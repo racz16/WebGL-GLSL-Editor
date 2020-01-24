@@ -1,0 +1,95 @@
+{
+	"name": "webgl-glsl-editor",
+	"displayName": "WebGL GLSL Editor",
+	"description": "Language support for WebGL GLSL.",
+	"author": "Rácz Zalán",
+	"publisher": "raczzalan",
+	"keywords": [
+		"WebGL",
+		"OpenGL",
+		"ES",
+		"GLSL",
+		"shader"
+	],
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.40.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"activationEvents": [
+		"onLanguage:glsl",
+		"onCommand:extension.helloWorld"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"languages": [
+			{
+				"id": "glsl",
+				"aliases": [
+					"GLSL",
+					"glsl"
+				],
+				"extensions": [
+					".glsl",
+					".vert",
+					".vs",
+					".frag",
+					".fs"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "glsl",
+				"scopeName": "source.glsl",
+				"path": "./syntaxes/glsl.tmLanguage.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "glsl",
+				"path": "./snippets.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "webglglsleditor.opendocsgl",
+				"title": "Open docs.gl"
+			},
+			{
+				"command": "webglglsleditor.opengles2",
+				"title": "Open official OpenGL ES 2.0 documentation"
+			},
+			{
+				"command": "webglglsleditor.opengles3",
+				"title": "Open official OpenGL ES 3.0 documentation"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile",
+		"test": "node ./out/test/runTest.js",
+		"compile-antlr": "compile-antlr.bat"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.40.0",
+		"antlr4ts-cli": "^0.5.0-alpha.3",
+		"glob": "^7.1.5",
+		"mocha": "^6.2.2",
+		"tslint": "^5.20.0",
+		"typescript": "^3.6.4",
+		"vscode-test": "^1.2.2"
+	},
+	"dependencies": {
+		"antlr4ts": "^0.5.0-alpha.3"
+	}
+}

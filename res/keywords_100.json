@@ -1,0 +1,43 @@
+{
+    "keywords": [
+        {
+            "name": "break"
+        },
+        {
+            "name": "continue"
+        },
+        {
+            "name": "do"
+        },
+        {
+            "name": "for"
+        },
+        {
+            "name": "while"
+        },
+        {
+            "name": "if"
+        },
+        {
+            "name": "else"
+        },
+        {
+            "name": "discard"
+        },
+        {
+            "name": "return"
+        },
+        {
+            "name": "struct"
+        },
+        {
+            "name": "void"
+        },
+        {
+            "name": "true"
+        },
+        {
+            "name": "false"
+        }
+    ]
+}

@@ -1,0 +1,126 @@
+{
+    "transparent": [
+        {
+            "name": "bool",
+            "width": 1,
+            "height": 1,
+            "base": "bool"
+        },
+        {
+            "name": "int",
+            "width": 1,
+            "height": 1,
+            "base": "int"
+        },
+        {
+            "name": "float",
+            "width": 1,
+            "height": 1,
+            "base": "float"
+        },
+        {
+            "name": "vec2",
+            "width": 2,
+            "height": 1,
+            "base": "float"
+        },
+        {
+            "name": "vec3",
+            "width": 3,
+            "height": 1,
+            "base": "float"
+        },
+        {
+            "name": "vec4",
+            "width": 4,
+            "height": 1,
+            "base": "float"
+        },
+        {
+            "name": "bvec2",
+            "width": 2,
+            "height": 1,
+            "base": "bool"
+        },
+        {
+            "name": "bvec3",
+            "width": 3,
+            "height": 1,
+            "base": "bool"
+        },
+        {
+            "name": "bvec4",
+            "width": 4,
+            "height": 1,
+            "base": "bool"
+        },
+        {
+            "name": "ivec2",
+            "width": 2,
+            "height": 1,
+            "base": "int"
+        },
+        {
+            "name": "ivec3",
+            "width": 3,
+            "height": 1,
+            "base": "int"
+        },
+        {
+            "name": "ivec4",
+            "width": 4,
+            "height": 1,
+            "base": "int"
+        },
+        {
+            "name": "mat2",
+            "width": 2,
+            "height": 2,
+            "base": "float"
+        },
+        {
+            "name": "mat3",
+            "width": 3,
+            "height": 3,
+            "base": "float"
+        },
+        {
+            "name": "mat4",
+            "width": 4,
+            "height": 4,
+            "base": "float"
+        }
+    ],
+    "floatingPointOpaque": [
+        {
+            "name": "sampler2D"
+        },
+        {
+            "name": "samplerCube"
+        }
+    ],
+    "signedIntegerOpaque": [],
+    "unsignedIntegerOpaque": [],
+    "custom": [
+        {
+            "name": "gl_DepthRangeParameters",
+            "members": [
+                {
+                    "memberPrecision": "highp",
+                    "memberType": "float",
+                    "memberName": "near"
+                },
+                {
+                    "memberPrecision": "highp",
+                    "memberType": "float",
+                    "memberName": "far"
+                },
+                {
+                    "memberPrecision": "highp",
+                    "memberType": "float",
+                    "memberName": "diff"
+                }
+            ]
+        }
+    ]
+}

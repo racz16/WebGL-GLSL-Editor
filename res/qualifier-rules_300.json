@@ -1,0 +1,30 @@
+{
+    "qualifierRules": [
+        {
+            "qualifierRule": [
+                "in",
+                "out",
+                "inout"
+            ]
+        },
+        {
+            "qualifierRule": [
+                "lowp",
+                "mediump",
+                "highp"
+            ]
+        },
+        {
+            "qualifierRule": [
+                "const",
+                "out"
+            ]
+        },
+        {
+            "qualifierRule": [
+                "const",
+                "inout"
+            ]
+        }
+    ]
+}

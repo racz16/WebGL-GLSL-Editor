@@ -1,0 +1,7 @@
+export enum TypeCategory {
+    CUSTOM,
+    TRANSPARENT,
+    FLOATING_POINT_OPAQUE,
+    SIGNED_INTEGER_OPAQUE,
+    UNSIGNED_INTEGER_OPAQUE,
+}
