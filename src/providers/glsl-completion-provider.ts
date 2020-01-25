@@ -15,11 +15,19 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private items: Array<CompletionItem>;
 
     //TODO:
+    //konstruktorok
+    //függvényeknél ahol többhöz egy doksi tartozik, ott legyen átirányítás
+    //summary típusokhoz, kulcsszavakhoz és qualifierekhez
+    //100-as verzió
+    //mat2x2 stb. is működjön
+    //refaktorálás
+
     //online dokumentáció bevarázslása
-    //amíg ez nincs, az aljára oda lehetne írni, hogy ez csak offline
     //kontextusfüggő ajánlás
     //például függvényen kívül ne ajánljunk függvényeket, úgyse tudjuk meghívni stb.
     //de legalább annyit, hogy a struct-ok memberjeit és a swizzle-ket elérjük
+
+    private importantElements = ['cross', 'distance', 'dot', 'inverse', 'length', 'normalize', 'reflect', 'refract', 'texture', 'transpose', 'vec2', 'vec3', 'vec4', 'mat3', 'mat4'];
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position);
@@ -50,21 +58,16 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 this.items.push(ci);
             }
         }
-        const fs = new Set<string>();
-        for (const fd of this.documentInfo.builtin.functions) {
-            if (fs.has(fd.name)) {
-                continue;
-            }
-            const kind = fd.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
-            const ci = new CompletionItem(fd.name, kind);
-            if (ci.label === 'dot' || ci.label === 'cross' || ci.label === 'texture') {
+        for (const func of this.documentInfo.builtin.functionSummaries) {
+            const ci = new CompletionItem(func[0], CompletionItemKind.Function);
+            if (this.importantElements.includes(ci.label)) {
                 ci.insertText = ci.label;
                 ci.sortText = '*' + ci.label;
                 ci.label = '★ ' + ci.label;
             }
-            //ci.documentation = Helper.getSummary(fd);
+            ci.detail = 'Built-In Function';
+            ci.documentation = func[1];
             this.items.push(ci);
-            fs.add(fd.name);
         }
     }
 

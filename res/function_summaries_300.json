@@ -1,0 +1,376 @@
+{
+  "functions": [
+    {
+      "name": "acos",
+      "summary": "return the arccosine of the parameter"
+    },
+    {
+      "name": "acosh",
+      "summary": "return the arc hyperbolic cosine of the parameter"
+    },
+    {
+      "name": "asin",
+      "summary": "return the arcsine of the parameter"
+    },
+    {
+      "name": "asinh",
+      "summary": "return the arc hyperbolic sine of the parameter"
+    },
+    {
+      "name": "atan",
+      "summary": "return the arc-tangent of the parameters"
+    },
+    {
+      "name": "atanh",
+      "summary": "return the arc hyperbolic tangent of the parameter"
+    },
+    {
+      "name": "cos",
+      "summary": "return the cosine of the parameter"
+    },
+    {
+      "name": "cosh",
+      "summary": "return the hyperbolic cosine of the parameter"
+    },
+    {
+      "name": "degrees",
+      "summary": "convert a quantity in radians to degrees"
+    },
+    {
+      "name": "radians",
+      "summary": "convert a quantity in degrees to radians"
+    },
+    {
+      "name": "sin",
+      "summary": "return the sine of the parameter"
+    },
+    {
+      "name": "sinh",
+      "summary": "return the hyperbolic sine of the parameter"
+    },
+    {
+      "name": "tan",
+      "summary": "return the tangent of the parameter"
+    },
+    {
+      "name": "tanh",
+      "summary": "return the hyperbolic tangent of the parameter"
+    },
+    {
+      "name": "abs",
+      "summary": "return the absolute value of the parameter"
+    },
+    {
+      "name": "ceil",
+      "summary": "find the nearest integer that is greater than or equal to the parameter"
+    },
+    {
+      "name": "clamp",
+      "summary": "constrain a value to lie between two further values"
+    },
+    {
+      "name": "dFdx",
+      "summary": "return the partial derivative of an argument with respect to x or y"
+    },
+    {
+      "name": "dFdy",
+      "summary": "return the partial derivative of an argument with respect to x or y"
+    },
+    {
+      "name": "exp",
+      "summary": "return the natural exponentiation of the parameter"
+    },
+    {
+      "name": "exp2",
+      "summary": "return 2 raised to the power of the parameter"
+    },
+    {
+      "name": "floor",
+      "summary": "ind the nearest integer less than or equal to the parameter"
+    },
+    {
+      "name": "fract",
+      "summary": "compute the fractional part of the argument"
+    },
+    {
+      "name": "fwidth",
+      "summary": "return the sum of the absolute derivatives in x and y"
+    },
+    {
+      "name": "inversesqrt",
+      "summary": "return the inverse of the square root of the parameter"
+    },
+    {
+      "name": "isinf",
+      "summary": "determine whether the parameter is positive or negative infinity"
+    },
+    {
+      "name": "isnan",
+      "summary": "determine whether the parameter is a number"
+    },
+    {
+      "name": "log",
+      "summary": "return the natural logarithm of the parameter"
+    },
+    {
+      "name": "log2",
+      "summary": "return the base 2 logarithm of the parameter"
+    },
+    {
+      "name": "max",
+      "summary": "return the greater of two values"
+    },
+    {
+      "name": "min",
+      "summary": "return the lesser of two values"
+    },
+    {
+      "name": "mix",
+      "summary": "linearly interpolate between two values"
+    },
+    {
+      "name": "mod",
+      "summary": "compute value of one parameter modulo another"
+    },
+    {
+      "name": "modf",
+      "summary": "separate a value into its integer and fractional components"
+    },
+    {
+      "name": "pow",
+      "summary": "return the value of the first parameter raised to the power of the second"
+    },
+    {
+      "name": "round",
+      "summary": "find the nearest integer to the parameter"
+    },
+    {
+      "name": "roundEven",
+      "summary": "find the nearest even integer to the parameter"
+    },
+    {
+      "name": "sign",
+      "summary": "extract the sign of the parameter"
+    },
+    {
+      "name": "smoothstep",
+      "summary": "perform Hermite interpolation between two values"
+    },
+    {
+      "name": "sqrt",
+      "summary": "return the square root of the parameter"
+    },
+    {
+      "name": "step",
+      "summary": "generate a step function by comparing two values"
+    },
+    {
+      "name": "trunc",
+      "summary": "find the truncated value of the parameter"
+    },
+    {
+      "name": "floatBitsToInt",
+      "summary": "produce the encoding of a floating point value as an integer"
+    },
+    {
+      "name": "floatBitsToUint",
+      "summary": "produce the encoding of a floating point value as an integer"
+    },
+    {
+      "name": "intBitsToFloat",
+      "summary": "produce a floating point using an encoding supplied as an integer"
+    },
+    {
+      "name": "uintBitsToFloat",
+      "summary": "produce a floating point using an encoding supplied as an integer"
+    },
+    {
+      "name": "packHalf2x16",
+      "summary": "convert two 32-bit floating-point quantities to 16-bit quantities and pack them into a single 32-bit integer"
+    },
+    {
+      "name": "packUnorm2x16",
+      "summary": "pack floating-point values into an unsigned integer"
+    },
+    {
+      "name": "packSnorm2x16",
+      "summary": "pack floating-point values into an unsigned integer"
+    },
+    {
+      "name": "packUnorm4x8",
+      "summary": "pack floating-point values into an unsigned integer"
+    },
+    {
+      "name": "packSnorm4x8",
+      "summary": "pack floating-point values into an unsigned integer"
+    },
+    {
+      "name": "unpackHalf2x16",
+      "summary": "convert two 16-bit floating-point values packed into a single 32-bit integer into a vector of two 32-bit floating-point quantities"
+    },
+    {
+      "name": "unpackUnorm2x16",
+      "summary": "unpack floating-point values from an unsigned integer"
+    },
+    {
+      "name": "unpackSnorm2x16",
+      "summary": "unpack floating-point values from an unsigned integer"
+    },
+    {
+      "name": "unpackUnorm4x8",
+      "summary": "unpack floating-point values from an unsigned integer"
+    },
+    {
+      "name": "unpackSnorm4x8",
+      "summary": "unpack floating-point values from an unsigned integer"
+    },
+    {
+      "name": "cross",
+      "summary": "calculate the cross product of two vectors"
+    },
+    {
+      "name": "distance",
+      "summary": "calculate the distance between two points"
+    },
+    {
+      "name": "dot",
+      "summary": "calculate the dot product of two vectors"
+    },
+    {
+      "name": "equal",
+      "summary": "perform a component-wise equal-to comparison of two vectors"
+    },
+    {
+      "name": "faceforward",
+      "summary": "return a vector pointing in the same direction as another"
+    },
+    {
+      "name": "length",
+      "summary": "calculate the length of a vector"
+    },
+    {
+      "name": "normalize",
+      "summary": "calculate the normalize product of two vectors"
+    },
+    {
+      "name": "notEqual",
+      "summary": "perform a component-wise not-equal-to comparison of two vectors"
+    },
+    {
+      "name": "reflect",
+      "summary": "calculate the reflection direction for an incident vector"
+    },
+    {
+      "name": "refract",
+      "summary": "calculate the refraction direction for an incident vector"
+    },
+    {
+      "name": "all",
+      "summary": "check whether all elements of a boolean vector are true"
+    },
+    {
+      "name": "any",
+      "summary": "check whether any element of a boolean vector is true"
+    },
+    {
+      "name": "greaterThan",
+      "summary": "perform a component-wise greater-than comparison of two vectors"
+    },
+    {
+      "name": "greaterThanEqual",
+      "summary": "perform a component-wise greater-than-or-equal comparison of two vectors"
+    },
+    {
+      "name": "lessThan",
+      "summary": "perform a component-wise less-than comparison of two vectors"
+    },
+    {
+      "name": "lessThanEqual",
+      "summary": "perform a component-wise less-than-or-equal comparison of two vectors"
+    },
+    {
+      "name": "not",
+      "summary": "logically invert a boolean vector"
+    },
+    {
+      "name": "texelFetch",
+      "summary": "perform a lookup of a single texel within a texture"
+    },
+    {
+      "name": "texelFetchOffset",
+      "summary": "perform a lookup of a single texel within a texture with an offset"
+    },
+    {
+      "name": "texture",
+      "summary": "retrieves texels from a texture"
+    },
+    {
+      "name": "textureGrad",
+      "summary": "perform a texture lookup with explicit gradients"
+    },
+    {
+      "name": "textureGradOffset",
+      "summary": "perform a texture lookup with explicit gradients and offset"
+    },
+    {
+      "name": "textureLod",
+      "summary": "perform a texture lookup with explicit level-of-detail"
+    },
+    {
+      "name": "textureLodOffset",
+      "summary": "perform a texture lookup with explicit level-of-detail and offset"
+    },
+    {
+      "name": "textureOffset",
+      "summary": "perform a texture lookup with offset"
+    },
+    {
+      "name": "textureProj",
+      "summary": "perform a texture lookup with projection"
+    },
+    {
+      "name": "textureProjGrad",
+      "summary": "perform a texture lookup with projection and explicit gradients"
+    },
+    {
+      "name": "textureProjGradOffset",
+      "summary": "perform a texture lookup with projection, explicit gradients and offset"
+    },
+    {
+      "name": "textureProjLod",
+      "summary": "perform a texture lookup with projection and explicit level-of-detail"
+    },
+    {
+      "name": "textureProjLodOffset",
+      "summary": "perform a texture lookup with projection and explicit level-of-detail and offset"
+    },
+    {
+      "name": "textureProjOffset",
+      "summary": "perform a texture lookup with projection and offset"
+    },
+    {
+      "name": "textureSize",
+      "summary": "retrieve the dimensions of a level of a texture"
+    },
+    {
+      "name": "determinant",
+      "summary": "calculate the determinant of a matrix"
+    },
+    {
+      "name": "inverse",
+      "summary": "calculate the inverse of a matrix"
+    },
+    {
+      "name": "matrixCompMult",
+      "summary": "perform a component-wise multiplication of two matrices"
+    },
+    {
+      "name": "outerProduct",
+      "summary": "calculate the outer product of a pair of vectors"
+    },
+    {
+      "name": "transpose",
+      "summary": "calculate the transpose of a matrix"
+    }
+  ]
+}

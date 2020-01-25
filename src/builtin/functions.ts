@@ -14,3 +14,12 @@ export interface Parameter {
     type: string;
     name: string;
 }
+
+export interface FunctionSummaries {
+    functions: Array<FunctionSummary>;
+}
+
+export interface FunctionSummary {
+    name: string;
+    summary: string;
+}

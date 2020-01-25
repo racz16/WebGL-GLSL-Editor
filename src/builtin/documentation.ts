@@ -1,8 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { Uri, MarkdownString } from 'vscode';
-import { Element } from '../scope/element';
+import { Uri } from 'vscode';
 
 export class Documentation {
 

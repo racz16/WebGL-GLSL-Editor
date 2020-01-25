@@ -21,7 +21,6 @@ import * as path from 'path';
 //snippets kibővítése
 //idegbeteg hierarchia átalakítása
 //code action-ökbe hibák javítása, color, formatting, folding és indentation egysorosoknál, signature helper
-//ofline doumentáció elkészítése
 //precision statements, scopeja, felesleges precision qualifierekre warning
 //glsl mellett vs és fs felismerése is, úgy sokkal okosabbak tudunk lenni
 //kommentek és preprocesszor összelövése
