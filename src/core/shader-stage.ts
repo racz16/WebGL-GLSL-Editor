@@ -1,5 +1,5 @@
 export enum ShaderStage {
-    UNKOWN,
+    DEFAULT,
     VERTEX,
     FRAGMENT,
 }

@@ -7,7 +7,8 @@
             "qualifiers": [
                 "in",
                 "highp"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "contains the index of the current primitive in an instanced draw command",
@@ -16,7 +17,8 @@
             "qualifiers": [
                 "in",
                 "highp"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "contains the position of the current vertex",
@@ -25,7 +27,8 @@
             "qualifiers": [
                 "out",
                 "highp"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "contains size of rasterized points, in pixels",
@@ -34,7 +37,8 @@
             "qualifiers": [
                 "out",
                 "highp"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "contains the window-relative coordinates of the current fragment",
@@ -43,7 +47,8 @@
             "qualifiers": [
                 "in",
                 "highp"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "summary": "indicates whether a primitive is front or back facing",
@@ -51,7 +56,8 @@
             "name": "gl_FrontFacing",
             "qualifiers": [
                 "in"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "summary": "establishes a depth value for the current fragment",
@@ -60,7 +66,8 @@
             "qualifiers": [
                 "out",
                 "highp"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "summary": "contains the coordinate of a fragment within a point",
@@ -69,7 +76,8 @@
             "qualifiers": [
                 "in",
                 "mediump"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "customSummary": "depth range in window coordinates",

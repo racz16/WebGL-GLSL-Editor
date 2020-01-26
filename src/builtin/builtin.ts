@@ -14,8 +14,9 @@ import { Interval } from '../scope/interval';
 import { Variables, Variable } from './variables';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { ReservedWords } from './reserved-words';
-import { Functions, Parameter, FunctionSummaries } from './functions';
+import { Functions, Parameter, FunctionSummaries, FunctionSummary, FunctionInfo } from './functions';
 import { MarkdownString } from 'vscode';
+import { ShaderStage } from '../core/shader-stage';
 
 export class Builtin {
 
@@ -26,7 +27,7 @@ export class Builtin {
     private postfix: string;
 
     public readonly functions = new Array<FunctionDeclaration>();
-    public readonly functionSummaries = new Map<string, MarkdownString>();
+    public readonly functionSummaries = new Map<string, FunctionInfo>();
     public readonly variables = new Map<string, VariableDeclaration>();
     public readonly types = new Map<string, TypeDeclaration>();
     public readonly keywords = new Array<Keyword>();
@@ -35,6 +36,19 @@ export class Builtin {
     public readonly reservedWords = new Array<string>();
 
     private constructor() { }
+
+    public setValues(postfix: string) {
+        this.postfix = postfix;
+        this.loadReservedWords();
+        this.loadKeywords();
+        this.loadQualifiers();
+        this.loadQualifierRules();
+        this.loadTypes();
+        this.addConstructors();
+        this.loadVariables();
+        this.loadFunctions();
+        this.loadFunctionSummaries();
+    }
 
     //
     //reserved------------------------------------------------------------------
@@ -91,9 +105,13 @@ export class Builtin {
 
     private loadTransparentTypes(types: Types): void {
         for (const type of types.transparent) {
-            const tb = this.stringToTypeBase(type.base);
-            const td = new TypeDeclaration(type.name, Interval.NONE, null, true, Interval.NONE, type.width, type.height, tb, TypeCategory.TRANSPARENT);
-            td.summary = type.summary;
+            let td: TypeDeclaration;
+            if (type.alias) {
+                td = this.types.get(type.alias);
+            } else {
+                const tb = this.stringToTypeBase(type.base);
+                td = new TypeDeclaration(type.name, Interval.NONE, null, true, Interval.NONE, type.width, type.height, tb, TypeCategory.TRANSPARENT);
+            }
             this.types.set(type.name, td);
         }
     }
@@ -142,6 +160,38 @@ export class Builtin {
     }
 
     //
+    //constructors--------------------------------------------------------------
+    //
+    private addConstructors(): void {
+        for (const td of this.types.values()) {
+            if (td.isScalar()) {
+                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
+                for (const td2 of this.types.values()) {
+                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
+                    const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE);
+                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td2);
+                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, false, Interval.NONE, tu2);
+                    fd.parameters.push(vd);
+                }
+            } else if (td.isVector()) {
+                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
+                //TODO
+            } else if (td.isMatrix()) {
+                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
+                //TODO
+            }
+            if (td.typeCategory === TypeCategory.CUSTOM) {
+                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
+                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
+                const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE);
+                for (const vd of td.members) {
+                    fd.parameters.push(vd);
+                }
+            }
+        }
+    }
+
+    //
     //variables-----------------------------------------------------------------
     //
     private loadVariables(): void {
@@ -150,7 +200,8 @@ export class Builtin {
             const array = variable.array ?? 0;
             const td = this.types.get(variable.type);
             const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, Interval.NONE, array, td);
-            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, true, Interval.NONE, tu);
+            const stage = this.getStage(variable.stage);
+            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, true, Interval.NONE, tu, stage);
             this.addVariableQualifiers(tu, variable);
             vd.summary = this.createVariableSummary(variable, vd);
             this.variables.set(variable.name, vd);
@@ -192,6 +243,7 @@ export class Builtin {
     //functions-----------------------------------------------------------------
     //
     private loadFunctions(): void {
+        //TODO genType átalakítás
         const functions: Functions = require(this.getPath('functions'));
         for (const func of functions.functions) {
             const td = this.types.get(func.returnType);
@@ -203,7 +255,8 @@ export class Builtin {
                     tu.qualifiers.push(qu);
                 }
             }
-            const fp = new FunctionDeclaration(func.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE);
+            const stage = this.getStage(func.stage);
+            const fp = new FunctionDeclaration(func.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, stage);
             for (const parameter of func.parameters) {
                 const td = this.types.get(parameter.type);
                 const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
@@ -218,22 +271,26 @@ export class Builtin {
     private loadFunctionSummaries(): void {
         const functions: FunctionSummaries = require(this.getPath('function_summaries'));
         for (const func of functions.functions) {
-            const summary = this.createFunctionSummary(func.name, func.summary);
-            this.functionSummaries.set(func.name, summary);
+            const summary = this.createFunctionSummary(func);
+            const stage = this.getStage(func.stage);
+            const fi = new FunctionInfo(func.name, summary, stage, false);
+            this.functionSummaries.set(func.name, fi);
         }
     }
 
-    private createFunctionSummary(name: string, summary: string): MarkdownString {
+    private createFunctionSummary(func: FunctionSummary): MarkdownString {
         const mds = new MarkdownString();
-        mds.appendText(`${name} — `);
-        if (summary) {
-            mds.appendText(summary);
+        mds.appendText(`${func.name} — `);
+        if (func.summary) {
+            mds.appendText(func.summary);
+        } else if (func.customSummary) {
+            mds.appendText(func.customSummary);
         } else {
             mds.appendText('documentation is not available');
         }
         mds.appendText('\r\n');
-        if (summary) {
-            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify(name))})`);
+        if (func.summary) {
+            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify(func.name))})`);
             mds.isTrusted = true;
         }
         return mds;
@@ -243,17 +300,12 @@ export class Builtin {
     //
     //
     //
-
-    public setValues(postfix: string) {
-        this.postfix = postfix;
-        this.loadReservedWords();
-        this.loadKeywords();
-        this.loadQualifiers();
-        this.loadQualifierRules();
-        this.loadTypes();
-        this.loadVariables();
-        this.loadFunctions();
-        this.loadFunctionSummaries();
+    private getStage(stage: string): ShaderStage {
+        switch (stage) {
+            case 'vertex': return ShaderStage.VERTEX;
+            case 'fragment': return ShaderStage.FRAGMENT;
+            default: return ShaderStage.DEFAULT;
+        }
     }
 
     private getPath(name: string): string {
@@ -300,7 +352,7 @@ export class Builtin {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.global, variable.declarationInterval, tu);
+            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.global, variable.declarationInterval, tu, variable.stage);
             vd.summary = variable.summary;
             bi.variables.set(variable.name, vd);
         }
@@ -312,7 +364,7 @@ export class Builtin {
                 const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(func.name, func.nameInterval, null, tu, func.builtIn, func.ctor, func.interval, func.signatureInterval);
+            const fp = new FunctionDeclaration(func.name, func.nameInterval, null, tu, func.builtIn, func.ctor, func.interval, func.signatureInterval, func.stage);
             for (const parameter of func.parameters) {
                 const td = this.types.get(parameter.type.name);
                 const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);

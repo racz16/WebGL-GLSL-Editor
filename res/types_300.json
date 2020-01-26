@@ -7,21 +7,18 @@
             "base": "bool"
         },
         {
-            "summary": "Highp signed integers use 32 bits, including a sign bit, in two's complement form. Mediump and lowp integers have implementation-defined numbers of bits. For all precisions, operations resulting in overflow or underflow will not cause any exception, nor will they saturate, rather they will “wrap” to yield the low-order n bits of the result where n is the size in bits of the integer. However, for the case where the minimum representable value is divided by -1, it is allowed to return either the minimum representable value or the maximum representable value.",
             "name": "int",
             "width": 1,
             "height": 1,
             "base": "int"
         },
         {
-            "summary": "Highp unsigned integers have exactly 32 bits of precision.  Mediump and lowp integers have implementation-defined numbers of bits. For all precisions, operations resulting in overflow or underflow will not cause any exception, nor will they saturate, rather they will “wrap” to yield the low-order n bits of the result where n is the size in bits of the integer. However, for the case where the minimum representable value is divided by -1, it is allowed to return either the minimum representable value or the maximum representable value.",
             "name": "uint",
             "width": 1,
             "height": 1,
             "base": "uint"
         },
         {
-            "summary": "As an input value to one of the processing units, a floating-point variable is expected to match the IEEE 754 single precision floating-point definition for precision and dynamic range. Highp floating-point variables within a shader are encoded according to the IEEE 754 specification for single-precision floating-point values (logically, not necessarily physically). While encodings are logically IEEE 754, operations (addition, multiplication, etc.) are not necessarily performed as required by IEEE 754.",
             "name": "float",
             "width": 1,
             "height": 1,
@@ -121,7 +118,8 @@
             "name": "mat2x2",
             "width": 2,
             "height": 2,
-            "base": "float"
+            "base": "float",
+            "alias": "mat2"
         },
         {
             "name": "mat2x3",
@@ -145,7 +143,8 @@
             "name": "mat3x3",
             "width": 3,
             "height": 3,
-            "base": "float"
+            "base": "float",
+            "alias": "mat3"
         },
         {
             "name": "mat3x4",
@@ -169,7 +168,8 @@
             "name": "mat4x4",
             "width": 4,
             "height": 4,
-            "base": "float"
+            "base": "float",
+            "alias": "mat4"
         }
     ],
     "floatingPointOpaque": [

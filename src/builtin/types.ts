@@ -7,11 +7,11 @@ export interface Types {
 }
 
 export interface TransparentType {
-    summary: string;
     name: string;
     width: number;
     height: number;
     base: string;
+    alias: string;
 }
 
 export interface OpaqueType {

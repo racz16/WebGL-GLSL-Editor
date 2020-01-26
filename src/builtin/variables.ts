@@ -10,4 +10,5 @@ export interface Variable {
     name: string;
     array: number;
     qualifiers: Array<string>;
+    stage: string;
 }

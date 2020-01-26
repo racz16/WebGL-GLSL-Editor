@@ -5,23 +5,17 @@ import { LogicalFunction } from '../scope/function/logical-function';
 import { Scope } from '../scope/scope';
 import { TypeCategory } from '../scope/type/type-category';
 import { Helper } from '../helper/helper';
+import { ShaderStage } from '../core/shader-stage';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
-    private documentInfo: GlslDocumentInfo;
+    private di: GlslDocumentInfo;
     private document: TextDocument;
     private position: Position;
     private offset: number;
     private items: Array<CompletionItem>;
 
     //TODO:
-    //konstruktorok
-    //stage, customsummary, qualifier a jsonból, genType átalakítás
-    //függvényeknél ahol többhöz egy doksi tartozik, ott legyen átirányítás
-    //summary típusokhoz, kulcsszavakhoz és qualifierekhez, konstruktorokhoz?
-    //mat2x2 stb. is működjön
-    //refaktorálás
-
     //online dokumentáció bevarázslása
     //kontextusfüggő ajánlás
     //például függvényen kívül ne ajánljunk függvényeket, úgyse tudjuk meghívni stb.
@@ -42,33 +36,40 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private initialize(document: TextDocument, position: Position): void {
         GlslProcessor.processDocument(document);
-        this.documentInfo = GlslProcessor.getDocumentInfo(document.uri);
+        this.di = GlslProcessor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
         this.offset = document.offsetAt(position);
+    }
+
+    private isAvailable(stage: ShaderStage): boolean {
+        return stage === ShaderStage.DEFAULT || stage === this.di.getShaderStage();
     }
 
     //
     //function
     //
     private addFunctionCompletionItems(): void {
-        for (const lf of this.documentInfo.functions) {
+        for (const lf of this.di.functions) {
             const ci = this.getFunctionCompletionItem(lf);
             if (ci) {
                 this.items.push(ci);
             }
         }
-        for (const func of this.documentInfo.builtin.functionSummaries) {
-            const ci = new CompletionItem(func[0], CompletionItemKind.Function);
-            if (this.importantElements.includes(ci.label)) {
-                ci.insertText = ci.label;
-                ci.filterText = ci.label;
-                ci.sortText = '*' + ci.label;
-                ci.label = '★ ' + ci.label;
+        for (const func of this.di.builtin.functionSummaries.values()) {
+            if (this.isAvailable(func.stage)) {
+                const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
+                const ci = new CompletionItem(func.name, kind);
+                if (this.importantElements.includes(ci.label)) {
+                    ci.insertText = ci.label;
+                    ci.filterText = ci.label;
+                    ci.sortText = '*' + ci.label;
+                    ci.label = '★ ' + ci.label;
+                }
+                ci.detail = func.ctor ? null : 'Built-In Function';
+                ci.documentation = func.summary;
+                this.items.push(ci);
             }
-            ci.detail = 'Built-In Function';
-            ci.documentation = func[1];
-            this.items.push(ci);
         }
     }
 
@@ -83,8 +84,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         for (const fp of lf.prototypes) {
             if (this.offset > fp.interval.stopIndex) {
                 const ci = new CompletionItem(fp.name, CompletionItemKind.Function);
-                ci.detail = 'Function';
-                ci.documentation = new MarkdownString(fp.toStringDocumentation());
                 return ci;
             }
         }
@@ -95,9 +94,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //keyword
     //
     private addKeywordCompletionItems(): void {
-        for (const kw of this.documentInfo.builtin.keywords) {
+        for (const kw of this.di.builtin.keywords) {
             const ci = new CompletionItem(kw.name, CompletionItemKind.Keyword);
-            ci.detail = 'Keyword';
             this.items.push(ci);
         }
     }
@@ -106,9 +104,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //qualifier
     //
     private addQualifierCompletionItems(): void {
-        for (const q of this.documentInfo.builtin.qualifiers.values()) {
+        for (const q of this.di.builtin.qualifiers.values()) {
             const ci = new CompletionItem(q.name, CompletionItemKind.Keyword);
-            ci.detail = 'Qualifier';
             this.items.push(ci);
         }
     }
@@ -117,15 +114,13 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //type
     //
     private addTypeCompletionItems(): void {
-        this.addUserTypeCompletionItems(this.documentInfo.getRootScope());
-        for (const td of this.documentInfo.builtin.types.values()) {
+        this.addUserTypeCompletionItems(this.di.getRootScope());
+        for (const td of this.di.builtin.types.values()) {
             const ci = new CompletionItem(td.name, CompletionItemKind.Class);
             if (td.typeCategory === TypeCategory.CUSTOM) {
                 ci.documentation = new MarkdownString(td.toStringDocumentation());
-            } else if (td.summary) {
-                ci.documentation = td.summary;
+                ci.detail = 'Built-In Type';
             }
-            ci.detail = 'Built-In Type';
             this.items.push(ci);
         }
     }
@@ -150,12 +145,14 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //variable
     //
     private addVariableCompletionItems(): void {
-        this.addUserVariableCompletionItems(this.documentInfo.getRootScope());
-        for (const vd of this.documentInfo.builtin.variables.values()) {
-            const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
-            ci.documentation = vd.summary;
-            ci.detail = 'Built-In Variable';
-            this.items.push(ci);
+        this.addUserVariableCompletionItems(this.di.getRootScope());
+        for (const vd of this.di.builtin.variables.values()) {
+            if (this.isAvailable(vd.stage)) {
+                const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
+                ci.documentation = vd.summary;
+                ci.detail = 'Built-In Variable';
+                this.items.push(ci);
+            }
         }
     }
 

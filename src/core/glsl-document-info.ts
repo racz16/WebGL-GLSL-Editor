@@ -45,13 +45,17 @@ export class GlslDocumentInfo {
         this.setShaderStage();
     }
 
+    public getShaderStage(): ShaderStage {
+        return this.stage;
+    }
+
     private setShaderStage(): void {
         if (this.uri.path.endsWith('.fs') || this.uri.path.endsWith('.frag')) {
             this.stage = ShaderStage.FRAGMENT;
         } else if (this.uri.path.endsWith('.vs') || this.uri.path.endsWith('.vert')) {
             this.stage = ShaderStage.VERTEX;
         } else {
-            this.stage = ShaderStage.UNKOWN;
+            this.stage = ShaderStage.DEFAULT;
         }
     }
 

@@ -6,7 +6,8 @@
             "name": "gl_Position",
             "qualifiers": [
                 "highp"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "gl_PointSize — contains size of rasterized points, in pixels",
@@ -14,7 +15,8 @@
             "name": "gl_PointSize",
             "qualifiers": [
                 "mediump"
-            ]
+            ],
+            "stage": "vertex"
         },
         {
             "summary": "gl_FragCoord — contains the window-relative coordinates of the current fragment",
@@ -22,12 +24,14 @@
             "name": "gl_FragCoord",
             "qualifiers": [
                 "mediump"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "summary": "gl_FrontFacing — indicates whether a primitive is front or back facing",
             "type": "bool",
-            "name": "gl_FrontFacing"
+            "name": "gl_FrontFacing",
+            "stage": "fragment"
         },
         {
             "summary": "gl_PointCoord — contains the coordinate of a fragment within a point",
@@ -35,7 +39,8 @@
             "name": "gl_PointCoord",
             "qualifiers": [
                 "mediump"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "customSummary": "Writing to gl_FragColor specifies the fragment color that will be used by the subsequent fixed functionality pipeline.",
@@ -43,7 +48,8 @@
             "name": "gl_FragColor",
             "qualifiers": [
                 "mediump"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "customSummary": "The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array's length is gl_MaxDrawBuffers.",
@@ -52,7 +58,8 @@
             "array": 1,
             "qualifiers": [
                 "mediump"
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "customSummary": "depth range in window coordinates",

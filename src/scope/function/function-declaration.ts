@@ -3,9 +3,9 @@ import { LogicalFunction } from './logical-function';
 import { Interval } from '../interval';
 import { TypeUsage } from '../type/type-usage';
 import { VariableDeclaration } from '../variable/variable-declaration';
-import { MarkdownString } from 'vscode';
 import { GlslDocumentInfo } from '../../core/glsl-document-info';
 import { Scope } from '../scope';
+import { ShaderStage } from '../../core/shader-stage';
 
 export class FunctionDeclaration extends Element {
 
@@ -16,14 +16,16 @@ export class FunctionDeclaration extends Element {
     public readonly parameters = new Array<VariableDeclaration>();
     public readonly builtIn: boolean;
     public readonly ctor: boolean;
+    public readonly stage: ShaderStage;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, signatureInterval: Interval) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, signatureInterval: Interval, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
         this.interval = interval;
         this.signatureInterval = signatureInterval;
         this.returnType = returnType;
         this.builtIn = builtIn;
         this.ctor = ctor;
+        this.stage = stage;
     }
 
     public isConnectableWith(fd: FunctionDeclaration): boolean {
