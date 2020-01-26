@@ -223,7 +223,7 @@ export class Builtin {
         }
         mds.appendText('\r\n');
         if (variable.summary) {
-            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify(variable.name))})`);
+            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify({ name: variable.name, active: true }))})`);
             mds.isTrusted = true;
         }
         return mds;
@@ -290,7 +290,7 @@ export class Builtin {
         }
         mds.appendText('\r\n');
         if (func.summary) {
-            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify(func.name))})`);
+            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify({ name: func.name, active: true }))})`);
             mds.isTrusted = true;
         }
         return mds;

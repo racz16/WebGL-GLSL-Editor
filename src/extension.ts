@@ -57,11 +57,20 @@ export function activate(context: ExtensionContext) {
 	}));
 
 
-	context.subscriptions.push(commands.registerCommand('webglglsleditor.opendoc', (name: string) => {
+	context.subscriptions.push(commands.registerCommand('webglglsleditor.opendoc', (param: any) => {
+		let vc: ViewColumn;
+		let name: string;
+		if (param.name) {
+			vc = ViewColumn.Beside;
+			name = param.name;
+		} else {
+			vc = ViewColumn.Active;
+			name = param.toString();
+		}
 		const panel = window.createWebviewPanel(
 			'documentation',
 			name,
-			ViewColumn.Beside,//TODO: hover/completion providerből oké, doksiból active kéne
+			vc,
 			{
 				enableScripts: true,
 				enableCommandUris: true,
