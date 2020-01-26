@@ -13,7 +13,7 @@ export class TypeUsage extends Element {
     public readonly interval: Interval;
     public readonly arrayInterval: Interval;
     public readonly arrayDepth: number;
-    public readonly inlineStructDeclaration;
+    public readonly inlineStructDeclaration: boolean;
 
     public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, arrayDepth: number, declaration: TypeDeclaration, inlineStructDeclaration = false) {
         super(name, nameInterval, scope);

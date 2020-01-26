@@ -70,11 +70,13 @@
     },
     {
       "name": "dFdx",
-      "summary": "return the partial derivative of an argument with respect to x or y"
+      "summary": "return the partial derivative of an argument with respect to x or y",
+      "stage": "fragment"
     },
     {
       "name": "dFdy",
-      "summary": "return the partial derivative of an argument with respect to x or y"
+      "summary": "return the partial derivative of an argument with respect to x or y",
+      "stage": "fragment"
     },
     {
       "name": "exp",
@@ -94,7 +96,8 @@
     },
     {
       "name": "fwidth",
-      "summary": "return the sum of the absolute derivatives in x and y"
+      "summary": "return the sum of the absolute derivatives in x and y",
+      "stage": "fragment"
     },
     {
       "name": "inversesqrt",
@@ -197,14 +200,6 @@
       "summary": "pack floating-point values into an unsigned integer"
     },
     {
-      "name": "packUnorm4x8",
-      "summary": "pack floating-point values into an unsigned integer"
-    },
-    {
-      "name": "packSnorm4x8",
-      "summary": "pack floating-point values into an unsigned integer"
-    },
-    {
       "name": "unpackHalf2x16",
       "summary": "convert two 16-bit floating-point values packed into a single 32-bit integer into a vector of two 32-bit floating-point quantities"
     },
@@ -214,14 +209,6 @@
     },
     {
       "name": "unpackSnorm2x16",
-      "summary": "unpack floating-point values from an unsigned integer"
-    },
-    {
-      "name": "unpackUnorm4x8",
-      "summary": "unpack floating-point values from an unsigned integer"
-    },
-    {
-      "name": "unpackSnorm4x8",
       "summary": "unpack floating-point values from an unsigned integer"
     },
     {

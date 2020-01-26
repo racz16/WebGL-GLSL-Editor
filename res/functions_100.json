@@ -1,0 +1,994 @@
+{
+    "functions": [
+        {
+            "returnType": "genType",
+            "name": "acos",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "asin",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "atan",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "y"
+                },
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "atan",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "y_over_x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "cos",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "angle"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "degrees",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "radians"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "radians",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "degrees"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "sin",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "angle"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "tan",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "angle"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "abs",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "ceil",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "clamp",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "minVal"
+                },
+                {
+                    "type": "genType",
+                    "name": "maxVal"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "clamp",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "float",
+                    "name": "minVal"
+                },
+                {
+                    "type": "float",
+                    "name": "maxVal"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "exp",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "exp2",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "floor",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "fract",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "inversesqrt",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "log",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "log2",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "max",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "max",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "float",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "min",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "min",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "float",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "mix",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                },
+                {
+                    "type": "genType",
+                    "name": "a"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "mix",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                },
+                {
+                    "type": "float",
+                    "name": "a"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "mod",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "float",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "mod",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "pow",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "sign",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "smoothstep",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "edge0"
+                },
+                {
+                    "type": "genType",
+                    "name": "edge1"
+                },
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "smoothstep",
+            "parameters": [
+                {
+                    "type": "float",
+                    "name": "edge0"
+                },
+                {
+                    "type": "float",
+                    "name": "edge1"
+                },
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "sqrt",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "step",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "edge"
+                },
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "step",
+            "parameters": [
+                {
+                    "type": "float",
+                    "name": "edge"
+                },
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "vec3",
+            "name": "cross",
+            "parameters": [
+                {
+                    "type": "vec3",
+                    "name": "x"
+                },
+                {
+                    "type": "vec3",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "float",
+            "name": "distance",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "p0"
+                },
+                {
+                    "type": "genType",
+                    "name": "p1"
+                }
+            ]
+        },
+        {
+            "returnType": "float",
+            "name": "dot",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                },
+                {
+                    "type": "genType",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "equal",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "equal",
+            "parameters": [
+                {
+                    "type": "bvec",
+                    "name": "x"
+                },
+                {
+                    "type": "bvec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "equal",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "faceforward",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "N"
+                },
+                {
+                    "type": "genType",
+                    "name": "I"
+                },
+                {
+                    "type": "genType",
+                    "name": "Nref"
+                }
+            ]
+        },
+        {
+            "returnType": "float",
+            "name": "length",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "normalize",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "v"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "notEqual",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "notEqual",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "notEqual",
+            "parameters": [
+                {
+                    "type": "bvec",
+                    "name": "x"
+                },
+                {
+                    "type": "bvec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "reflect",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "I"
+                },
+                {
+                    "type": "genType",
+                    "name": "N"
+                }
+            ]
+        },
+        {
+            "returnType": "genType",
+            "name": "refract",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "I"
+                },
+                {
+                    "type": "genType",
+                    "name": "N"
+                },
+                {
+                    "type": "float",
+                    "name": "eta"
+                }
+            ]
+        },
+        {
+            "returnType": "bool",
+            "name": "all",
+            "parameters": [
+                {
+                    "type": "bvec",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "bool",
+            "name": "any",
+            "parameters": [
+                {
+                    "type": "bvec",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "greaterThan",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "greaterThan",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "greaterThanEqual",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "greaterThanEqual",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "lessThan",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "lessThan",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "lessThanEqual",
+            "parameters": [
+                {
+                    "type": "vec",
+                    "name": "x"
+                },
+                {
+                    "type": "vec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "lessThanEqual",
+            "parameters": [
+                {
+                    "type": "ivec",
+                    "name": "x"
+                },
+                {
+                    "type": "ivec",
+                    "name": "y"
+                }
+            ]
+        },
+        {
+            "returnType": "bvec",
+            "name": "not",
+            "parameters": [
+                {
+                    "type": "bvec",
+                    "name": "x"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2D",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "coord"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2D",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "bias"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProj",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProj",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "bias"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProj",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec4",
+                    "name": "coord"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProj",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec4",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "bias"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DLod",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjLod",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjLod",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec4",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "textureCube",
+            "parameters": [
+                {
+                    "type": "samplerCube",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "textureCube",
+            "parameters": [
+                {
+                    "type": "samplerCube",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "bias"
+                }
+            ]
+        },
+        {
+            "returnType": "vec4",
+            "name": "textureCubeLod",
+            "parameters": [
+                {
+                    "type": "samplerCube",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ]
+        },
+        {
+            "returnType": "mat",
+            "name": "matrixCompMult",
+            "parameters": [
+                {
+                    "type": "mat",
+                    "name": "x"
+                },
+                {
+                    "type": "mat",
+                    "name": "y"
+                }
+            ]
+        }
+    ]
+}

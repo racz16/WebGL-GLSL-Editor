@@ -16,9 +16,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     //TODO:
     //konstruktorok
+    //stage, customsummary, qualifier a jsonból, genType átalakítás
     //függvényeknél ahol többhöz egy doksi tartozik, ott legyen átirányítás
-    //summary típusokhoz, kulcsszavakhoz és qualifierekhez
-    //100-as verzió
+    //summary típusokhoz, kulcsszavakhoz és qualifierekhez, konstruktorokhoz?
     //mat2x2 stb. is működjön
     //refaktorálás
 
@@ -62,6 +62,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             const ci = new CompletionItem(func[0], CompletionItemKind.Function);
             if (this.importantElements.includes(ci.label)) {
                 ci.insertText = ci.label;
+                ci.filterText = ci.label;
                 ci.sortText = '*' + ci.label;
                 ci.label = '★ ' + ci.label;
             }
@@ -75,14 +76,15 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         for (const fd of lf.definitions) {
             if (this.offset > fd.interval.stopIndex) {
                 const ci = new CompletionItem(fd.name, CompletionItemKind.Function);
-                ci.documentation = fd.toStringDocumentation();
+                ci.documentation = new MarkdownString(fd.toStringDocumentation());
                 return ci;
             }
         }
         for (const fp of lf.prototypes) {
             if (this.offset > fp.interval.stopIndex) {
                 const ci = new CompletionItem(fp.name, CompletionItemKind.Function);
-                ci.documentation = fp.toStringDocumentation();
+                ci.detail = 'Function';
+                ci.documentation = new MarkdownString(fp.toStringDocumentation());
                 return ci;
             }
         }

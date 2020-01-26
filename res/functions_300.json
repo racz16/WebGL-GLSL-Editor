@@ -300,7 +300,8 @@
                     "type": "genType",
                     "name": "p"
                 }
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "returnType": "genType",
@@ -310,27 +311,8 @@
                     "type": "genType",
                     "name": "p"
                 }
-            ]
-        },
-        {
-            "returnType": "genType",
-            "name": "dFdx",
-            "parameters": [
-                {
-                    "type": "genType",
-                    "name": "p"
-                }
-            ]
-        },
-        {
-            "returnType": "genType",
-            "name": "dFdy",
-            "parameters": [
-                {
-                    "type": "genType",
-                    "name": "p)"
-                }
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "returnType": "genType",
@@ -380,7 +362,8 @@
                     "type": "genType",
                     "name": "p"
                 }
-            ]
+            ],
+            "stage": "fragment"
         },
         {
             "returnType": "genType",
@@ -878,16 +861,25 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "uint",
             "name": "packHalf2x16",
             "parameters": [
                 {
+                    "qualifiers": [
+                        "mediump"
+                    ],
                     "type": "vec2",
                     "name": "v"
                 }
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "uint",
             "name": "packUnorm2x16",
             "parameters": [
@@ -898,6 +890,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "uint",
             "name": "packSnorm2x16",
             "parameters": [
@@ -908,70 +903,48 @@
             ]
         },
         {
-            "returnType": "uint",
-            "name": "packUnorm4x8",
-            "parameters": [
-                {
-                    "type": "vec4",
-                    "name": "v"
-                }
-            ]
-        },
-        {
-            "returnType": "uint",
-            "name": "packSnorm4x8",
-            "parameters": [
-                {
-                    "type": "vec4",
-                    "name": "v"
-                }
-            ]
-        },
-        {
+            "qualifiers": [
+                "mediump"
+            ],
             "returnType": "vec2",
             "name": "unpackHalf2x16",
             "parameters": [
                 {
+                    "qualifiers": [
+                        "highp"
+                    ],
                     "type": "uint",
                     "name": "v"
                 }
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "vec2",
             "name": "unpackUnorm2x16",
             "parameters": [
                 {
+                    "qualifiers": [
+                        "highp"
+                    ],
                     "type": "uint",
                     "name": "p"
                 }
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "vec2",
             "name": "unpackSnorm2x16",
             "parameters": [
                 {
-                    "type": "uint",
-                    "name": "p"
-                }
-            ]
-        },
-        {
-            "returnType": "vec2",
-            "name": "unpackUnorm4x8",
-            "parameters": [
-                {
-                    "type": "uint",
-                    "name": "p"
-                }
-            ]
-        },
-        {
-            "returnType": "vec2",
-            "name": "unpackSnorm4x8",
-            "parameters": [
-                {
+                    "qualifiers": [
+                        "highp"
+                    ],
                     "type": "uint",
                     "name": "p"
                 }
@@ -2988,6 +2961,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec2",
             "name": "textureSize",
             "parameters": [
@@ -3002,6 +2978,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec3",
             "name": "textureSize",
             "parameters": [
@@ -3016,6 +2995,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec2",
             "name": "textureSize",
             "parameters": [
@@ -3030,6 +3012,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec2",
             "name": "textureSize",
             "parameters": [
@@ -3044,6 +3029,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec2",
             "name": "textureSize",
             "parameters": [
@@ -3058,6 +3046,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec3",
             "name": "textureSize",
             "parameters": [
@@ -3072,6 +3063,9 @@
             ]
         },
         {
+            "qualifiers": [
+                "highp"
+            ],
             "returnType": "ivec3",
             "name": "textureSize",
             "parameters": [

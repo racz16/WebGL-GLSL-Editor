@@ -27,8 +27,6 @@ genUType clamp(genUType x, genUType minVal, genUType maxVal);
 genUType clamp(genUType x, uint minVal, uint maxVal);
 genType dFdx(genType p);
 genType dFdy(genType p);
-genType dFdx(genType p);
-genType dFdy(genType p); 
 genType exp(genType x);
 genType exp2(genType x);
 genType floor(genType x);
@@ -77,13 +75,9 @@ genType uintBitsToFloat(genUType x);
 uint packHalf2x16(vec2 v);
 uint packUnorm2x16(vec2 v);
 uint packSnorm2x16(vec2 v);
-uint packUnorm4x8(vec4 v);
-uint packSnorm4x8(vec4 v);
 vec2 unpackHalf2x16(uint v);
 vec2 unpackUnorm2x16(uint p);
 vec2 unpackSnorm2x16(uint p);
-vec2 unpackUnorm4x8(uint p);
-vec2 unpackSnorm4x8(uint p);
 
 //vector
 vec3 cross(vec3 x, vec3 y);
