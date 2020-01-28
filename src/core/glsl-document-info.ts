@@ -110,7 +110,7 @@ export class GlslDocumentInfo {
         const parser = this.createParser(lexer);
         this.generatedErrors = this.getGeneratedErrors(parser);
         this.processVisitor(parser);
-        Validator.validate(this);
+        //Validator.validate(this);
     }
 
     private createLexer(document: TextDocument): AntlrGlslLexer {
