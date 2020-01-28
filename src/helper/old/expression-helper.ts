@@ -12,14 +12,14 @@ import { FunctionCall } from '../../scope/function/function-call';
 import { TypeCategory } from '../../scope/type/type-category';
 import { Interval } from '../../scope/interval';
 
-export class ExpressionHelper {
+export class OldExpressionHelper {
 
     private static visitor: GlslVisitor;
     private static scope: Scope;
 
     public static expression(ctx: ExpressionContext, visitor: GlslVisitor, scope: Scope): TypeUsage {
-        ExpressionHelper.visitor = visitor;
-        ExpressionHelper.scope = scope;
+        OldExpressionHelper.visitor = visitor;
+        OldExpressionHelper.scope = scope;
         /*if (this.isLiteral(ctx)) {
             return this.literal(ctx);
         } else if (this.isParentheticalExpression(ctx)) {

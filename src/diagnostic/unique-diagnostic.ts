@@ -1,4 +1,4 @@
-import { DiagnosticSeverity, DiagnosticTag, Diagnostic, TextDocument, DiagnosticRelatedInformation} from 'vscode';
+import { DiagnosticSeverity, DiagnosticTag, Diagnostic, TextDocument, DiagnosticRelatedInformation } from 'vscode';
 import { DiagnosticExtension } from './diagnostic-extension';
 import { Helper } from '../helper/helper';
 import { Interval } from '../scope/interval';
@@ -24,11 +24,13 @@ export class UniqueDiagnostic {
     }
 
     public toDiagnostic(document: TextDocument): Diagnostic {
-        const diagnostic = new Diagnostic(Helper.intervalToRange(this.interval, document), this.message, this.severity);
+        //TODO
+        /*const diagnostic = new Diagnostic(Helper.intervalToRange(this.interval, document), this.message, this.severity);
         diagnostic.code = this.errorCode;
         diagnostic.relatedInformation = this.extensionsToRelatedInformations(document, this.extensions);
         diagnostic.tags = this.tags;
-        return diagnostic;
+        return diagnostic;*/
+        return null;
     }
 
     private extensionsToRelatedInformations(document: TextDocument, extensions: Array<DiagnosticExtension>): Array<DiagnosticRelatedInformation> {
@@ -41,8 +43,10 @@ export class UniqueDiagnostic {
     }
 
     private extensionToRelatedInformation(extension: DiagnosticExtension, document: TextDocument): DiagnosticRelatedInformation {
-        const location = Helper.intervalToLocation(extension.interval, document);
-        return new DiagnosticRelatedInformation(location, extension.message);
+        //TODO
+        /*const location = Helper.intervalToLocation(extension.interval, document);
+        return new DiagnosticRelatedInformation(location, extension.message);*/
+        return null;
     }
 
 }

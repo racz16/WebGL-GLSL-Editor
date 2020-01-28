@@ -1,10 +1,9 @@
-import { Uri, TextDocument, Position } from 'vscode';
+import { Uri, TextDocument, Position, Location, Range } from 'vscode';
 import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
 import { GlslVisitor } from './glsl-visitor';
 import { UniqueDiagnostic } from '../diagnostic/unique-diagnostic';
 import { GlslErrorListener } from './glsl-error-listener';
 import { AntlrGeneratedDiagnostic } from '../diagnostic/antlr-generated-diagnostic';
-import { FunctionValidator } from '../diagnostic/validators/function-validator';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -12,7 +11,6 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
 import { Builtin } from '../builtin/builtin';
-import { Helper } from '../helper/helper';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -38,6 +36,7 @@ export class GlslDocumentInfo {
     public readonly functionDefinitions = new Array<FunctionDeclaration>();
     public builtin: Builtin;
 
+    private document: TextDocument;
     private rootScope: Scope;
 
     public constructor(uri: Uri) {
@@ -99,22 +98,23 @@ export class GlslDocumentInfo {
     }
 
     public processDocument(document: TextDocument): void {
+        this.document = document;
         if (document.version > this.lastProcessedVersion) {
-            this.processDocumentUnsafe(document);
+            this.processDocumentUnsafe();
             this.lastProcessedVersion = document.version;
         }
     }
 
-    private processDocumentUnsafe(document: TextDocument): void {
-        const lexer = this.createLexer(document);
+    private processDocumentUnsafe(): void {
+        const lexer = this.createLexer();
         const parser = this.createParser(lexer);
         this.generatedErrors = this.getGeneratedErrors(parser);
         this.processVisitor(parser);
         //Validator.validate(this);
     }
 
-    private createLexer(document: TextDocument): AntlrGlslLexer {
-        const inputStream = new ANTLRInputStream(document.getText());
+    private createLexer(): AntlrGlslLexer {
+        const inputStream = new ANTLRInputStream(this.document.getText());
         const lexer = new AntlrGlslLexer(inputStream);
         this.tokens = lexer.getAllTokens();
         lexer.reset();
@@ -139,10 +139,36 @@ export class GlslDocumentInfo {
         new GlslVisitor(this.uri).visit(tree);
     }
 
-    public getScopeAt(position: Position, document: TextDocument): Scope {
+    //
+    //
+    //
+    public intervalToLocation(interval: Interval): Location {
+        const range = this.intervalToRange(interval);
+        return new Location(this.document.uri, range);
+    }
+
+    public intervalToRange(interval: Interval): Range {
+        const start = this.offsetToPosition(interval.startIndex);
+        const stop = this.offsetToPosition(interval.stopIndex);
+        return new Range(start, stop);
+    }
+
+    public offsetToPosition(offset: number): Position {
+        return this.document.positionAt(offset);
+    }
+
+    public lineAndCharacterToRange(line: number, character: number): Range {
+        const position = new Position(line - 1, character);
+        return new Range(position, position);
+    }
+    //
+    //
+    //
+
+    public getScopeAt(position: Position): Scope {
         let scope: Scope = this.rootScope;
         while (true) {
-            const newScope = this.getChildScope(scope, position, document);
+            const newScope = this.getChildScope(scope, position);
             if (!newScope) {
                 return scope;
             } else {
@@ -177,17 +203,17 @@ export class GlslDocumentInfo {
     //
 
     //function
-    public getFunctionPrototypeAt(position: Position, document: TextDocument): FunctionDeclaration {
-        return this.getFunction(this.functionPrototypes, position, document);
+    public getFunctionPrototypeAt(position: Position): FunctionDeclaration {
+        return this.getFunction(this.functionPrototypes, position);
     }
 
-    public getFunctionDefinitionAt(position: Position, document: TextDocument): FunctionDeclaration {
-        return this.getFunction(this.functionDefinitions, position, document);
+    public getFunctionDefinitionAt(position: Position): FunctionDeclaration {
+        return this.getFunction(this.functionDefinitions, position);
     }
 
-    private getFunction(functionList: Array<FunctionDeclaration>, position: Position, document: TextDocument) {
+    private getFunction(functionList: Array<FunctionDeclaration>, position: Position) {
         for (const fd of functionList) {
-            if (Helper.intervalToRange(fd.nameInterval, document).contains(position)) {
+            if (this.intervalToRange(fd.nameInterval).contains(position)) {
                 return fd;
             }
         }
@@ -195,47 +221,47 @@ export class GlslDocumentInfo {
     }
 
     //function calls
-    public getFunctionCallAt(position: Position, document: TextDocument): FunctionCall {
-        return this.getElementAt(position, document, 'functionCalls') as FunctionCall;
+    public getFunctionCallAt(position: Position): FunctionCall {
+        return this.getElementAt(position, 'functionCalls') as FunctionCall;
     }
 
     //variable declaration
-    public getVariableDeclarationAt(position: Position, document: TextDocument): VariableDeclaration {
-        return this.getElementAt(position, document, 'variableDeclarations') as VariableDeclaration;
+    public getVariableDeclarationAt(position: Position): VariableDeclaration {
+        return this.getElementAt(position, 'variableDeclarations') as VariableDeclaration;
     }
 
     //variable usages
-    public getVariableUsageAt(position: Position, document: TextDocument): VariableUsage {
-        return this.getElementAt(position, document, 'variableUsages') as VariableUsage;
+    public getVariableUsageAt(position: Position): VariableUsage {
+        return this.getElementAt(position, 'variableUsages') as VariableUsage;
     }
 
     //type declaration
-    public getTypeDeclarationAt(position: Position, document: TextDocument): TypeDeclaration {
-        return this.getElementAt(position, document, 'typeDeclarations') as TypeDeclaration;
+    public getTypeDeclarationAt(position: Position): TypeDeclaration {
+        return this.getElementAt(position, 'typeDeclarations') as TypeDeclaration;
     }
 
     //type usages
-    public getTypeUsageAt(position: Position, document: TextDocument): TypeUsage {
-        return this.getElementAt(position, document, 'typeUsages') as TypeUsage;
+    public getTypeUsageAt(position: Position): TypeUsage {
+        return this.getElementAt(position, 'typeUsages') as TypeUsage;
     }
 
     //
-    private getElementAt(position: Position, document: TextDocument, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall {
+    private getElementAt(position: Position, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (Helper.intervalToRange(element.nameInterval, document).contains(position)) {
+                if (this.intervalToRange(element.nameInterval).contains(position)) {
                     return element;
                 }
             }
-            scope = this.getChildScope(scope, position, document);
+            scope = this.getChildScope(scope, position);
         }
         return null;
     }
 
-    public getChildScope(scope: Scope, position: Position, document: TextDocument): Scope {
+    public getChildScope(scope: Scope, position: Position): Scope {
         for (const childScope of scope.children) {
-            if (Helper.intervalToRange(childScope.interval, document).contains(position)) {
+            if (this.intervalToRange(childScope.interval).contains(position)) {
                 return childScope;
             }
         }

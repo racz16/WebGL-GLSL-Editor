@@ -46,37 +46,37 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
         for (const fp of lf.prototypes) {
-            ret.push(Helper.intervalToLocation(fp.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(fp.nameInterval));
         }
         for (const fd of lf.definitions) {
-            ret.push(Helper.intervalToLocation(fd.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(fd.nameInterval));
         }
         for (const fc of lf.calls) {
-            ret.push(Helper.intervalToLocation(fc.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(fc.nameInterval));
         }
         return ret;
     }
 
     private processDeclaration(element: TypeDeclaration | VariableDeclaration): Array<Location> {
         const ret = new Array<Location>();
-        ret.push(Helper.intervalToLocation(element.nameInterval, this.document));
+        ret.push(this.di.intervalToLocation(element.nameInterval));
         for (const usage of element.usages) {
-            ret.push(Helper.intervalToLocation(usage.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(usage.nameInterval));
         }
         return ret;
     }
 
     private processUsage(element: TypeUsage | VariableUsage): Array<Location> {
         const ret = new Array<Location>();
-        ret.push(Helper.intervalToLocation(element.nameInterval, this.document));
+        ret.push(this.di.intervalToLocation(element.nameInterval));
         const declaration = element.declaration;
         if (declaration) {
             if (!declaration.builtin) {
-                ret.push(Helper.intervalToLocation(declaration.nameInterval, this.document));
+                ret.push(this.di.intervalToLocation(declaration.nameInterval));
             }
             for (const usage of declaration.usages) {
                 if (element !== usage) {
-                    ret.push(Helper.intervalToLocation(usage.nameInterval, this.document));
+                    ret.push(this.di.intervalToLocation(usage.nameInterval));
                 }
             }
 

@@ -1,13 +1,11 @@
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
-import { Position, TextDocument, Range, Location, MarkdownString } from 'vscode';
+import { Position, TextDocument, Range, Location } from 'vscode';
 import { Array_subscriptContext, Identifier_optarrayContext, Function_prototypeContext, Function_definitionContext, Identifier_optarray_optassignmentContext } from '../_generated/AntlrGlslParser';
 import { ParserRuleContext } from 'antlr4ts';
 import { Scope } from '../scope/scope';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { Interval } from '../scope/interval';
 import { GlslDocumentInfo } from '../core/glsl-document-info';
-import { Documentation } from '../builtin/documentation';
-import { Element } from '../scope/element';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 
 export class Helper {
@@ -57,7 +55,7 @@ export class Helper {
         return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1) : Interval.NONE;
     }
 
-    public static intervalToLocation(interval: Interval, document: TextDocument): Location {
+    /*public static intervalToLocation(interval: Interval, document: TextDocument): Location {
         const range = this.intervalToRange(interval, document);
         return new Location(document.uri, range);
     }
@@ -75,7 +73,7 @@ export class Helper {
     public static lineAndCharacterToRange(line: number, character: number): Range {
         const position = new Position(line - 1, character);
         return new Range(position, position);
-    }
+    }*/
 
     public static getTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: GlslDocumentInfo): TypeDeclaration {
         while (scope) {

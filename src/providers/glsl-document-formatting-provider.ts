@@ -71,13 +71,13 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private getRange(t1: Token, t2: Token): Range {
         if (t1) {
             return new Range(
-                Helper.offsetToPosition(t1.stopIndex + 1, this.document),
-                Helper.offsetToPosition(t2.startIndex, this.document)
+                this.di.offsetToPosition(t1.stopIndex + 1),
+                this.di.offsetToPosition(t2.startIndex)
             );
         } else {
             return new Range(
                 new Position(0, 0),
-                Helper.offsetToPosition(t2.startIndex, this.document)
+                this.di.offsetToPosition(t2.startIndex)
             );
         }
     }

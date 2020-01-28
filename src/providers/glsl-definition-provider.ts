@@ -28,7 +28,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
-        return Helper.intervalToLocation(vd.nameInterval, this.document);
+        return this.di.intervalToLocation(vd.nameInterval);
     }
 
     protected processVariableUsage(vu: VariableUsage): Location {
@@ -36,7 +36,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Location {
-        return Helper.intervalToLocation(td.nameInterval, this.document);
+        return this.di.intervalToLocation(td.nameInterval);
     }
 
     protected processTypeUsage(tu: TypeUsage): Location {
@@ -46,7 +46,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
         for (const fd of lf.definitions) {
-            ret.push(Helper.intervalToLocation(fd.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(fd.nameInterval));
         }
         return ret;
     }
@@ -54,7 +54,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     private processUsage(element: TypeUsage | VariableUsage): Location {
         const declaration = element.declaration;
         if (declaration && !declaration.builtin) {
-            return Helper.intervalToLocation(declaration.nameInterval, this.document);
+            return this.di.intervalToLocation(declaration.nameInterval);
         }
         return null;
     }

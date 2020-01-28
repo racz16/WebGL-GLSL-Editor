@@ -126,7 +126,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private addUserTypeCompletionItems(scope: Scope): void {
-        if (scope && (Helper.intervalToRange(scope.interval, this.document).contains(this.position) || scope.parent === null)) {
+        if (scope && (this.di.intervalToRange(scope.interval).contains(this.position) || scope.parent === null)) {
             for (const td of scope.typeDeclarations) {
                 if (this.offset > td.structInterval.stopIndex) {
                     const ci = new CompletionItem(td.name, CompletionItemKind.Struct);
@@ -157,7 +157,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private addUserVariableCompletionItems(scope: Scope): void {
-        if (scope && (Helper.intervalToRange(scope.interval, this.document).contains(this.position) || scope.parent === null)) {
+        if (scope && (this.di.intervalToRange(scope.interval).contains(this.position) || scope.parent === null)) {
             for (const vd of scope.variableDeclarations) {
                 if (this.offset > vd.declarationInterval.stopIndex) {
                     const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);

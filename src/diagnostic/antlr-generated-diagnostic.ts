@@ -45,9 +45,11 @@ export class AntlrGeneratedDiagnostic {
     }
 
     public toDiagnostic(): Diagnostic {
-        const range = Helper.lineAndCharacterToRange(this.line, this.charPositionInLine);
+        //TODO
+        /*const range = Helper.lineAndCharacterToRange(this.line, this.charPositionInLine);
         const message = `Unexpected token '${this.offendingSymbol.text}'`;
-        return new Diagnostic(range, message, DiagnosticSeverity.Error);
+        return new Diagnostic(range, message, DiagnosticSeverity.Error);*/
+        return null;
     }
 
 

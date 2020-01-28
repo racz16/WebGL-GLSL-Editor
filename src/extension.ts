@@ -1,6 +1,5 @@
 import { GlslDocumentHighlightProvider } from './providers/glsl-document-highlight-provider';
-import { ExtensionContext, languages, window, commands, workspace, env, Uri, ViewColumn } from 'vscode';
-import { GlslDiagnosticsProvider } from './providers/glsl-diagnostics-provider';
+import { ExtensionContext, languages, commands } from 'vscode';
 import { GlslCompletionProvider } from './providers/glsl-completion-provider';
 import { GlslDocumentSymbolProvider } from './providers/glsl-document-symbol-provider';
 import { GlslDeclarationProvider } from './providers/glsl-declaration-provider';
@@ -11,23 +10,28 @@ import { GlslImplementationProvider } from './providers/glsl-implementation-prov
 import { GlslReferenceProvider } from './providers/glsl-reference-provider';
 import { GlslTypeDefinitionProvider } from './providers/glsl-type-definition-provider';
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
-import { Documentation } from './builtin/documentation';
-
-import * as path from 'path';
+import { GlslCommandProvider } from './providers/glsl-command-provider';
+import { GlslProcessor } from './core/glsl-processor';
 
 //TODO:
-//readme és changelog megírása
-//language-configuration, package json átnézése, meg úgy általában átnézni, hogy glsl legyen, ne test
-//snippets kibővítése
-//idegbeteg hierarchia átalakítása
-//code action-ökbe hibák javítása, color, formatting, folding és indentation egysorosoknál, signature helper
-//precision statements, scopeja, felesleges precision qualifierekre warning
-//glsl mellett vs és fs felismerése is, úgy sokkal okosabbak tudunk lenni
-//kommentek és preprocesszor összelövése
-//konfigurációk
-//workspace.onDidChangeConfiguration	//diagnostics ki-be kapcsolásához
+//writing readme and the changelog
+//reviewing language-configuration and package json
+//extending the snippets
+//function signature helper
+//configurations
+//	strict renaming
+//commens vs preprocessor directives
+//precision statements
+//color visalizer for vec3 and vec4 constructor where variable name contains the word 'color'
+//inline statement, folding, indentation and formatting
+//refactoring
+
+//diagnostics, code actions for fixes, pairing with other stages
+//	redundant qualifier warning etc function parameter in or highp float in vertex shader etc.
 
 export function activate(context: ExtensionContext) {
+	GlslProcessor.initialize(context);
+
 	const selector = [
 		{ language: 'glsl', scheme: 'file' },
 		{ language: 'glsl', scheme: 'untitled' },
@@ -42,6 +46,7 @@ export function activate(context: ExtensionContext) {
 	];
 
 	//diagnostics
+	//TODO
 	/*const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
 		if (editor.document.languageId === 'glsl') {
@@ -64,48 +69,25 @@ export function activate(context: ExtensionContext) {
 		}
 	}));*/
 
-
-	context.subscriptions.push(commands.registerCommand('webglglsleditor.opendoc', (param: any) => {
-		let vc: ViewColumn;
-		let name: string;
-		if (param.name) {
-			vc = ViewColumn.Beside;
-			name = param.name;
-		} else {
-			vc = ViewColumn.Active;
-			name = param.toString();
-		}
-		const panel = window.createWebviewPanel(
-			'documentation',
-			name,
-			vc,
-			{
-				enableScripts: true,
-				enableCommandUris: true,
-				localResourceRoots: [Uri.file(path.join(context.extensionPath, 'res', 'scripts'))]
-			}
-		);
-		const filePath = Uri.file(path.join(context.extensionPath, 'res', 'scripts', 'mml-svg.js'));
-		const specialFilePath = panel.webview.asWebviewUri(filePath);
-		panel.webview.html = Documentation.getDocumentation(context.extensionPath, name, specialFilePath);
+	//offline documentation
+	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_DOC, (param: any) => {
+		GlslCommandProvider.openDoc(param);
 	}));
-
-	//docimentation
-	context.subscriptions.push(commands.registerCommand('webglglsleditor.opendocsgl', () => {
-		env.openExternal(Uri.parse('http://docs.gl'));
+	//online docimentation
+	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_DOCS_GL, () => {
+		GlslCommandProvider.openDocsGl();
 	}));
-	context.subscriptions.push(commands.registerCommand('webglglsleditor.opengles2', () => {
-		env.openExternal(Uri.parse('https://www.khronos.org/registry/OpenGL-Refpages/es2.0'));
+	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_GL_ES_2, () => {
+		GlslCommandProvider.openGlEs2();
 	}));
-	context.subscriptions.push(commands.registerCommand('webglglsleditor.opengles3', () => {
-		env.openExternal(Uri.parse('https://www.khronos.org/registry/OpenGL-Refpages/es3.0'));
+	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_GL_ES_3, () => {
+		GlslCommandProvider.openGlEs3();
 	}));
-
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
 	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider()));
-	//symbols (outline and breadcrumbs)
+	//symbols (outline, breadcrumbs, find symbol)
 	context.subscriptions.push(languages.registerDocumentSymbolProvider(selector, new GlslDocumentSymbolProvider()));
 	//declaration
 	context.subscriptions.push(languages.registerDeclarationProvider(selector, new GlslDeclarationProvider()));
@@ -124,3 +106,4 @@ export function activate(context: ExtensionContext) {
 	//formatting
 	context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 }
+

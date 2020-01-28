@@ -59,7 +59,7 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
     private processDeclaration(element: VariableDeclaration | TypeDeclaration): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
         if (!element.builtin) {
-            const range = Helper.intervalToRange(element.nameInterval, this.document);
+            const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
         }
         this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
@@ -70,13 +70,13 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
         if (element.declaration) {
             return this.processDeclaration(element.declaration);
         }
-        const range = Helper.intervalToRange(element.nameInterval, this.document);
+        const range = this.di.intervalToRange(element.nameInterval);
         return new Array<DocumentHighlight>(new DocumentHighlight(range, DocumentHighlightKind.Text));
     }
 
     private addHighlight(ret: Array<DocumentHighlight>, elements: Array<Element>, dhk: DocumentHighlightKind): void {
         for (const element of elements) {
-            const range = Helper.intervalToRange(element.nameInterval, this.document);
+            const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, dhk));
         }
     }

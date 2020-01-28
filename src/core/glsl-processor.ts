@@ -1,9 +1,18 @@
-import { Uri, TextDocument } from 'vscode';
+import { Uri, TextDocument, ExtensionContext } from 'vscode';
 import { GlslDocumentInfo } from './glsl-document-info';
 
 export class GlslProcessor {
 
     private static readonly documentInfos = new Map<Uri, GlslDocumentInfo>();
+    private static context: ExtensionContext;
+
+    public static initialize(context: ExtensionContext): void {
+        this.context = context;
+    }
+
+    public static getContext(): ExtensionContext {
+        return this.context;
+    }
 
     public static processDocument(document: TextDocument): void {
         const documentInfo = this.getDocumentInfo(document.uri);

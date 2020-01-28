@@ -8,6 +8,8 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { GlslProcessor } from '../core/glsl-processor';
+import { GlslDocumentInfo } from '../core/glsl-document-info';
 
 export class GlslDeclarationProvider extends PositionalProviderBase<Declaration> implements DeclarationProvider {
 
@@ -28,7 +30,7 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Declaration {
-        return Helper.intervalToLocation(vd.nameInterval, this.document);
+        return this.di.intervalToLocation(vd.nameInterval);
     }
 
     protected processVariableUsage(vu: VariableUsage): Declaration {
@@ -36,7 +38,7 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Declaration {
-        return Helper.intervalToLocation(td.nameInterval, this.document);
+        return this.di.intervalToLocation(td.nameInterval);
     }
 
     protected processTypeUsage(tu: TypeUsage): Declaration {
@@ -46,7 +48,7 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
     private processFunction(lf: LogicalFunction): Declaration {
         const ret = new Array<Location>();
         for (const fp of lf.prototypes) {
-            ret.push(Helper.intervalToLocation(fp.nameInterval, this.document));
+            ret.push(this.di.intervalToLocation(fp.nameInterval));
         }
         return ret;
     }
@@ -54,7 +56,7 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
     private processUsage(element: VariableUsage | TypeUsage): Declaration {
         const declaration = element.declaration;
         if (declaration && !declaration.builtin) {
-            return Helper.intervalToLocation(declaration.nameInterval, this.document);
+            return this.di.intervalToLocation(declaration.nameInterval);
         }
         return null;
     }

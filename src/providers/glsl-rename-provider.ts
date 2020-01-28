@@ -27,13 +27,13 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
             this.validateFunction(newName);
             const we = new WorkspaceEdit();
             for (const fp of this.lf.prototypes) {
-                we.replace(document.uri, Helper.intervalToRange(fp.nameInterval, document), newName);
+                we.replace(document.uri, this.di.intervalToRange(fp.nameInterval), newName);
             }
             for (const fd of this.lf.definitions) {
-                we.replace(document.uri, Helper.intervalToRange(fd.nameInterval, document), newName);
+                we.replace(document.uri, this.di.intervalToRange(fd.nameInterval), newName);
             }
             for (const fc of this.lf.calls) {
-                we.replace(document.uri, Helper.intervalToRange(fc.nameInterval, document), newName);
+                we.replace(document.uri, this.di.intervalToRange(fc.nameInterval), newName);
             }
             return we;
         }
@@ -41,9 +41,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (this.vd) {
             this.validateStructOrVariable(newName);
             const we = new WorkspaceEdit();
-            we.replace(document.uri, Helper.intervalToRange(this.vd.nameInterval, document), newName);
+            we.replace(document.uri, this.di.intervalToRange(this.vd.nameInterval), newName);
             for (const vu of this.vd.usages) {
-                we.replace(document.uri, Helper.intervalToRange(vu.nameInterval, document), newName);
+                we.replace(document.uri, this.di.intervalToRange(vu.nameInterval), newName);
             }
             return we;
         }
@@ -51,9 +51,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (this.td) {
             this.validateStructOrVariable(newName);
             const we = new WorkspaceEdit();
-            we.replace(document.uri, Helper.intervalToRange(this.td.nameInterval, document), newName);
+            we.replace(document.uri, this.di.intervalToRange(this.td.nameInterval), newName);
             for (const tu of this.td.usages) {
-                we.replace(document.uri, Helper.intervalToRange(tu.nameInterval, document), newName);
+                we.replace(document.uri, this.di.intervalToRange(tu.nameInterval), newName);
             }
             return we;
         }
@@ -76,7 +76,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateAlreadyDefinedStructOrVariable(newName: string): void {
-        const scope = this.documentInfo.getScopeAt(this.position, this.document);
+        const scope = this.di.getScopeAt(this.position);
         if (scope.variableDeclarations.find(vd => vd.name === newName)) {
             throw new Error(`Variable '${newName}' is already definied`);
         }
@@ -86,16 +86,16 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateBuiltin(newName: string): void {
-        if (this.documentInfo.builtin.types.has(newName)) {
+        if (this.di.builtin.types.has(newName)) {
             throw new Error(`Identifier '${newName}' is the name of a builtin type`);
         }
-        if (this.documentInfo.builtin.qualifiers.has(newName)) {
+        if (this.di.builtin.qualifiers.has(newName)) {
             throw new Error(`Identifier '${newName}' is the name of a qualifier`);
         }
-        if (this.documentInfo.builtin.reservedWords.includes(newName)) {
+        if (this.di.builtin.reservedWords.includes(newName)) {
             throw new Error(`Identifier '${newName}' is a reserved word`);
         }
-        for (const keyword of this.documentInfo.builtin.keywords) {
+        for (const keyword of this.di.builtin.keywords) {
             if (keyword.name === newName) {
                 throw new Error(`Identifier '${newName}' is the name of a keyword`);
             }
@@ -103,21 +103,21 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateStructOrVariable(newName: string): void {
-        const scope = this.documentInfo.getScopeAt(this.position, this.document);
-        if (scope.isGlobal() && this.documentInfo.functionPrototypes.find(fp => fp.name === newName)) {
+        const scope = this.di.getScopeAt(this.position);
+        if (scope.isGlobal() && this.di.functionPrototypes.find(fp => fp.name === newName)) {
             throw new Error(`Function '${newName}' is already definied`);
         }
-        if (scope.isGlobal() && this.documentInfo.functionDefinitions.find(fd => fd.name === newName)) {
+        if (scope.isGlobal() && this.di.functionDefinitions.find(fd => fd.name === newName)) {
             throw new Error(`Function '${newName}' is already definied`);
         }
-        if (scope.isGlobal() && this.documentInfo.builtin.functionSummaries.has(newName)) {
+        if (scope.isGlobal() && this.di.builtin.functionSummaries.has(newName)) {
             throw new Error(`Function '${newName}' is already definied`);
         }
     }
 
     private validateFunction(newName: string): void {
         const fd = this.lf.definitions.length ? this.lf.definitions[0] : this.lf.prototypes[0];
-        for (const lf2 of this.documentInfo.functions) {
+        for (const lf2 of this.di.functions) {
             if (this.lf !== lf2) {
                 const fd2 = lf2.definitions.length ? lf2.definitions[0] : lf2.prototypes[0];
                 if (newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
@@ -137,7 +137,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
                 }
             }
         }
-        for (const fd2 of this.documentInfo.builtin.functions) {
+        for (const fd2 of this.di.builtin.functions) {
             if (newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
                 throw new Error(`Overriding built-in function '${newName}' is illegal`);
             }
@@ -170,26 +170,26 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     protected processVariableDeclaration(vd: VariableDeclaration): Range {
         this.vd = vd;
-        return Helper.intervalToRange(vd.nameInterval, this.document);
+        return this.di.intervalToRange(vd.nameInterval);
     }
 
     protected processVariableUsage(vu: VariableUsage): Range {
         if (vu.declaration && !vu.declaration.builtin) {
             this.vd = vu.declaration;
-            return Helper.intervalToRange(vu.nameInterval, this.document);
+            return this.di.intervalToRange(vu.nameInterval);
         }
         return this.defaultReturn();
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Range {
         this.td = td;
-        return Helper.intervalToRange(td.nameInterval, this.document);
+        return this.di.intervalToRange(td.nameInterval);
     }
 
     protected processTypeUsage(tu: TypeUsage): Range {
         if (tu.declaration && !tu.declaration.builtin) {
             this.td = tu.declaration;
-            return Helper.intervalToRange(tu.nameInterval, this.document);
+            return this.di.intervalToRange(tu.nameInterval);
         }
         return this.defaultReturn();
     }
@@ -200,7 +200,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
         this.lf = lf;
-        return Helper.intervalToRange(nameInterval, this.document);
+        return this.di.intervalToRange(nameInterval);
     }
 
 }

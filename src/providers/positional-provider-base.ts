@@ -10,7 +10,7 @@ import { FunctionCall } from '../scope/function/function-call';
 
 export class PositionalProviderBase<T> {
 
-    protected documentInfo: GlslDocumentInfo;
+    protected di: GlslDocumentInfo;
     protected document: TextDocument;
     protected position: Position;
 
@@ -18,39 +18,39 @@ export class PositionalProviderBase<T> {
         this.initialize(document, position);
 
         //function
-        const fp = this.documentInfo.getFunctionPrototypeAt(position, document);
+        const fp = this.di.getFunctionPrototypeAt(position);
         if (fp) {
             return this.processFunctionPrototype(fp);
         }
 
-        const fd = this.documentInfo.getFunctionDefinitionAt(position, document);
+        const fd = this.di.getFunctionDefinitionAt(position);
         if (fd) {
             return this.processFunctionDefinition(fd);
         }
 
-        const fc = this.documentInfo.getFunctionCallAt(position, document);
+        const fc = this.di.getFunctionCallAt(position);
         if (fc) {
             return this.processFunctionCall(fc);
         }
 
         //type
-        const td = this.documentInfo.getTypeDeclarationAt(position, document);
+        const td = this.di.getTypeDeclarationAt(position);
         if (td) {
             return this.processTypeDeclaration(td);
         }
 
-        const tu = this.documentInfo.getTypeUsageAt(position, document);
+        const tu = this.di.getTypeUsageAt(position);
         if (tu) {
             return this.processTypeUsage(tu);
         }
 
         //variable
-        const vd = this.documentInfo.getVariableDeclarationAt(position, document);
+        const vd = this.di.getVariableDeclarationAt(position);
         if (vd) {
             return this.processVariableDeclaration(vd);
         }
 
-        const vu = this.documentInfo.getVariableUsageAt(position, document);
+        const vu = this.di.getVariableUsageAt(position);
         if (vu) {
             return this.processVariableUsage(vu);
         }
@@ -60,7 +60,7 @@ export class PositionalProviderBase<T> {
 
     protected initialize(document: TextDocument, position: Position): void {
         GlslProcessor.processDocument(document);
-        this.documentInfo = GlslProcessor.getDocumentInfo(document.uri);
+        this.di = GlslProcessor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
     }
