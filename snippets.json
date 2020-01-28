@@ -1,5 +1,10 @@
 {
-    "main function": {
+    "version": {
+        "prefix": "version",
+        "body": "#version ${1:300} es",
+        "description": "Creates the version declaration"
+    },
+    "main": {
         "prefix": "main",
         "body": [
             "void main(){",
@@ -45,7 +50,10 @@
         "description": "Creates an if statement"
     },
     "iffloat": {
-        "prefix": ["iffloat", "iff"],
+        "prefix": [
+            "iffloat",
+            "iff"
+        ],
         "body": [
             "if(${1:value} < ${2:0.0001f} && ${1:value} > ${3:-0.0001f}) {",
             "\t$0",
@@ -54,7 +62,10 @@
         "description": "Creates a float comparison if statement"
     },
     "ifelse": {
-        "prefix": ["ifelse", "ife"],
+        "prefix": [
+            "ifelse",
+            "ife"
+        ],
         "body": [
             "if(${1:true}) {",
             "\t$0",
@@ -63,5 +74,14 @@
             "}"
         ],
         "description": "Creates an if-else statement"
+    },
+    "struct": {
+        "prefix": "struct",
+        "body": [
+            "struct ${1:Type} {",
+            "\t${2:vec3} ${3:vec};$0",
+            "};"
+        ],
+        "description": "Creates a struct"
     }
 }

@@ -1,9 +1,18 @@
 {
-	"name": "webgl-glsl-editor",
+	"name": "webglglsleditor",
 	"displayName": "WebGL GLSL Editor",
 	"description": "Language support for WebGL GLSL.",
 	"author": "Rácz Zalán",
 	"publisher": "raczzalan",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/racz16/WebGL-GLSL-Editor"
+	},
+	"bugs": {
+		"email": "racz1666@gmail.com",
+		"url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
+	},
+	"license": "MIT",
 	"keywords": [
 		"WebGL",
 		"OpenGL",
@@ -11,7 +20,7 @@
 		"GLSL",
 		"shader"
 	],
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.40.0"
 	},
@@ -19,8 +28,7 @@
 		"Programming Languages"
 	],
 	"activationEvents": [
-		"onLanguage:glsl",
-		"onCommand:extension.helloWorld"
+		"onLanguage:glsl"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

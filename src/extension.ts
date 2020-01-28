@@ -14,9 +14,8 @@ import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslProcessor } from './core/glsl-processor';
 
 //TODO:
-//writing readme and the changelog
-//reviewing language-configuration and package json
-//extending the snippets
+//writing readme and the changelog, icon, badges
+//data in changlelog like [1.0.0] - 2020.02.10.
 //function signature helper
 //configurations
 //	strict renaming
@@ -24,6 +23,8 @@ import { GlslProcessor } from './core/glsl-processor';
 //precision statements
 //color visalizer for vec3 and vec4 constructor where variable name contains the word 'color'
 //inline statement, folding, indentation and formatting
+//rewriting the syntax highlighting
+//refining the antlr parser
 //refactoring
 
 //diagnostics, code actions for fixes, pairing with other stages

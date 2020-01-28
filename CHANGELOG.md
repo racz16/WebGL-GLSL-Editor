@@ -1,9 +1,22 @@
 # Change Log
 
-All notable changes to the "test-extension" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
+- Diagnostics
+- Function signature helper
 
-- Initial release
+## [1.0.0]
+### Added
+- Syntax highlight
+- Offline documentation
+- Code completion
+- Format
+- Rename
+- Highlights
+- Hover
+- Symbols
+- Go to/Peek declarations
+- Go to/Peek definitions
+- Go to/Peek type definitions
+- Go to/Find all/Peek implementations
+- Go to/Find all/Peek references
+- Commands for online documentation
