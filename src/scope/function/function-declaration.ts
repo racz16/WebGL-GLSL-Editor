@@ -35,7 +35,7 @@ export class FunctionDeclaration extends Element {
         return this.areParametersConnectableWith(fd);
     }
 
-    private areParametersConnectableWith(fd: FunctionDeclaration): boolean {
+    public areParametersConnectableWith(fd: FunctionDeclaration): boolean {
         for (let i = 0; i < this.parameters.length; i++) {
             const vd = this.parameters[i];
             const vd2 = fd.parameters[i];

@@ -24,7 +24,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         this.validateRenameGeneral(newName);
 
         if (this.lf) {
-            //TODO: validáció
+            this.validateFunction(newName);
             const we = new WorkspaceEdit();
             for (const fp of this.lf.prototypes) {
                 we.replace(document.uri, Helper.intervalToRange(fp.nameInterval, document), newName);
@@ -39,7 +39,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         }
 
         if (this.vd) {
-            this.validateAlreadyDefinedFunction(newName);
+            this.validateStructOrVariable(newName);
             const we = new WorkspaceEdit();
             we.replace(document.uri, Helper.intervalToRange(this.vd.nameInterval, document), newName);
             for (const vu of this.vd.usages) {
@@ -49,7 +49,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         }
 
         if (this.td) {
-            this.validateAlreadyDefinedFunction(newName);
+            this.validateStructOrVariable(newName);
             const we = new WorkspaceEdit();
             we.replace(document.uri, Helper.intervalToRange(this.td.nameInterval, document), newName);
             for (const tu of this.td.usages) {
@@ -85,16 +85,6 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         }
     }
 
-    private validateAlreadyDefinedFunction(newName: string): void {
-        const scope = this.documentInfo.getScopeAt(this.position, this.document);
-        if (scope.isGlobal() && this.documentInfo.functionPrototypes.find(fp => fp.name === newName)) {
-            throw new Error(`Function '${newName}' is already definied`);
-        }
-        if (scope.isGlobal() && this.documentInfo.functionDefinitions.find(fd => fd.name === newName)) {
-            throw new Error(`Function '${newName}' is already definied`);
-        }
-    }
-
     private validateBuiltin(newName: string): void {
         if (this.documentInfo.builtin.types.has(newName)) {
             throw new Error(`Identifier '${newName}' is the name of a builtin type`);
@@ -111,6 +101,50 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
             }
         }
     }
+
+    private validateStructOrVariable(newName: string): void {
+        const scope = this.documentInfo.getScopeAt(this.position, this.document);
+        if (scope.isGlobal() && this.documentInfo.functionPrototypes.find(fp => fp.name === newName)) {
+            throw new Error(`Function '${newName}' is already definied`);
+        }
+        if (scope.isGlobal() && this.documentInfo.functionDefinitions.find(fd => fd.name === newName)) {
+            throw new Error(`Function '${newName}' is already definied`);
+        }
+        if (scope.isGlobal() && this.documentInfo.builtin.functionSummaries.has(newName)) {
+            throw new Error(`Function '${newName}' is already definied`);
+        }
+    }
+
+    private validateFunction(newName: string): void {
+        const fd = this.lf.definitions.length ? this.lf.definitions[0] : this.lf.prototypes[0];
+        for (const lf2 of this.documentInfo.functions) {
+            if (this.lf !== lf2) {
+                const fd2 = lf2.definitions.length ? lf2.definitions[0] : lf2.prototypes[0];
+                if (newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
+                    if (this.lf.definitions.length && lf2.definitions.length) {
+                        throw new Error(`Function '${newName}' is already definied`);
+                    }
+                    if (fd.returnType.declaration !== fd2.returnType.declaration) {
+                        throw new Error(`Function '${newName}' has a different return type`);
+                    }
+                    for (let i = 0; i < fd.parameters.length; i++) {
+                        const p = fd.parameters[i];
+                        const p2 = fd2.parameters[i];
+                        if (!p.type.qualifiersEqualsExceptPrecisionWith(p2.type)) {
+                            throw new Error(`Function '${newName}' has different qualifiers`);
+                        }
+                    }
+                }
+            }
+        }
+        for (const fd2 of this.documentInfo.builtin.functions) {
+            if (newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
+                throw new Error(`Overriding built-in function '${newName}' is illegal`);
+            }
+        }
+    }
+
+    private validateParameter(): void { }
 
     //
     //prepare

@@ -42,19 +42,27 @@ export function activate(context: ExtensionContext) {
 	];
 
 	//diagnostics
-	const collection = languages.createDiagnosticCollection('glsl');
+	/*const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
-		new GlslDiagnosticsProvider().textChanged(editor.document, collection);
+		if (editor.document.languageId === 'glsl') {
+			new GlslDiagnosticsProvider().textChanged(editor.document, collection);
+		}
 	}
 	context.subscriptions.push(workspace.onDidOpenTextDocument(event => {
-		new GlslDiagnosticsProvider().textChanged(event, collection);
+		if (event.languageId === 'glsl') {
+			new GlslDiagnosticsProvider().textChanged(event, collection);
+		}
 	}));
 	context.subscriptions.push(workspace.onDidCloseTextDocument(event => {
-		collection.delete(event.uri);
+		if (event.languageId === 'glsl') {
+			collection.delete(event.uri);
+		}
 	}));
 	context.subscriptions.push(workspace.onDidChangeTextDocument(event => {
-		new GlslDiagnosticsProvider().textChanged(event.document, collection);
-	}));
+		if (event.document.languageId === 'glsl') {
+			new GlslDiagnosticsProvider().textChanged(event.document, collection);
+		}
+	}));*/
 
 
 	context.subscriptions.push(commands.registerCommand('webglglsleditor.opendoc', (param: any) => {
