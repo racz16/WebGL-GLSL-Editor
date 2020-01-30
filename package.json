@@ -1,5 +1,5 @@
 {
-	"name": "webglglsleditor",
+	"name": "webgl-glsl-editor",
 	"displayName": "WebGL GLSL Editor",
 	"description": "Language support for WebGL GLSL.",
 	"author": "Rácz Zalán",
@@ -28,7 +28,10 @@
 		"Programming Languages"
 	],
 	"activationEvents": [
-		"onLanguage:glsl"
+		"onLanguage:glsl",
+		"onCommand:webgl-glsl-editor.opendocsgl",
+		"onCommand:webgl-glsl-editor.opengles2",
+		"onCommand:webgl-glsl-editor.opengles3"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -64,16 +67,33 @@
 		],
 		"commands": [
 			{
-				"command": "webglglsleditor.opendocsgl",
+				"command": "webgl-glsl-editor.opendocsgl",
 				"title": "Open docs.gl"
 			},
 			{
-				"command": "webglglsleditor.opengles2",
+				"command": "webgl-glsl-editor.opengles2",
 				"title": "Open official OpenGL ES 2.0 documentation"
 			},
 			{
-				"command": "webglglsleditor.opengles3",
+				"command": "webgl-glsl-editor.opengles3",
 				"title": "Open official OpenGL ES 3.0 documentation"
+			}
+		],
+		"configuration": [
+			{
+				"title": "WebGL GLSL Editor",
+				"properties": {
+					"webgl-glsl-editor.strictRename": {
+						"type": "boolean",
+						"default": true,
+						"description": "Prevents invalid renames."
+					},
+					"webgl-glsl-editor.offlineDocumentationWarning": {
+						"type": "boolean",
+						"default": true,
+						"description": "Displays a warning on top of the offline documentation."
+					}
+				}
 			}
 		]
 	},

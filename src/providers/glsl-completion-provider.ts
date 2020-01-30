@@ -1,27 +1,30 @@
-import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, CompletionItemTag, MarkdownString } from 'vscode';
+import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, MarkdownString } from 'vscode';
 import { GlslProcessor } from '../core/glsl-processor';
 import { GlslDocumentInfo } from '../core/glsl-document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { Scope } from '../scope/scope';
 import { TypeCategory } from '../scope/type/type-category';
-import { Helper } from '../helper/helper';
 import { ShaderStage } from '../core/shader-stage';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
     private di: GlslDocumentInfo;
-    private document: TextDocument;
     private position: Position;
     private offset: number;
     private items: Array<CompletionItem>;
+    private importantElements = ['cross', 'distance', 'dot', 'inverse', 'length', 'normalize', 'reflect', 'refract', 'texture', 'transpose', 'vec2', 'vec3', 'vec4', 'mat3', 'mat4'];
 
     //TODO:
-    //online dokumentáció bevarázslása
-    //kontextusfüggő ajánlás
-    //például függvényen kívül ne ajánljunk függvényeket, úgyse tudjuk meghívni stb.
-    //de legalább annyit, hogy a struct-ok memberjeit és a swizzle-ket elérjük
+    //struct members, swizzle
 
-    private importantElements = ['cross', 'distance', 'dot', 'inverse', 'length', 'normalize', 'reflect', 'refract', 'texture', 'transpose', 'vec2', 'vec3', 'vec4', 'mat3', 'mat4'];
+    //context based completion
+
+    private initialize(document: TextDocument, position: Position): void {
+        GlslProcessor.processDocument(document);
+        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        this.position = position;
+        this.offset = document.offsetAt(position);
+    }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position);
@@ -34,15 +37,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return this.items;
     }
 
-    private initialize(document: TextDocument, position: Position): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
-        this.document = document;
-        this.position = position;
-        this.offset = document.offsetAt(position);
-    }
-
-    private isAvailable(stage: ShaderStage): boolean {
+    private isAvailableInThisStage(stage: ShaderStage): boolean {
         return stage === ShaderStage.DEFAULT || stage === this.di.getShaderStage();
     }
 
@@ -57,7 +52,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             }
         }
         for (const func of this.di.builtin.functionSummaries.values()) {
-            if (this.isAvailable(func.stage)) {
+            if (this.isAvailableInThisStage(func.stage)) {
                 const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
                 const ci = new CompletionItem(func.name, kind);
                 if (this.importantElements.includes(ci.label)) {
@@ -76,15 +71,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private getFunctionCompletionItem(lf: LogicalFunction): CompletionItem {
         for (const fd of lf.definitions) {
             if (this.offset > fd.interval.stopIndex) {
-                const ci = new CompletionItem(fd.name, CompletionItemKind.Function);
-                ci.documentation = new MarkdownString(fd.toStringDocumentation());
-                return ci;
+                return new CompletionItem(fd.name, CompletionItemKind.Function);
             }
         }
         for (const fp of lf.prototypes) {
             if (this.offset > fp.interval.stopIndex) {
-                const ci = new CompletionItem(fp.name, CompletionItemKind.Function);
-                return ci;
+                return new CompletionItem(fp.name, CompletionItemKind.Function);
             }
         }
         return null;
@@ -147,7 +139,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private addVariableCompletionItems(): void {
         this.addUserVariableCompletionItems(this.di.getRootScope());
         for (const vd of this.di.builtin.variables.values()) {
-            if (this.isAvailable(vd.stage)) {
+            if (this.isAvailableInThisStage(vd.stage)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
                 ci.documentation = vd.summary;
                 ci.detail = 'Built-In Variable';

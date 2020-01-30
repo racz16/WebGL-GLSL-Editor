@@ -1,7 +1,11 @@
 import { Uri, TextDocument, ExtensionContext } from 'vscode';
 import { GlslDocumentInfo } from './glsl-document-info';
+import { Configurations } from './configurations';
 
 export class GlslProcessor {
+
+    public static readonly EXTENSION_NAME = 'webgl-glsl-editor';
+    public static readonly CONFIGURATIONS = new Configurations();
 
     private static readonly documentInfos = new Map<Uri, GlslDocumentInfo>();
     private static context: ExtensionContext;

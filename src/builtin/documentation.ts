@@ -2,15 +2,18 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Uri } from 'vscode';
+import { GlslProcessor } from '../core/glsl-processor';
 
 export class Documentation {
 
     private static readonly documentations = new Map<string, string>();
     private static readonly redirections = new Map<string, string>();
+    private static alert = true;
     private static initialized = false;
 
     private static initialize(): void {
         if (!this.initialized) {
+            this.alert = GlslProcessor.CONFIGURATIONS.getOfflineDocumentationWarning();
             this.redirections.set('dFdy', 'dFdx');
             this.redirections.set('floatBitsToUint', 'floatBitsToInt');
             this.redirections.set('uintBitsToFloat', 'intBitsToFloat');
@@ -24,15 +27,27 @@ export class Documentation {
 
     public static getDocumentation(extensionPath: string, name: string, uri: Uri): string {
         this.initialize();
+        if (this.alert !== GlslProcessor.CONFIGURATIONS.getOfflineDocumentationWarning()) {
+            this.alert = !this.alert;
+            this.documentations.clear();
+        }
         const redirectedName = this.redirections.get(name) ?? name;
         let documentation = this.documentations.get(redirectedName);
         if (!documentation) {
             const filePath = Uri.file(path.join(extensionPath, 'res', 'documentation', `${redirectedName}.xhtml`));
             if (!fs.existsSync(filePath.fsPath)) {
-                return null;
+                return `${name} — documentation is not available`;
             }
             const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
-            documentation = `
+            const alertDisplay = this.alert ? '' : 'display: none;';
+            documentation = this.createHtml(redirectedName, uri, fileContent, alertDisplay);
+            this.documentations.set(redirectedName, documentation);
+        }
+        return documentation;
+    }
+
+    private static createHtml(redirectedName: string, uri: Uri, fileContent: string, alertDisplay: string): string {
+        return `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -45,6 +60,7 @@ export class Documentation {
                             background-color: var(--vscode-editor-foreground);
                             padding: 5px;
                             margin: 20px 0 10px 0;
+                            ${alertDisplay}
                         }
                     </style>
                     <script src="${uri}"></script>
@@ -57,10 +73,7 @@ export class Documentation {
                     ${fileContent}
                 </body>
                 </html>
-            `;
-            this.documentations.set(redirectedName, documentation);
-        }
-        return documentation;
+                `;
     }
 
 }

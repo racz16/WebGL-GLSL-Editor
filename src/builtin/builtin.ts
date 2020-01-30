@@ -17,6 +17,8 @@ import { ReservedWords } from './reserved-words';
 import { Functions, Parameter, FunctionSummaries, FunctionSummary, FunctionInfo } from './functions';
 import { MarkdownString } from 'vscode';
 import { ShaderStage } from '../core/shader-stage';
+import { GlslCommandProvider } from '../providers/glsl-command-provider';
+import { GlslProcessor } from '../core/glsl-processor';
 
 export class Builtin {
 
@@ -223,7 +225,8 @@ export class Builtin {
         }
         mds.appendText('\r\n');
         if (variable.summary) {
-            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify({ name: variable.name, active: true }))})`);
+            const parameter = encodeURIComponent(JSON.stringify({ name: variable.name, active: true }));
+            mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;
@@ -290,7 +293,8 @@ export class Builtin {
         }
         mds.appendText('\r\n');
         if (func.summary) {
-            mds.appendMarkdown(`[Open documentation](command:webglglsleditor.opendoc?${encodeURIComponent(JSON.stringify({ name: func.name, active: true }))})`);
+            const parameter = encodeURIComponent(JSON.stringify({ name: func.name, active: true }));
+            mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;

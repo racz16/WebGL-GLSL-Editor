@@ -9,6 +9,7 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';
+import { GlslProcessor } from '../core/glsl-processor';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
 
@@ -62,6 +63,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateRenameGeneral(newName: string): void {
+        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+            return;
+        }
         if (newName.length > 1024) {
             throw new Error(`The length of identifier '${newName}' is greater than 1024`);
         }
@@ -103,6 +107,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateStructOrVariable(newName: string): void {
+        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+            return;
+        }
         const scope = this.di.getScopeAt(this.position);
         if (scope.isGlobal() && this.di.functionPrototypes.find(fp => fp.name === newName)) {
             throw new Error(`Function '${newName}' is already definied`);
@@ -116,6 +123,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateFunction(newName: string): void {
+        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+            return;
+        }
         const fd = this.lf.definitions.length ? this.lf.definitions[0] : this.lf.prototypes[0];
         for (const lf2 of this.di.functions) {
             if (this.lf !== lf2) {

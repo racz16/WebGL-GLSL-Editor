@@ -1,14 +1,14 @@
 import * as path from 'path';
-import { ViewColumn, window, Uri, env } from 'vscode';
+import { ViewColumn, window, Uri, env, ExtensionContext } from 'vscode';
 import { Documentation } from '../builtin/documentation';
 import { GlslProcessor } from '../core/glsl-processor';
 
 export class GlslCommandProvider {
 
-    public static readonly OPEN_DOCS_GL = 'webglglsleditor.opendocsgl';
-    public static readonly OPEN_GL_ES_2 = 'webglglsleditor.opengles2';
-    public static readonly OPEN_GL_ES_3 = 'webglglsleditor.opengles3';
-    public static readonly OPEN_DOC = 'webglglsleditor.opendoc';
+    public static readonly OPEN_DOCS_GL = 'opendocsgl';
+    public static readonly OPEN_GL_ES_2 = 'opengles2';
+    public static readonly OPEN_GL_ES_3 = 'opengles3';
+    public static readonly OPEN_DOC = 'opendoc';
 
     public static openDocsGl(): void {
         env.openExternal(Uri.parse('http://docs.gl'));
@@ -23,20 +23,14 @@ export class GlslCommandProvider {
     }
 
     public static openDoc(param: any): void {
+        const name = param.name ? param.name : param.toString();
+        const vc = param.name ? ViewColumn.Beside : ViewColumn.Active;
         const context = GlslProcessor.getContext();
-        let vc: ViewColumn;
-        let name: string;
-        if (param.name) {
-            vc = ViewColumn.Beside;
-            name = param.name;
-        } else {
-            vc = ViewColumn.Active;
-            name = param.toString();
-        }
-        const panel = window.createWebviewPanel(
-            'documentation',
-            name,
-            vc,
+        this.openDocUnsafe(name, vc, context);
+    }
+
+    private static openDocUnsafe(name: string, vc: ViewColumn, context: ExtensionContext): void {
+        const panel = window.createWebviewPanel('documentation', name, vc,
             {
                 enableScripts: true,
                 enableCommandUris: true,

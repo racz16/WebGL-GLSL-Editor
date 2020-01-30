@@ -1,5 +1,5 @@
 import { GlslDocumentHighlightProvider } from './providers/glsl-document-highlight-provider';
-import { ExtensionContext, languages, commands } from 'vscode';
+import { ExtensionContext, languages, commands, window, workspace, ConfigurationChangeEvent } from 'vscode';
 import { GlslCompletionProvider } from './providers/glsl-completion-provider';
 import { GlslDocumentSymbolProvider } from './providers/glsl-document-symbol-provider';
 import { GlslDeclarationProvider } from './providers/glsl-declaration-provider';
@@ -17,9 +17,8 @@ import { GlslProcessor } from './core/glsl-processor';
 //writing readme and the changelog, icon, badges
 //data in changlelog like [1.0.0] - 2020.02.10.
 //function signature helper
-//configurations
-//	strict renaming
 //commens vs preprocessor directives
+
 //precision statements
 //color visalizer for vec3 and vec4 constructor where variable name contains the word 'color'
 //inline statement, folding, indentation and formatting
@@ -71,24 +70,24 @@ export function activate(context: ExtensionContext) {
 	}));*/
 
 	//offline documentation
-	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_DOC, (param: any) => {
+	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {
 		GlslCommandProvider.openDoc(param);
 	}));
 	//online docimentation
-	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_DOCS_GL, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOCS_GL}`, () => {
 		GlslCommandProvider.openDocsGl();
 	}));
-	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_GL_ES_2, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_2}`, () => {
 		GlslCommandProvider.openGlEs2();
 	}));
-	context.subscriptions.push(commands.registerCommand(GlslCommandProvider.OPEN_GL_ES_3, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_3}`, () => {
 		GlslCommandProvider.openGlEs3();
 	}));
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
 	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider()));
-	//symbols (outline, breadcrumbs, find symbol)
+	//symbols
 	context.subscriptions.push(languages.registerDocumentSymbolProvider(selector, new GlslDocumentSymbolProvider()));
 	//declaration
 	context.subscriptions.push(languages.registerDeclarationProvider(selector, new GlslDeclarationProvider()));
