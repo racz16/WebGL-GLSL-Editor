@@ -19,10 +19,11 @@ import { MarkdownString } from 'vscode';
 import { ShaderStage } from '../core/shader-stage';
 import { GlslCommandProvider } from '../providers/glsl-command-provider';
 import { GlslProcessor } from '../core/glsl-processor';
+import { Constants } from '../core/constants';
 
 export class Builtin {
 
-    private static readonly RESOURCES_PATH = '../../res';
+    private static readonly JSON_PATH = '../../res/json';
     private static builtin_100: Builtin;
     private static builtin_300: Builtin;
 
@@ -146,8 +147,8 @@ export class Builtin {
     private addMembers(td: TypeDeclaration, type: CustomType): void {
         for (const member of type.members) {
             const td2 = this.types.get(member.memberType);
-            const tu = new TypeUsage(member.memberType, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td2);
-            const vd = new VariableDeclaration(member.memberName, Interval.NONE, null, true, false, Interval.NONE, tu);
+            const tu = new TypeUsage(member.memberType, Interval.NONE, Interval.NONE, null, Interval.NONE, td2);
+            const vd = new VariableDeclaration(member.memberName, Interval.NONE, null, true, Interval.NONE, tu);
             this.addMemberPrecisionQualifier(tu, member);
             td.members.push(vd);
         }
@@ -169,10 +170,10 @@ export class Builtin {
             if (td.isScalar()) {
                 this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
                 for (const td2 of this.types.values()) {
-                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
-                    const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE);
-                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td2);
-                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, false, Interval.NONE, tu2);
+                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                    const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
+                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td2);
+                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, Interval.NONE, tu2);
                     fd.parameters.push(vd);
                 }
             } else if (td.isVector()) {
@@ -184,8 +185,8 @@ export class Builtin {
             }
             if (td.typeCategory === TypeCategory.CUSTOM) {
                 this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
-                const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE);
+                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
                 for (const vd of td.members) {
                     fd.parameters.push(vd);
                 }
@@ -201,18 +202,22 @@ export class Builtin {
         for (const variable of variables.variables) {
             const array = variable.array ?? 0;
             const td = this.types.get(variable.type);
-            const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, Interval.NONE, array, td);
-            const stage = this.getStage(variable.stage);
-            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, true, Interval.NONE, tu, stage);
+            const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
             this.addVariableQualifiers(tu, variable);
-            vd.summary = this.createVariableSummary(variable, vd);
+            for (let i = 0; i < array; i++) {
+                tu.array.push(-1);
+            }
+            const summary = this.createVariableSummary(variable, tu);
+            const stage = this.getStage(variable.stage);
+            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, Interval.NONE, tu, summary, stage);
             this.variables.set(variable.name, vd);
         }
     }
 
-    private createVariableSummary(variable: Variable, vd: VariableDeclaration): MarkdownString {
-        const mds = new MarkdownString(vd.toStringDocumentation());
-        mds.appendText('\r\n');
+    private createVariableSummary(variable: Variable, tu: TypeUsage): MarkdownString {
+        const mds = new MarkdownString();
+        mds.appendCodeblock(tu.toString() + ' ' + variable.name + ';');
+        mds.appendText(Constants.CRLF);
         mds.appendText(`${variable.name} — `);
         if (variable.summary) {
             mds.appendText(variable.summary);
@@ -223,7 +228,7 @@ export class Builtin {
         } else {
             mds.appendText('documentation is not available');
         }
-        mds.appendText('\r\n');
+        mds.appendText(Constants.CRLF);
         if (variable.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: variable.name, active: true }));
             mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
@@ -250,7 +255,7 @@ export class Builtin {
         const functions: Functions = require(this.getPath('functions'));
         for (const func of functions.functions) {
             const td = this.types.get(func.returnType);
-            const tu = new TypeUsage(func.returnType, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
+            const tu = new TypeUsage(func.returnType, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
             if (func.qualifiers) {
                 for (const qualifier of func.qualifiers) {
                     const q = this.qualifiers.get(qualifier);
@@ -259,11 +264,11 @@ export class Builtin {
                 }
             }
             const stage = this.getStage(func.stage);
-            const fp = new FunctionDeclaration(func.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, stage);
+            const fp = new FunctionDeclaration(func.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, null, stage);
             for (const parameter of func.parameters) {
                 const td = this.types.get(parameter.type);
-                const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
-                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, true, Interval.NONE, tu);
+                const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
                 this.addVariableQualifiers(tu, parameter);
                 fp.parameters.push(vd);
             }
@@ -291,7 +296,7 @@ export class Builtin {
         } else {
             mds.appendText('documentation is not available');
         }
-        mds.appendText('\r\n');
+        mds.appendText(Constants.CRLF);
         if (func.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: func.name, active: true }));
             mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
@@ -313,7 +318,7 @@ export class Builtin {
     }
 
     private getPath(name: string): string {
-        return `${Builtin.RESOURCES_PATH}/${name}_${this.postfix}.json`;
+        return `${Builtin.JSON_PATH}/${name}_${this.postfix}.json`;
     }
 
     public createNewInstance(): Builtin {
@@ -338,41 +343,42 @@ export class Builtin {
             const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.structInterval, type.width, type.height, type.typeBase, type.typeCategory);
             for (const member of type.members) {
                 const td2 = bi.types.get(member.type.name);
-                const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, member.type.arrayInterval, member.type.arrayDepth, td2);
+                const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, member.type.arrayInterval, td2);
                 for (const qu of member.type.qualifiers) {
                     const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                     tu.qualifiers.push(qu2);
                 }
-                const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.global, member.declarationInterval, tu);
+                const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu);
                 td.members.push(vd);
             }
-            td.summary = type.summary;
             bi.types.set(type.name, td);
         }
         for (const variable of this.variables.values()) {
             const td = bi.types.get(variable.type.name);
-            const tu = new TypeUsage(variable.type.name, variable.type.interval, variable.type.nameInterval, null, variable.type.arrayInterval, variable.type.arrayDepth, td);
+            const tu = new TypeUsage(variable.type.name, variable.type.interval, variable.type.nameInterval, null, variable.type.arrayInterval, td);
+            for (const array of variable.type.array) {
+                tu.array.push(array);
+            }
             for (const qu of variable.type.qualifiers) {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.global, variable.declarationInterval, tu, variable.stage);
-            vd.summary = variable.summary;
+            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, variable.summary, variable.stage);
             bi.variables.set(variable.name, vd);
         }
         for (const func of this.functions) {
             const td = this.types.get(func.returnType.name);
-            const tu = new TypeUsage(func.returnType.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
+            const tu = new TypeUsage(func.returnType.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
             for (const qualifier of func.returnType.qualifiers) {
                 const q = this.qualifiers.get(qualifier.name);
                 const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(func.name, func.nameInterval, null, tu, func.builtIn, func.ctor, func.interval, func.signatureInterval, func.stage);
+            const fp = new FunctionDeclaration(func.name, func.nameInterval, null, tu, func.builtIn, func.ctor, func.interval, func.signatureInterval, null, func.stage);
             for (const parameter of func.parameters) {
                 const td = this.types.get(parameter.type.name);
-                const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, Interval.NONE, 0, td);
-                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, true, Interval.NONE, tu);
+                const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
                 for (const qualifier of parameter.type.qualifiers) {
                     const q = this.qualifiers.get(qualifier.name);
                     const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);

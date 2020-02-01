@@ -14,6 +14,13 @@ export class PositionalProviderBase<T> {
     protected document: TextDocument;
     protected position: Position;
 
+    protected initialize(document: TextDocument, position: Position): void {
+        GlslProcessor.processDocument(document);
+        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        this.document = document;
+        this.position = position;
+    }
+
     public processElements(document: TextDocument, position: Position): T {
         this.initialize(document, position);
 
@@ -35,34 +42,27 @@ export class PositionalProviderBase<T> {
 
         //type
         const td = this.di.getTypeDeclarationAt(position);
-        if (td) {
+        if (td && td.name) {
             return this.processTypeDeclaration(td);
         }
 
         const tu = this.di.getTypeUsageAt(position);
-        if (tu) {
+        if (tu && tu.name) {
             return this.processTypeUsage(tu);
         }
 
         //variable
         const vd = this.di.getVariableDeclarationAt(position);
-        if (vd) {
+        if (vd && vd.name) {
             return this.processVariableDeclaration(vd);
         }
 
         const vu = this.di.getVariableUsageAt(position);
-        if (vu) {
+        if (vu && vu.name) {
             return this.processVariableUsage(vu);
         }
 
         return this.defaultReturn();
-    }
-
-    protected initialize(document: TextDocument, position: Position): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
-        this.document = document;
-        this.position = position;
     }
 
     protected processFunctionPrototype(fp: FunctionDeclaration): T {

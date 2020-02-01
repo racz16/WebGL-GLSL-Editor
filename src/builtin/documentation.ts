@@ -34,7 +34,7 @@ export class Documentation {
         const redirectedName = this.redirections.get(name) ?? name;
         let documentation = this.documentations.get(redirectedName);
         if (!documentation) {
-            const filePath = Uri.file(path.join(extensionPath, 'res', 'documentation', `${redirectedName}.xhtml`));
+            const filePath = Uri.file(path.join(extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
             if (!fs.existsSync(filePath.fsPath)) {
                 return `${name} — documentation is not available`;
             }

@@ -3,7 +3,6 @@ import { GlslDocumentInfo } from '../core/glsl-document-info';
 import { Token } from 'antlr4ts';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { GlslProcessor } from '../core/glsl-processor';
-import { Helper } from '../helper/helper';
 import { Constants } from '../core/constants';
 
 export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider {

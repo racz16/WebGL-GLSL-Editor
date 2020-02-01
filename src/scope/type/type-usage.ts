@@ -7,17 +7,16 @@ import { Scope } from '../scope';
 
 export class TypeUsage extends Element {
 
-    public readonly declaration: TypeDeclaration = null;
+    public readonly declaration: TypeDeclaration;
     public readonly qualifiers = new Array<QualifierUsage>();
     public readonly implicitQualifiers = new Array<Qualifier>();
     public readonly interval: Interval;
     public readonly arrayInterval: Interval;
-    public readonly arrayDepth: number;
+    public readonly array = new Array<number>();
     public readonly inlineStructDeclaration: boolean;
 
-    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, arrayDepth: number, declaration: TypeDeclaration, inlineStructDeclaration = false) {
+    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, declaration: TypeDeclaration, inlineStructDeclaration = false) {
         super(name, nameInterval, scope);
-        this.arrayDepth = arrayDepth;
         this.declaration = declaration;
         this.interval = interval;
         this.arrayInterval = arrayInterval;
@@ -29,11 +28,23 @@ export class TypeUsage extends Element {
     }
 
     public isArray(): boolean {
-        return this.arrayDepth > 0;
+        return this.array.length > 0;
     }
 
     public isMultidimensionalArray(): boolean {
-        return this.arrayDepth > 1;
+        return this.array.length > 1;
+    }
+
+    public areArrayDimensionsMatch(tu: TypeUsage): boolean {
+        if (!tu || this.array.length !== tu.array.length) {
+            return false;
+        }
+        for (let i = 0; i < this.array.length; i++) {
+            if (this.array[i] !== tu.array[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public qualifiersEqualsExceptPrecisionWith(tu: TypeUsage): boolean {
@@ -57,29 +68,6 @@ export class TypeUsage extends Element {
         return true;
     }
 
-    /*public equals(tu: TypeUsage): boolean {
-        if (!this.declaration || !tu) {
-            return false;
-        }
-        return this.arrayDepth === tu.arrayDepth
-            && this.qualifiersEquals(tu)
-            && this.declaration.equals(tu.declaration);
-    }
-
-    public qualifiersEquals(tu: TypeUsage): boolean {
-        for (const qu of this.qualifiers) {
-            if (!tu.containsQualifier(qu.qualifier) && !tu.implicitQualifiers.includes(qu.qualifier)) {
-                return false;
-            }
-        }
-        for (const q of this.implicitQualifiers) {
-            if (!tu.containsQualifier(q) && !tu.implicitQualifiers.includes(q)) {
-                return false;
-            }
-        }
-        return this.qualifiers.length + this.implicitQualifiers.length === tu.qualifiers.length + tu.implicitQualifiers.length;
-    }*/
-
     private containsQualifier(q: Qualifier): boolean {
         for (const qu of this.qualifiers) {
             if (qu.qualifier === q) {
@@ -102,8 +90,9 @@ export class TypeUsage extends Element {
 
     private toStringArray(): string {
         let ret = '';
-        for (let i = 0; i < this.arrayDepth; i++) {
-            ret += "[]";
+        for (const array of this.array) {
+            const arraySize = array === -1 ? '' : `${array}`;
+            ret += `[${arraySize}]`;
         }
         return ret;
     }

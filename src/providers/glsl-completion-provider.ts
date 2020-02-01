@@ -56,16 +56,20 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
                 const ci = new CompletionItem(func.name, kind);
                 if (this.importantElements.includes(ci.label)) {
-                    ci.insertText = ci.label;
-                    ci.filterText = ci.label;
-                    ci.sortText = '*' + ci.label;
-                    ci.label = '★ ' + ci.label;
+                    this.makeItImportant(ci);
                 }
                 ci.detail = func.ctor ? null : 'Built-In Function';
                 ci.documentation = func.summary;
                 this.items.push(ci);
             }
         }
+    }
+
+    private makeItImportant(ci: CompletionItem): void {
+        ci.insertText = ci.label;
+        ci.filterText = ci.label;
+        ci.sortText = '*' + ci.label;
+        ci.label = '★ ' + ci.label;
     }
 
     private getFunctionCompletionItem(lf: LogicalFunction): CompletionItem {

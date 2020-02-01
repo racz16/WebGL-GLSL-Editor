@@ -82,9 +82,7 @@ export class FunctionValidator {
     private static validateWithOtherFunction(fd: FunctionDeclaration): void {
         if (fd !== this.fd) {
             if (this.fd.returnType.declaration !== fd.returnType.declaration ||
-                this.fd.returnType.arrayDepth !== fd.returnType.arrayDepth
-                //TODO: tömb méretének is meg kéne egyeznie
-            ) {
+                !this.fd.returnType.areArrayDimensionsMatch(fd.returnType)) {
                 this.addError(DiagnosticSeverity.Error, `Not all declarations of function '${this.fd.name}' has the same return type`, this.fd.nameInterval);
             }
             for (let i = 0; i < this.fd.parameters.length; i++) {

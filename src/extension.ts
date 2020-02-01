@@ -17,14 +17,12 @@ import { GlslProcessor } from './core/glsl-processor';
 //writing readme and the changelog, icon, badges
 //data in changlelog like [1.0.0] - 2020.02.10.
 //function signature helper
-//commens vs preprocessor directives
 
 //precision statements
 //color visalizer for vec3 and vec4 constructor where variable name contains the word 'color'
 //inline statement, folding, indentation and formatting
 //rewriting the syntax highlighting
 //refining the antlr parser
-//refactoring
 
 //diagnostics, code actions for fixes, pairing with other stages
 //	redundant qualifier warning etc function parameter in or highp float in vertex shader etc.

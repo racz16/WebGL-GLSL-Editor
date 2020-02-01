@@ -9,19 +9,15 @@ export class Scope {
 
     public readonly parent: Scope;
     public readonly children = new Array<Scope>();
+    public readonly interval: Interval;
 
     public readonly functionCalls = new Array<FunctionCall>();
 
-    //variables
     public readonly variableDeclarations = new Array<VariableDeclaration>();
     public readonly variableUsages = new Array<VariableUsage>();
 
-    //types
     public readonly typeDeclarations = new Array<TypeDeclaration>();
     public readonly typeUsages = new Array<TypeUsage>();
-
-    public readonly precisionDeclarations = new Array<TypeUsage>();
-    public readonly interval: Interval;
 
     public constructor(interval: Interval, parent: Scope) {
         this.interval = interval;
@@ -30,14 +26,6 @@ export class Scope {
 
     public isGlobal(): boolean {
         return !this.parent;
-    }
-
-    public getRootScope(): Scope {
-        let scope: Scope = this;
-        while (scope.parent !== null) {
-            scope = scope.parent;
-        }
-        return scope;
     }
 
 }

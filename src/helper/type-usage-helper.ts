@@ -76,9 +76,10 @@ export class TypeUsageHelper {
         const arrayInterval = Helper.getIntervalFromParserRule(this.tuc.array_subscript());
         const nameInterval = Helper.getIntervalFromParserRule(this.tuc.type());
         const interval = Helper.getIntervalFromParserRule(this.tuc);
+        //TODO: array size
         const arrayDepth = Helper.getArrayDepthFromArraySubscript(this.tuc.array_subscript()) + variableArrayDepth;
         const td = Helper.getTypeDeclaration(name, nameInterval, this.scope, this.di);
-        const tu = new TypeUsage(name, interval, nameInterval, this.scope, arrayInterval, arrayDepth, td);
+        const tu = new TypeUsage(name, interval, nameInterval, this.scope, arrayInterval, td);
         this.addQualifiers(tu);
         if (index === 0) {
             if (!tu.isVoid()) {
@@ -94,9 +95,10 @@ export class TypeUsageHelper {
     private static getStructType(index: number, variableArrayDepth: number): TypeUsage {
         const tdc = this.tuc.type_declaration();
         const arrayInterval = Helper.getIntervalFromParserRule(this.tuc.array_subscript());
+        //TODO: array size
         const arrayDepth = Helper.getArrayDepthFromArraySubscript(this.tuc.array_subscript()) + variableArrayDepth;
         const td = TypeDeclarationHelper.getTypeDeclaration(tdc, this.scope, this.di, index);
-        const tu = new TypeUsage(td.name, td.structInterval, Interval.NONE, this.scope, arrayInterval, arrayDepth, td, true);
+        const tu = new TypeUsage(td.name, td.structInterval, Interval.NONE, this.scope, arrayInterval, td, true);
         this.addQualifiers(tu);
         return tu;
     }

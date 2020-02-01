@@ -8,15 +8,21 @@ export class LogicalFunction {
     public readonly definitions = new Array<FunctionDeclaration>();
 
     public connects(fd: FunctionDeclaration): boolean {
-        const fp = this.prototypes[0];
-        if (fp && fp.isConnectableWith(fd)) {
-            return true;
+        return this.getDeclaration().isConnectableWith(fd);
+    }
+
+    public getDeclaration(): FunctionDeclaration {
+        if (this.prototypes.length) {
+            return this.prototypes[0];
+        } else if (this.definitions.length) {
+            return this.definitions[0];
+        } else {
+            return null;
         }
-        const fd2 = this.definitions[0];
-        if (fd2 && fd2.isConnectableWith(fd)) {
-            return true;
-        }
-        return false;
+    }
+
+    public hasDeclaration(): boolean {
+        return this.prototypes.length !== 0 || this.definitions.length !== 0;
     }
 
 }

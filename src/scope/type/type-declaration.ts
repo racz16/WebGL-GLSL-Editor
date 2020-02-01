@@ -4,8 +4,8 @@ import { TypeBase } from './type-base';
 import { VariableDeclaration } from '../variable/variable-declaration';
 import { TypeUsage } from './type-usage';
 import { Interval } from '../interval';
-import { MarkdownString } from 'vscode';
 import { Scope } from '../scope';
+import { Constants } from '../../core/constants';
 
 export class TypeDeclaration extends Element {
 
@@ -15,10 +15,8 @@ export class TypeDeclaration extends Element {
     public readonly typeCategory: TypeCategory;
     public readonly width: number;
     public readonly height: number;
-    public readonly implicitConversions = new Array<TypeDeclaration>();
     public readonly members = new Array<VariableDeclaration>();
     public readonly usages = new Array<TypeUsage>();
-    public summary: string;
 
 
     public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, structInterval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM) {
@@ -29,11 +27,6 @@ export class TypeDeclaration extends Element {
         this.height = height;
         this.typeBase = typeBase;
         this.typeCategory = typeCategory;
-        //TODO: implicit conversions
-    }
-
-    public isConvertibleTo(td: TypeDeclaration): boolean {
-        return this.name === td.name || this.implicitConversions.includes(td);
     }
 
     public isScalar(): boolean {
@@ -56,7 +49,7 @@ export class TypeDeclaration extends Element {
 
     public containsArrayDeclaration(): boolean {
         for (const vd of this.members) {
-            if (vd.type.arrayDepth > 0 || (vd.type.declaration && vd.type.declaration.containsArrayDeclaration())) {
+            if (vd.type.isArray() || (vd.type.declaration && vd.type.declaration.containsArrayDeclaration())) {
                 return true;
             }
         }
@@ -73,9 +66,9 @@ export class TypeDeclaration extends Element {
     }
 
     public toStringDocumentation(): string {
-        let result = `\tstruct ${this.name} {\r\n`;
+        let result = `\tstruct ${this.name} {${Constants.CRLF}`;
         for (const vd of this.members) {
-            result += `\t\t${vd.toString()};\r\n`;
+            result += `\t\t${vd.toString()};${Constants.CRLF}`;
         }
         result += '\t};';
         return result;

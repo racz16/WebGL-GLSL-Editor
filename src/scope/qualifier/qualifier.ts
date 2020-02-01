@@ -1,6 +1,5 @@
 import { QualifierUsage } from './qualifier-usage';
 import { GlslDocumentInfo } from '../../core/glsl-document-info';
-import { MarkdownString } from 'vscode';
 
 export class Qualifier {
 
@@ -41,19 +40,12 @@ export class Qualifier {
         return true;
     }
 
-    /*public equals(q: Qualifier): boolean {
-        if (!q) {
-            return false;
-        }
-        return this.name === q.name;
-    }*/
-
     public toString(): string {
         return this.name;
     }
 
     public toStringDocumentation(): string {
-        return `\t${this.toString()};`;
+        return `\t${this.toString()}`;
     }
 
 }

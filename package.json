@@ -92,6 +92,16 @@
 						"type": "boolean",
 						"default": true,
 						"description": "Displays a warning on top of the offline documentation."
+					},
+					"webgl-glsl-editor.alwaysOpenOnlineDoc": {
+						"type": "boolean",
+						"default": false,
+						"description": "Documentation is always opened online in the browser."
+					},
+					"webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
+						"type": "boolean",
+						"default": false,
+						"description": "Offline documentation is always opened in new tab."
 					}
 				}
 			}

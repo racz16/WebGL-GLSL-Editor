@@ -27,7 +27,7 @@ export class VariableDeclarationHelper {
         const declarationInterval = Helper.getIntervalFromParserRule(svdc);
         const arrayDepth = Helper.getArrayDepthFromIdentifierOptarray(ioc);
         const tu = TypeUsageHelper.getParameterType(svdc.type_usage(), arrayDepth, scope, di);
-        const vd = new VariableDeclaration(name, nameInterval, scope, false, false, declarationInterval, tu);
+        const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu);
         scope.variableDeclarations.push(vd);
         return vd;
     }
@@ -47,7 +47,7 @@ export class VariableDeclarationHelper {
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
-                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, false, declarationInterval, tu);
+                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
             }
@@ -56,7 +56,7 @@ export class VariableDeclarationHelper {
             const name = null;
             const nameInterval = Interval.NONE;
             const declarationInterval = Helper.getIntervalFromParserRule(vdc);
-            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, false, declarationInterval, tu);
+            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu);
             this.scope.variableDeclarations.push(vd);
             vds.push(vd);
         }

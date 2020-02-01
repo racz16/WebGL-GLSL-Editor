@@ -5,7 +5,7 @@ import { Scope } from '../scope';
 
 export class FunctionCall extends Element {
 
-    public readonly logicalFunction: LogicalFunction = null;
+    public readonly logicalFunction: LogicalFunction;
     public readonly interval: Interval;
     public readonly builtin: boolean;
 
@@ -14,17 +14,6 @@ export class FunctionCall extends Element {
         this.logicalFunction = logicalFunction;
         this.interval = interval;
         this.builtin = builtin;
-    }
-
-    /*public equals(fc: FunctionCall): boolean {
-        if (!this.logicalFunction || !fc) {
-            return false;
-        }
-        return this.logicalFunction.equals(fc.logicalFunction);
-    }*/
-
-    public hasDeclaration(): boolean {
-        return this.logicalFunction.prototypes[0] !== null || this.logicalFunction.definitions[0] !== null;
     }
 
     public toString(): string {

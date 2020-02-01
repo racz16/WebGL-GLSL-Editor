@@ -14,7 +14,7 @@
 		},
 		{
 			"name": "meta.preprocessor.glsl",
-			"match": "#([a-zA-Z0-9_+\\-*<>%|&?.:;,~!^=\\s]|(\\/(?!\\*)))*"
+			"match": "#([a-zA-Z0-9_+\\-*<>%|&?.:;,~!^=\\s]|(\\/(?!(\\*|\\/))))*"
 		},
 		{
 			"name": "keyword.operator.glsl",

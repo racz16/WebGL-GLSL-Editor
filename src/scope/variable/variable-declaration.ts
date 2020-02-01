@@ -9,28 +9,20 @@ import { ShaderStage } from '../../core/shader-stage';
 export class VariableDeclaration extends Element {
 
     public readonly builtin: boolean;
-    public readonly global: boolean;
     public readonly type: TypeUsage;
     public readonly usages = new Array<VariableUsage>();
     public readonly declarationInterval: Interval;
-    public summary: MarkdownString;
+    public readonly summary: MarkdownString;
     public readonly stage: ShaderStage;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, global: boolean, declarationInterval: Interval, type: TypeUsage, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, summary?: MarkdownString, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
-        this.global = global;
         this.type = type;
         this.declarationInterval = declarationInterval;
+        this.summary = summary;
         this.stage = stage;
     }
-
-    /*public equals(vd: VariableDeclaration): boolean {
-        if (!vd) {
-            return false;
-        }
-        return (this.name === vd.name && this.type.equals(vd.type));
-    }*/
 
     public toString(): string {
         return this.type.toString() + ' ' + this.name;

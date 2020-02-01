@@ -1,5 +1,4 @@
 import { DocumentHighlightProvider, TextDocument, Position, CancellationToken, ProviderResult, DocumentHighlight, DocumentHighlightKind } from 'vscode';
-import { Helper } from '../helper/helper';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { Element } from '../scope/element';
 import { PositionalProviderBase } from './positional-provider-base';
@@ -61,8 +60,8 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
         if (!element.builtin) {
             const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
+            this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
         }
-        this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
         return ret;
     }
 

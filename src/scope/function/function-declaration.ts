@@ -16,15 +16,17 @@ export class FunctionDeclaration extends Element {
     public readonly parameters = new Array<VariableDeclaration>();
     public readonly builtIn: boolean;
     public readonly ctor: boolean;
+    public readonly functionScope: Scope;
     public readonly stage: ShaderStage;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, signatureInterval: Interval, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, signatureInterval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
         this.interval = interval;
         this.signatureInterval = signatureInterval;
         this.returnType = returnType;
         this.builtIn = builtIn;
         this.ctor = ctor;
+        this.functionScope = functionScope;
         this.stage = stage;
     }
 
@@ -41,70 +43,11 @@ export class FunctionDeclaration extends Element {
             const vd2 = fd.parameters[i];
             if (!vd.type.declaration || !vd2.type.declaration ||
                 vd.type.declaration !== vd2.type.declaration ||
-                vd.type.arrayDepth !== vd2.type.arrayDepth
-                //TODO: tömb méretének is meg kéne egyeznie
-            ) {
+                !vd.type.areArrayDimensionsMatch(vd2.type)) {
                 return false;
             }
         }
         return true;
-    }
-
-    /*public equals(f: FunctionDeclaration): boolean {
-        if (!f) {
-            return false;
-        }
-        return this.equalsSignature(f) && this.returnType.equals(f.returnType);
-    }
-
-    public equalsSignature(f: FunctionDeclaration): boolean {
-        if (this.name !== f.name || this.parameters.length !== f.parameters.length) {
-            return false;
-        }
-        return this.equalsParameters(f);
-    }
-
-    private equalsParameters(func: FunctionDeclaration): boolean {
-        for (let i = 0; i < this.parameters.length; i++) {
-            if (!this.parameters[i].type.equals(func.parameters[i].type)) {
-                return false;
-            }
-        }
-        return true;
-    }*/
-
-    public toStringSignature(showParameters: boolean): string {
-        let ret = this.name + '(';
-        if (showParameters) {
-            ret += this.toStringParameterArray();
-        }
-        ret += ')';
-        return ret;
-    }
-
-    public toStringParameterArray(): string {
-        let ret = '';
-        for (let i = 0; i < this.parameters.length; i++) {
-            ret += this.toStringParameter(i);
-        }
-        return ret;
-    }
-
-    private toStringParameter(index: number): string {
-        let ret = '';
-        ret += this.parameters[index].toString();
-        if (index !== this.parameters.length - 1) {
-            ret += ', ';
-        }
-        return ret;
-    }
-
-    public toString(): string {
-        return this.returnType + ' ' + this.toStringSignature(true);
-    }
-
-    public toStringDocumentation(): string {
-        return `\t${this.toString()};`;
     }
 
     public isDuplicateOf(element: Element, di: GlslDocumentInfo): boolean {
@@ -117,6 +60,42 @@ export class FunctionDeclaration extends Element {
                     (di.isGlsl100es() && prototypes.includes(fd) && prototypes.includes(this)));
         }
         return super.isDuplicateOf(element, di);
+    }
+
+    //
+    //toString
+    //
+    public toStringSignature(showParameters: boolean): string {
+        let ret = this.name + '(';
+        if (showParameters) {
+            ret += this.toStringParameters();
+        }
+        ret += ')';
+        return ret;
+    }
+
+    public toStringParameters(): string {
+        let ret = '';
+        for (let i = 0; i < this.parameters.length; i++) {
+            ret += this.toStringParameter(i);
+        }
+        return ret;
+    }
+
+    private toStringParameter(index: number): string {
+        let ret = this.parameters[index].toString();
+        if (index !== this.parameters.length - 1) {
+            ret += ', ';
+        }
+        return ret;
+    }
+
+    public toString(): string {
+        return this.returnType + ' ' + this.toStringSignature(true);
+    }
+
+    public toStringDocumentation(): string {
+        return `\t${this.toString()};`;
     }
 
 }

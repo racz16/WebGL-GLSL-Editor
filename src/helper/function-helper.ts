@@ -29,7 +29,7 @@ export abstract class FunctionHelper {
         const signatureInterval = Helper.getIntervalFromParserRule(this.fhc);
         const returnType = TypeUsageHelper.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval);
+        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval, this.scope);
         this.addParameters(fd);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.functionPrototypes.push(fd);
@@ -46,7 +46,7 @@ export abstract class FunctionHelper {
         const signatureInterval = Helper.getIntervalFromParserRule(this.fhc);
         const returnType = TypeUsageHelper.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval);
+        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval, this.scope);
         this.addParameters(fd);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.functionDefinitions.push(fd);

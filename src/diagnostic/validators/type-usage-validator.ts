@@ -28,10 +28,10 @@ export class TypeUsageValidator {
         if (tu.declaration && tu.declaration.isOpaque()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.name}' is an opaque type`, tu.nameInterval);
         }
-        if (tu.isVoid() && tu.arrayDepth > 0) {
+        if (tu.isVoid() && tu.isArray()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.toString()}' contains array declaration(s)`, tu.nameInterval);
         }
-        if (di.isGlsl100es() && tu.arrayDepth > 0) {
+        if (di.isGlsl100es() && tu.isArray()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.toString()}' is an array`, tu.interval, 'S0041');
         }
         if (di.isGlsl100es() && tu.declaration && tu.declaration.containsArrayDeclaration()) {

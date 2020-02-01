@@ -6,14 +6,6 @@ export class Keyword {
         this.name = name;
     }
 
-    /*public equals(kw: Keyword): boolean {
-        if (!kw) {
-            return false;
-        }
-        return this.name === kw.name;
-    }*/
-
-
     public toString(): string {
         return this.name;
     }

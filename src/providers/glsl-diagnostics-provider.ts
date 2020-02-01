@@ -4,10 +4,10 @@ import { GlslDocumentInfo } from '../core/glsl-document-info';
 
 export class GlslDiagnosticsProvider {
 
-    //TODO: specifikáció alapján a többi hiba
+    //TODO
 
     private document: TextDocument;
-    private documentInfo: GlslDocumentInfo;
+    private di: GlslDocumentInfo;
     private diagnostics: Array<Diagnostic>;
 
     public textChanged(document: TextDocument, collection: DiagnosticCollection): void {
@@ -23,20 +23,20 @@ export class GlslDiagnosticsProvider {
 
     private initialize(document: TextDocument): void {
         GlslProcessor.processDocument(document);
-        this.documentInfo = GlslProcessor.getDocumentInfo(document.uri);
+        this.di = GlslProcessor.getDocumentInfo(document.uri);
         this.diagnostics = new Array<Diagnostic>();
         this.document = document;
     }
 
     private addUniqueDiagnostics(): void {
-        for (const error of this.documentInfo.errors) {
+        for (const error of this.di.errors) {
             const diagnostic = error.toDiagnostic(this.document);
             this.diagnostics.push(diagnostic);
         }
     }
 
     private addAntlrGeneratedDiagnostics(): void {
-        for (const error of this.documentInfo.generatedErrors) {
+        for (const error of this.di.generatedErrors) {
             const diagnostic = error.toDiagnostic();
             this.diagnostics.push(diagnostic);
         }

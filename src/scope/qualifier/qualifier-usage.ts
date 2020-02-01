@@ -5,7 +5,7 @@ import { Scope } from '../scope';
 
 export class QualifierUsage extends Element {
 
-    public readonly qualifier: Qualifier = null;
+    public readonly qualifier: Qualifier;
 
     public constructor(name: string, nameInterval: Interval, scope: Scope, qualifier: Qualifier) {
         super(name, nameInterval, scope);
@@ -23,12 +23,5 @@ export class QualifierUsage extends Element {
     public isPrecisionQualifier(): boolean {
         return this.qualifier && this.qualifier.isPrecisionQualifier();
     }
-
-    /*public equals(qu: QualifierUsage): boolean {
-        if (!qu) {
-            return false;
-        }
-        return this.name === qu.name;
-    }*/
 
 }

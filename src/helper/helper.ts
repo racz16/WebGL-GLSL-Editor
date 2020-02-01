@@ -55,26 +55,6 @@ export class Helper {
         return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1) : Interval.NONE;
     }
 
-    /*public static intervalToLocation(interval: Interval, document: TextDocument): Location {
-        const range = this.intervalToRange(interval, document);
-        return new Location(document.uri, range);
-    }
-
-    public static intervalToRange(interval: Interval, document: TextDocument): Range {
-        const start = this.offsetToPosition(interval.startIndex, document);
-        const stop = this.offsetToPosition(interval.stopIndex, document);
-        return new Range(start, stop);
-    }
-
-    public static offsetToPosition(offset: number, document: TextDocument): Position {
-        return document.positionAt(offset);
-    }
-
-    public static lineAndCharacterToRange(line: number, character: number): Range {
-        const position = new Position(line - 1, character);
-        return new Range(position, position);
-    }*/
-
     public static getTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: GlslDocumentInfo): TypeDeclaration {
         while (scope) {
             const td = scope.typeDeclarations.find(td => td.name === name && td.structInterval.stopIndex < nameInterval.startIndex);

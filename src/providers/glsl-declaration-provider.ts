@@ -1,5 +1,4 @@
 import { TextDocument, Position, CancellationToken, ProviderResult, Declaration, Location, DeclarationProvider } from 'vscode';
-import { Helper } from '../helper/helper';
 import { PositionalProviderBase } from './positional-provider-base';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
@@ -8,8 +7,6 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
-import { GlslProcessor } from '../core/glsl-processor';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
 
 export class GlslDeclarationProvider extends PositionalProviderBase<Declaration> implements DeclarationProvider {
 
@@ -60,6 +57,5 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
         }
         return null;
     }
-
 
 }
