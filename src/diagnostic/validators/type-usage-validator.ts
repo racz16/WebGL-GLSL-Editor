@@ -1,5 +1,5 @@
 import { TypeUsage } from '../../scope/type/type-usage';
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode';
 import { DiagnosticExtension } from '../diagnostic-extension';
 import { UniqueDiagnostic } from '../unique-diagnostic';
@@ -12,9 +12,9 @@ import { DeclarationValidator } from './declaration-validator';
 export class TypeUsageValidator {
 
     private static tu: TypeUsage;
-    private static di: GlslDocumentInfo;
+    private static di: DocumentInfo;
 
-    private static initialize(tu: TypeUsage, di: GlslDocumentInfo): void {
+    private static initialize(tu: TypeUsage, di: DocumentInfo): void {
         this.tu = tu;
         this.di = di;
     }
@@ -22,7 +22,7 @@ export class TypeUsageValidator {
     //
     //return type
     //
-    public static validateReturnType(tu: TypeUsage, di: GlslDocumentInfo): void {
+    public static validateReturnType(tu: TypeUsage, di: DocumentInfo): void {
         this.initialize(tu, di);
         this.validateType();
         if (tu.declaration && tu.declaration.isOpaque()) {
@@ -66,7 +66,7 @@ export class TypeUsageValidator {
     //
     //function parameter
     //
-    public static validateParameterType(tu: TypeUsage, di: GlslDocumentInfo): void {
+    public static validateParameterType(tu: TypeUsage, di: DocumentInfo): void {
         this.initialize(tu, di);
         this.validateType();
         if (tu.inlineStructDeclaration) {
@@ -101,7 +101,7 @@ export class TypeUsageValidator {
     //
     //member type
     //
-    public static validateMemberType(tu: TypeUsage, di: GlslDocumentInfo): void {
+    public static validateMemberType(tu: TypeUsage, di: DocumentInfo): void {
         this.initialize(tu, di);
         this.validateType();
         this.validateMemberQualifiers();

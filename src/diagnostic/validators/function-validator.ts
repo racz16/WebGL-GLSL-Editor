@@ -1,5 +1,5 @@
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode';
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 import { FunctionDeclaration } from '../../scope/function/function-declaration';
 import { DiagnosticExtension } from '../diagnostic-extension';
 import { UniqueDiagnostic } from '../unique-diagnostic';
@@ -21,17 +21,17 @@ export class FunctionValidator {
     //nem void esetén mindenképpen térjünk vissza és meglfelelő típussal
     //függvényhívások
 
-    private static di: GlslDocumentInfo;
+    private static di: DocumentInfo;
     private static fd: FunctionDeclaration;
     private static mainExists: boolean;
 
-    public static validateFunctions(documentInfo: GlslDocumentInfo): void {
-        this.di = documentInfo;
-        for (const fp of documentInfo.functionPrototypes) {
+    public static validateFunctions(di: DocumentInfo): void {
+        this.di = di;
+        for (const fp of di.getRootScope().functionPrototypes) {
             this.validateFunction(fp);
         }
         this.mainExists = false;
-        for (const fd of documentInfo.functionDefinitions) {
+        for (const fd of di.getRootScope().functionDefinitions) {
             this.validateFunction(fd);
         }
         if (!this.mainExists) {

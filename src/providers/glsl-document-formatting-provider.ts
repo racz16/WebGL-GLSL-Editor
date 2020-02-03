@@ -1,8 +1,8 @@
 import { DocumentFormattingEditProvider, TextDocument, FormattingOptions, CancellationToken, ProviderResult, TextEdit, Range, Position } from 'vscode';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { DocumentInfo } from '../core/document-info';
 import { Token } from 'antlr4ts';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
 
 export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider {
@@ -22,12 +22,22 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     //egy többsoros kommentnek nem feltétlen kéne pl. a következő sorban lébvő utasítás indentációját is elrontania
     //  meg nem biztos, hogy fenn kéne tartani az előtte lévő 1000 üres sort
 
-    private di: GlslDocumentInfo;
+    private di: DocumentInfo;
     private document: TextDocument;
     private options: FormattingOptions;
 
     private blockDepth: number;
     private newLineCount: number;
+
+    private initialize(document: TextDocument, options: FormattingOptions): void {
+        GlslEditor.processDocument(document);
+        this.document = document;
+        this.options = options;
+        this.di = GlslEditor.getDocumentInfo(document.uri);
+
+        this.blockDepth = 0;
+        this.newLineCount = 0;
+    }
 
     public provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
         this.initialize(document, options);
@@ -55,16 +65,6 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             t1 = t2;
         }
         return ret;
-    }
-
-    private initialize(document: TextDocument, options: FormattingOptions): void {
-        GlslProcessor.processDocument(document);
-        this.document = document;
-        this.options = options;
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
-
-        this.blockDepth = 0;
-        this.newLineCount = 0;
     }
 
     private getRange(t1: Token, t2: Token): Range {

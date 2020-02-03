@@ -2,7 +2,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Uri } from 'vscode';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
+import { Redirections } from './redirections';
 
 export class Documentation {
 
@@ -13,37 +14,37 @@ export class Documentation {
 
     private static initialize(): void {
         if (!this.initialized) {
-            this.alert = GlslProcessor.CONFIGURATIONS.getOfflineDocumentationWarning();
-            this.redirections.set('dFdy', 'dFdx');
-            this.redirections.set('floatBitsToUint', 'floatBitsToInt');
-            this.redirections.set('uintBitsToFloat', 'intBitsToFloat');
-            this.redirections.set('packUnorm2x16', 'packUnorm');
-            this.redirections.set('packSnorm2x16', 'packUnorm');
-            this.redirections.set('unpackUnorm2x16', 'unpackUnorm');
-            this.redirections.set('unpackSnorm2x16', 'unpackUnorm');
+            const redirections: Redirections = require('../../res/json/documentation_redirections.json');
+            for (const redirection of redirections.redirections) {
+                this.redirections.set(redirection.from, redirection.to);
+            }
             this.initialized = true;
         }
     }
 
     public static getDocumentation(extensionPath: string, name: string, uri: Uri): string {
         this.initialize();
-        if (this.alert !== GlslProcessor.CONFIGURATIONS.getOfflineDocumentationWarning()) {
+        if (this.alert !== GlslEditor.CONFIGURATIONS.getOfflineDocumentationWarning()) {
             this.alert = !this.alert;
             this.documentations.clear();
         }
         const redirectedName = this.redirections.get(name) ?? name;
         let documentation = this.documentations.get(redirectedName);
         if (!documentation) {
-            const filePath = Uri.file(path.join(extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
-            if (!fs.existsSync(filePath.fsPath)) {
-                return `${name} — documentation is not available`;
-            }
-            const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
-            const alertDisplay = this.alert ? '' : 'display: none;';
-            documentation = this.createHtml(redirectedName, uri, fileContent, alertDisplay);
+            documentation = this.getDocumentationFromFile(extensionPath, name, redirectedName, uri);
             this.documentations.set(redirectedName, documentation);
         }
         return documentation;
+    }
+
+    private static getDocumentationFromFile(extensionPath: string, name: string, redirectedName: string, uri: Uri): string {
+        const filePath = Uri.file(path.join(extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
+        if (!fs.existsSync(filePath.fsPath)) {
+            return `${name} — documentation is not available`;
+        }
+        const fileContent = fs.readFileSync(filePath.fsPath, 'utf8');
+        const alertDisplay = this.alert ? '' : 'display: none;';
+        return this.createHtml(redirectedName, uri, fileContent, alertDisplay);
     }
 
     private static createHtml(redirectedName: string, uri: Uri, fileContent: string, alertDisplay: string): string {

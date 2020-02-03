@@ -28,3 +28,12 @@ export interface TypeMember {
     memberType: string;
     memberName: string;
 }
+
+export interface GenericTypes {
+    types: Array<GenericType>;
+}
+
+export interface GenericType {
+    generic: string;
+    real: Array<string>;
+}

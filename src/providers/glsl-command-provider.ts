@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { ViewColumn, window, Uri, env, ExtensionContext, WebviewPanel, Disposable } from 'vscode';
 import { Documentation } from '../builtin/documentation';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslCommandProvider {
 
@@ -29,12 +29,12 @@ export class GlslCommandProvider {
     public static openDoc(param: any): void {
         const name = param.name ? param.name : param.toString();
         const vc = param.name ? ViewColumn.Beside : ViewColumn.Active;
-        const context = GlslProcessor.getContext();
+        const context = GlslEditor.getContext();
         this.openDocUnsafe(name, vc, context);
     }
 
     private static openDocUnsafe(name: string, vc: ViewColumn, context: ExtensionContext): void {
-        if (GlslProcessor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
+        if (GlslEditor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
             env.openExternal(Uri.parse(`http://docs.gl/el3/${name}`));
         } else {
             this.openOfflineDoc(name, vc, context);
@@ -42,7 +42,7 @@ export class GlslCommandProvider {
     }
 
     private static openOfflineDoc(name: string, vc: ViewColumn, context: ExtensionContext): void {
-        if (!this.panel || !this.isPanelUsable || GlslProcessor.CONFIGURATIONS.getAlwaysOpenOfflineDocInNewTab()) {
+        if (!this.panel || !this.isPanelUsable || GlslEditor.CONFIGURATIONS.getAlwaysOpenOfflineDocInNewTab()) {
             this.panel = this.createPanel(name, vc, context);
         }
         this.panel.title = name;

@@ -12,8 +12,8 @@ import { TypeUsage } from '../scope/type/type-usage';
 export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<DocumentHighlight>> implements DocumentHighlightProvider {
 
     //TODO:
-    //függvényhez return-ök, discard-ok
-    //ciklushoz break-ek, return-ök, discard-ok
+    //return type: returns, discards
+    //for, while: breaks, (returns, discards)? 
 
     public provideDocumentHighlights(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<DocumentHighlight[]> {
         return this.processElements(document, position);

@@ -1,7 +1,6 @@
-import { Types, OpaqueType, CustomType, TypeMember } from './types';
+import { Types, OpaqueType, CustomType, TypeMember, GenericTypes } from './types';
 import { Keywords } from './keywords';
-import { Qualifiers } from './qualifiers';
-import { QualifierRules } from './qualifier-rules';
+import { Qualifiers, QualifierRules } from './qualifiers';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -14,12 +13,14 @@ import { Interval } from '../scope/interval';
 import { Variables, Variable } from './variables';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { ReservedWords } from './reserved-words';
-import { Functions, Parameter, FunctionSummaries, FunctionSummary, FunctionInfo } from './functions';
+import { Functions, Parameter, FunctionSummaries, FunctionSummary, ImportantFunctions } from './functions';
 import { MarkdownString } from 'vscode';
-import { ShaderStage } from '../core/shader-stage';
+import { ShaderStage } from '../scope/shader-stage';
 import { GlslCommandProvider } from '../providers/glsl-command-provider';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
+import { FunctionInfo } from '../scope/function/function-info';
+import { GenericTypeProcessor } from './generic-type-processor';
 
 export class Builtin {
 
@@ -31,12 +32,14 @@ export class Builtin {
 
     public readonly functions = new Array<FunctionDeclaration>();
     public readonly functionSummaries = new Map<string, FunctionInfo>();
+    public readonly importantFunctions = new Array<string>();
     public readonly variables = new Map<string, VariableDeclaration>();
     public readonly types = new Map<string, TypeDeclaration>();
     public readonly keywords = new Array<Keyword>();
     public readonly qualifiers = new Map<string, Qualifier>();
     public readonly qualifierRules = new Array<Set<Qualifier>>();
     public readonly reservedWords = new Array<string>();
+    public readonly genericTypes = new Map<string, Array<string>>();
 
     private constructor() { }
 
@@ -47,10 +50,12 @@ export class Builtin {
         this.loadQualifiers();
         this.loadQualifierRules();
         this.loadTypes();
+        this.loadGenericTypes();
         this.addConstructors();
         this.loadVariables();
         this.loadFunctions();
         this.loadFunctionSummaries();
+        this.loadImportantFunctions();
     }
 
     //
@@ -163,6 +168,21 @@ export class Builtin {
     }
 
     //
+    //generic types
+    //
+    private loadGenericTypes(): void {
+        const genTypes: GenericTypes = require(this.getPath('generic_types'));
+        for (const genType of genTypes.types) {
+            const generic = genType.generic;
+            const reals = new Array<string>();
+            for (const real of genType.real) {
+                reals.push(real);
+            }
+            this.genericTypes.set(generic, reals);
+        }
+    }
+
+    //
     //constructors--------------------------------------------------------------
     //
     private addConstructors(): void {
@@ -231,7 +251,7 @@ export class Builtin {
         mds.appendText(Constants.CRLF);
         if (variable.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: variable.name, active: true }));
-            mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+            mds.appendMarkdown(`[Open documentation](command:${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;
@@ -251,28 +271,29 @@ export class Builtin {
     //functions-----------------------------------------------------------------
     //
     private loadFunctions(): void {
-        //TODO genType átalakítás
         const functions: Functions = require(this.getPath('functions'));
-        for (const func of functions.functions) {
-            const td = this.types.get(func.returnType);
-            const tu = new TypeUsage(func.returnType, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
-            if (func.qualifiers) {
-                for (const qualifier of func.qualifiers) {
-                    const q = this.qualifiers.get(qualifier);
-                    const qu = new QualifierUsage(qualifier, Interval.NONE, null, q);
-                    tu.qualifiers.push(qu);
+        for (const genericFunc of functions.functions) {
+            for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
+                const td = this.types.get(realFunc.returnType);
+                const tu = new TypeUsage(realFunc.returnType, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                if (realFunc.qualifiers) {
+                    for (const qualifier of realFunc.qualifiers) {
+                        const q = this.qualifiers.get(qualifier);
+                        const qu = new QualifierUsage(qualifier, Interval.NONE, null, q);
+                        tu.qualifiers.push(qu);
+                    }
                 }
+                const stage = this.getStage(realFunc.stage);
+                const fp = new FunctionDeclaration(realFunc.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, null, stage);
+                for (const parameter of realFunc.parameters) {
+                    const td = this.types.get(parameter.type);
+                    const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                    const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
+                    this.addVariableQualifiers(tu, parameter);
+                    fp.parameters.push(vd);
+                }
+                this.functions.push(fp);
             }
-            const stage = this.getStage(func.stage);
-            const fp = new FunctionDeclaration(func.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, null, stage);
-            for (const parameter of func.parameters) {
-                const td = this.types.get(parameter.type);
-                const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
-                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
-                this.addVariableQualifiers(tu, parameter);
-                fp.parameters.push(vd);
-            }
-            this.functions.push(fp);
         }
     }
 
@@ -299,12 +320,18 @@ export class Builtin {
         mds.appendText(Constants.CRLF);
         if (func.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: func.name, active: true }));
-            mds.appendMarkdown(`[Open documentation](command:${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+            mds.appendMarkdown(`[Open documentation](command:${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;
     }
 
+    private loadImportantFunctions(): void {
+        const functions: ImportantFunctions = require(`${Builtin.JSON_PATH}/important_functions.json`);
+        for (const func of functions.importantFunctions) {
+            this.importantFunctions.push(func);
+        }
+    }
 
     //
     //
@@ -321,7 +348,7 @@ export class Builtin {
         return `${Builtin.JSON_PATH}/${name}_${this.postfix}.json`;
     }
 
-    public createNewInstance(): Builtin {
+    public clone(): Builtin {
         const bi = new Builtin();
         for (const reserved of this.reservedWords) {
             bi.reservedWords.push(reserved);
@@ -352,6 +379,9 @@ export class Builtin {
                 td.members.push(vd);
             }
             bi.types.set(type.name, td);
+        }
+        for (const type of this.genericTypes) {
+            bi.genericTypes.set(type[0], type[1]);
         }
         for (const variable of this.variables.values()) {
             const td = bi.types.get(variable.type.name);
@@ -391,6 +421,9 @@ export class Builtin {
         for (const func of this.functionSummaries) {
             bi.functionSummaries.set(func[0], func[1]);
         }
+        for (const func of this.importantFunctions) {
+            bi.importantFunctions.push(func);
+        }
         return bi;
     }
 
@@ -406,13 +439,12 @@ export class Builtin {
         }
     }
 
-
     public static get100(): Builtin {
         if (!this.builtin_100) {
             this.builtin_100 = new Builtin();
             this.builtin_100.setValues('100');
         }
-        return this.builtin_100.createNewInstance();
+        return this.builtin_100.clone();
     }
 
     public static get300(): Builtin {
@@ -420,7 +452,7 @@ export class Builtin {
             this.builtin_300 = new Builtin();
             this.builtin_300.setValues('300');
         }
-        return this.builtin_300.createNewInstance();
+        return this.builtin_300.clone();
     }
 
 }

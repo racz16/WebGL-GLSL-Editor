@@ -1,18 +1,17 @@
 import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, MarkdownString } from 'vscode';
-import { GlslProcessor } from '../core/glsl-processor';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { Scope } from '../scope/scope';
 import { TypeCategory } from '../scope/type/type-category';
-import { ShaderStage } from '../core/shader-stage';
+import { ShaderStage } from '../scope/shader-stage';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
-    private di: GlslDocumentInfo;
+    private di: DocumentInfo;
     private position: Position;
     private offset: number;
     private items: Array<CompletionItem>;
-    private importantElements = ['cross', 'distance', 'dot', 'inverse', 'length', 'normalize', 'reflect', 'refract', 'texture', 'transpose', 'vec2', 'vec3', 'vec4', 'mat3', 'mat4'];
 
     //TODO:
     //struct members, swizzle
@@ -20,8 +19,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //context based completion
 
     private initialize(document: TextDocument, position: Position): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        GlslEditor.processDocument(document);
+        this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
         this.offset = document.offsetAt(position);
     }
@@ -45,7 +44,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //function
     //
     private addFunctionCompletionItems(): void {
-        for (const lf of this.di.functions) {
+        for (const lf of this.di.getRootScope().functions) {
             const ci = this.getFunctionCompletionItem(lf);
             if (ci) {
                 this.items.push(ci);
@@ -55,7 +54,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             if (this.isAvailableInThisStage(func.stage)) {
                 const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
                 const ci = new CompletionItem(func.name, kind);
-                if (this.importantElements.includes(ci.label)) {
+                if (this.di.builtin.importantFunctions.includes(ci.label)) {
                     this.makeItImportant(ci);
                 }
                 ci.detail = func.ctor ? null : 'Built-In Function';

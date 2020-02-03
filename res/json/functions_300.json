@@ -1689,7 +1689,7 @@
             "name": "texture",
             "parameters": [
                 {
-                    "type": "gsampler2DArrayShadow",
+                    "type": "sampler2DArrayShadow",
                     "name": "sampler"
                 },
                 {
@@ -1835,7 +1835,7 @@
             "name": "textureGrad",
             "parameters": [
                 {
-                    "type": "gsampler2DArrayShadow",
+                    "type": "sampler2DArrayShadow",
                     "name": "sampler"
                 },
                 {

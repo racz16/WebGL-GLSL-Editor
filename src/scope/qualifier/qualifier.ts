@@ -1,5 +1,5 @@
 import { QualifierUsage } from './qualifier-usage';
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 
 export class Qualifier {
 
@@ -24,14 +24,14 @@ export class Qualifier {
         return this.name === 'lowp' || this.name === 'mediump' || this.name === 'highp';
     }
 
-    public isCompatibleWith(qualifier: Qualifier, di: GlslDocumentInfo): boolean {
+    public isCompatibleWith(qualifier: Qualifier, di: DocumentInfo): boolean {
         if (this === qualifier) {
             return false;
         }
         return this.isCompatibleWithUnsafe(qualifier, di);
     }
 
-    private isCompatibleWithUnsafe(qualifier: Qualifier, di: GlslDocumentInfo): boolean {
+    private isCompatibleWithUnsafe(qualifier: Qualifier, di: DocumentInfo): boolean {
         for (const qs of di.builtin.qualifierRules) {
             if (qs.has(this) && qs.has(qualifier)) {
                 return false;

@@ -15,11 +15,12 @@ export class TypeUsage extends Element {
     public readonly array = new Array<number>();
     public readonly inlineStructDeclaration: boolean;
 
-    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, declaration: TypeDeclaration, inlineStructDeclaration = false) {
+    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, declaration: TypeDeclaration, arraySize = new Array<number>(), inlineStructDeclaration = false) {
         super(name, nameInterval, scope);
         this.declaration = declaration;
         this.interval = interval;
         this.arrayInterval = arrayInterval;
+        this.array = arraySize;
         this.inlineStructDeclaration = inlineStructDeclaration;
     }
 

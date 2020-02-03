@@ -1,4 +1,4 @@
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 import { VariableDeclaration } from '../../scope/variable/variable-declaration';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode';
 import { DiagnosticExtension } from '../diagnostic-extension';
@@ -11,12 +11,12 @@ import { TypeDeclaration } from '../../scope/type/type-declaration';
 
 export class DeclarationValidator {
 
-    private static di: GlslDocumentInfo;
+    private static di: DocumentInfo;
 
     //
     //function parameter declaration
     //
-    public static validateParameter(vd: VariableDeclaration, di: GlslDocumentInfo): void {
+    public static validateParameter(vd: VariableDeclaration, di: DocumentInfo): void {
         this.di = di;
         //TODO: nem lehet inicializálva
         TypeUsageValidator.validateParameterType(vd.type, di);
@@ -26,7 +26,7 @@ export class DeclarationValidator {
     //
     //struct member
     //
-    public static validateMember(vd: VariableDeclaration, di: GlslDocumentInfo): void {
+    public static validateMember(vd: VariableDeclaration, di: DocumentInfo): void {
         this.di = di;
         //TODO: nem lehet inicializálva
         TypeUsageValidator.validateMemberType(vd.type, di);
@@ -39,14 +39,14 @@ export class DeclarationValidator {
     //
     //type declarations
     //
-    public static validateTypeDeclarations(scope: Scope, di: GlslDocumentInfo): void {
+    public static validateTypeDeclarations(scope: Scope, di: DocumentInfo): void {
         this.di = di;
         for (const td of scope.typeDeclarations) {
             this.validateTypeDeclaration(td, di);
         }
     }
 
-    public static validateTypeDeclaration(td: TypeDeclaration, di: GlslDocumentInfo): void {
+    public static validateTypeDeclaration(td: TypeDeclaration, di: DocumentInfo): void {
         this.di = di;
         GeneralValidator.validateIdentifier(td, this.di);
         for (const vd of td.members) {

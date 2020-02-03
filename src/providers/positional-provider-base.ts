@@ -1,7 +1,7 @@
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 import { TextDocument, Position } from 'vscode';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { DocumentInfo } from '../core/document-info';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -10,13 +10,13 @@ import { FunctionCall } from '../scope/function/function-call';
 
 export class PositionalProviderBase<T> {
 
-    protected di: GlslDocumentInfo;
+    protected di: DocumentInfo;
     protected document: TextDocument;
     protected position: Position;
 
     protected initialize(document: TextDocument, position: Position): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        GlslEditor.processDocument(document);
+        this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
     }

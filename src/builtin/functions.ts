@@ -1,6 +1,3 @@
-import { ShaderStage } from '../core/shader-stage';
-import { MarkdownString } from 'vscode';
-
 export interface Functions {
     functions: Array<Function>;
 }
@@ -30,16 +27,6 @@ export interface FunctionSummary {
     stage: string;
 }
 
-export class FunctionInfo {
-    name: string;
-    summary: MarkdownString;
-    stage: ShaderStage;
-    ctor: boolean;
-
-    public constructor(name: string, summary: MarkdownString, stage: ShaderStage, ctor: boolean) {
-        this.name = name;
-        this.summary = summary;
-        this.stage = stage;
-        this.ctor = ctor;
-    }
+export interface ImportantFunctions {
+    importantFunctions: Array<string>;
 }

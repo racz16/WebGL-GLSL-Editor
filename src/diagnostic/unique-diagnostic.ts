@@ -1,6 +1,5 @@
 import { DiagnosticSeverity, DiagnosticTag, Diagnostic, TextDocument, DiagnosticRelatedInformation } from 'vscode';
 import { DiagnosticExtension } from './diagnostic-extension';
-import { Helper } from '../helper/helper';
 import { Interval } from '../scope/interval';
 
 export class UniqueDiagnostic {

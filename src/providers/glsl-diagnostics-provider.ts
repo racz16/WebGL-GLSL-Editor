@@ -1,13 +1,13 @@
 import { TextDocument, DiagnosticCollection, Diagnostic } from 'vscode';
-import { GlslProcessor } from '../core/glsl-processor';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { DocumentInfo } from '../core/document-info';
 
 export class GlslDiagnosticsProvider {
 
     //TODO
 
     private document: TextDocument;
-    private di: GlslDocumentInfo;
+    private di: DocumentInfo;
     private diagnostics: Array<Diagnostic>;
 
     public textChanged(document: TextDocument, collection: DiagnosticCollection): void {
@@ -22,8 +22,8 @@ export class GlslDiagnosticsProvider {
     }
 
     private initialize(document: TextDocument): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        GlslEditor.processDocument(document);
+        this.di = GlslEditor.getDocumentInfo(document.uri);
         this.diagnostics = new Array<Diagnostic>();
         this.document = document;
     }

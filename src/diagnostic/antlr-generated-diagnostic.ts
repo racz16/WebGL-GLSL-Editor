@@ -1,6 +1,5 @@
 import { Recognizer, RecognitionException, CommonToken } from 'antlr4ts';
-import { Diagnostic, DiagnosticSeverity } from 'vscode';
-import { Helper } from '../helper/helper';
+import { Diagnostic } from 'vscode';
 
 export class AntlrGeneratedDiagnostic {
 

@@ -3,9 +3,9 @@ import { LogicalFunction } from './logical-function';
 import { Interval } from '../interval';
 import { TypeUsage } from '../type/type-usage';
 import { VariableDeclaration } from '../variable/variable-declaration';
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 import { Scope } from '../scope';
-import { ShaderStage } from '../../core/shader-stage';
+import { ShaderStage } from '../shader-stage';
 
 export class FunctionDeclaration extends Element {
 
@@ -50,7 +50,7 @@ export class FunctionDeclaration extends Element {
         return true;
     }
 
-    public isDuplicateOf(element: Element, di: GlslDocumentInfo): boolean {
+    public isDuplicateOf(element: Element, di: DocumentInfo): boolean {
         if (element instanceof FunctionDeclaration) {
             const fd = element;
             const prototypes = this.logicalFunction.prototypes;

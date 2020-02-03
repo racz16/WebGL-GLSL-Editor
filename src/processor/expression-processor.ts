@@ -1,19 +1,18 @@
 import { ExpressionContext } from '../_generated/AntlrGlslParser';
 import { TypeDeclaration } from '../scope/type/type-declaration';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
-import { Helper } from './helper';
+import { DocumentInfo } from '../core/document-info';
 
-export class ExpressionHelper {
+export class ExpressionProcessor {
 
     private ctx: ExpressionContext;
-    private di: GlslDocumentInfo;
+    private di: DocumentInfo;
 
-    private initialize(ctx: ExpressionContext, di: GlslDocumentInfo): void {
+    private initialize(ctx: ExpressionContext, di: DocumentInfo): void {
         this.ctx = ctx;
         this.di = di;
     }
 
-    public processExpression(ctx: ExpressionContext, di: GlslDocumentInfo): ExpressionType {
+    public processExpression(ctx: ExpressionContext, di: DocumentInfo): ExpressionType {
         this.initialize(ctx, di);
         if (this.isLiteral()) {
             return this.processLiteral();
@@ -64,7 +63,7 @@ export class ExpressionHelper {
     }
 
     private processParenthesizedExpression(): ExpressionType {
-        return new ExpressionHelper().processExpression(this.ctx.expression()[0], this.di);
+        return new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.di);
     }
 
 }

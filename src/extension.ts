@@ -11,7 +11,7 @@ import { GlslReferenceProvider } from './providers/glsl-reference-provider';
 import { GlslTypeDefinitionProvider } from './providers/glsl-type-definition-provider';
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
 import { GlslCommandProvider } from './providers/glsl-command-provider';
-import { GlslProcessor } from './core/glsl-processor';
+import { GlslEditor } from './core/glsl-editor';
 
 //TODO:
 //writing readme and the changelog, icon, badges
@@ -28,7 +28,7 @@ import { GlslProcessor } from './core/glsl-processor';
 //	redundant qualifier warning etc function parameter in or highp float in vertex shader etc.
 
 export function activate(context: ExtensionContext) {
-	GlslProcessor.initialize(context);
+	GlslEditor.initialize(context);
 
 	const selector = [
 		{ language: 'glsl', scheme: 'file' },
@@ -44,7 +44,6 @@ export function activate(context: ExtensionContext) {
 	];
 
 	//diagnostics
-	//TODO
 	/*const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
 		if (editor.document.languageId === 'glsl') {
@@ -68,17 +67,17 @@ export function activate(context: ExtensionContext) {
 	}));*/
 
 	//offline documentation
-	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {
+	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {
 		GlslCommandProvider.openDoc(param);
 	}));
 	//online docimentation
-	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOCS_GL}`, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOCS_GL}`, () => {
 		GlslCommandProvider.openDocsGl();
 	}));
-	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_2}`, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_2}`, () => {
 		GlslCommandProvider.openGlEs2();
 	}));
-	context.subscriptions.push(commands.registerCommand(`${GlslProcessor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_3}`, () => {
+	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_3}`, () => {
 		GlslCommandProvider.openGlEs3();
 	}));
 	//highlight

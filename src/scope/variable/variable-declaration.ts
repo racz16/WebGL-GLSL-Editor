@@ -4,7 +4,7 @@ import { VariableUsage } from './variable-usage';
 import { Interval } from '../interval';
 import { MarkdownString } from 'vscode';
 import { Scope } from '../scope';
-import { ShaderStage } from '../../core/shader-stage';
+import { ShaderStage } from '../shader-stage';
 
 export class VariableDeclaration extends Element {
 

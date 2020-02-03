@@ -8,7 +8,7 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
 
@@ -78,7 +78,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     //validate
     //
     private validateGeneral(): void {
-        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+        if (!GlslEditor.CONFIGURATIONS.getStrictRename()) {
             return;
         }
         if (this.newName.length > 1024) {
@@ -122,14 +122,14 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateStructOrVariable(): void {
-        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+        if (!GlslEditor.CONFIGURATIONS.getStrictRename()) {
             return;
         }
         const scope = this.di.getScopeAt(this.position);
-        if (scope.isGlobal() && this.di.functionPrototypes.find(fp => fp.name === this.newName)) {
+        if (scope.isGlobal() && this.di.getRootScope().functionPrototypes.find(fp => fp.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
-        if (scope.isGlobal() && this.di.functionDefinitions.find(fd => fd.name === this.newName)) {
+        if (scope.isGlobal() && this.di.getRootScope().functionDefinitions.find(fd => fd.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
         if (scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
@@ -138,11 +138,11 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateFunction(): void {
-        if (!GlslProcessor.CONFIGURATIONS.getStrictRename()) {
+        if (!GlslEditor.CONFIGURATIONS.getStrictRename()) {
             return;
         }
         const fd = this.lf.definitions.length ? this.lf.definitions[0] : this.lf.prototypes[0];
-        for (const lf2 of this.di.functions) {
+        for (const lf2 of this.di.getRootScope().functions) {
             if (this.lf !== lf2) {
                 const fd2 = lf2.definitions.length ? lf2.definitions[0] : lf2.prototypes[0];
                 this.validateFunctionWithOtherFunction(fd, fd2);

@@ -1,5 +1,5 @@
 import { Interval } from './interval';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { DocumentInfo } from '../core/document-info';
 import { Scope } from './scope';
 
 export abstract class Element {
@@ -14,7 +14,7 @@ export abstract class Element {
         this.scope = scope;
     }
 
-    public isDuplicateOf(element: Element, di: GlslDocumentInfo): boolean {
+    public isDuplicateOf(element: Element, di: DocumentInfo): boolean {
         return element && this.name === element.name && element !== this;
     }
 

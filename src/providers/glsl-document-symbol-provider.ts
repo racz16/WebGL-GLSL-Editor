@@ -1,7 +1,7 @@
 import { DocumentSymbolProvider, TextDocument, CancellationToken, ProviderResult, SymbolInformation, DocumentSymbol, SymbolKind, Range } from 'vscode';
-import { GlslProcessor } from '../core/glsl-processor';
+import { GlslEditor } from '../core/glsl-editor';
 import { Scope } from '../scope/scope';
-import { GlslDocumentInfo } from '../core/glsl-document-info';
+import { DocumentInfo } from '../core/document-info';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
@@ -9,15 +9,15 @@ import { Interval } from '../scope/interval';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
 
-    private di: GlslDocumentInfo;
+    private di: DocumentInfo;
     private result: Array<DocumentSymbol>;
 
     //TODO:
     //interface blocks
 
     private initialize(document: TextDocument): void {
-        GlslProcessor.processDocument(document);
-        this.di = GlslProcessor.getDocumentInfo(document.uri);
+        GlslEditor.processDocument(document);
+        this.di = GlslEditor.getDocumentInfo(document.uri);
         this.result = new Array<DocumentSymbol>();
     }
 
@@ -29,7 +29,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         for (const vd of this.di.getRootScope().variableDeclarations) {
             this.addVariable(vd, null, false, false);
         }
-        for (const fd of this.di.functionDefinitions) {
+        for (const fd of this.di.getRootScope().functionDefinitions) {
             this.addFunction(fd);
         }
         return this.result;

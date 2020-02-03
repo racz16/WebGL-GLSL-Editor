@@ -2,11 +2,10 @@ import { Uri, TextDocument, Position, Location, Range } from 'vscode';
 import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
 import { GlslVisitor } from './glsl-visitor';
 import { UniqueDiagnostic } from '../diagnostic/unique-diagnostic';
-import { GlslErrorListener } from './glsl-error-listener';
+import { ErrorListener } from '../diagnostic/error-listener';
 import { AntlrGeneratedDiagnostic } from '../diagnostic/antlr-generated-diagnostic';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
-import { LogicalFunction } from '../scope/function/logical-function';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
@@ -16,24 +15,17 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { FunctionCall } from '../scope/function/function-call';
-import { Validator } from '../diagnostic/validators/validator';
-import { ShaderStage } from './shader-stage';
+import { ShaderStage } from '../scope/shader-stage';
 
-export class GlslDocumentInfo {
+export class DocumentInfo {
     private readonly uri: Uri;
     private lastProcessedVersion = -1;
-    private glslVersion = 100;
+    private version = 100;
     private stage: ShaderStage;
     private tokens: Array<Token>;
 
-    //public readonly FOLDING_BLOCKS = new Array<FoldingBlock>();
-    //public readonly BRACELESS_SCOPES = new Array<Scope>();
     public readonly errors = new Array<UniqueDiagnostic>();
     public generatedErrors = new Array<AntlrGeneratedDiagnostic>();
-    //public readonly MACRO_DEFINITIONS = new Array<string>();
-    public readonly functions = new Array<LogicalFunction>();
-    public readonly functionPrototypes = new Array<FunctionDeclaration>();
-    public readonly functionDefinitions = new Array<FunctionDeclaration>();
     public builtin: Builtin;
 
     private document: TextDocument;
@@ -42,6 +34,14 @@ export class GlslDocumentInfo {
     public constructor(uri: Uri) {
         this.uri = uri;
         this.setShaderStage();
+    }
+
+    public reset(): void {
+        if (this.builtin) {
+            this.builtin.reset();
+        }
+        this.errors.length = 0;
+        this.rootScope = new Scope(Interval.NONE, null);
     }
 
     public getShaderStage(): ShaderStage {
@@ -58,45 +58,48 @@ export class GlslDocumentInfo {
         }
     }
 
-    public reset(): void {
-        //this.FOLDING_BLOCKS.length = 0;
-        //this.BRACELESS_SCOPES.length = 0;
-        //this.MACRO_DEFINITIONS.length = 0;
-        if (this.builtin) {
-            this.builtin.reset();
+    public isGlsl300es(): boolean {
+        return this.version === 300;
+    }
+
+    public isGlsl100es(): boolean {
+        return this.version === 100;
+    }
+
+    public getVersion(): number {
+        return this.version;
+    }
+
+    public setVersion(version: 100 | 300): void {
+        if (version !== this.version || !this.builtin) {
+            this.version = version;
+            if (version === 100) {
+                this.builtin = Builtin.get100();
+            } else {
+                this.builtin = Builtin.get300();
+            }
         }
-        this.errors.length = 0;
-        this.functions.length = 0;
-        this.functionPrototypes.length = 0;
-        this.functionDefinitions.length = 0;
-        this.rootScope = new Scope(Interval.NONE, null);
     }
 
     public getRootScope(): Scope {
         return this.rootScope;
     }
 
-    public setVersion(version: 100 | 300): void {
-        this.glslVersion = version;
-        if (version === 100) {
-            this.builtin = Builtin.get100();
-        } else {
-            this.builtin = Builtin.get300();
-        }
+    public getTokens(): Array<Token> {
+        return this.tokens;
     }
 
-    public isGlsl300es(): boolean {
-        return this.glslVersion === 300;
+    public getUri(): Uri {
+        return this.uri;
     }
 
-    public isGlsl100es(): boolean {
-        return this.glslVersion === 100;
+    public getLastProcessedVersion(): number {
+        return this.lastProcessedVersion;
     }
 
-    public getGlslVersion(): number {
-        return this.glslVersion;
-    }
-
+    //
+    //process
+    //
     public processDocument(document: TextDocument): void {
         this.document = document;
         if (document.version > this.lastProcessedVersion) {
@@ -129,8 +132,8 @@ export class GlslDocumentInfo {
 
     private getGeneratedErrors(parser: AntlrGlslParser): Array<AntlrGeneratedDiagnostic> {
         parser.removeErrorListeners();
-        parser.addErrorListener(new GlslErrorListener());
-        const listener = parser.getErrorListeners()[0] as GlslErrorListener;
+        parser.addErrorListener(new ErrorListener());
+        const listener = parser.getErrorListeners()[0] as ErrorListener;
         return listener.getSyntaxErrors();
     }
 
@@ -161,42 +164,6 @@ export class GlslDocumentInfo {
         const position = new Position(line - 1, character);
         return new Range(position, position);
     }
-    //
-    //
-    //
-
-    public getScopeAt(position: Position): Scope {
-        let scope: Scope = this.rootScope;
-        while (true) {
-            const newScope = this.getChildScope(scope, position);
-            if (!newScope) {
-                return scope;
-            } else {
-                scope = newScope;
-            }
-        }
-    }
-
-    /*public isVariableVisibleAt(position: Position, document: TextDocument, name: string): boolean {
-        return this.isElementVisibleAt(position, document, name, 'variableDeclarations');
-    }
-
-    public isTypeVisibleAt(position: Position, document: TextDocument, name: string): boolean {
-        return this.isElementVisibleAt(position, document, name, 'typeDeclarations');
-    }
-
-    private isElementVisibleAt(position: Position, document: TextDocument, name: string, type: 'variableDeclarations' | 'typeDeclarations'): boolean {
-        let scope: Scope = this.rootScope;
-        while (scope) {
-            for (const element of scope[type]) {
-                if (element.name === name) {
-                    return true;
-                }
-            }
-            scope = this.getChildScope(scope, position, document);
-        }
-        return false;
-    }*/
 
     //
     //get elements
@@ -204,11 +171,11 @@ export class GlslDocumentInfo {
 
     //function
     public getFunctionPrototypeAt(position: Position): FunctionDeclaration {
-        return this.getFunction(this.functionPrototypes, position);
+        return this.getFunction(this.getRootScope().functionPrototypes, position);
     }
 
     public getFunctionDefinitionAt(position: Position): FunctionDeclaration {
-        return this.getFunction(this.functionDefinitions, position);
+        return this.getFunction(this.getRootScope().functionDefinitions, position);
     }
 
     private getFunction(functionList: Array<FunctionDeclaration>, position: Position) {
@@ -245,7 +212,7 @@ export class GlslDocumentInfo {
         return this.getElementAt(position, 'typeUsages') as TypeUsage;
     }
 
-    //
+    //generic
     private getElementAt(position: Position, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall {
         let scope: Scope = this.rootScope;
         while (scope) {
@@ -259,6 +226,18 @@ export class GlslDocumentInfo {
         return null;
     }
 
+    public getScopeAt(position: Position): Scope {
+        let scope: Scope = this.rootScope;
+        while (true) {
+            const newScope = this.getChildScope(scope, position);
+            if (!newScope) {
+                return scope;
+            } else {
+                scope = newScope;
+            }
+        }
+    }
+
     public getChildScope(scope: Scope, position: Position): Scope {
         for (const childScope of scope.children) {
             if (this.intervalToRange(childScope.interval).contains(position)) {
@@ -266,21 +245,6 @@ export class GlslDocumentInfo {
             }
         }
         return null;
-    }
-
-    //
-    //
-    //
-    public getTokens(): Array<Token> {
-        return this.tokens;
-    }
-
-    public getUri(): Uri {
-        return this.uri;
-    }
-
-    public getLastProcessedVersion(): number {
-        return this.lastProcessedVersion;
     }
 
 }

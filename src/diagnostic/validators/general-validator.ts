@@ -1,5 +1,5 @@
 import { Interval } from '../../scope/interval';
-import { GlslDocumentInfo } from '../../core/glsl-document-info';
+import { DocumentInfo } from '../../core/document-info';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode';
 import { DiagnosticExtension } from '../diagnostic-extension';
 import { UniqueDiagnostic } from '../unique-diagnostic';
@@ -7,15 +7,15 @@ import { Element } from '../../scope/element';
 
 export class GeneralValidator {
 
-    private static di: GlslDocumentInfo;
+    private static di: DocumentInfo;
     private static element: Element;
 
-    private static initialize(element: Element, di: GlslDocumentInfo): void {
+    private static initialize(element: Element, di: DocumentInfo): void {
         this.di = di;
         this.element = element;
     }
 
-    public static validateIdentifier(element: Element, di: GlslDocumentInfo): void {
+    public static validateIdentifier(element: Element, di: DocumentInfo): void {
         this.initialize(element, di);
         const identifier = element.name;
         if (identifier) {
@@ -39,8 +39,8 @@ export class GeneralValidator {
         this.validateIdentifierDuplicationWithOthers(this.element.scope.typeDeclarations);
         this.validateIdentifierDuplicationWithOthers(this.element.scope.variableDeclarations);
         if (this.element.scope.isGlobal()) {
-            this.validateIdentifierDuplicationWithOthers(this.di.functionPrototypes);
-            this.validateIdentifierDuplicationWithOthers(this.di.functionDefinitions);
+            this.validateIdentifierDuplicationWithOthers(this.di.getRootScope().functionPrototypes);
+            this.validateIdentifierDuplicationWithOthers(this.di.getRootScope().functionDefinitions);
         }
     }
 
