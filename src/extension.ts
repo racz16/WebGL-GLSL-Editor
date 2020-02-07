@@ -1,5 +1,5 @@
 import { GlslDocumentHighlightProvider } from './providers/glsl-document-highlight-provider';
-import { ExtensionContext, languages, commands, window, workspace, ConfigurationChangeEvent } from 'vscode';
+import { ExtensionContext, languages, commands, workspace, Diagnostic, DiagnosticSeverity, window } from 'vscode';
 import { GlslCompletionProvider } from './providers/glsl-completion-provider';
 import { GlslDocumentSymbolProvider } from './providers/glsl-document-symbol-provider';
 import { GlslDeclarationProvider } from './providers/glsl-declaration-provider';
@@ -12,6 +12,7 @@ import { GlslTypeDefinitionProvider } from './providers/glsl-type-definition-pro
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
 import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslEditor } from './core/glsl-editor';
+import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 
 //TODO:
 //writing readme and the changelog, icon, badges
@@ -44,15 +45,15 @@ export function activate(context: ExtensionContext) {
 	];
 
 	//diagnostics
-	/*const collection = languages.createDiagnosticCollection('glsl');
+	const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
 		if (editor.document.languageId === 'glsl') {
-			new GlslDiagnosticsProvider().textChanged(editor.document, collection);
+			new GlslDiagnosticProvider().textChanged(editor.document, collection);
 		}
 	}
 	context.subscriptions.push(workspace.onDidOpenTextDocument(event => {
 		if (event.languageId === 'glsl') {
-			new GlslDiagnosticsProvider().textChanged(event, collection);
+			new GlslDiagnosticProvider().textChanged(event, collection);
 		}
 	}));
 	context.subscriptions.push(workspace.onDidCloseTextDocument(event => {
@@ -62,9 +63,9 @@ export function activate(context: ExtensionContext) {
 	}));
 	context.subscriptions.push(workspace.onDidChangeTextDocument(event => {
 		if (event.document.languageId === 'glsl') {
-			new GlslDiagnosticsProvider().textChanged(event.document, collection);
+			new GlslDiagnosticProvider().textChanged(event.document, collection);
 		}
-	}));*/
+	}));
 
 	//offline documentation
 	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {

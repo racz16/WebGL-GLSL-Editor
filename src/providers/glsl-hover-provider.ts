@@ -15,10 +15,12 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
     protected processFunctionCall(fc: FunctionCall): Hover {
         const fd = fc.logicalFunction?.getDeclaration();
         if (fd) {
-            let md = new MarkdownString(fd.toStringDocumentation());
             const fi = this.di.builtin.functionSummaries.get(fd.name);
+            const md = new MarkdownString(fd.toStringDocumentation());
             if (fi && fi.summary) {
-                md = new MarkdownString(md + Constants.CRLF + Constants.CRLF + '---' + Constants.CRLF + fi.summary);
+                md.appendText(Constants.CRLF);
+                md.appendMarkdown(fi.summary.value);
+                md.isTrusted = true;
             }
             return new Hover(md);
         }
@@ -27,11 +29,12 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
 
     protected processVariableUsage(vu: VariableUsage): Hover {
         if (vu.declaration) {
-            let md = new MarkdownString(vu.declaration.toStringDocumentation());
             if (vu.declaration.summary) {
-                md = new MarkdownString(md + Constants.CRLF + Constants.CRLF + '---' + Constants.CRLF + vu.declaration.summary);
+                return new Hover(vu.declaration.summary);
+            } else {
+                const md = new MarkdownString(vu.declaration.toStringDocumentation());
+                return new Hover(md);
             }
-            return new Hover(md);
         }
         return null;
     }

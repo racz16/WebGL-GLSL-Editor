@@ -27,7 +27,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
             this.addStruct(td, null);
         }
         for (const vd of this.di.getRootScope().variableDeclarations) {
-            this.addVariable(vd, null, false, false);
+            this.addVariable(vd, null, false);
         }
         for (const fd of this.di.getRootScope().functionDefinitions) {
             this.addFunction(fd);
@@ -38,7 +38,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private addFunction(fd: FunctionDeclaration): void {
         const range = this.di.intervalToRange(fd.interval);
         const selectionRange = this.di.intervalToRange(fd.nameInterval);
-        const type = fd.returnType.name ?? '<unnamed struct>';
+        const type = fd.returnType.toStringWithoutQualifiers() ?? '<unnamed struct>';
         const ds = new DocumentSymbol(fd.name, type, SymbolKind.Function, range, selectionRange);
         this.addLocalElements(ds, fd, fd.functionScope);
         this.result.push(ds);
@@ -50,7 +50,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         const name = td.name ?? '<unnamed struct>';
         const ds = new DocumentSymbol(name, null, SymbolKind.Struct, range, selectionRange);
         for (const vd of td.members) {
-            this.addVariable(vd, ds, false, true);
+            this.addVariable(vd, ds, true);
         }
         if (parent) {
             parent.children.push(ds);
@@ -59,13 +59,13 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         }
     }
 
-    private addVariable(vd: VariableDeclaration, parent: DocumentSymbol, parameter: boolean, property: boolean): void {
+    private addVariable(vd: VariableDeclaration, parent: DocumentSymbol, property: boolean): void {
         const range = this.di.intervalToRange(vd.declarationInterval);
         const selectionRange = this.getRange(vd.nameInterval, vd.declarationInterval);
         const name = vd.name ?? '<unnamed variable>';
-        let info = vd.type.name ?? '<unnamed struct>';
-        info = parameter ? info + ' (parameter)' : info;
-        const sk = property ? SymbolKind.Property : SymbolKind.Variable;
+        let info = vd.type.toStringWithoutQualifiers() ?? '<unnamed struct>';
+        info = vd.parameter ? info + ' (parameter)' : info;
+        const sk = this.getSymbolKind(vd, property);// property ? SymbolKind.Field : SymbolKind.Variable;
         const ds = new DocumentSymbol(name, info, sk, range, selectionRange);
         if (parent) {
             parent.children.push(ds);
@@ -74,12 +74,19 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         }
     }
 
+    private getSymbolKind(vd: VariableDeclaration, property: boolean): SymbolKind {
+        if (property) {
+            return SymbolKind.Property;
+        }
+        return vd.scope.parent ? SymbolKind.Variable : SymbolKind.Field;
+    }
+
     private addLocalElements(ds: DocumentSymbol, fd: FunctionDeclaration, scope: Scope): void {
         for (const td of scope.typeDeclarations) {
             this.addStruct(td, ds);
         }
         for (const vd of scope.variableDeclarations) {
-            this.addVariable(vd, ds, fd.functionScope === scope, false);
+            this.addVariable(vd, ds, false);
         }
         for (const childScope of scope.children) {
             this.addLocalElements(ds, fd, childScope);

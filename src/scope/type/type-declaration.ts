@@ -49,7 +49,7 @@ export class TypeDeclaration extends Element {
 
     public containsArrayDeclaration(): boolean {
         for (const vd of this.members) {
-            if (vd.type.isArray() || (vd.type.declaration && vd.type.declaration.containsArrayDeclaration())) {
+            if (vd.type.array.isArray() || (vd.type.declaration && vd.type.declaration.containsArrayDeclaration())) {
                 return true;
             }
         }

@@ -5,6 +5,8 @@ import { Scope } from '../scope/scope';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeUsageProcessor } from './type-usage-processor';
 import { Single_variable_declarationContext, Variable_declarationContext } from '../_generated/AntlrGlslParser';
+import { ArrayUsage } from '../scope/array-usage';
+import { ExpressionProcessor } from './expression-processor';
 
 export class VariableDeclarationProcessor {
 
@@ -16,6 +18,25 @@ export class VariableDeclarationProcessor {
         this.scope = scope;
     }
 
+    public static searchVariableDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): VariableDeclaration {
+        while (scope) {
+            const td = scope.variableDeclarations.find(td => td.name === name && td.nameInterval.stopIndex < nameInterval.startIndex);
+            if (td) {
+                return td;
+            } else if (this.anyTypeOrFunction(name, nameInterval, scope)) {
+                return null;
+            }
+            scope = scope.parent;
+        }
+        return di.builtin.variables.get(name) ?? null;
+    }
+
+    private static anyTypeOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
+        return scope.typeDeclarations.some(td => td.name === name && td.structInterval.stopIndex < nameInterval.startIndex) ||
+            scope.functionPrototypes.some(fp => fp.name === name && fp.signatureInterval.stopIndex < nameInterval.startIndex) ||
+            scope.functionDefinitions.some(fd => fd.name === name && fd.signatureInterval.stopIndex < nameInterval.startIndex);
+    }
+
     //
     //function parameter
     //
@@ -25,38 +46,42 @@ export class VariableDeclarationProcessor {
         const name = ioc ? ioc.IDENTIFIER().text : null;
         const nameInterval = ioc ? Helper.getIntervalFromTerminalNode(ioc.IDENTIFIER()) : Interval.NONE;
         const declarationInterval = Helper.getIntervalFromParserRule(svdc);
-        const arraySize = Helper.getArraySizeFromIdentifierOptarray(ioc);
+        const arraySize = Helper.getArraySizeFromIdentifierOptarray(ioc, this.scope, this.di);
         const tu = TypeUsageProcessor.getParameterType(svdc.type_usage(), arraySize, scope, di);
-        const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu);
+        const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu, true);
         scope.variableDeclarations.push(vd);
+        if (svdc.identifier_optarray_optassignment()) {
+            new ExpressionProcessor().processExpression(svdc.identifier_optarray_optassignment().expression(), this.scope, this.di);
+        }
         return vd;
     }
 
     //
-    //struct member
+    //variable declaration, struct member
     //
-    public static getMemberDeclarations(vdc: Variable_declarationContext, scope: Scope, di: DocumentInfo): Array<VariableDeclaration> {
+    public static getDeclarations(vdc: Variable_declarationContext, scope: Scope, di: DocumentInfo): Array<VariableDeclaration> {
         this.initialize(scope, di);
         const ioocs = vdc.identifier_optarray_optassignment();
         const vds = new Array<VariableDeclaration>();
         if (ioocs.length) {
             for (let i = 0; i < ioocs.length; i++) {
                 const iooc = ioocs[i];
-                const arraySize = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc);
+                const arraySize = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
                 const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), arraySize, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
-                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu);
+                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
+                new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
             }
         } else {
-            const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), new Array<number>(), this.scope, this.di, 0);
+            const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);
             const name = null;
             const nameInterval = Interval.NONE;
             const declarationInterval = Helper.getIntervalFromParserRule(vdc);
-            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu);
+            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
             this.scope.variableDeclarations.push(vd);
             vds.push(vd);
         }

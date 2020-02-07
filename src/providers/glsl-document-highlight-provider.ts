@@ -49,8 +49,10 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private processFunction(lf: LogicalFunction): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
-        this.addHighlight(ret, lf.prototypes, DocumentHighlightKind.Write);
-        this.addHighlight(ret, lf.definitions, DocumentHighlightKind.Read);
+        if (!lf.getDeclaration().builtIn) {
+            this.addHighlight(ret, lf.prototypes, DocumentHighlightKind.Write);
+            this.addHighlight(ret, lf.definitions, DocumentHighlightKind.Read);
+        }
         this.addHighlight(ret, lf.calls, DocumentHighlightKind.Text);
         return ret;
     }

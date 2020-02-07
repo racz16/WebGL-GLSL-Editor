@@ -6,6 +6,7 @@ import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
 import { Type_usageContext, QualifierContext } from '../_generated/AntlrGlslParser';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
+import { ArrayUsage } from '../scope/array-usage';
 
 export class TypeUsageProcessor {
 
@@ -25,7 +26,7 @@ export class TypeUsageProcessor {
     public static getReturnType(tuc: Type_usageContext, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di);
         this.tuc = tuc;
-        const tu = this.getType(0, new Array<number>());
+        const tu = this.getType(0, new ArrayUsage());
         //TODO: implicit precision qualifier
         return tu;
     }
@@ -33,10 +34,10 @@ export class TypeUsageProcessor {
     //
     //function parameter
     //
-    public static getParameterType(tuc: Type_usageContext, variableArraySize: Array<number>, scope: Scope, di: DocumentInfo): TypeUsage {
+    public static getParameterType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di);
         this.tuc = tuc;
-        const tu = this.getType(0, variableArraySize);
+        const tu = this.getType(0, variableArray);
         this.addImplicitParameterQualifiers(tu);
         //TODO: implicit precision qualifier
         return tu;
@@ -51,10 +52,10 @@ export class TypeUsageProcessor {
     //
     //multiple variable declaration
     //
-    public static getMemberType(tuc: Type_usageContext, variableArraySize: Array<number>, scope: Scope, di: DocumentInfo, index: number): TypeUsage {
+    public static getMemberType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo, index: number): TypeUsage {
         this.initialize(scope, di);
         this.tuc = tuc;
-        const tu = this.getType(index, variableArraySize);
+        const tu = this.getType(index, variableArray);
         //TODO: implicit precision qualifier
         return tu;
     }
@@ -62,22 +63,21 @@ export class TypeUsageProcessor {
     //
     //general
     //
-    private static getType(index: number, variableArraySize: Array<number>): TypeUsage {
+    private static getType(index: number, variableArray: ArrayUsage): TypeUsage {
         if (this.tuc.type()) {
-            return this.getRealType(index, variableArraySize);
+            return this.getRealType(index, variableArray);
         } else {
-            return this.getStructType(index, variableArraySize);
+            return this.getStructType(index, variableArray);
         }
     }
 
-    private static getRealType(index: number, variableArraySize: Array<number>): TypeUsage {
+    private static getRealType(index: number, variableArray: ArrayUsage): TypeUsage {
         const name = this.tuc.type().text;
-        const arrayInterval = Helper.getIntervalFromParserRule(this.tuc.array_subscript());
         const nameInterval = Helper.getIntervalFromParserRule(this.tuc.type());
         const interval = Helper.getIntervalFromParserRule(this.tuc);
-        const arraySize = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript()).concat(variableArraySize);
-        const td = TypeDeclarationProcessor.getTypeDeclarationFrom(name, nameInterval, this.scope, this.di);
-        const tu = new TypeUsage(name, interval, nameInterval, this.scope, arrayInterval, td, arraySize);
+        const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
+        const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
+        const tu = new TypeUsage(name, interval, nameInterval, this.scope, td, au);
         this.addQualifiers(tu);
         if (index === 0) {
             if (!tu.isVoid()) {
@@ -90,12 +90,11 @@ export class TypeUsageProcessor {
         return tu;
     }
 
-    private static getStructType(index: number, variableArraySize: Array<number>): TypeUsage {
+    private static getStructType(index: number, variableArray: ArrayUsage): TypeUsage {
         const tdc = this.tuc.type_declaration();
-        const arrayInterval = Helper.getIntervalFromParserRule(this.tuc.array_subscript());
-        const arraySize = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript()).concat(variableArraySize);
+        const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
         const td = TypeDeclarationProcessor.getTypeDeclaration(tdc, this.scope, this.di, index);
-        const tu = new TypeUsage(td.name, td.structInterval, Interval.NONE, this.scope, arrayInterval, td, arraySize, true);
+        const tu = new TypeUsage(td.name, td.structInterval, Interval.NONE, this.scope, td, au, true);
         this.addQualifiers(tu);
         return tu;
     }

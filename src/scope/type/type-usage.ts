@@ -4,6 +4,7 @@ import { Qualifier } from '../qualifier/qualifier';
 import { QualifierUsage } from '../qualifier/qualifier-usage';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
+import { ArrayUsage } from '../array-usage';
 
 export class TypeUsage extends Element {
 
@@ -11,16 +12,14 @@ export class TypeUsage extends Element {
     public readonly qualifiers = new Array<QualifierUsage>();
     public readonly implicitQualifiers = new Array<Qualifier>();
     public readonly interval: Interval;
-    public readonly arrayInterval: Interval;
-    public readonly array = new Array<number>();
+    public readonly array: ArrayUsage;
     public readonly inlineStructDeclaration: boolean;
 
-    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, arrayInterval: Interval, declaration: TypeDeclaration, arraySize = new Array<number>(), inlineStructDeclaration = false) {
+    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, declaration: TypeDeclaration, array: ArrayUsage, inlineStructDeclaration = false) {
         super(name, nameInterval, scope);
         this.declaration = declaration;
         this.interval = interval;
-        this.arrayInterval = arrayInterval;
-        this.array = arraySize;
+        this.array = array;
         this.inlineStructDeclaration = inlineStructDeclaration;
     }
 
@@ -28,24 +27,8 @@ export class TypeUsage extends Element {
         return this.name === 'void';
     }
 
-    public isArray(): boolean {
-        return this.array.length > 0;
-    }
-
-    public isMultidimensionalArray(): boolean {
-        return this.array.length > 1;
-    }
-
     public areArrayDimensionsMatch(tu: TypeUsage): boolean {
-        if (!tu || this.array.length !== tu.array.length) {
-            return false;
-        }
-        for (let i = 0; i < this.array.length; i++) {
-            if (this.array[i] !== tu.array[i]) {
-                return false;
-            }
-        }
-        return true;
+        return tu && this.array.arraySize === tu.array.arraySize && this.array.multidimensional === tu.array.multidimensional;
     }
 
     public qualifiersEqualsExceptPrecisionWith(tu: TypeUsage): boolean {
@@ -69,7 +52,7 @@ export class TypeUsage extends Element {
         return true;
     }
 
-    private containsQualifier(q: Qualifier): boolean {
+    public containsQualifier(q: Qualifier): boolean {
         for (const qu of this.qualifiers) {
             if (qu.qualifier === q) {
                 return true;
@@ -86,16 +69,11 @@ export class TypeUsage extends Element {
         for (let i = 0; i < this.qualifiers.length; i++) {
             qualifiers += this.qualifiers[i].toString() + ' ';
         }
-        return qualifiers + this.name + this.toStringArray();
+        return qualifiers + this.toStringWithoutQualifiers();
     }
 
-    private toStringArray(): string {
-        let ret = '';
-        for (const array of this.array) {
-            const arraySize = array === -1 ? '' : `${array}`;
-            ret += `[${arraySize}]`;
-        }
-        return ret;
+    public toStringWithoutQualifiers(): string {
+        return this.name + this.array.toString();
     }
 
 }

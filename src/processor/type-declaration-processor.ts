@@ -7,6 +7,10 @@ import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
 import { Type_declarationContext } from '../_generated/AntlrGlslParser';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { ArrayUsage } from '../scope/array-usage';
+import { LogicalFunction } from '../scope/function/logical-function';
 
 export class TypeDeclarationProcessor {
 
@@ -21,7 +25,7 @@ export class TypeDeclarationProcessor {
         this.scope = scope;
     }
 
-    public static getTypeDeclarationFrom(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): TypeDeclaration {
+    public static searchTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): TypeDeclaration {
         while (scope) {
             const td = scope.typeDeclarations.find(td => td.name === name && td.structInterval.stopIndex < nameInterval.startIndex);
             if (td) {
@@ -55,10 +59,25 @@ export class TypeDeclarationProcessor {
         scope.typeDeclarations.push(td);
         this.createInnerScope(structInterval);
         this.addMembers(td);
+        this.scope = this.scope.parent;
+        this.createConstructor(td);
         if (index === 0) {
             this.td = td;
         }
         return td;
+    }
+
+    private static createConstructor(td: TypeDeclaration): void {
+        const tu = new TypeUsage(td.name, td.nameInterval, td.nameInterval, this.scope, td, new ArrayUsage());
+        const ctor = new FunctionDeclaration(td.name, td.nameInterval, this.scope, tu, false, true, td.structInterval, td.structInterval, null);
+        for (const vd of td.members) {
+            ctor.parameters.push(vd);
+        }
+        const lf = new LogicalFunction();
+        lf.prototypes.push(ctor);
+        ctor.logicalFunction = lf;
+        this.scope.functions.push(lf);
+        this.scope.functionPrototypes.push(ctor);
     }
 
     private static createInnerScope(structInterval: Interval): void {
@@ -69,7 +88,7 @@ export class TypeDeclarationProcessor {
 
     private static addMembers(td: TypeDeclaration): void {
         for (const vdc of this.tdc.variable_declaration()) {
-            const vds = VariableDeclarationProcessor.getMemberDeclarations(vdc, this.scope, this.di);
+            const vds = VariableDeclarationProcessor.getDeclarations(vdc, this.scope, this.di);
             vds.forEach(vd => td.members.push(vd));
         }
     }

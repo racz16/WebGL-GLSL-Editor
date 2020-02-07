@@ -28,10 +28,10 @@ export class TypeUsageValidator {
         if (tu.declaration && tu.declaration.isOpaque()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.name}' is an opaque type`, tu.nameInterval);
         }
-        if (tu.isVoid() && tu.isArray()) {
+        if (tu.isVoid() && tu.array.isArray()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.toString()}' contains array declaration(s)`, tu.nameInterval);
         }
-        if (di.isGlsl100es() && tu.isArray()) {
+        if (di.isGlsl100es() && tu.array.isArray()) {
             this.addError(DiagnosticSeverity.Error, `Return type '${tu.toString()}' is an array`, tu.interval, 'S0041');
         }
         if (di.isGlsl100es() && tu.declaration && tu.declaration.containsArrayDeclaration()) {
@@ -139,7 +139,7 @@ export class TypeUsageValidator {
         if (!this.tu.declaration && !this.tu.isVoid()) {
             this.addError(DiagnosticSeverity.Error, `Type '${this.tu.name}' is undeclared or hidden`, this.tu.nameInterval);
         }
-        if (this.tu.isMultidimensionalArray()) {
+        if (this.tu.array.multidimensional) {
             this.addError(DiagnosticSeverity.Error, `Type '${this.tu.toString()}' is a multidimensional array`, this.tu.interval);
         }
     }

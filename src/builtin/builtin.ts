@@ -21,6 +21,8 @@ import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
 import { FunctionInfo } from '../scope/function/function-info';
 import { GenericTypeProcessor } from './generic-type-processor';
+import { ArrayUsage } from '../scope/array-usage';
+import { LogicalFunction } from '../scope/function/logical-function';
 
 export class Builtin {
 
@@ -30,7 +32,7 @@ export class Builtin {
 
     private postfix: string;
 
-    public readonly functions = new Array<FunctionDeclaration>();
+    public readonly functions = new Array<LogicalFunction>();
     public readonly functionSummaries = new Map<string, FunctionInfo>();
     public readonly importantFunctions = new Array<string>();
     public readonly variables = new Map<string, VariableDeclaration>();
@@ -152,8 +154,8 @@ export class Builtin {
     private addMembers(td: TypeDeclaration, type: CustomType): void {
         for (const member of type.members) {
             const td2 = this.types.get(member.memberType);
-            const tu = new TypeUsage(member.memberType, Interval.NONE, Interval.NONE, null, Interval.NONE, td2);
-            const vd = new VariableDeclaration(member.memberName, Interval.NONE, null, true, Interval.NONE, tu);
+            const tu = new TypeUsage(member.memberType, Interval.NONE, Interval.NONE, null, td2, new ArrayUsage());
+            const vd = new VariableDeclaration(member.memberName, Interval.NONE, null, true, Interval.NONE, tu, false);
             this.addMemberPrecisionQualifier(tu, member);
             td.members.push(vd);
         }
@@ -190,10 +192,10 @@ export class Builtin {
             if (td.isScalar()) {
                 this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
                 for (const td2 of this.types.values()) {
-                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
                     const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
-                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td2);
-                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, Interval.NONE, tu2);
+                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, td2, new ArrayUsage());
+                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, Interval.NONE, tu2, true);
                     fd.parameters.push(vd);
                 }
             } else if (td.isVector()) {
@@ -205,7 +207,7 @@ export class Builtin {
             }
             if (td.typeCategory === TypeCategory.CUSTOM) {
                 this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
                 const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
                 for (const vd of td.members) {
                     fd.parameters.push(vd);
@@ -220,16 +222,13 @@ export class Builtin {
     private loadVariables(): void {
         const variables: Variables = require(this.getPath('variables'));
         for (const variable of variables.variables) {
-            const array = variable.array ?? 0;
+            const array = variable.array === undefined ? -1 : variable.array;
             const td = this.types.get(variable.type);
-            const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+            const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, td, new ArrayUsage(array));
             this.addVariableQualifiers(tu, variable);
-            for (let i = 0; i < array; i++) {
-                tu.array.push(-1);
-            }
             const summary = this.createVariableSummary(variable, tu);
             const stage = this.getStage(variable.stage);
-            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, Interval.NONE, tu, summary, stage);
+            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, Interval.NONE, tu, false, summary, stage);
             this.variables.set(variable.name, vd);
         }
     }
@@ -275,7 +274,7 @@ export class Builtin {
         for (const genericFunc of functions.functions) {
             for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
                 const td = this.types.get(realFunc.returnType);
-                const tu = new TypeUsage(realFunc.returnType, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
+                const tu = new TypeUsage(realFunc.returnType, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
                 if (realFunc.qualifiers) {
                     for (const qualifier of realFunc.qualifiers) {
                         const q = this.qualifiers.get(qualifier);
@@ -287,12 +286,15 @@ export class Builtin {
                 const fp = new FunctionDeclaration(realFunc.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, null, stage);
                 for (const parameter of realFunc.parameters) {
                     const td = this.types.get(parameter.type);
-                    const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
-                    const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
+                    const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
+                    const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu, true);
                     this.addVariableQualifiers(tu, parameter);
                     fp.parameters.push(vd);
                 }
-                this.functions.push(fp);
+                const lf = new LogicalFunction();
+                lf.prototypes.push(fp);
+                fp.logicalFunction = lf;
+                this.functions.push(lf);
             }
         }
     }
@@ -370,12 +372,12 @@ export class Builtin {
             const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.structInterval, type.width, type.height, type.typeBase, type.typeCategory);
             for (const member of type.members) {
                 const td2 = bi.types.get(member.type.name);
-                const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, member.type.arrayInterval, td2);
+                const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
                 for (const qu of member.type.qualifiers) {
                     const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                     tu.qualifiers.push(qu2);
                 }
-                const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu);
+                const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false);
                 td.members.push(vd);
             }
             bi.types.set(type.name, td);
@@ -385,30 +387,28 @@ export class Builtin {
         }
         for (const variable of this.variables.values()) {
             const td = bi.types.get(variable.type.name);
-            const tu = new TypeUsage(variable.type.name, variable.type.interval, variable.type.nameInterval, null, variable.type.arrayInterval, td);
-            for (const array of variable.type.array) {
-                tu.array.push(array);
-            }
+            const tu = new TypeUsage(variable.type.name, variable.type.interval, variable.type.nameInterval, null, td, variable.type.array);
             for (const qu of variable.type.qualifiers) {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, variable.summary, variable.stage);
+            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, variable.summary, variable.stage);
             bi.variables.set(variable.name, vd);
         }
-        for (const func of this.functions) {
-            const td = this.types.get(func.returnType.name);
-            const tu = new TypeUsage(func.returnType.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
-            for (const qualifier of func.returnType.qualifiers) {
+        for (const olf of this.functions) {
+            const ofp = olf.getDeclaration();
+            const td = this.types.get(ofp.returnType.name);
+            const tu = new TypeUsage(ofp.returnType.name, Interval.NONE, Interval.NONE, null, td, ofp.returnType.array);
+            for (const qualifier of ofp.returnType.qualifiers) {
                 const q = this.qualifiers.get(qualifier.name);
                 const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(func.name, func.nameInterval, null, tu, func.builtIn, func.ctor, func.interval, func.signatureInterval, null, func.stage);
-            for (const parameter of func.parameters) {
+            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, ofp.signatureInterval, null, ofp.stage);
+            for (const parameter of ofp.parameters) {
                 const td = this.types.get(parameter.type.name);
-                const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, Interval.NONE, td);
-                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu);
+                const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, td, parameter.type.array);
+                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu, true);
                 for (const qualifier of parameter.type.qualifiers) {
                     const q = this.qualifiers.get(qualifier.name);
                     const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
@@ -416,7 +416,10 @@ export class Builtin {
                 }
                 fp.parameters.push(vd);
             }
-            bi.functions.push(fp);
+            const lf = new LogicalFunction();
+            lf.prototypes.push(fp);
+            fp.logicalFunction = lf;
+            bi.functions.push(lf);
         }
         for (const func of this.functionSummaries) {
             bi.functionSummaries.set(func[0], func[1]);

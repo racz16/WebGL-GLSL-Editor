@@ -171,20 +171,11 @@ export class DocumentInfo {
 
     //function
     public getFunctionPrototypeAt(position: Position): FunctionDeclaration {
-        return this.getFunction(this.getRootScope().functionPrototypes, position);
+        return this.getElementAt(position, 'functionPrototypes') as FunctionDeclaration;
     }
 
     public getFunctionDefinitionAt(position: Position): FunctionDeclaration {
-        return this.getFunction(this.getRootScope().functionDefinitions, position);
-    }
-
-    private getFunction(functionList: Array<FunctionDeclaration>, position: Position) {
-        for (const fd of functionList) {
-            if (this.intervalToRange(fd.nameInterval).contains(position)) {
-                return fd;
-            }
-        }
-        return null;
+        return this.getElementAt(position, 'functionDefinitions') as FunctionDeclaration;
     }
 
     //function calls
@@ -213,7 +204,7 @@ export class DocumentInfo {
     }
 
     //generic
-    private getElementAt(position: Position, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall {
+    private getElementAt(position: Position, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls' | 'functionPrototypes' | 'functionDefinitions'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {

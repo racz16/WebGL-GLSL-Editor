@@ -91,7 +91,11 @@ export class FunctionDeclaration extends Element {
     }
 
     public toString(): string {
-        return this.returnType + ' ' + this.toStringSignature(true);
+        if (this.ctor) {
+            return this.toStringSignature(true);
+        } else {
+            return this.returnType + ' ' + this.toStringSignature(true);
+        }
     }
 
     public toStringDocumentation(): string {

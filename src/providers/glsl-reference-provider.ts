@@ -44,11 +44,13 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
 
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
-        for (const fp of lf.prototypes) {
-            ret.push(this.di.intervalToLocation(fp.nameInterval));
-        }
-        for (const fd of lf.definitions) {
-            ret.push(this.di.intervalToLocation(fd.nameInterval));
+        if (!lf.getDeclaration().builtIn) {
+            for (const fp of lf.prototypes) {
+                ret.push(this.di.intervalToLocation(fp.nameInterval));
+            }
+            for (const fd of lf.definitions) {
+                ret.push(this.di.intervalToLocation(fd.nameInterval));
+            }
         }
         for (const fc of lf.calls) {
             ret.push(this.di.intervalToLocation(fc.nameInterval));

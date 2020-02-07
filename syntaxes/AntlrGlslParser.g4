@@ -97,7 +97,7 @@ type_declaration : KW_STRUCT IDENTIFIER? LCB (variable_declaration SEMICOLON)* R
 
 interface_block_declaration: type_qualifier* (IDENTIFIER LCB (variable_declaration SEMICOLON)* RCB (identifier_optarray)?)?;
 
-identifier_optarray : IDENTIFIER array_subscript?;
+identifier_optarray : IDENTIFIER array_subscript*;
 
 identifier_optarray_optassignment : identifier_optarray (OP_ASSIGN expression)?;
 
@@ -137,9 +137,9 @@ type
     | IDENTIFIER
     ;
 
-type_usage : qualifier* (type | type_declaration) array_subscript?;
+type_usage : qualifier* (type | type_declaration) array_subscript*;
 
-array_subscript : (LSB expression? RSB)+;
+array_subscript : LSB expression? RSB;
 
 //
 //qualifiers

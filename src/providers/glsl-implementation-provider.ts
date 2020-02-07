@@ -24,8 +24,10 @@ export class GlslImplementationProvider extends PositionalProviderBase<Array<Loc
 
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
-        for (const fd of lf.definitions) {
-            ret.push(this.di.intervalToLocation(fd.nameInterval));
+        if (!lf.getDeclaration().builtIn) {
+            for (const fd of lf.definitions) {
+                ret.push(this.di.intervalToLocation(fd.nameInterval));
+            }
         }
         return ret;
     }

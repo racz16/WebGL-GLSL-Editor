@@ -6,6 +6,8 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
+import { ExpressionType } from './expression-processor';
+import { Interval } from '../scope/interval';
 
 export abstract class FunctionProcessor {
 
@@ -17,6 +19,40 @@ export abstract class FunctionProcessor {
         this.fhc = fhc;
         this.di = di;
         this.scope = scope;
+    }
+
+    public static searchFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionType>, scope: Scope, di: DocumentInfo): LogicalFunction {
+        while (scope) {
+            const lf = scope.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters));
+            if (lf) {
+                return lf;
+            } else if (this.anyTypeOrVariable(name, nameInterval, scope)) {
+                return null;
+            }
+            scope = scope.parent;
+        }
+        return di.builtin.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
+    }
+
+    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Interval, parameters: Array<ExpressionType>): boolean {
+        const fd = lf.getDeclaration();
+        return fd.name === name && fd.parameters.length === parameters.length &&
+            this.areParametersMatch(fd, parameters) &&
+            fd.interval.stopIndex < nameInterval.startIndex;
+    }
+
+    private static areParametersMatch(fd: FunctionDeclaration, parameters: Array<ExpressionType>): boolean {
+        for (let i = 0; i < parameters.length; i++) {
+            if (fd.parameters[i].type?.declaration.name !== parameters[i].type.name) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static anyTypeOrVariable(name: string, nameInterval: Interval, scope: Scope): boolean {
+        return scope.typeDeclarations.some(td => td.name === name && td.structInterval.stopIndex < nameInterval.startIndex) ||
+            scope.typeDeclarations.some(fd => fd.name === name && fd.structInterval.stopIndex < nameInterval.startIndex);
     }
 
     //

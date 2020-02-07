@@ -148,7 +148,8 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
                 this.validateFunctionWithOtherFunction(fd, fd2);
             }
         }
-        for (const fd2 of this.di.builtin.functions) {
+        for (const lf of this.di.builtin.functions) {
+            const fd2 = lf.getDeclaration();
             if (this.newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
                 throw new Error(`Overriding built-in function '${this.newName}' is illegal`);
             }
