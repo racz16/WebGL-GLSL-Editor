@@ -1,6 +1,6 @@
 import { Types, OpaqueType, CustomType, TypeMember, GenericTypes } from './interfaces/types';
 import { Keywords } from './interfaces/keywords';
-import { Qualifiers, QualifierRules, LayoutParameters } from './interfaces/qualifiers';
+import { Qualifiers, LayoutParameters } from './interfaces/qualifiers';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
