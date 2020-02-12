@@ -6,23 +6,24 @@ import { TypeUsage } from './type-usage';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { Constants } from '../../core/constants';
+import { FunctionCall } from '../function/function-call';
 
 export class TypeDeclaration extends Element {
 
     public readonly builtin: boolean;
-    public readonly structInterval: Interval;
+    public readonly interval: Interval;
     public readonly typeBase: TypeBase;
     public readonly typeCategory: TypeCategory;
     public readonly width: number;
     public readonly height: number;
     public readonly members = new Array<VariableDeclaration>();
     public readonly usages = new Array<TypeUsage>();
+    public readonly ctorCalls = new Array<FunctionCall>();
 
-
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, structInterval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
-        this.structInterval = structInterval;
+        this.interval = interval;
         this.width = width;
         this.height = height;
         this.typeBase = typeBase;

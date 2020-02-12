@@ -11,7 +11,6 @@ export class FunctionDeclaration extends Element {
 
     public logicalFunction: LogicalFunction;
     public readonly interval: Interval;
-    public readonly signatureInterval: Interval;
     public readonly returnType: TypeUsage;
     public readonly parameters = new Array<VariableDeclaration>();
     public readonly builtIn: boolean;
@@ -19,10 +18,9 @@ export class FunctionDeclaration extends Element {
     public readonly functionScope: Scope;
     public readonly stage: ShaderStage;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, signatureInterval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
         this.interval = interval;
-        this.signatureInterval = signatureInterval;
         this.returnType = returnType;
         this.builtIn = builtIn;
         this.ctor = ctor;

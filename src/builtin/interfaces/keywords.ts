@@ -4,4 +4,5 @@ export interface Keywords {
 
 export interface Keyword {
     name: string;
+    stage: string;
 }

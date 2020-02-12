@@ -17,7 +17,7 @@ function_header : type_usage IDENTIFIER LRB function_parameter_list? RRB;
 
 function_parameter_list 
     : KW_VOID
-    | single_variable_declaration (COMMA single_variable_declaration)* 
+    | single_variable_declaration (COMMA single_variable_declaration)*
     ;
 
 function_call : (TYPE | IDENTIFIER) LRB function_call_parameter_list? RRB;
@@ -51,11 +51,9 @@ selection_statement : KW_IF LRB expression RRB statement (KW_ELSE statement)?;
 //switch-case
 switch_statement : KW_SWITCH LRB expression RRB LCB case_group* RCB;
 
-case_group : case_label case_statement_list?;
+case_group : case_label statement*;
 
 case_label : (KW_DEFAULT | KW_CASE expression) COLON;
-
-case_statement_list : statement+;
 
 //iteration
 iteration_statement 
@@ -95,7 +93,7 @@ single_variable_declaration : type_usage identifier_optarray_optassignment?;
 
 type_declaration : KW_STRUCT IDENTIFIER? LCB (variable_declaration SEMICOLON)* RCB;
 
-interface_block_declaration: type_qualifier* (IDENTIFIER LCB (variable_declaration SEMICOLON)* RCB (identifier_optarray)?)?;
+interface_block_declaration: qualifier* (IDENTIFIER LCB (variable_declaration SEMICOLON)* RCB (identifier_optarray)?)?;
 
 identifier_optarray : IDENTIFIER array_subscript*;
 
@@ -124,9 +122,10 @@ expression
     | expression OP_LOGICAL_OR expression 
     | expression QUESTION expression_list COLON expression_list
     | expression (OP_ASSIGN | OP_MODIFY) expression
+    | expression DOT
     ;
 
-expression_list: expression (COMMA expression)*;
+expression_list: expression (COMMA expression)* COMMA?;
 
 /////
 //types-------------------------------------------------------------------------
@@ -145,8 +144,8 @@ array_subscript : LSB expression? RSB;
 //qualifiers
 //
 qualifier
-    : Q_PRECISION
-    | Q_LAYOUT
+    : layout_qualifier
+    | Q_PRECISION
     | Q_INVARIANT
     | Q_SMOOTH
     | Q_FLAT
@@ -163,37 +162,11 @@ qualifier
     | Q_LOWP
     ;
 
-type_qualifier 
-    : storage_qualifier 
-    | layout_qualifier 
-    | layout_qualifier storage_qualifier
-    | interpolation_qualifier
-    | interpolation_qualifier storage_qualifier
-    | Q_INVARIANT storage_qualifier
-    | Q_INVARIANT interpolation_qualifier storage_qualifier
-    ;
-
-storage_qualifier 
-    : Q_CONST 
-    | Q_IN
-    | Q_OUT
-    | Q_CENTROID Q_IN 
-    | Q_CENTROID Q_OUT 
-    | Q_ATTRIBUTE 
-    | Q_UNIFORM 
-    | Q_VARYING 
-    ;
-
 layout_qualifier : Q_LAYOUT LRB layout_qualifier_id_list RRB;
 
 layout_qualifier_id_list : layout_qualifier_id (COMMA layout_qualifier_id)*;
 
 layout_qualifier_id : IDENTIFIER (OP_ASSIGN (IDENTIFIER | literal))?;
-
-interpolation_qualifier 
-    : Q_SMOOTH 
-    | Q_FLAT 
-    ;
 
 //
 //literals

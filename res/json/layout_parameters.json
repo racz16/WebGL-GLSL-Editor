@@ -1,0 +1,10 @@
+{
+    "layoutParameters": [
+        "location",
+        "shared",
+        "packed",
+        "std140",
+        "row_major",
+        "column_major"
+    ]
+}

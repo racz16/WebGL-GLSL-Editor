@@ -1,4 +1,4 @@
-import { Function, Parameter } from "./functions";
+import { Function, Parameter } from "./interfaces/functions";
 
 export class GenericTypeProcessor {
 
@@ -80,7 +80,7 @@ export class GenericTypeProcessor {
             case 'ivec':
             case 'uvec':
             case 'bvec':
-                return GenericTypeGroup.XVEC;
+                return GenericTypeGroup.X_VEC;
             case 'gvec2':
             case 'gvec3':
             case 'gvec4':
@@ -99,7 +99,7 @@ export class GenericTypeProcessor {
     private static getVariantCount(gtg: GenericTypeGroup): number {
         switch (gtg) {
             case GenericTypeGroup.GEN_TYPE: return this.genTypes.get('genType').length;
-            case GenericTypeGroup.XVEC: return this.genTypes.get('vec').length;
+            case GenericTypeGroup.X_VEC: return this.genTypes.get('vec').length;
             case GenericTypeGroup.G_SAMPLER: return this.genTypes.get('gsampler2D').length;
             case GenericTypeGroup.MAT: return this.genTypes.get('mat').length;
             default: throw new Error();
@@ -110,7 +110,7 @@ export class GenericTypeProcessor {
 
 export enum GenericTypeGroup {
     GEN_TYPE,
-    XVEC,
+    X_VEC,
     G_SAMPLER,
     MAT,
     NONE

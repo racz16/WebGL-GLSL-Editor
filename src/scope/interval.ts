@@ -1,7 +1,5 @@
 export class Interval {
 
-    public static readonly NONE = new Interval(-1, -1);
-
     public readonly startIndex: number;
     public readonly stopIndex: number;
 

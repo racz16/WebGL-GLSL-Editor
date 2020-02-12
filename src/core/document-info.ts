@@ -41,7 +41,7 @@ export class DocumentInfo {
             this.builtin.reset();
         }
         this.errors.length = 0;
-        this.rootScope = new Scope(Interval.NONE, null);
+        this.rootScope = new Scope(null, null);
     }
 
     public getShaderStage(): ShaderStage {
@@ -111,9 +111,9 @@ export class DocumentInfo {
     private processDocumentUnsafe(): void {
         const lexer = this.createLexer();
         const parser = this.createParser(lexer);
-        this.generatedErrors = this.getGeneratedErrors(parser);
+        //this.generatedErrors = this.getGeneratedErrors(parser); for validation
         this.processVisitor(parser);
-        //Validator.validate(this);
+        //Validator.validate(this); for validation
     }
 
     private createLexer(): AntlrGlslLexer {
@@ -143,7 +143,7 @@ export class DocumentInfo {
     }
 
     //
-    //
+    //general
     //
     public intervalToLocation(interval: Interval): Location {
         const range = this.intervalToRange(interval);
@@ -151,6 +151,9 @@ export class DocumentInfo {
     }
 
     public intervalToRange(interval: Interval): Range {
+        if (!interval) {
+            return null;
+        }
         const start = this.offsetToPosition(interval.startIndex);
         const stop = this.offsetToPosition(interval.stopIndex);
         return new Range(start, stop);
@@ -166,7 +169,7 @@ export class DocumentInfo {
     }
 
     //
-    //get elements
+    //get element at
     //
 
     //function
@@ -208,11 +211,20 @@ export class DocumentInfo {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (this.intervalToRange(element.nameInterval).contains(position)) {
+                if (this.intervalToRange(element.nameInterval)?.contains(position)) {
                     return element;
                 }
             }
             scope = this.getChildScope(scope, position);
+        }
+        return null;
+    }
+
+    private getChildScope(scope: Scope, position: Position): Scope {
+        for (const childScope of scope.children) {
+            if (this.intervalToRange(childScope.interval)?.contains(position)) {
+                return childScope;
+            }
         }
         return null;
     }
@@ -227,15 +239,6 @@ export class DocumentInfo {
                 scope = newScope;
             }
         }
-    }
-
-    public getChildScope(scope: Scope, position: Position): Scope {
-        for (const childScope of scope.children) {
-            if (this.intervalToRange(childScope.interval).contains(position)) {
-                return childScope;
-            }
-        }
-        return null;
     }
 
 }

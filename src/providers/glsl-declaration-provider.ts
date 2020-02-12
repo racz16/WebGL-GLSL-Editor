@@ -45,8 +45,12 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
     private processFunction(lf: LogicalFunction): Declaration {
         const ret = new Array<Location>();
         if (!lf.getDeclaration().builtIn) {
-            for (const fp of lf.prototypes) {
-                ret.push(this.di.intervalToLocation(fp.nameInterval));
+            if (lf.getDeclaration().ctor) {
+                return this.processTypeDeclaration(lf.getDeclaration().returnType.declaration);
+            } else {
+                for (const fp of lf.prototypes) {
+                    ret.push(this.di.intervalToLocation(fp.nameInterval));
+                }
             }
         }
         return ret;

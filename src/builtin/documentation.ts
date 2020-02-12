@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 import { Uri } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
-import { Redirections } from './redirections';
+import { Redirections } from './interfaces/redirections';
 
 export class Documentation {
 

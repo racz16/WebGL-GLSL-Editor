@@ -14,3 +14,7 @@ export interface QualifierRules {
 export interface QualifierRule {
     qualifierRule: Array<string>;
 }
+
+export interface LayoutParameters {
+    layoutParameters: Array<string>;
+}

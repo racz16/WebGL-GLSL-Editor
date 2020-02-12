@@ -31,7 +31,8 @@
             "name": "else"
         },
         {
-            "name": "discard"
+            "name": "discard",
+            "stage": "fragment"
         },
         {
             "name": "return"

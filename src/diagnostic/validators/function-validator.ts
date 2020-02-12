@@ -39,7 +39,7 @@ export class FunctionValidator {
                 'There is no main function in this shader. ' +
                 'Every shader has to contain a main function with void return type and no parameters. ' +
                 'The main function is not overloadable.',
-                Interval.NONE);
+                new Interval(0, 0));
         }
     }
 
@@ -56,7 +56,7 @@ export class FunctionValidator {
         if (this.fd.name === 'main') {
             this.mainExists = true;
             if (this.fd.parameters.length > 0) {
-                this.addError(DiagnosticSeverity.Error, `The main function has parameters`, this.fd.signatureInterval, 'S0029');
+                this.addError(DiagnosticSeverity.Error, `The main function has parameters`, this.fd.nameInterval, 'S0029');
             }
             if (!this.fd.returnType.isVoid()) {
                 this.addError(DiagnosticSeverity.Error, `The main function's return type '${this.fd.returnType.name}' isn't void`, this.fd.returnType.interval, 'S0029');

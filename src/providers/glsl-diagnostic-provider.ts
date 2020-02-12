@@ -45,12 +45,17 @@ export class GlslDiagnosticProvider {
     }
 
     private addDiagnostic(row: string): void {
-        if (row.includes('ERROR: 0:') && !row.includes('compilation terminated')) {
-            const t1 = row.substring(9);
-            const i = t1.indexOf(':');
-            const line = +t1.substring(0, i);
-            const error = row.substring(9 + i + 2);
-            this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+        if (!row.includes('compilation terminated') && !row.includes('No code generated')) {
+            if (row.includes('ERROR: 0:')) {
+                const t1 = row.substring(9);
+                const i = t1.indexOf(':');
+                const line = +t1.substring(0, i);
+                const error = row.substring(9 + i + 2);
+                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+            } else if (row.includes('ERROR: ')) {
+                const error = row.substring(7);
+                this.diagnostics.push(new Diagnostic(this.document.lineAt(0).range, error, DiagnosticSeverity.Error));
+            }
         }
     }
 

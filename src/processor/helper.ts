@@ -1,11 +1,19 @@
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
-import { Array_subscriptContext, Identifier_optarrayContext, Function_prototypeContext, Function_definitionContext, Identifier_optarray_optassignmentContext, For_iterationContext, Selection_statementContext, While_iterationContext, Do_while_iterationContext } from '../_generated/AntlrGlslParser';
+import { Array_subscriptContext, Identifier_optarrayContext, Identifier_optarray_optassignmentContext } from '../_generated/AntlrGlslParser';
 import { ParserRuleContext } from 'antlr4ts';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor, ExpressionType } from './expression-processor';
 import { DocumentInfo } from '../core/document-info';
+import { TypeBase } from '../scope/type/type-base';
+import { TypeCategory } from '../scope/type/type-category';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { MarkdownString, Position } from 'vscode';
+import { ShaderStage } from '../scope/shader-stage';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
 
 export class Helper {
 
@@ -37,57 +45,24 @@ export class Helper {
         return this.getArraySizeFromIdentifierOptarray(iooc.identifier_optarray(), scope, di);
     }
 
-    public static createScope(currentScope: Scope, prc: ParserRuleContext): Scope {
-        const interval = Helper.getIntervalFromParserRule(prc);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
+    public static createTypeDeclaration(name: string, width: number, height: number, typeBase: TypeBase, typeCategory: TypeCategory): TypeDeclaration {
+        return new TypeDeclaration(name, null, null, true, null, width, height, typeBase, typeCategory);
     }
 
-    public static createScopeFromFunctionPrototype(currentScope: Scope, ctx: Function_prototypeContext): Scope {
-        const interval = new Interval(ctx.function_header().LRB().symbol.startIndex, ctx.SEMICOLON().symbol.stopIndex + 1);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
+    public static createTypeUsage(name: string, td: TypeDeclaration, array: ArrayUsage): TypeUsage {
+        return new TypeUsage(name, null, null, null, td, array, false);
     }
 
-    public static createScopeFromFunctionDefinition(currentScope: Scope, ctx: Function_definitionContext): Scope {
-        const interval = new Interval(ctx.function_header().LRB().symbol.startIndex, ctx.compound_statement().RCB().symbol.stopIndex + 1);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
+    public static createVariableDeclaration(name: string, tu: TypeUsage, parameter: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT): VariableDeclaration {
+        return new VariableDeclaration(name, null, null, true, null, tu, parameter, summary, stage);
     }
 
-    public static createScopeFromForIteration(currentScope: Scope, ctx: For_iterationContext): Scope {
-        const interval = new Interval(ctx.LRB().symbol.startIndex, ctx.statement().stop.stopIndex + 1);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
-    }
-
-    public static createScopeFromWhileIteration(currentScope: Scope, ctx: While_iterationContext | Do_while_iterationContext): Scope {
-        const interval = this.getIntervalFromParserRule(ctx.statement());
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
-    }
-
-    public static createScopeFromIf(currentScope: Scope, ctx: Selection_statementContext): Scope {
-        const interval = this.getIntervalFromParserRule(ctx.statement()[0]);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
-    }
-
-    public static createScopeFromElse(currentScope: Scope, ctx: Selection_statementContext): Scope {
-        const interval = this.getIntervalFromParserRule(ctx.statement()[1]);
-        const newScope = new Scope(interval, currentScope);
-        currentScope.children.push(newScope);
-        return newScope;
+    public static createFunctionDeclaration(name: string, tu: TypeUsage, ctor: boolean, stage = ShaderStage.DEFAULT): FunctionDeclaration {
+        return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage);
     }
 
     public static getIntervalFromParserRule(ctx: ParserRuleContext): Interval {
-        return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1) : Interval.NONE;
+        return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1) : null;
     }
 
     public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext): Interval {
@@ -95,11 +70,23 @@ export class Helper {
     }
 
     public static getIntervalFromTerminalNode(tn: TerminalNode): Interval {
-        return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1) : Interval.NONE;
+        return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1) : null;
     }
 
     public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode): Interval {
         return new Interval(tn.symbol.startIndex, tn2.symbol.stopIndex + 1);
+    }
+
+    public static isALowerThanB(a: Interval, b: Interval): boolean {
+        return !a || !b || a.stopIndex < b.startIndex;
+    }
+
+    public static isALowerThanOffset(a: Interval, offset: number): boolean {
+        return a && a.stopIndex < offset;
+    }
+
+    public static isPositionInScope(scope: Scope, position: Position, di: DocumentInfo): boolean {
+        return scope && (di.intervalToRange(scope.interval)?.contains(position) || scope.isGlobal());
     }
 
 }

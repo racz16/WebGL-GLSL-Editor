@@ -1,5 +1,5 @@
 import { GlslDocumentHighlightProvider } from './providers/glsl-document-highlight-provider';
-import { ExtensionContext, languages, commands, workspace, Diagnostic, DiagnosticSeverity, window } from 'vscode';
+import { ExtensionContext, languages, commands, workspace, window } from 'vscode';
 import { GlslCompletionProvider } from './providers/glsl-completion-provider';
 import { GlslDocumentSymbolProvider } from './providers/glsl-document-symbol-provider';
 import { GlslDeclarationProvider } from './providers/glsl-declaration-provider';

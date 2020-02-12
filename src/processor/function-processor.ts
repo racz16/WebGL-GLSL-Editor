@@ -38,12 +38,12 @@ export abstract class FunctionProcessor {
         const fd = lf.getDeclaration();
         return fd.name === name && fd.parameters.length === parameters.length &&
             this.areParametersMatch(fd, parameters) &&
-            fd.interval.stopIndex < nameInterval.startIndex;
+            Helper.isALowerThanB(fd.interval, nameInterval);
     }
 
     private static areParametersMatch(fd: FunctionDeclaration, parameters: Array<ExpressionType>): boolean {
         for (let i = 0; i < parameters.length; i++) {
-            if (fd.parameters[i].type?.declaration.name !== parameters[i].type.name) {
+            if (fd.parameters[i].type?.declaration !== parameters[i].type) {
                 return false;
             }
         }
@@ -51,8 +51,8 @@ export abstract class FunctionProcessor {
     }
 
     private static anyTypeOrVariable(name: string, nameInterval: Interval, scope: Scope): boolean {
-        return scope.typeDeclarations.some(td => td.name === name && td.structInterval.stopIndex < nameInterval.startIndex) ||
-            scope.typeDeclarations.some(fd => fd.name === name && fd.structInterval.stopIndex < nameInterval.startIndex);
+        return scope.typeDeclarations.some(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
+            scope.variableDeclarations.some(fd => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval));
     }
 
     //
@@ -62,10 +62,9 @@ export abstract class FunctionProcessor {
         this.initialize(fpc.function_header(), scope, di);
         const interval = Helper.getIntervalFromParserRule(fpc);
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
-        const signatureInterval = Helper.getIntervalFromParserRule(this.fhc);
         const returnType = TypeUsageProcessor.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval, this.scope);
+        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
@@ -79,10 +78,9 @@ export abstract class FunctionProcessor {
         this.initialize(fdc.function_header(), scope, di);
         const interval = Helper.getIntervalFromParserRule(fdc);
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
-        const signatureInterval = Helper.getIntervalFromParserRule(this.fhc);
         const returnType = TypeUsageProcessor.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, signatureInterval, this.scope);
+        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);

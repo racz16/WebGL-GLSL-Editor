@@ -44,6 +44,9 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
 
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
+        if (lf.getDeclaration().ctor) {
+            return this.processConstructor(lf);
+        }
         if (!lf.getDeclaration().builtIn) {
             for (const fp of lf.prototypes) {
                 ret.push(this.di.intervalToLocation(fp.nameInterval));
@@ -58,26 +61,48 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
         return ret;
     }
 
+    private processConstructor(lf: LogicalFunction): Array<Location> {
+        const fd = lf.getDeclaration();
+        if (fd.builtIn) {
+            const ret = new Array<Location>();
+            for (const fc of fd.returnType.declaration.ctorCalls) {
+                if (fc.logicalFunction === lf) {
+                    ret.push(this.di.intervalToLocation(fc.nameInterval));
+                }
+            }
+            return ret;
+        } else {
+            return this.processDeclaration(fd.returnType.declaration);
+        }
+    }
+
     private processDeclaration(element: TypeDeclaration | VariableDeclaration): Array<Location> {
         const ret = new Array<Location>();
-        ret.push(this.di.intervalToLocation(element.nameInterval));
-        for (const usage of element.usages) {
-            ret.push(this.di.intervalToLocation(usage.nameInterval));
+        if (!element.builtin) {
+            ret.push(this.di.intervalToLocation(element.nameInterval));
+            for (const usage of element.usages) {
+                ret.push(this.di.intervalToLocation(usage.nameInterval));
+            }
+            if (element instanceof TypeDeclaration) {
+                for (const ctorCall of element.ctorCalls) {
+                    ret.push(this.di.intervalToLocation(ctorCall.nameInterval));
+                }
+            }
         }
         return ret;
     }
 
     private processUsage(element: TypeUsage | VariableUsage): Array<Location> {
         const ret = new Array<Location>();
-        ret.push(this.di.intervalToLocation(element.nameInterval));
         const declaration = element.declaration;
-        if (declaration) {
-            if (!declaration.builtin) {
-                ret.push(this.di.intervalToLocation(declaration.nameInterval));
-            }
+        if (declaration && !declaration.builtin) {
+            ret.push(this.di.intervalToLocation(declaration.nameInterval));
             for (const usage of declaration.usages) {
-                if (element !== usage) {
-                    ret.push(this.di.intervalToLocation(usage.nameInterval));
+                ret.push(this.di.intervalToLocation(usage.nameInterval));
+            }
+            if (element instanceof TypeUsage) {
+                for (const ctorCall of element.declaration.ctorCalls) {
+                    ret.push(this.di.intervalToLocation(ctorCall.nameInterval));
                 }
             }
         }

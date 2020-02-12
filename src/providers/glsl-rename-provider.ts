@@ -9,12 +9,14 @@ import { FunctionCall } from '../scope/function/function-call';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';
 import { GlslEditor } from '../core/glsl-editor';
+import { Scope } from '../scope/scope';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
 
     private lf: LogicalFunction;
     private vd: VariableDeclaration;
     private td: TypeDeclaration;
+    private scope: Scope;
     private newName: string;
 
     private initializeRename(document: TextDocument, position: Position, newName: string): void {
@@ -71,6 +73,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         for (const tu of this.td.usages) {
             we.replace(this.document.uri, this.di.intervalToRange(tu.nameInterval), this.newName);
         }
+        for (const fc of this.td.ctorCalls) {
+            we.replace(this.document.uri, this.di.intervalToRange(fc.nameInterval), this.newName);
+        }
         return we;
     }
 
@@ -95,11 +100,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateDefinedStructOrVariable(): void {
-        const scope = this.di.getScopeAt(this.position);
-        if (scope.variableDeclarations.find(vd => vd.name === this.newName)) {
+        if (this.scope.variableDeclarations.find(vd => vd.name === this.newName)) {
             throw new Error(`Variable '${this.newName}' is already definied`);
         }
-        if (scope.typeDeclarations.find(td => td.name === this.newName)) {
+        if (this.scope.typeDeclarations.find(td => td.name === this.newName)) {
             throw new Error(`Struct '${this.newName}' is already definied`);
         }
     }
@@ -125,14 +129,13 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (!GlslEditor.CONFIGURATIONS.getStrictRename()) {
             return;
         }
-        const scope = this.di.getScopeAt(this.position);
-        if (scope.isGlobal() && this.di.getRootScope().functionPrototypes.find(fp => fp.name === this.newName)) {
+        if (this.scope.isGlobal() && this.di.getRootScope().functionPrototypes.find(fp => fp.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
-        if (scope.isGlobal() && this.di.getRootScope().functionDefinitions.find(fd => fd.name === this.newName)) {
+        if (this.scope.isGlobal() && this.di.getRootScope().functionDefinitions.find(fd => fd.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
-        if (scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
+        if (this.scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
     }
@@ -181,6 +184,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     //prepare
     //
     public prepareRename(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Range | { range: Range, placeholder: string }> {
+        this.lf = null;
+        this.vd = null;
+        this.td = null;
         return this.processElements(document, position);
     }
 
@@ -194,19 +200,26 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     protected processFunctionCall(fc: FunctionCall): Range {
         if (!fc.builtin) {
-            this.processFunction(fc.logicalFunction, fc.nameInterval);
+            const fd = fc.logicalFunction.getDeclaration();
+            if (fd.ctor) {
+                return this.processTypeDeclaration(fd.returnType.declaration);
+            } else {
+                return this.processFunction(fc.logicalFunction, fc.nameInterval);
+            }
         }
         return this.defaultReturn();
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Range {
         this.vd = vd;
+        this.scope = vd.scope;
         return this.di.intervalToRange(vd.nameInterval);
     }
 
     protected processVariableUsage(vu: VariableUsage): Range {
         if (vu.declaration && !vu.declaration.builtin) {
             this.vd = vu.declaration;
+            this.scope = vu.scope;
             return this.di.intervalToRange(vu.nameInterval);
         }
         return this.defaultReturn();
@@ -214,12 +227,14 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     protected processTypeDeclaration(td: TypeDeclaration): Range {
         this.td = td;
+        this.scope = td.scope;
         return this.di.intervalToRange(td.nameInterval);
     }
 
     protected processTypeUsage(tu: TypeUsage): Range {
         if (tu.declaration && !tu.declaration.builtin) {
             this.td = tu.declaration;
+            this.scope = tu.scope;
             return this.di.intervalToRange(tu.nameInterval);
         }
         return this.defaultReturn();
@@ -227,6 +242,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
         this.lf = lf;
+        this.scope = lf.getDeclaration().scope;
         return this.di.intervalToRange(nameInterval);
     }
 

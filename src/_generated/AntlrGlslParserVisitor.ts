@@ -17,7 +17,6 @@ import { Selection_statementContext } from "./AntlrGlslParser";
 import { Switch_statementContext } from "./AntlrGlslParser";
 import { Case_groupContext } from "./AntlrGlslParser";
 import { Case_labelContext } from "./AntlrGlslParser";
-import { Case_statement_listContext } from "./AntlrGlslParser";
 import { Iteration_statementContext } from "./AntlrGlslParser";
 import { For_iterationContext } from "./AntlrGlslParser";
 import { While_iterationContext } from "./AntlrGlslParser";
@@ -39,12 +38,9 @@ import { TypeContext } from "./AntlrGlslParser";
 import { Type_usageContext } from "./AntlrGlslParser";
 import { Array_subscriptContext } from "./AntlrGlslParser";
 import { QualifierContext } from "./AntlrGlslParser";
-import { Type_qualifierContext } from "./AntlrGlslParser";
-import { Storage_qualifierContext } from "./AntlrGlslParser";
 import { Layout_qualifierContext } from "./AntlrGlslParser";
 import { Layout_qualifier_id_listContext } from "./AntlrGlslParser";
 import { Layout_qualifier_idContext } from "./AntlrGlslParser";
-import { Interpolation_qualifierContext } from "./AntlrGlslParser";
 import { LiteralContext } from "./AntlrGlslParser";
 import { Number_literalContext } from "./AntlrGlslParser";
 
@@ -154,13 +150,6 @@ export interface AntlrGlslParserVisitor<Result> extends ParseTreeVisitor<Result>
 	 * @return the visitor result
 	 */
 	visitCase_label?: (ctx: Case_labelContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `AntlrGlslParser.case_statement_list`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitCase_statement_list?: (ctx: Case_statement_listContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `AntlrGlslParser.iteration_statement`.
@@ -310,20 +299,6 @@ export interface AntlrGlslParserVisitor<Result> extends ParseTreeVisitor<Result>
 	visitQualifier?: (ctx: QualifierContext) => Result;
 
 	/**
-	 * Visit a parse tree produced by `AntlrGlslParser.type_qualifier`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitType_qualifier?: (ctx: Type_qualifierContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `AntlrGlslParser.storage_qualifier`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitStorage_qualifier?: (ctx: Storage_qualifierContext) => Result;
-
-	/**
 	 * Visit a parse tree produced by `AntlrGlslParser.layout_qualifier`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -343,13 +318,6 @@ export interface AntlrGlslParserVisitor<Result> extends ParseTreeVisitor<Result>
 	 * @return the visitor result
 	 */
 	visitLayout_qualifier_id?: (ctx: Layout_qualifier_idContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `AntlrGlslParser.interpolation_qualifier`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitInterpolation_qualifier?: (ctx: Interpolation_qualifierContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `AntlrGlslParser.literal`.

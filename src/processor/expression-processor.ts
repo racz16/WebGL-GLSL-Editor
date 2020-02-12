@@ -1,7 +1,6 @@
 import { ExpressionContext } from '../_generated/AntlrGlslParser';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { DocumentInfo } from '../core/document-info';
-import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { Helper } from './helper';
 import { Scope } from '../scope/scope';
 import { VariableUsage } from '../scope/variable/variable-usage';
@@ -9,6 +8,7 @@ import { ArrayUsage } from '../scope/array-usage';
 import { TypeBase } from '../scope/type/type-base';
 import { FunctionCall } from '../scope/function/function-call';
 import { FunctionProcessor } from './function-processor';
+import { VariableUsageProcessor } from './variable-usage-processor';
 
 export class ExpressionProcessor {
 
@@ -20,7 +20,6 @@ export class ExpressionProcessor {
         this.ctx = ctx;
         this.scope = scope;
         this.di = di;
-
     }
 
     public processExpression(ctx: ExpressionContext, scope: Scope, di: DocumentInfo): ExpressionType | Array<ExpressionType> {
@@ -92,15 +91,10 @@ export class ExpressionProcessor {
     }
 
     private processIdentifier(): ExpressionType {
-        const interval = Helper.getIntervalFromTerminalNode(this.ctx.IDENTIFIER());
-        const name = this.ctx.IDENTIFIER().text;
-        const vd = VariableDeclarationProcessor.searchVariableDeclaration(name, interval, this.scope, this.di);
-        if (vd) {
-            const vu = new VariableUsage(name, this.scope, interval, vd);
-            vd.usages.push(vu);
-            this.scope.variableUsages.push(vu);
-            const constant = vd.type.containsQualifier(this.di.builtin.qualifiers.get('const'));
-            return new ExpressionType(vd.type.declaration, vd.type.array, constant);
+        const vu = VariableUsageProcessor.getVariableUsage(this.ctx.IDENTIFIER(), this.scope, this.di);
+        if (vu.declaration) {
+            const constant = vu.declaration.type.containsQualifier(this.di.builtin.qualifiers.get('const'));
+            return new ExpressionType(vu.declaration.type.declaration, vu.declaration.type.array, constant);
         } else {
             return null;
         }
@@ -163,17 +157,21 @@ export class ExpressionProcessor {
                 }
             }
         }
-
-        const name = this.ctx.function_call().IDENTIFIER() ? this.ctx.function_call().IDENTIFIER().text : this.ctx.function_call().TYPE().text;
+        const tn = this.ctx.function_call().IDENTIFIER() ? this.ctx.function_call().IDENTIFIER() : this.ctx.function_call().TYPE();
+        const name = tn.text;
         const interval = Helper.getIntervalFromParserRule(this.ctx.function_call());
-        const nameInterval = Helper.getIntervalFromTerminalNode(this.ctx.function_call().IDENTIFIER());
+        const nameInterval = Helper.getIntervalFromTerminalNode(tn);
         const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
+        //TODO: matrix ctors
         if (lf) {
             const fd = lf.getDeclaration();
             const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn);
             lf.calls.push(fc);
             this.scope.functionCalls.push(fc);
             if (fd.returnType.declaration) {
+                if (fd.ctor) {
+                    fd.returnType.declaration.ctorCalls.push(fc);
+                }
                 return new ExpressionType(fd.returnType.declaration, fd.returnType.array);
             } else {
                 return null;

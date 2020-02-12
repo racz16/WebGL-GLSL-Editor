@@ -16,8 +16,4 @@ export class FunctionCall extends Element {
         this.builtin = builtin;
     }
 
-    public toString(): string {
-        return this.name;
-    }
-
 }

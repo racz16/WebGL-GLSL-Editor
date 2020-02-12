@@ -1,6 +1,6 @@
-import { Types, OpaqueType, CustomType, TypeMember, GenericTypes } from './types';
-import { Keywords } from './keywords';
-import { Qualifiers, QualifierRules } from './qualifiers';
+import { Types, OpaqueType, CustomType, TypeMember, GenericTypes } from './interfaces/types';
+import { Keywords } from './interfaces/keywords';
+import { Qualifiers, QualifierRules, LayoutParameters } from './interfaces/qualifiers';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -9,11 +9,10 @@ import { Qualifier } from '../scope/qualifier/qualifier';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeBase } from '../scope/type/type-base';
 import { TypeUsage } from '../scope/type/type-usage';
-import { Interval } from '../scope/interval';
-import { Variables, Variable } from './variables';
+import { Variables, Variable } from './interfaces/variables';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
-import { ReservedWords } from './reserved-words';
-import { Functions, Parameter, FunctionSummaries, FunctionSummary, ImportantFunctions } from './functions';
+import { ReservedWords } from './interfaces/reserved-words';
+import { Functions, Parameter, FunctionSummaries, FunctionSummary, ImportantFunctions, Function } from './interfaces/functions';
 import { MarkdownString } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { GlslCommandProvider } from '../providers/glsl-command-provider';
@@ -23,6 +22,8 @@ import { FunctionInfo } from '../scope/function/function-info';
 import { GenericTypeProcessor } from './generic-type-processor';
 import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { ConstructorProcessor } from './constructor-processor';
+import { Helper } from '../processor/helper';
 
 export class Builtin {
 
@@ -39,6 +40,7 @@ export class Builtin {
     public readonly types = new Map<string, TypeDeclaration>();
     public readonly keywords = new Array<Keyword>();
     public readonly qualifiers = new Map<string, Qualifier>();
+    public readonly layoutParameters = new Array<string>();
     public readonly qualifierRules = new Array<Set<Qualifier>>();
     public readonly reservedWords = new Array<string>();
     public readonly genericTypes = new Map<string, Array<string>>();
@@ -50,7 +52,8 @@ export class Builtin {
         this.loadReservedWords();
         this.loadKeywords();
         this.loadQualifiers();
-        this.loadQualifierRules();
+        this.loadLayoutParameters();
+        //this.loadQualifierRules(); //for validations
         this.loadTypes();
         this.loadGenericTypes();
         this.addConstructors();
@@ -61,7 +64,7 @@ export class Builtin {
     }
 
     //
-    //reserved------------------------------------------------------------------
+    //reserved
     //
     private loadReservedWords(): void {
         const reservedWords: ReservedWords = require(this.getPath('reserved'));
@@ -71,22 +74,32 @@ export class Builtin {
     }
 
     //
-    //keywords------------------------------------------------------------------
+    //keywords
     //
     private loadKeywords(): void {
         const keywords: Keywords = require(this.getPath('keywords'));
         for (const keyword of keywords.keywords) {
-            this.keywords.push(new Keyword(keyword.name));
+            const stage = this.getStage(keyword.stage);
+            this.keywords.push(new Keyword(keyword.name, stage));
         }
     }
 
     //
-    //qualifiers----------------------------------------------------------------
+    //qualifiers
     //
     private loadQualifiers(): void {
         const qualifiers: Qualifiers = require(this.getPath('qualifiers'));
         for (const qualifier of qualifiers.qualifiers) {
             this.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
+        }
+    }
+
+    private loadLayoutParameters(): void {
+        if (this.postfix !== '100') {
+            const layoutParameters: LayoutParameters = require(`${Builtin.JSON_PATH}/layout_parameters.json`);
+            for (const param of layoutParameters.layoutParameters) {
+                this.layoutParameters.push(param);
+            }
         }
     }
 
@@ -102,7 +115,7 @@ export class Builtin {
     }
 
     //
-    //types---------------------------------------------------------------------
+    //types
     //
     private loadTypes(): void {
         const types: Types = require(this.getPath('types'));
@@ -120,7 +133,7 @@ export class Builtin {
                 td = this.types.get(type.alias);
             } else {
                 const tb = this.stringToTypeBase(type.base);
-                td = new TypeDeclaration(type.name, Interval.NONE, null, true, Interval.NONE, type.width, type.height, tb, TypeCategory.TRANSPARENT);
+                td = Helper.createTypeDeclaration(type.name, type.width, type.height, tb, TypeCategory.TRANSPARENT);
             }
             this.types.set(type.name, td);
         }
@@ -138,14 +151,14 @@ export class Builtin {
 
     private loadOpaqueTypes(opaqueTypes: Array<OpaqueType>, typeCategory: TypeCategory, typeBase: TypeBase): void {
         for (const type of opaqueTypes) {
-            const td = new TypeDeclaration(type.name, Interval.NONE, null, true, Interval.NONE, -1, -1, typeBase, typeCategory);
+            const td = Helper.createTypeDeclaration(type.name, -1, -1, typeBase, typeCategory);
             this.types.set(type.name, td);
         }
     }
 
     private loadCustomTypes(types: Types): void {
         for (const type of types.custom) {
-            const td = new TypeDeclaration(type.name, Interval.NONE, null, true, Interval.NONE, -1, -1, TypeBase.NONE, TypeCategory.CUSTOM);
+            const td = Helper.createTypeDeclaration(type.name, -1, -1, TypeBase.NONE, TypeCategory.CUSTOM);
             this.addMembers(td, type);
             this.types.set(type.name, td);
         }
@@ -154,8 +167,8 @@ export class Builtin {
     private addMembers(td: TypeDeclaration, type: CustomType): void {
         for (const member of type.members) {
             const td2 = this.types.get(member.memberType);
-            const tu = new TypeUsage(member.memberType, Interval.NONE, Interval.NONE, null, td2, new ArrayUsage());
-            const vd = new VariableDeclaration(member.memberName, Interval.NONE, null, true, Interval.NONE, tu, false);
+            const tu = Helper.createTypeUsage(member.memberType, td2, new ArrayUsage());
+            const vd = Helper.createVariableDeclaration(member.memberName, tu, false);
             this.addMemberPrecisionQualifier(tu, member);
             td.members.push(vd);
         }
@@ -164,7 +177,7 @@ export class Builtin {
     private addMemberPrecisionQualifier(tu: TypeUsage, member: TypeMember): void {
         if (member.memberPrecision) {
             const q = this.qualifiers.get(member.memberPrecision);
-            const qu = new QualifierUsage(member.memberPrecision, Interval.NONE, null, q);
+            const qu = new QualifierUsage(member.memberPrecision, null, null, q);
             tu.qualifiers.push(qu);
         }
     }
@@ -185,50 +198,33 @@ export class Builtin {
     }
 
     //
-    //constructors--------------------------------------------------------------
+    //constructors
     //
     private addConstructors(): void {
         for (const td of this.types.values()) {
-            if (td.isScalar()) {
+            if (!td.isOpaque()) {
                 this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                for (const td2 of this.types.values()) {
-                    const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
-                    const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
-                    const tu2 = new TypeUsage(td2.name, Interval.NONE, Interval.NONE, null, td2, new ArrayUsage());
-                    const vd = new VariableDeclaration('value', Interval.NONE, null, true, Interval.NONE, tu2, true);
-                    fd.parameters.push(vd);
-                }
-            } else if (td.isVector()) {
-                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                //TODO
-            } else if (td.isMatrix()) {
-                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                //TODO
-            }
-            if (td.typeCategory === TypeCategory.CUSTOM) {
-                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
-                const tu = new TypeUsage(td.name, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
-                const fd = new FunctionDeclaration(td.name, Interval.NONE, null, tu, true, true, Interval.NONE, Interval.NONE, null);
-                for (const vd of td.members) {
-                    fd.parameters.push(vd);
+                const ctors = ConstructorProcessor.getConstructors(td, this.types);
+                for (const ctor of ctors) {
+                    this.functions.push(ctor);
                 }
             }
         }
     }
 
     //
-    //variables-----------------------------------------------------------------
+    //variables
     //
     private loadVariables(): void {
         const variables: Variables = require(this.getPath('variables'));
         for (const variable of variables.variables) {
             const array = variable.array === undefined ? -1 : variable.array;
             const td = this.types.get(variable.type);
-            const tu = new TypeUsage(variable.type, Interval.NONE, Interval.NONE, null, td, new ArrayUsage(array));
+            const tu = Helper.createTypeUsage(variable.type, td, new ArrayUsage(array));
             this.addVariableQualifiers(tu, variable);
             const summary = this.createVariableSummary(variable, tu);
             const stage = this.getStage(variable.stage);
-            const vd = new VariableDeclaration(variable.name, Interval.NONE, null, true, Interval.NONE, tu, false, summary, stage);
+            const vd = Helper.createVariableDeclaration(variable.name, tu, false, summary, stage);
             this.variables.set(variable.name, vd);
         }
     }
@@ -260,42 +256,50 @@ export class Builtin {
         if (variable.qualifiers) {
             for (const qualifier of variable.qualifiers) {
                 const q = this.qualifiers.get(qualifier);
-                const qu = new QualifierUsage(qualifier, Interval.NONE, null, q);
+                const qu = new QualifierUsage(qualifier, null, null, q);
                 tu.qualifiers.push(qu);
             }
         }
     }
 
     //
-    //functions-----------------------------------------------------------------
+    //functions
     //
     private loadFunctions(): void {
         const functions: Functions = require(this.getPath('functions'));
         for (const genericFunc of functions.functions) {
             for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
                 const td = this.types.get(realFunc.returnType);
-                const tu = new TypeUsage(realFunc.returnType, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
-                if (realFunc.qualifiers) {
-                    for (const qualifier of realFunc.qualifiers) {
-                        const q = this.qualifiers.get(qualifier);
-                        const qu = new QualifierUsage(qualifier, Interval.NONE, null, q);
-                        tu.qualifiers.push(qu);
-                    }
-                }
+                const tu = Helper.createTypeUsage(realFunc.returnType, td, new ArrayUsage());
+                this.addReturnTypeQualifiers(realFunc, tu);
                 const stage = this.getStage(realFunc.stage);
-                const fp = new FunctionDeclaration(realFunc.name, Interval.NONE, null, tu, true, false, Interval.NONE, Interval.NONE, null, stage);
-                for (const parameter of realFunc.parameters) {
-                    const td = this.types.get(parameter.type);
-                    const tu = new TypeUsage(parameter.type, Interval.NONE, Interval.NONE, null, td, new ArrayUsage());
-                    const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu, true);
-                    this.addVariableQualifiers(tu, parameter);
-                    fp.parameters.push(vd);
-                }
+                const fp = Helper.createFunctionDeclaration(realFunc.name, tu, false, stage);
+                this.addParameters(realFunc, fp);
                 const lf = new LogicalFunction();
                 lf.prototypes.push(fp);
                 fp.logicalFunction = lf;
                 this.functions.push(lf);
             }
+        }
+    }
+
+    private addReturnTypeQualifiers(realFunc: Function, tu: TypeUsage): void {
+        if (realFunc.qualifiers) {
+            for (const qualifier of realFunc.qualifiers) {
+                const q = this.qualifiers.get(qualifier);
+                const qu = new QualifierUsage(qualifier, null, null, q);
+                tu.qualifiers.push(qu);
+            }
+        }
+    }
+
+    private addParameters(realFunc: Function, fp: FunctionDeclaration): void {
+        for (const parameter of realFunc.parameters) {
+            const td = this.types.get(parameter.type);
+            const tu = Helper.createTypeUsage(parameter.type, td, new ArrayUsage());
+            const vd = Helper.createVariableDeclaration(parameter.name, tu, true);
+            this.addVariableQualifiers(tu, parameter);
+            fp.parameters.push(vd);
         }
     }
 
@@ -336,7 +340,7 @@ export class Builtin {
     }
 
     //
-    //
+    //general
     //
     private getStage(stage: string): ShaderStage {
         switch (stage) {
@@ -361,6 +365,9 @@ export class Builtin {
         for (const qualifier of this.qualifiers.values()) {
             bi.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
         }
+        for (const param of this.layoutParameters) {
+            bi.layoutParameters.push(param);
+        }
         for (const qualifierRule of this.qualifierRules) {
             const qr = new Set<Qualifier>();
             for (const qualifier of qualifierRule) {
@@ -369,7 +376,7 @@ export class Builtin {
             bi.qualifierRules.push(qr);
         }
         for (const type of this.types.values()) {
-            const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.structInterval, type.width, type.height, type.typeBase, type.typeCategory);
+            const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.interval, type.width, type.height, type.typeBase, type.typeCategory);
             for (const member of type.members) {
                 const td2 = bi.types.get(member.type.name);
                 const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
@@ -397,21 +404,21 @@ export class Builtin {
         }
         for (const olf of this.functions) {
             const ofp = olf.getDeclaration();
-            const td = this.types.get(ofp.returnType.name);
-            const tu = new TypeUsage(ofp.returnType.name, Interval.NONE, Interval.NONE, null, td, ofp.returnType.array);
+            const td = bi.types.get(ofp.returnType.name);
+            const tu = new TypeUsage(ofp.returnType.name, null, null, null, td, ofp.returnType.array);
             for (const qualifier of ofp.returnType.qualifiers) {
-                const q = this.qualifiers.get(qualifier.name);
-                const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
+                const q = bi.qualifiers.get(qualifier.name);
+                const qu = new QualifierUsage(qualifier.name, null, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, ofp.signatureInterval, null, ofp.stage);
+            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, null, ofp.stage);
             for (const parameter of ofp.parameters) {
-                const td = this.types.get(parameter.type.name);
-                const tu = new TypeUsage(parameter.type.name, Interval.NONE, Interval.NONE, null, td, parameter.type.array);
-                const vd = new VariableDeclaration(parameter.name, Interval.NONE, null, true, Interval.NONE, tu, true);
+                const td = bi.types.get(parameter.type.name);
+                const tu = new TypeUsage(parameter.type.name, null, null, null, td, parameter.type.array);
+                const vd = new VariableDeclaration(parameter.name, null, null, true, null, tu, true);
                 for (const qualifier of parameter.type.qualifiers) {
-                    const q = this.qualifiers.get(qualifier.name);
-                    const qu = new QualifierUsage(qualifier.name, Interval.NONE, null, q);
+                    const q = bi.qualifiers.get(qualifier.name);
+                    const qu = new QualifierUsage(qualifier.name, null, null, q);
                     tu.qualifiers.push(qu);
                 }
                 fp.parameters.push(vd);
@@ -439,6 +446,9 @@ export class Builtin {
         }
         for (const variable of this.variables.values()) {
             variable.usages.length = 0;
+        }
+        for (const func of this.functions.values()) {
+            func.calls.length = 0;
         }
     }
 

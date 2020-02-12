@@ -11,10 +11,6 @@ import { TypeUsage } from '../scope/type/type-usage';
 
 export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<DocumentHighlight>> implements DocumentHighlightProvider {
 
-    //TODO:
-    //return type: returns, discards
-    //for, while: breaks, (returns, discards)? 
-
     public provideDocumentHighlights(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<DocumentHighlight[]> {
         return this.processElements(document, position);
     }
@@ -49,6 +45,9 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private processFunction(lf: LogicalFunction): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
+        if (lf.getDeclaration().ctor) {
+            return this.processConstructor(lf);
+        }
         if (!lf.getDeclaration().builtIn) {
             this.addHighlight(ret, lf.prototypes, DocumentHighlightKind.Write);
             this.addHighlight(ret, lf.definitions, DocumentHighlightKind.Read);
@@ -57,12 +56,31 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
         return ret;
     }
 
+    private processConstructor(lf: LogicalFunction): Array<DocumentHighlight> {
+        const fd = lf.getDeclaration();
+        if (fd.builtIn) {
+            const ret = new Array<DocumentHighlight>();
+            for (const fc of fd.returnType.declaration.ctorCalls) {
+                if (fc.logicalFunction === lf) {
+                    const range = this.di.intervalToRange(fc.nameInterval);
+                    ret.push(new DocumentHighlight(range, DocumentHighlightKind.Text));
+                }
+            }
+            return ret;
+        } else {
+            return this.processDeclaration(fd.returnType.declaration);
+        }
+    }
+
     private processDeclaration(element: VariableDeclaration | TypeDeclaration): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
         if (!element.builtin) {
             const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
             this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
+            if (element instanceof TypeDeclaration) {
+                this.addHighlight(ret, element.ctorCalls, DocumentHighlightKind.Text);
+            }
         }
         return ret;
     }
@@ -70,9 +88,12 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
     private processUsage(element: VariableUsage | TypeUsage): Array<DocumentHighlight> {
         if (element.declaration) {
             return this.processDeclaration(element.declaration);
+        } else if (element.name !== 'void') {
+            const range = this.di.intervalToRange(element.nameInterval);
+            return new Array<DocumentHighlight>(new DocumentHighlight(range, DocumentHighlightKind.Text));
+        } else {
+            return null;
         }
-        const range = this.di.intervalToRange(element.nameInterval);
-        return new Array<DocumentHighlight>(new DocumentHighlight(range, DocumentHighlightKind.Text));
     }
 
     private addHighlight(ret: Array<DocumentHighlight>, elements: Array<Element>, dhk: DocumentHighlightKind): void {

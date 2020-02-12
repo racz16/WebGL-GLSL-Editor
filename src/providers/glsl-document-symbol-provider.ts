@@ -45,8 +45,8 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     }
 
     private addStruct(td: TypeDeclaration, parent: DocumentSymbol): void {
-        const range = this.di.intervalToRange(td.structInterval);
-        const selectionRange = this.getRange(td.nameInterval, td.structInterval);
+        const range = this.di.intervalToRange(td.interval);
+        const selectionRange = this.getRange(td.nameInterval, td.interval);
         const name = td.name ?? '<unnamed struct>';
         const ds = new DocumentSymbol(name, null, SymbolKind.Struct, range, selectionRange);
         for (const vd of td.members) {
@@ -65,7 +65,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         const name = vd.name ?? '<unnamed variable>';
         let info = vd.type.toStringWithoutQualifiers() ?? '<unnamed struct>';
         info = vd.parameter ? info + ' (parameter)' : info;
-        const sk = this.getSymbolKind(vd, property);// property ? SymbolKind.Field : SymbolKind.Variable;
+        const sk = this.getSymbolKind(vd, property);
         const ds = new DocumentSymbol(name, info, sk, range, selectionRange);
         if (parent) {
             parent.children.push(ds);
@@ -94,7 +94,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     }
 
     private getRange(interval: Interval, defaultInterval: Interval): Range {
-        const availableInterval = interval !== Interval.NONE ? interval : defaultInterval;
+        const availableInterval = interval ?? defaultInterval;
         return this.di.intervalToRange(availableInterval);
     }
 

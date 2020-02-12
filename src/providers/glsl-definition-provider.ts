@@ -14,15 +14,15 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
         return this.processElements(document, position);
     }
 
-    protected processFunctionPrototype(fp: FunctionDeclaration): Array<Location> {
+    protected processFunctionPrototype(fp: FunctionDeclaration): Array<Location> | Location {
         return this.processFunction(fp.logicalFunction);
     }
 
-    protected processFunctionDefinition(fd: FunctionDeclaration): Array<Location> {
+    protected processFunctionDefinition(fd: FunctionDeclaration): Array<Location> | Location {
         return this.processFunction(fd.logicalFunction);
     }
 
-    protected processFunctionCall(fc: FunctionCall): Array<Location> {
+    protected processFunctionCall(fc: FunctionCall): Array<Location> | Location {
         return this.processFunction(fc.logicalFunction);
     }
 
@@ -42,11 +42,15 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
         return this.processUsage(tu);
     }
 
-    private processFunction(lf: LogicalFunction): Array<Location> {
+    private processFunction(lf: LogicalFunction): Array<Location> | Location {
         const ret = new Array<Location>();
         if (!lf.getDeclaration().builtIn) {
-            for (const fd of lf.definitions) {
-                ret.push(this.di.intervalToLocation(fd.nameInterval));
+            if (lf.getDeclaration().ctor) {
+                return this.processTypeDeclaration(lf.getDeclaration().returnType.declaration);
+            } else {
+                for (const fd of lf.definitions) {
+                    ret.push(this.di.intervalToLocation(fd.nameInterval));
+                }
             }
         }
         return ret;
