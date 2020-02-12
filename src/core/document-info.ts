@@ -1,9 +1,6 @@
 import { Uri, TextDocument, Position, Location, Range } from 'vscode';
 import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
 import { GlslVisitor } from './glsl-visitor';
-import { UniqueDiagnostic } from '../diagnostic/unique-diagnostic';
-import { ErrorListener } from '../diagnostic/error-listener';
-import { AntlrGeneratedDiagnostic } from '../diagnostic/antlr-generated-diagnostic';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
@@ -24,8 +21,6 @@ export class DocumentInfo {
     private stage: ShaderStage;
     private tokens: Array<Token>;
 
-    public readonly errors = new Array<UniqueDiagnostic>();
-    public generatedErrors = new Array<AntlrGeneratedDiagnostic>();
     public builtin: Builtin;
 
     private document: TextDocument;
@@ -40,7 +35,6 @@ export class DocumentInfo {
         if (this.builtin) {
             this.builtin.reset();
         }
-        this.errors.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
@@ -111,9 +105,7 @@ export class DocumentInfo {
     private processDocumentUnsafe(): void {
         const lexer = this.createLexer();
         const parser = this.createParser(lexer);
-        //this.generatedErrors = this.getGeneratedErrors(parser); for validation
         this.processVisitor(parser);
-        //Validator.validate(this); for validation
     }
 
     private createLexer(): AntlrGlslLexer {
@@ -127,14 +119,8 @@ export class DocumentInfo {
     private createParser(lexer: AntlrGlslLexer): AntlrGlslParser {
         const tokenStream = new CommonTokenStream(lexer);
         const parser = new AntlrGlslParser(tokenStream);
-        return parser;
-    }
-
-    private getGeneratedErrors(parser: AntlrGlslParser): Array<AntlrGeneratedDiagnostic> {
         parser.removeErrorListeners();
-        parser.addErrorListener(new ErrorListener());
-        const listener = parser.getErrorListeners()[0] as ErrorListener;
-        return listener.getSyntaxErrors();
+        return parser;
     }
 
     private processVisitor(parser: AntlrGlslParser): void {

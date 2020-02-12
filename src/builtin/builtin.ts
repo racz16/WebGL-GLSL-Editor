@@ -53,7 +53,6 @@ export class Builtin {
         this.loadKeywords();
         this.loadQualifiers();
         this.loadLayoutParameters();
-        //this.loadQualifierRules(); //for validations
         this.loadTypes();
         this.loadGenericTypes();
         this.addConstructors();
@@ -100,17 +99,6 @@ export class Builtin {
             for (const param of layoutParameters.layoutParameters) {
                 this.layoutParameters.push(param);
             }
-        }
-    }
-
-    private loadQualifierRules(): void {
-        const qualifierRules: QualifierRules = require(this.getPath('qualifier-rules'));
-        for (const qualifierRule of qualifierRules.qualifierRules) {
-            const qualifierSet = new Set<Qualifier>();
-            for (const qualifier of qualifierRule.qualifierRule) {
-                qualifierSet.add(this.qualifiers.get(qualifier));
-            }
-            this.qualifierRules.push(qualifierSet);
         }
     }
 
