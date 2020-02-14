@@ -112,11 +112,15 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitFor_iteration(ctx: For_iterationContext): void {
         this.scope = this.createScopeFromForIteration(this.scope, ctx);
-        this.visit(ctx.variable_declaration());
+        if (ctx.variable_declaration()) {
+            this.visit(ctx.variable_declaration());
+        }
         for (const el of ctx.expression_list()) {
             this.visit(el);
         }
-        this.visit(ctx.expression());
+        if (ctx.expression()) {
+            this.visit(ctx.expression());
+        }
         this.visit(ctx.statement());
         this.scope = this.scope.parent;
     }

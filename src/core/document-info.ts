@@ -20,7 +20,7 @@ export class DocumentInfo {
     private version = 100;
     private stage: ShaderStage;
     private tokens: Array<Token>;
-
+    public readonly completionRegions = new Array<TypeUsage>();
     public builtin: Builtin;
 
     private document: TextDocument;
@@ -35,6 +35,7 @@ export class DocumentInfo {
         if (this.builtin) {
             this.builtin.reset();
         }
+        this.completionRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
@@ -149,9 +150,17 @@ export class DocumentInfo {
         return this.document.positionAt(offset);
     }
 
+    public positionToOffset(position: Position): number {
+        return this.document.offsetAt(position);
+    }
+
     public lineAndCharacterToRange(line: number, character: number): Range {
         const position = new Position(line - 1, character);
         return new Range(position, position);
+    }
+
+    public getTextInInterval(interval: Interval): string {
+        return this.document.getText(this.intervalToRange(interval));
     }
 
     //

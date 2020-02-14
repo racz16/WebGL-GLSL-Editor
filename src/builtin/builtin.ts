@@ -189,9 +189,9 @@ export class Builtin {
     //constructors
     //
     private addConstructors(): void {
-        for (const td of this.types.values()) {
+        for (const [name, td] of this.types) {
             if (!td.isOpaque()) {
-                this.functionSummaries.set(td.name, new FunctionInfo(td.name, null, ShaderStage.DEFAULT, true));
+                this.functionSummaries.set(name, new FunctionInfo(name, null, ShaderStage.DEFAULT, true));
                 const ctors = ConstructorProcessor.getConstructors(td, this.types);
                 for (const ctor of ctors) {
                     this.functions.push(ctor);
@@ -363,19 +363,24 @@ export class Builtin {
             }
             bi.qualifierRules.push(qr);
         }
-        for (const type of this.types.values()) {
-            const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.interval, type.width, type.height, type.typeBase, type.typeCategory);
-            for (const member of type.members) {
-                const td2 = bi.types.get(member.type.name);
-                const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
-                for (const qu of member.type.qualifiers) {
-                    const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
-                    tu.qualifiers.push(qu2);
+        for (const [name, type] of this.types) {
+            if (name === 'mat2x2' || name === 'mat3x3' || name === 'mat4x4') {
+                const td = bi.types.get(type.name);
+                bi.types.set(name, td);
+            } else {
+                const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.interval, type.width, type.height, type.typeBase, type.typeCategory);
+                for (const member of type.members) {
+                    const td2 = bi.types.get(member.type.name);
+                    const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
+                    for (const qu of member.type.qualifiers) {
+                        const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
+                        tu.qualifiers.push(qu2);
+                    }
+                    const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false);
+                    td.members.push(vd);
                 }
-                const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false);
-                td.members.push(vd);
+                bi.types.set(type.name, td);
             }
-            bi.types.set(type.name, td);
         }
         for (const type of this.genericTypes) {
             bi.genericTypes.set(type[0], type[1]);

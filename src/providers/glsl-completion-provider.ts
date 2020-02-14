@@ -6,6 +6,8 @@ import { Scope } from '../scope/scope';
 import { TypeCategory } from '../scope/type/type-category';
 import { ShaderStage } from '../scope/shader-stage';
 import { Helper } from '../processor/helper';
+import { TypeUsage } from '../scope/type/type-usage';
+import { Interval } from '../scope/interval';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
@@ -14,9 +16,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private offset: number;
     private items: Array<CompletionItem>;
 
-    //TODO:
-    //struct members, swizzle
+    private readonly xyzw = ['x', 'y', 'z', 'w'];
+    private readonly rgba = ['r', 'g', 'b', 'a'];
+    private readonly pqst = ['p', 'q', 's', 't'];
 
+    //TODO:
     //context based completion
 
     private initialize(document: TextDocument, position: Position): void {
@@ -28,11 +32,89 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position);
+        const [cr, startsWith] = this.getCompletionExpression();
         this.items = new Array<CompletionItem>();
-        const scope = this.di.getScopeAt(this.position);
-        this.addKeywordAndQualifierItems();
-        this.addItems(scope);
+        if (cr) {
+            this.completeAfterDot(cr, startsWith);
+        } else {
+            const scope = this.di.getScopeAt(this.position);
+            this.addKeywordAndQualifierItems();
+            this.addItems(scope);
+        }
         return this.items;
+    }
+
+    private completeAfterDot(cr: TypeUsage, startsWith: string): void {
+        if (cr.array.isArray()) {
+            if ('length'.startsWith(startsWith)) {
+                this.items.push(new CompletionItem('length', CompletionItemKind.Function));
+            }
+        } else if (cr.declaration.isVector()) {
+            this.addSwizzles(cr.declaration.width, this.xyzw, 0, startsWith);
+            this.addSwizzles(cr.declaration.width, this.rgba, 1, startsWith);
+            this.addSwizzles(cr.declaration.width, this.pqst, 2, startsWith);
+        } else {
+            for (const memeber of cr.declaration.members) {
+                if (memeber.name.startsWith(startsWith)) {
+                    this.items.push(new CompletionItem(memeber.name, CompletionItemKind.Property));
+                }
+            }
+        }
+    }
+
+    private addSwizzles(width: number, swizzleCharacters: Array<string>, swizzleCharactersPriority: number, startsWith: string, swizzle = ''): void {
+        if (swizzle.length < 4) {
+            for (let i = 0; i < width; i++) {
+                const char = swizzleCharacters[i];
+                const newSwizzle = swizzle + char;
+                if (newSwizzle.startsWith(startsWith)) {
+                    const ci = new CompletionItem(newSwizzle, CompletionItemKind.Property);
+                    ci.sortText = this.getSwizzleSortText(swizzleCharacters, swizzleCharactersPriority, newSwizzle);
+                    this.items.push(ci);
+                }
+                this.addSwizzles(width, swizzleCharacters, swizzleCharactersPriority, startsWith, newSwizzle);
+            }
+        }
+    }
+
+    private getSwizzleSortText(swizzleCharacters: Array<string>, swizzleCharactersPriority: number, swizzle: string): string {
+        let sortText = `${swizzle.length}${swizzleCharactersPriority}`;
+        for (const char of swizzle) {
+            sortText += swizzleCharacters.indexOf(char);
+        }
+        return sortText;
+    }
+
+    private getCompletionExpression(): [TypeUsage, string] {
+        const offset = this.di.positionToOffset(this.position);
+        let tu: TypeUsage = null;
+        for (const cr of this.di.completionRegions) {
+            if (cr.interval.stopIndex < offset) {
+                tu = cr;
+            } else {
+                break;
+            }
+        }
+        if (tu) {
+            const text = this.di.getTextInInterval(new Interval(tu.interval.stopIndex + 1, offset));
+            if (this.isIdentifier(text)) {
+                return [tu, text];
+            }
+        }
+        return [null, null];
+    }
+
+    private isIdentifier(text: string): boolean {
+        for (const char of text) {
+            const lowerCase = (char >= 'a' && char <= 'z');
+            const upperCase = (char >= 'A' && char <= 'Z');
+            const digit = (char >= '0' && char <= '9');
+            const underScore = char === '_';
+            if (!lowerCase && !upperCase && !digit && !underScore) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //
@@ -79,9 +161,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //builtin types
     //
     private addBuiltinTypes(localItems: Array<CompletionItem>): void {
-        for (const td of this.di.builtin.types.values()) {
-            if (!this.items.some(ci => this.getName(ci) === td.name)) {
-                const ci = new CompletionItem(td.name, CompletionItemKind.Class);
+        for (const [name, td] of this.di.builtin.types) {
+            if (!this.items.some(ci => this.getName(ci) === name)) {
+                const ci = new CompletionItem(name, CompletionItemKind.Class);
                 if (td.typeCategory === TypeCategory.CUSTOM) {
                     ci.documentation = new MarkdownString(td.toStringDocumentation());
                     ci.detail = 'Built-In Type';

@@ -9,6 +9,8 @@ import { TypeBase } from '../scope/type/type-base';
 import { FunctionCall } from '../scope/function/function-call';
 import { FunctionProcessor } from './function-processor';
 import { VariableUsageProcessor } from './variable-usage-processor';
+import { TypeCategory } from '../scope/type/type-category';
+import { TypeUsage } from '../scope/type/type-usage';
 
 export class ExpressionProcessor {
 
@@ -58,6 +60,8 @@ export class ExpressionProcessor {
             return this.processShiftExpression();
         } else if (this.isAssignmentOrModifyExpression()) {
             return this.processAssignmentOrModifyExpression();
+        } else if (this.isCompletionExpression()) {
+            return this.processCompletionExpression();
         } else {
             for (const exp of this.ctx.expression()) {
                 new ExpressionProcessor().processExpression(exp, this.scope, this.di);
@@ -132,7 +136,8 @@ export class ExpressionProcessor {
     }
 
     private processLengthExpression(): ExpressionType {
-        const exp = new ExpressionProcessor().processExpression(this.ctx.expression[0], this.scope, this.di);
+        const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        this.processCompletionRegion(exp);
         if (exp && exp instanceof ExpressionType && exp.array.isArray()) {
             return new ExpressionType(this.di.builtin.types.get('int'), new ArrayUsage(), true, exp.array.arraySize);
         }
@@ -186,6 +191,7 @@ export class ExpressionProcessor {
 
     private processMemberExpression(): ExpressionType {
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        this.processCompletionRegion(exp);
         if (exp && exp instanceof ExpressionType && !exp.array.isArray()) {
             const name = this.ctx.IDENTIFIER().text;
             const member = exp.type.members.find(vd => vd.name === name);
@@ -352,6 +358,24 @@ export class ExpressionProcessor {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
         return left;
+    }
+
+    private isCompletionExpression(): boolean {
+        return !!this.ctx.DOT();
+    }
+
+    private processCompletionExpression(): ExpressionType {
+        const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        this.processCompletionRegion(exp);
+        return null;
+    }
+
+    private processCompletionRegion(exp: ExpressionType | Array<ExpressionType>): void {
+        if (exp && exp instanceof ExpressionType && (exp.array.isArray() || exp.type.isVector() || exp.type.typeCategory === TypeCategory.CUSTOM)) {
+            const interval = Helper.getIntervalFromParserRule(this.ctx.expression()[0]);
+            const tu = new TypeUsage(exp.type.name, interval, null, this.scope, exp.type, exp.array);
+            this.di.completionRegions.push(tu);
+        }
     }
 
     //

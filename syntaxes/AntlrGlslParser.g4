@@ -44,6 +44,7 @@ simple_statement
     | iteration_statement 
     | jump_statement 
     | switch_statement
+    | SEMICOLON
     ;
 
 selection_statement : KW_IF LRB expression RRB statement (KW_ELSE statement)?;
@@ -62,7 +63,7 @@ iteration_statement
     | do_while_iteration
     ;
 
-for_iteration : KW_FOR LRB (variable_declaration | expression_list)? SEMICOLON expression? SEMICOLON expression_list? RRB statement;
+for_iteration : KW_FOR LRB (variable_declaration | expression_list)? SEMICOLON? expression? SEMICOLON? expression_list? RRB statement;
 
 while_iteration : KW_WHILE LRB expression RRB statement;
 
@@ -70,7 +71,7 @@ do_while_iteration : KW_DO statement KW_WHILE LRB expression RRB SEMICOLON;
 
 jump_statement : (KW_CONTINUE | KW_BREAK | KW_DISCARD | KW_RETURN expression?) SEMICOLON;
 
-expression_statement : expression_list? SEMICOLON;
+expression_statement : expression_list SEMICOLON?;
 
 /////
 //declarations------------------------------------------------------------------
@@ -107,7 +108,7 @@ expression
     | IDENTIFIER 
     | function_call 
     | LRB expression RRB 
-    | expression (array_subscript | DOT IDENTIFIER | DOT function_call | OP_INC | OP_DEC ) 
+    | expression (array_subscript | DOT IDENTIFIER | DOT function_call | DOT | OP_INC | OP_DEC ) 
     | (OP_ADD | OP_SUB | OP_LOGICAL_UNARY | OP_BIT_UNARY | OP_INC | OP_DEC) expression 
     | expression (OP_MUL | OP_DIV | OP_MOD) expression 
     | expression (OP_ADD | OP_SUB) expression 
@@ -122,7 +123,6 @@ expression
     | expression OP_LOGICAL_OR expression 
     | expression QUESTION expression_list COLON expression_list
     | expression (OP_ASSIGN | OP_MODIFY) expression
-    | expression DOT
     ;
 
 expression_list: expression (COMMA expression)* COMMA?;

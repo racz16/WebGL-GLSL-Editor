@@ -84,7 +84,7 @@ export function activate(context: ExtensionContext) {
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
-	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider()));
+	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), '.'));
 	//symbols
 	context.subscriptions.push(languages.registerDocumentSymbolProvider(selector, new GlslDocumentSymbolProvider()));
 	//declaration
