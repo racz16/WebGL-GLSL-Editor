@@ -11,6 +11,11 @@ import { FunctionProcessor } from './function-processor';
 import { VariableUsageProcessor } from './variable-usage-processor';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeUsage } from '../scope/type/type-usage';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { TypeDeclarationProcessor } from './type-declaration-processor';
+import { Interval } from '../scope/interval';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
 
 export class ExpressionProcessor {
 
@@ -34,6 +39,12 @@ export class ExpressionProcessor {
             return this.processIdentifier();
         } else if (this.isParenthesizedExpression()) {
             return this.processParenthesizedExpression();
+        } else if (this.isModuloExpression()) {
+            return this.processModuloExpression();
+        } else if (this.isArithmeticUnaryExpression()) {
+            return this.processArithmeticUnaryExpression();
+        } else if (this.isArithmeticBinaryExpression()) {
+            return this.processArithmeticBinaryExpression();
         } else if (this.isArrayExpression()) {
             return this.processArrayExpression();
         } else if (this.isLengthExpression()) {
@@ -112,6 +123,83 @@ export class ExpressionProcessor {
         return new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
     }
 
+    private isModuloExpression(): boolean {
+        return !!this.ctx.OP_MOD();
+    }
+
+    private processModuloExpression(): ExpressionType {
+        const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
+        if (left && right && left instanceof ExpressionType && right instanceof ExpressionType &&
+            !left.array.isArray() && !right.array.isArray() && left.type.typeBase === right.type.typeBase &&
+            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT) &&
+            (left.type.isScalar() || right.type.isScalar() || left.type.width === right.type.width)) {
+            if (left.type.isVector()) {
+                return new ExpressionType(left.type, left.array, left.constant && right.constant);
+            } else {
+                return new ExpressionType(right.type, right.array, left.constant && right.constant);
+            }
+        }
+        return null;
+    }
+
+    private isArithmeticBinaryExpression(): boolean {
+        return this.ctx.expression().length === 2 && (!!this.ctx.OP_ADD() || !!this.ctx.OP_SUB() || !!this.ctx.OP_DIV() || !!this.ctx.OP_MUL());
+    }
+
+    private processArithmeticBinaryExpression(): ExpressionType {
+        const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
+        if (left && right && left instanceof ExpressionType && right instanceof ExpressionType &&
+            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT || left.type.typeBase === TypeBase.FLOAT) &&
+            (right.type.typeBase === TypeBase.INT || right.type.typeBase === TypeBase.UINT || right.type.typeBase === TypeBase.FLOAT) &&
+            ((left.type.typeBase === TypeBase.FLOAT && right.type.typeBase === TypeBase.FLOAT) || left.type.typeBase === right.type.typeBase) &&
+            !left.array.isArray() && !right.array.isArray()) {
+            if (left.type.isScalar() && right.type.isScalar()) {
+                return left;
+            } else if (left.type.isScalar() && !right.type.isScalar()) {
+                return right;
+            } else if (!left.type.isScalar() && right.type.isScalar()) {
+                return left;
+            } else if (left.type.isVector() && right.type.isVector() && left.type.width === right.type.width) {
+                return left;
+            } else if (!this.ctx.OP_MUL() && left.type.isMatrix() && right.type.isMatrix() &&
+                left.type.width === right.type.width && left.type.height === right.type.height) {
+                return left;
+            } else if (this.ctx.OP_MUL() && ((left.type.isMatrix() && !right.type.isScalar()) || (!left.type.isScalar() && right.type.isMatrix()))) {
+                const leftSize = left.type.width;
+                const rightSize = right.type.isMatrix() ? right.type.height : right.type.width;
+                if (leftSize === rightSize) {
+                    if (left.type.isVector()) {
+                        const td = this.di.builtin.types.get(`vec${right.type.width}`);
+                        return new ExpressionType(td, new ArrayUsage(), left.constant && right.constant);
+                    } else if (right.type.isVector()) {
+                        const td = this.di.builtin.types.get(`vec${left.type.height}`);
+                        return new ExpressionType(td, new ArrayUsage(), left.constant && right.constant);
+                    } else {
+                        const td = this.di.builtin.types.get(`mat${right.type.width}x${left.type.height}`);
+                        return new ExpressionType(td, new ArrayUsage(), left.constant && right.constant);
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private isArithmeticUnaryExpression(): boolean {
+        return this.ctx.expression().length === 1 && (!!this.ctx.OP_INC() || !!this.ctx.OP_DEC() || !!this.ctx.OP_SUB());
+    }
+
+    private processArithmeticUnaryExpression(): ExpressionType {
+        const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
+        if (exp && exp instanceof ExpressionType && !exp.array.isArray() &&
+            (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT || exp.type.typeBase === TypeBase.FLOAT)) {
+            return exp;
+        }
+        return null;
+    }
+
     private isArrayExpression(): boolean {
         return !!this.ctx.array_subscript();
     }
@@ -149,6 +237,31 @@ export class ExpressionProcessor {
     }
 
     private processFunctionExpression(): ExpressionType {
+        const parameters = this.getParameters();
+        const tn = this.ctx.function_call().IDENTIFIER() ? this.ctx.function_call().IDENTIFIER() : this.ctx.function_call().TYPE();
+        const name = tn.text;
+        const interval = Helper.getIntervalFromParserRule(this.ctx.function_call());
+        const nameInterval = Helper.getIntervalFromTerminalNode(tn);
+        const lf = this.getLogicalFunction(name, nameInterval, parameters);
+        if (lf) {
+            const fd = lf.getDeclaration();
+            const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn);
+            lf.calls.push(fc);
+            this.scope.functionCalls.push(fc);
+            if (fd.returnType.declaration) {
+                if (fd.ctor) {
+                    fd.returnType.declaration.ctorCalls.push(fc);
+                }
+                const constant = fd.builtIn && name !== 'dFdx' && name !== 'dFdy' && name !== 'fwidth' && parameters.every(param => param && param.constant);
+                return new ExpressionType(fd.returnType.declaration, fd.returnType.array, constant);
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private getParameters(): Array<ExpressionType> {
         const parameters = new Array<ExpressionType>();
         if (this.ctx.function_call().function_call_parameter_list()?.expression_list()) {
             for (const exp of this.ctx.function_call().function_call_parameter_list().expression_list().expression()) {
@@ -162,27 +275,60 @@ export class ExpressionProcessor {
                 }
             }
         }
-        const tn = this.ctx.function_call().IDENTIFIER() ? this.ctx.function_call().IDENTIFIER() : this.ctx.function_call().TYPE();
-        const name = tn.text;
-        const interval = Helper.getIntervalFromParserRule(this.ctx.function_call());
-        const nameInterval = Helper.getIntervalFromTerminalNode(tn);
-        const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
-        //TODO: matrix ctors
-        if (lf) {
-            const fd = lf.getDeclaration();
-            const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn);
-            lf.calls.push(fc);
-            this.scope.functionCalls.push(fc);
-            if (fd.returnType.declaration) {
-                if (fd.ctor) {
-                    fd.returnType.declaration.ctorCalls.push(fc);
-                }
-                return new ExpressionType(fd.returnType.declaration, fd.returnType.array);
-            } else {
-                return null;
+        return parameters;
+    }
+
+    private getLogicalFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionType>): LogicalFunction {
+        //TODO
+        const array = Helper.getArraySizeFromArraySubscript(this.ctx.function_call().array_subscript(), this.scope, this.di);
+        if (array.isArray()) {
+            const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
+            if (td && parameters.every(param => param && param.type === td) && parameters.length) {
+                return this.createLogicalFunction(name, nameInterval, td, array.specifyArraySize(parameters.length), parameters);
+            }
+        } else {
+            const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
+            if (lf) {
+                return lf;
+            }
+            const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
+            if (this.isMatrixCtor(td, parameters)) {
+                return this.createLogicalFunction(name, nameInterval, td, array, parameters);
             }
         }
         return null;
+    }
+
+    private createLogicalFunction(name: string, nameInterval: Interval, td: TypeDeclaration, array: ArrayUsage, parameters: Array<ExpressionType>): LogicalFunction {
+        const tu = new TypeUsage(name, nameInterval, nameInterval, null, td, array);
+        const fp = new FunctionDeclaration(name, null, null, tu, td.builtin, true, null, null);
+        for (let i = 0; i < parameters.length; i++) {
+            const tu2 = new TypeUsage(parameters[i].type.name, null, null, null, parameters[i].type, new ArrayUsage());
+            const vd = new VariableDeclaration(`v${i}`, null, null, td.builtin, null, tu2, true);
+            fp.parameters.push(vd);
+        }
+        const lf = new LogicalFunction();
+        fp.logicalFunction = lf;
+        lf.prototypes.push(fp);
+        return lf;
+    }
+
+    private isMatrixCtor(td: TypeDeclaration, parameters: Array<ExpressionType>): boolean {
+        if (!td || !td.isMatrix()) {
+            return false;
+        }
+        if (parameters.length === 1 && (parameters[0].type.isScalar() || parameters[0].type.isMatrix())) {
+            return true;
+        }
+        const matrixSize = td.width * td.height;
+        let paramsSize = 0;
+        for (const param of parameters) {
+            if (param.type.typeCategory !== TypeCategory.TRANSPARENT || param.type.isMatrix()) {
+                return false;
+            }
+            paramsSize += param.type.width * param.type.height;
+        }
+        return matrixSize === paramsSize;
     }
 
     private isMemberExpression(): boolean {
@@ -327,7 +473,6 @@ export class ExpressionProcessor {
     }
 
     private processTernaryExpression(): Array<ExpressionType> {
-        //TODO
         new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const el = this.ctx.expression_list()[0];
         const el2 = this.ctx.expression_list()[1];

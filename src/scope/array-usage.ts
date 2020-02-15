@@ -30,6 +30,14 @@ export class ArrayUsage {
         }
     }
 
+    public specifyArraySize(arraySize: number): ArrayUsage {
+        if (arraySize <= 0 || this.arraySize > 0) {
+            return this;
+        } else {
+            return new ArrayUsage(arraySize, this.interval, this.multidimensional);
+        }
+    }
+
     public toString(): string {
         if (!this.isArray()) {
             return '';

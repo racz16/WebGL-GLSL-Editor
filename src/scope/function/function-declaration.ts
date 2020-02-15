@@ -64,7 +64,8 @@ export class FunctionDeclaration extends Element {
     //toString
     //
     public toStringSignature(showParameters: boolean): string {
-        let ret = this.name + '(';
+        const arrayCtor = this.returnType.array.isArray && this.ctor ? this.returnType.array.toString() : '';
+        let ret = this.name + arrayCtor + '(';
         if (showParameters) {
             ret += this.toStringParameters();
         }

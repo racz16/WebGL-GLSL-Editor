@@ -20,7 +20,7 @@ function_parameter_list
     | single_variable_declaration (COMMA single_variable_declaration)*
     ;
 
-function_call : (TYPE | IDENTIFIER) LRB function_call_parameter_list? RRB;
+function_call : (TYPE | IDENTIFIER) array_subscript* LRB function_call_parameter_list? RRB;
 
 function_call_parameter_list
     : KW_VOID
@@ -105,10 +105,10 @@ identifier_optarray_optassignment : identifier_optarray (OP_ASSIGN expression)?;
 /////
 expression 
     : literal 
-    | IDENTIFIER 
     | function_call 
+    | IDENTIFIER
     | LRB expression RRB 
-    | expression (array_subscript | DOT IDENTIFIER | DOT function_call | DOT | OP_INC | OP_DEC ) 
+    | expression (array_subscript | DOT function_call | DOT IDENTIFIER | DOT | OP_INC | OP_DEC ) 
     | (OP_ADD | OP_SUB | OP_LOGICAL_UNARY | OP_BIT_UNARY | OP_INC | OP_DEC) expression 
     | expression (OP_MUL | OP_DIV | OP_MOD) expression 
     | expression (OP_ADD | OP_SUB) expression 

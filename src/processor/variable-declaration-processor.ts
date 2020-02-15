@@ -63,15 +63,15 @@ export class VariableDeclarationProcessor {
         if (ioocs.length) {
             for (let i = 0; i < ioocs.length; i++) {
                 const iooc = ioocs[i];
-                const arraySize = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
-                const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), arraySize, this.scope, this.di, i);
+                const array = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
+                const exp = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
+                const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
                 const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
-                new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
             }
         } else {
             const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);

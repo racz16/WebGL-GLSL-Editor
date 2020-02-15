@@ -63,7 +63,7 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
 
     private processConstructor(lf: LogicalFunction): Array<Location> {
         const fd = lf.getDeclaration();
-        if (fd.builtIn) {
+        if (fd.builtIn && !fd.returnType.array.isArray()) {
             const ret = new Array<Location>();
             for (const fc of fd.returnType.declaration.ctorCalls) {
                 if (fc.logicalFunction === lf) {

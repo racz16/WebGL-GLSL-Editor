@@ -58,7 +58,7 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private processConstructor(lf: LogicalFunction): Array<DocumentHighlight> {
         const fd = lf.getDeclaration();
-        if (fd.builtIn) {
+        if (fd.builtIn && !fd.returnType.array.isArray()) {
             const ret = new Array<DocumentHighlight>();
             for (const fc of fd.returnType.declaration.ctorCalls) {
                 if (fc.logicalFunction === lf) {
