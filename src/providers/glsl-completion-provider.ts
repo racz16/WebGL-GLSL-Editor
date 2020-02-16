@@ -8,6 +8,7 @@ import { ShaderStage } from '../scope/shader-stage';
 import { Helper } from '../processor/helper';
 import { TypeUsage } from '../scope/type/type-usage';
 import { Interval } from '../scope/interval';
+import { Constants } from '../core/constants';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
@@ -15,13 +16,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private position: Position;
     private offset: number;
     private items: Array<CompletionItem>;
-
-    private readonly xyzw = ['x', 'y', 'z', 'w'];
-    private readonly rgba = ['r', 'g', 'b', 'a'];
-    private readonly pqst = ['p', 'q', 's', 't'];
-
-    //TODO:
-    //context based completion
 
     private initialize(document: TextDocument, position: Position): void {
         GlslEditor.processDocument(document);
@@ -50,9 +44,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 this.items.push(new CompletionItem('length', CompletionItemKind.Function));
             }
         } else if (cr.declaration.isVector()) {
-            this.addSwizzles(cr.declaration.width, this.xyzw, 0, startsWith);
-            this.addSwizzles(cr.declaration.width, this.rgba, 1, startsWith);
-            this.addSwizzles(cr.declaration.width, this.pqst, 2, startsWith);
+            this.addSwizzles(cr.declaration.width, Constants.xyzw, 0, startsWith);
+            this.addSwizzles(cr.declaration.width, Constants.rgba, 1, startsWith);
+            this.addSwizzles(cr.declaration.width, Constants.stpq, 2, startsWith);
         } else {
             for (const memeber of cr.declaration.members) {
                 if (memeber.name.startsWith(startsWith)) {

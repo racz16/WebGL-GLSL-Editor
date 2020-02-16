@@ -7,21 +7,6 @@ import { Constants } from '../core/constants';
 
 export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider {
 
-    //TODO:
-    //zárójel nélküli scope-ok kezelése
-    //case :-ja előtt ne legyen space
-    //  ha több utasítás van, akkor be kell törni (és indentálni)
-    //++ és -- operátor tapadjon ahhoz, amire vonatkozik, a másik irányba viszont legyen space
-    //egyoperandusú '-' operátor tapadjon
-    //függvények, nem inline struktúra definíciók előtt-után legyen egy-egy üres sor legalább
-    //struct definíciója utáni változódeklaráció(k) és ';' ne törjön új sorba
-    //lehessen bizonyos helyzetekben sortörés, pl. hosszú sorok esetén jól jöhet
-    //for-on belüli ';'-k ne kezdjenek új sort
-    //if, while, for, do esetén ha csak egy utasítás jön, akkor lehessen az utasítás (vagy blokk) a kulcsszó sorában
-    //  mármint ha ennek van értelme, 10 beágyazott 'egysoros' if esetén azért ne
-    //egy többsoros kommentnek nem feltétlen kéne pl. a következő sorban lébvő utasítás indentációját is elrontania
-    //  meg nem biztos, hogy fenn kéne tartani az előtte lévő 1000 üres sort
-
     private di: DocumentInfo;
     private document: TextDocument;
     private options: FormattingOptions;

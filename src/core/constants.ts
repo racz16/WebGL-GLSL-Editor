@@ -14,4 +14,8 @@ export class Constants {
     public static readonly COMMA = ',';
     public static readonly COLON = ':';
     public static readonly SEMICOLON = ';';
+
+    public static readonly xyzw = ['x', 'y', 'z', 'w'];
+    public static readonly rgba = ['r', 'g', 'b', 'a'];
+    public static readonly stpq = ['s', 't', 'p', 'q'];
 }

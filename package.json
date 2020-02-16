@@ -56,7 +56,7 @@
 			{
 				"language": "glsl",
 				"scopeName": "source.glsl",
-				"path": "./syntaxes/glsl.tmLanguage.json"
+				"path": "./syntaxes/glsl.language.json"
 			}
 		],
 		"snippets": [

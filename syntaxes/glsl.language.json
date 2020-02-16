@@ -1,0 +1,235 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "GLSL",
+	"patterns": [
+		{
+			"comment": "BLOCK COMMENT",
+			"name": "comment.block.glsl",
+			"begin": "\\/\\*",
+			"end": "\\*\\/"
+		},
+		{
+			"comment": "SINGLE LINE COMMENT",
+			"name": "comment.line.double-slash.glsl",
+			"begin": "//",
+			"end": "$"
+		},
+		{
+			"comment": "MACRO",
+			"name": "meta.preprocessor.glsl",
+			"match": "#([a-zA-Z0-9_.+\\-*%<>\\[\\](){}^|&~=!:;,?\\s]|(\\/(?!(\\*|\\/))))*"
+		},
+		{
+			"comment": "BOOL LITERAL",
+			"name": "constant.language.glsl",
+			"match": "\\b(true|false)\\b"
+		},
+		{
+			"comment": "NUMBER LITERAL",
+			"patterns": [
+				{
+					"include": "#number"
+				}
+			]
+		},
+		{
+			"comment": "OPERATOR",
+			"name": "keyword.operator.glsl",
+			"match": "[.+\\-*/%<>^|&~=!:,?]"
+		},
+		{
+			"comment": "KEYWORD",
+			"name": "keyword.control.glsl",
+			"match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
+		},
+		{
+			"comment": "QUALIFIER",
+			"patterns": [
+				{
+					"include": "#qualifier"
+				}
+			]
+		},
+		{
+			"match": "(struct)\\s+(\\w+)",
+			"captures": {
+				"1": {
+					"name": "storage.type.glsl"
+				},
+				"2": {
+					"name": "entity.name.type.glsl"
+				}
+			}
+		},
+		{
+			"comment": "FUNCTION HEADER",
+			"begin": "(((\\w+)|((struct)(\\s+\\w+)?\\s*{(.*?)}))(\\s+|(\\s*\\[(.*?)\\]\\s*)+))(\\w+\\s*)\\(",
+			"beginCaptures": {
+				"3": {
+					"patterns": [
+						{
+							"comment": "RETURN TYPE",
+							"include": "#type-usage"
+						}
+					]
+				},
+				"5": {
+					"name": "storage.type.glsl"
+				},
+				"6": {
+					"name": "entity.name.type.glsl"
+				},
+				"7": {
+					"patterns": [
+						{
+							"comment": "STRUCT BODY",
+							"include": "$self"
+						}
+					]
+				},
+				"8": {
+					"patterns": [
+						{
+							"comment": "ARRAY USAGE",
+							"include": "$self"
+						}
+					]
+				},
+				"11": {
+					"name": "entity.name.function.glsl"
+				}
+			},
+			"patterns": [
+				{
+					"include": "$self"
+				}
+			],
+			"end": "\\)",
+			"applyEndPatternLast": 1
+		},
+		{
+			"comment": "FUNCTION CALL",
+			"begin": "(\\w+)(\\s*|(\\s*\\[([^\\]]*?)\\]\\s*)+)\\(",
+			"beginCaptures": {
+				"1": {
+					"name": "entity.name.function.glsl"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			},
+			"patterns": [
+				{
+					"include": "$self"
+				}
+			],
+			"end": "\\)",
+			"applyEndPatternLast": 1
+		},
+		{
+			"comment": "TYPE USAGE",
+			"patterns": [
+				{
+					"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
+					"name": "storage.type.glsl",
+					"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
+				},
+				{
+					"comment": "BUILTIN STRUCT TYPE",
+					"name": "storage.type.glsl",
+					"begin": "gl_",
+					"end": "\\s"
+				}
+			]
+		},
+		{
+			"match": "([_a-zA-Z][_a-zA-Z0-9]*)((\\s+)|(\\s*\\[.*?\\]\\s*)+)([_a-zA-Z][_a-zA-Z0-9]*)",
+			"captures": {
+				"1": {
+					"name": "entity.name.type.glsl"
+				},
+				"2": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			}
+		},
+		{
+			"comment": "IDENTIFIER",
+			"patterns": [
+				{
+					"include": "#identifier"
+				}
+			]
+		}
+	],
+	"repository": {
+		"identifier": {
+			"patterns": [
+				{
+					"comment": "IDENTIFIER",
+					"name": "variable.glsl",
+					"match": "[a-zA-Z_][a-zA-Z0-9_]*"
+				}
+			]
+		},
+		"number": {
+			"patterns": [
+				{
+					"comment": "FLOATING POINT NUMBER",
+					"name": "constant.numeric.glsl",
+					"match": "\\b(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?\\b"
+				},
+				{
+					"comment": "FIXED POINT NUMBER",
+					"name": "constant.numeric.glsl",
+					"match": "\\b([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?\\b"
+				}
+			]
+		},
+		"type-usage": {
+			"patterns": [
+				{
+					"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
+					"name": "storage.type.glsl",
+					"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
+				},
+				{
+					"comment": "BUILTIN STRUCT TYPE",
+					"name": "storage.type.glsl",
+					"begin": "gl_",
+					"end": "\\s"
+				},
+				{
+					"comment": "USER TYPE",
+					"name": "entity.name.type.glsl",
+					"match": "[a-zA-Z_][a-zA-Z0-9_]*"
+				}
+			]
+		},
+		"qualifier": {
+			"patterns": [
+				{
+					"comment": "QUALIFIER",
+					"name": "storage.modifier.glsl",
+					"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
+				}
+			]
+		}
+	},
+	"scopeName": "source.glsl"
+}

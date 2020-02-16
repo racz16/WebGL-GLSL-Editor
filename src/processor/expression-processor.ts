@@ -16,6 +16,7 @@ import { TypeDeclarationProcessor } from './type-declaration-processor';
 import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { Constants } from '../core/constants';
 
 export class ExpressionProcessor {
 
@@ -551,15 +552,12 @@ export class ExpressionProcessor {
         if (str.length < 1 || str.length > 4) {
             return false;
         }
-        const rgba = new Set<string>(['r', 'g', 'b', 'a']);
-        const xyzw = new Set<string>(['x', 'y', 'z', 'w']);
-        const stpq = new Set<string>(['s', 't', 'p', 'q']);
-        return this.allCharactersFromSet(str, rgba) || this.allCharactersFromSet(str, xyzw) || this.allCharactersFromSet(str, stpq);
+        return this.allCharactersFromSet(str, Constants.rgba) || this.allCharactersFromSet(str, Constants.xyzw) || this.allCharactersFromSet(str, Constants.stpq);
     }
 
-    private allCharactersFromSet(str: string, set: Set<string>): boolean {
+    private allCharactersFromSet(str: string, set: Array<string>): boolean {
         for (const char of str) {
-            if (!set.has(char)) {
+            if (!set.includes(char)) {
                 return false;
             }
         }
