@@ -4,7 +4,7 @@
 - Diagnostics
 - Function signature helper
 
-## [1.0.0]
+## [1.0.0] - 2020.02.16.
 ### Added
 - Syntax highlight
 - Offline documentation

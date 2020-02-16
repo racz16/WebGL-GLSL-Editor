@@ -12,9 +12,6 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private di: DocumentInfo;
     private result: Array<DocumentSymbol>;
 
-    //TODO:
-    //interface blocks
-
     private initialize(document: TextDocument): void {
         GlslEditor.processDocument(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);

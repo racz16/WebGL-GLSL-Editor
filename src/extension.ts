@@ -14,20 +14,6 @@ import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslEditor } from './core/glsl-editor';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 
-//TODO:
-//writing readme and the changelog, icon, badges
-//data in changlelog like [1.0.0] - 2020.02.10.
-//function signature helper
-
-//precision statements
-//color visalizer for vec3 and vec4 constructor where variable name contains the word 'color'
-//inline statement, folding, indentation and formatting
-//rewriting the syntax highlighting
-//refining the antlr parser
-
-//diagnostics, code actions for fixes, pairing with other stages
-//	redundant qualifier warning etc function parameter in or highp float in vertex shader etc.
-
 export function activate(context: ExtensionContext) {
 	GlslEditor.initialize(context);
 

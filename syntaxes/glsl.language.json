@@ -28,7 +28,14 @@
 			"comment": "NUMBER LITERAL",
 			"patterns": [
 				{
-					"include": "#number"
+					"comment": "FLOATING POINT NUMBER",
+					"name": "constant.numeric.glsl",
+					"match": "\\b(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?\\b"
+				},
+				{
+					"comment": "FIXED POINT NUMBER",
+					"name": "constant.numeric.glsl",
+					"match": "\\b([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?\\b"
 				}
 			]
 		},
@@ -44,19 +51,17 @@
 		},
 		{
 			"comment": "QUALIFIER",
-			"patterns": [
-				{
-					"include": "#qualifier"
-				}
-			]
+			"name": "storage.modifier.glsl",
+			"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
 		},
 		{
-			"match": "(struct)\\s+(\\w+)",
+			"comment": "STRUCT",
+			"match": "(struct)(\\s+(\\w+))?",
 			"captures": {
 				"1": {
 					"name": "storage.type.glsl"
 				},
-				"2": {
+				"3": {
 					"name": "entity.name.type.glsl"
 				}
 			}
@@ -68,8 +73,20 @@
 				"3": {
 					"patterns": [
 						{
-							"comment": "RETURN TYPE",
-							"include": "#type-usage"
+							"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
+							"name": "storage.type.glsl",
+							"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
+						},
+						{
+							"comment": "BUILTIN STRUCT TYPE",
+							"name": "storage.type.glsl",
+							"begin": "gl_",
+							"end": "\\s"
+						},
+						{
+							"comment": "USER TYPE",
+							"name": "entity.name.type.glsl",
+							"match": "[a-zA-Z_][a-zA-Z0-9_]*"
 						}
 					]
 				},
@@ -131,7 +148,7 @@
 			"applyEndPatternLast": 1
 		},
 		{
-			"comment": "TYPE USAGE",
+			"comment": "BUILTIN TYPE USAGE",
 			"patterns": [
 				{
 					"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
@@ -170,66 +187,9 @@
 		},
 		{
 			"comment": "IDENTIFIER",
-			"patterns": [
-				{
-					"include": "#identifier"
-				}
-			]
+			"name": "variable.glsl",
+			"match": "[a-zA-Z_][a-zA-Z0-9_]*"
 		}
 	],
-	"repository": {
-		"identifier": {
-			"patterns": [
-				{
-					"comment": "IDENTIFIER",
-					"name": "variable.glsl",
-					"match": "[a-zA-Z_][a-zA-Z0-9_]*"
-				}
-			]
-		},
-		"number": {
-			"patterns": [
-				{
-					"comment": "FLOATING POINT NUMBER",
-					"name": "constant.numeric.glsl",
-					"match": "\\b(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?\\b"
-				},
-				{
-					"comment": "FIXED POINT NUMBER",
-					"name": "constant.numeric.glsl",
-					"match": "\\b([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?\\b"
-				}
-			]
-		},
-		"type-usage": {
-			"patterns": [
-				{
-					"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
-					"name": "storage.type.glsl",
-					"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
-				},
-				{
-					"comment": "BUILTIN STRUCT TYPE",
-					"name": "storage.type.glsl",
-					"begin": "gl_",
-					"end": "\\s"
-				},
-				{
-					"comment": "USER TYPE",
-					"name": "entity.name.type.glsl",
-					"match": "[a-zA-Z_][a-zA-Z0-9_]*"
-				}
-			]
-		},
-		"qualifier": {
-			"patterns": [
-				{
-					"comment": "QUALIFIER",
-					"name": "storage.modifier.glsl",
-					"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
-				}
-			]
-		}
-	},
 	"scopeName": "source.glsl"
 }

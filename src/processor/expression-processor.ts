@@ -280,7 +280,10 @@ export class ExpressionProcessor {
     }
 
     private getLogicalFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionType>): LogicalFunction {
-        //TODO
+        const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
+        if (lf) {
+            return lf;
+        }
         const array = Helper.getArraySizeFromArraySubscript(this.ctx.function_call().array_subscript(), this.scope, this.di);
         if (array.isArray()) {
             const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
@@ -288,10 +291,6 @@ export class ExpressionProcessor {
                 return this.createLogicalFunction(name, nameInterval, td, array.specifyArraySize(parameters.length), parameters);
             }
         } else {
-            const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
-            if (lf) {
-                return lf;
-            }
             const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
             if (this.isMatrixCtor(td, parameters)) {
                 return this.createLogicalFunction(name, nameInterval, td, array, parameters);
@@ -311,6 +310,7 @@ export class ExpressionProcessor {
         const lf = new LogicalFunction();
         fp.logicalFunction = lf;
         lf.prototypes.push(fp);
+        this.di.getRootScope().functions.push(lf);
         return lf;
     }
 
