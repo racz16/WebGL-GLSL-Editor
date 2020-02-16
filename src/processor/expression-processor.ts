@@ -302,7 +302,7 @@ export class ExpressionProcessor {
 
     private createLogicalFunction(name: string, nameInterval: Interval, td: TypeDeclaration, array: ArrayUsage, parameters: Array<ExpressionType>): LogicalFunction {
         const tu = new TypeUsage(name, nameInterval, nameInterval, null, td, array);
-        const fp = new FunctionDeclaration(name, null, null, tu, td.builtin, true, null, null);
+        const fp = new FunctionDeclaration(name, td.nameInterval, null, tu, td.builtin, true, td.interval, null);
         for (let i = 0; i < parameters.length; i++) {
             const tu2 = new TypeUsage(parameters[i].type.name, null, null, null, parameters[i].type, new ArrayUsage());
             const vd = new VariableDeclaration(`v${i}`, null, null, td.builtin, null, tu2, true);

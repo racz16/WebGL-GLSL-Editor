@@ -1,6 +1,7 @@
 {
 	"name": "webgl-glsl-editor",
 	"displayName": "WebGL GLSL Editor",
+	"icon": "res/png/icon.png",
 	"description": "Language support for WebGL GLSL.",
 	"author": "Rácz Zalán",
 	"publisher": "raczzalan",

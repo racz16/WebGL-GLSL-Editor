@@ -436,6 +436,7 @@ export class Builtin {
         }
         for (const type of this.types.values()) {
             type.usages.length = 0;
+            type.ctorCalls.length = 0;
         }
         for (const variable of this.variables.values()) {
             variable.usages.length = 0;

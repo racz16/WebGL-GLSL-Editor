@@ -45,31 +45,12 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private processFunction(lf: LogicalFunction): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
-        if (lf.getDeclaration().ctor) {
-            return this.processConstructor(lf);
-        }
-        if (!lf.getDeclaration().builtIn) {
+        if (!lf.getDeclaration().builtIn && !lf.getDeclaration().ctor) {
             this.addHighlight(ret, lf.prototypes, DocumentHighlightKind.Write);
             this.addHighlight(ret, lf.definitions, DocumentHighlightKind.Read);
         }
         this.addHighlight(ret, lf.calls, DocumentHighlightKind.Text);
         return ret;
-    }
-
-    private processConstructor(lf: LogicalFunction): Array<DocumentHighlight> {
-        const fd = lf.getDeclaration();
-        if (fd.builtIn && !fd.returnType.array.isArray()) {
-            const ret = new Array<DocumentHighlight>();
-            for (const fc of fd.returnType.declaration.ctorCalls) {
-                if (fc.logicalFunction === lf) {
-                    const range = this.di.intervalToRange(fc.nameInterval);
-                    ret.push(new DocumentHighlight(range, DocumentHighlightKind.Text));
-                }
-            }
-            return ret;
-        } else {
-            return this.processDeclaration(fd.returnType.declaration);
-        }
     }
 
     private processDeclaration(element: VariableDeclaration | TypeDeclaration): Array<DocumentHighlight> {
@@ -78,9 +59,6 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
             const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
             this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
-            if (element instanceof TypeDeclaration) {
-                this.addHighlight(ret, element.ctorCalls, DocumentHighlightKind.Text);
-            }
         }
         return ret;
     }

@@ -44,10 +44,7 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
 
     private processFunction(lf: LogicalFunction): Array<Location> {
         const ret = new Array<Location>();
-        if (lf.getDeclaration().ctor) {
-            return this.processConstructor(lf);
-        }
-        if (!lf.getDeclaration().builtIn) {
+        if (!lf.getDeclaration().builtIn && !lf.getDeclaration().ctor) {
             for (const fp of lf.prototypes) {
                 ret.push(this.di.intervalToLocation(fp.nameInterval));
             }
@@ -61,32 +58,12 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
         return ret;
     }
 
-    private processConstructor(lf: LogicalFunction): Array<Location> {
-        const fd = lf.getDeclaration();
-        if (fd.builtIn && !fd.returnType.array.isArray()) {
-            const ret = new Array<Location>();
-            for (const fc of fd.returnType.declaration.ctorCalls) {
-                if (fc.logicalFunction === lf) {
-                    ret.push(this.di.intervalToLocation(fc.nameInterval));
-                }
-            }
-            return ret;
-        } else {
-            return this.processDeclaration(fd.returnType.declaration);
-        }
-    }
-
     private processDeclaration(element: TypeDeclaration | VariableDeclaration): Array<Location> {
         const ret = new Array<Location>();
         if (!element.builtin) {
             ret.push(this.di.intervalToLocation(element.nameInterval));
             for (const usage of element.usages) {
                 ret.push(this.di.intervalToLocation(usage.nameInterval));
-            }
-            if (element instanceof TypeDeclaration) {
-                for (const ctorCall of element.ctorCalls) {
-                    ret.push(this.di.intervalToLocation(ctorCall.nameInterval));
-                }
             }
         }
         return ret;
