@@ -94,7 +94,7 @@ single_variable_declaration : type_usage identifier_optarray_optassignment?;
 
 type_declaration : KW_STRUCT IDENTIFIER? LCB (variable_declaration SEMICOLON)* RCB;
 
-interface_block_declaration: qualifier* (IDENTIFIER LCB (variable_declaration SEMICOLON)* RCB (identifier_optarray)?)?;
+interface_block_declaration: qualifier* IDENTIFIER LCB (variable_declaration SEMICOLON)* RCB (identifier_optarray)?;
 
 identifier_optarray : IDENTIFIER array_subscript*;
 

@@ -13,6 +13,7 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { FunctionCall } from '../scope/function/function-call';
 import { ShaderStage } from '../scope/shader-stage';
+import { FoldingRegion } from '../scope/folding-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -21,6 +22,7 @@ export class DocumentInfo {
     private stage: ShaderStage;
     private tokens: Array<Token>;
     public readonly completionRegions = new Array<TypeUsage>();
+    public readonly foldingRegions = new Array<FoldingRegion>();
     public builtin: Builtin;
 
     private document: TextDocument;
@@ -36,6 +38,7 @@ export class DocumentInfo {
             this.builtin.reset();
         }
         this.completionRegions.length = 0;
+        this.foldingRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 

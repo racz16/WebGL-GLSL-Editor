@@ -1,7 +1,7 @@
 import { GlslEditor } from './glsl-editor';
-import { Uri } from 'vscode';
+import { Uri, FoldingRangeKind, Position } from 'vscode';
 import { DocumentInfo } from './document-info';
-import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, StatementContext, Invariant_declarationContext } from '../_generated/AntlrGlslParser';
+import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, StatementContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
 import { Helper } from '../processor/helper';
 import { Scope } from '../scope/scope';
@@ -12,8 +12,9 @@ import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { VariableDeclarationProcessor } from '../processor/variable-declaration-processor';
 import { ExpressionProcessor } from '../processor/expression-processor';
 import { Interval } from '../scope/interval';
-import { ParserRuleContext } from 'antlr4ts';
+import { ParserRuleContext, Token } from 'antlr4ts';
 import { VariableUsageProcessor } from '../processor/variable-usage-processor';
+import { FoldingRegion } from '../scope/folding-region';
 
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
 
@@ -32,6 +33,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         this.di.setVersion(version);
         this.di.reset();
         this.scope = this.di.getRootScope();
+        this.addCommentFoldingRegions();
     }
 
     private getVersion(): 100 | 300 {
@@ -50,6 +52,15 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         return 100;
     }
 
+    private addCommentFoldingRegions(): void {
+        for (let i = 0; i < this.di.getTokens().length; i++) {
+            const token = this.di.getTokens()[i];
+            if (token.type === AntlrGlslLexer.MULTI_LINE_COMMENT) {
+                this.addFoldingRangeFromComment(token, this.di.getTokens()[i + 1]);
+            }
+        }
+    }
+
     public visitStart(ctx: StartContext): void {
         this.initialize();
         super.visitChildren(ctx);
@@ -59,6 +70,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //declarations
     //
     public visitType_declaration(ctx: Type_declarationContext): void {
+        this.addFoldingRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, true);
         TypeDeclarationProcessor.getTypeDeclaration(ctx, this.scope, this.di, 0);
     }
 
@@ -68,6 +80,11 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitInvariant_declaration(ctx: Invariant_declarationContext): void {
         VariableUsageProcessor.getVariableUsage(ctx.IDENTIFIER(), this.scope, this.di);
+    }
+
+    public visitInterface_block_declaration(ctx: Interface_block_declarationContext): void {
+        this.addFoldingRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, true);
+        this.visitChildren(ctx);
     }
 
     //
@@ -89,6 +106,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitFunction_definition(ctx: Function_definitionContext): void {
         this.scope = this.createScopeFromFunctionDefinition(this.scope, ctx);
         FunctionProcessor.getFunctionDefinition(ctx, this.scope, this.di);
+        this.addFoldingRangeFromCompoundStatement(ctx.compound_statement());
         this.visitChildren(ctx.compound_statement());
         this.scope = this.scope.parent;
     }
@@ -121,6 +139,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         if (ctx.expression()) {
             this.visit(ctx.expression());
         }
+        this.addFoldingRangeFromStatement(ctx.statement());
         this.visit(ctx.statement());
         this.scope = this.scope.parent;
     }
@@ -135,6 +154,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitWhile_iteration(ctx: While_iterationContext): void {
         this.visit(ctx.expression());
         this.scope = this.createScopeFromWhileIteration(this.scope, ctx);
+        this.addFoldingRangeFromStatement(ctx.statement());
         this.visit(ctx.statement());
         this.scope = this.scope.parent;
     }
@@ -142,6 +162,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitDo_while_iteration(ctx: Do_while_iterationContext): void {
         this.visit(ctx.expression());
         this.scope = this.createScopeFromWhileIteration(this.scope, ctx);
+        this.addFoldingRangeFromStatement(ctx.statement());
         this.visit(ctx.statement());
         this.scope = this.scope.parent;
     }
@@ -159,10 +180,12 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitSelection_statement(ctx: Selection_statementContext): void {
         this.visit(ctx.expression());
         this.scope = this.createScopeFromIf(this.scope, ctx);
+        this.addFoldingRangeFromStatement(ctx.statement()[0]);
         this.visit(ctx.statement()[0]);
         this.scope = this.scope.parent;
         if (ctx.statement().length > 1) {
             this.scope = this.createScopeFromElse(this.scope, ctx);
+            this.addFoldingRangeFromStatement(ctx.statement()[1]);
             this.visit(ctx.statement()[1]);
             this.scope = this.scope.parent;
         }
@@ -175,9 +198,6 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         return newScope;
     }
 
-    //
-    //case
-    //
     private createScopeFromElse(currentScope: Scope, ctx: Selection_statementContext): Scope {
         const interval = Helper.getIntervalFromParserRule(ctx.statement()[1]);
         const newScope = new Scope(interval, currentScope);
@@ -185,10 +205,19 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         return newScope;
     }
 
+    //
+    //switch/case
+    //
+    public visitSwitch_statement(ctx: Switch_statementContext): void {
+        this.addFoldingRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, true);
+        this.visitChildren(ctx);
+    }
+
     public visitCase_group(ctx: Case_groupContext): void {
         this.visit(ctx.case_label().expression());
         if (ctx.statement().length) {
             this.scope = this.createScopeFromCaseStatements(this.scope, ctx.statement());
+            this.addFoldingRangeFromStatements(ctx.statement());
             for (const st of ctx.statement()) {
                 this.visit(st);
             }
@@ -208,6 +237,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitCompound_statement(ctx: Compound_statementContext): void {
         this.scope = this.createScope(this.scope, ctx);
+        this.addFoldingRangeFromCompoundStatement(ctx);
         this.visitChildren(ctx);
         this.scope = this.scope.parent;
     }
@@ -217,6 +247,39 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
         return newScope;
+    }
+
+    //
+    //folding range
+    //
+    private addFoldingRangeFromStatements(ctxs: Array<StatementContext>): void {
+        this.addFoldingRangeFromTokens(ctxs[0].start, ctxs[ctxs.length - 1].stop, false);
+    }
+
+    private addFoldingRangeFromStatement(ctx: StatementContext): void {
+        this.addFoldingRangeFromTokens(ctx.start, ctx.stop, !!ctx.compound_statement());
+    }
+
+    private addFoldingRangeFromCompoundStatement(ctx: Compound_statementContext): void {
+        this.addFoldingRangeFromTokens(ctx.start, ctx.stop, true);
+    }
+
+    private addFoldingRangeFromTokens(t: Token, t2: Token, block: boolean): void {
+        const startOffset = block ? -1 : -2;
+        const stopOffset = block ? -2 : -1;
+        const fr = new FoldingRegion(t.line + startOffset, t2.line + stopOffset);
+        this.addFoldingRange(fr);
+    }
+
+    private addFoldingRangeFromComment(t: Token, t2: Token): void {
+        const fr = new FoldingRegion(t.line - 1, t2.line - 2, FoldingRangeKind.Comment);
+        this.addFoldingRange(fr);
+    }
+
+    private addFoldingRange(foldingRegion: FoldingRegion): void {
+        if (!this.di.foldingRegions.some(fr => fr.startLine === foldingRegion.startLine && fr.stopLine === foldingRegion.stopLine)) {
+            this.di.foldingRegions.push(foldingRegion);
+        }
     }
 
     protected defaultResult(): void { }

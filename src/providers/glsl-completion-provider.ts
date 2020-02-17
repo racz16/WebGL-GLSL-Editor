@@ -120,8 +120,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private addBuiltinItems(localItems: Array<CompletionItem>): void {
-        this.addBuiltinTypes(localItems);
-        this.addBuiltinVariables(localItems);
+        this.addBuiltinTypeItems(localItems);
+        this.addBuiltinVariableItems(localItems);
         this.addBuiltinFunctionItems(localItems);
     }
 
@@ -154,7 +154,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     //builtin types
     //
-    private addBuiltinTypes(localItems: Array<CompletionItem>): void {
+    private addBuiltinTypeItems(localItems: Array<CompletionItem>): void {
         for (const [name, td] of this.di.builtin.types) {
             if (!this.items.some(ci => this.getName(ci) === name)) {
                 const ci = new CompletionItem(name, CompletionItemKind.Class);
@@ -170,7 +170,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     //builtin variables
     //
-    private addBuiltinVariables(localItems: Array<CompletionItem>): void {
+    private addBuiltinVariableItems(localItems: Array<CompletionItem>): void {
         for (const vd of this.di.builtin.variables.values()) {
             if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
@@ -256,13 +256,18 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserFunctionItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const lf of scope.functions) {
-            if (!this.items.some(ci => this.getName(ci) === lf.getDeclaration().name)) {
+            if (!this.isAdded(this.items, lf) && !this.isAdded(localItems, lf)) {
                 const ci = this.getFunctionCompletionItem(lf);
                 if (ci) {
                     localItems.push(ci);
                 }
             }
         }
+    }
+
+    private isAdded(list: Array<CompletionItem>, lf: LogicalFunction): boolean {
+        return list.some(ci => this.getName(ci) === lf.getDeclaration().name &&
+            (this.items === list || ci.kind === CompletionItemKind.Function || ci.kind === CompletionItemKind.Constructor));
     }
 
     private getFunctionCompletionItem(lf: LogicalFunction): CompletionItem {

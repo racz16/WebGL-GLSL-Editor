@@ -13,6 +13,7 @@ import { GlslDocumentFormattingProvider } from './providers/glsl-document-format
 import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslEditor } from './core/glsl-editor';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
+import { GlslFoldingProvider } from './providers/glsl-folding-provider';
 
 export function activate(context: ExtensionContext) {
 	GlslEditor.initialize(context);
@@ -67,6 +68,9 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_3}`, () => {
 		GlslCommandProvider.openGlEs3();
 	}));
+
+	//folding
+	context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
