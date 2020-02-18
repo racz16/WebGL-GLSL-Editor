@@ -89,11 +89,6 @@
 						"default": true,
 						"description": "Prevents invalid renames."
 					},
-					"webgl-glsl-editor.offlineDocumentationWarning": {
-						"type": "boolean",
-						"default": true,
-						"description": "Displays a warning on top of the offline documentation."
-					},
 					"webgl-glsl-editor.alwaysOpenOnlineDoc": {
 						"type": "boolean",
 						"default": false,

@@ -92,6 +92,6 @@ export function activate(context: ExtensionContext) {
 	//hover
 	context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
 	//formatting
-	context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
+	//context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 }
 
