@@ -228,7 +228,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserTypeItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const td of scope.typeDeclarations) {
-            if (Helper.isALowerThanOffset(td.interval, this.offset) && !this.items.some(ci => this.getName(ci) === td.name)) {
+            if (Helper.isALowerThanOffset(td.interval, this.offset) && !this.items.some(ci => this.getName(ci) === td.name) && !td.interfaceBlock) {
                 const ci = new CompletionItem(td.name, CompletionItemKind.Struct);
                 ci.documentation = new MarkdownString(td.toStringDocumentation());
                 ci.detail = 'Type';

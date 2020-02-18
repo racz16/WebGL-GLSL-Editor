@@ -107,13 +107,13 @@ export class ExpressionProcessor {
     }
 
     private processIdentifier(): ExpressionType {
-        const vu = VariableUsageProcessor.getVariableUsage(this.ctx.IDENTIFIER(), this.scope, this.di);
+        const vu = new VariableUsageProcessor().getVariableUsage(this.ctx.IDENTIFIER(), this.scope, this.di);
         if (vu.declaration) {
             const constant = vu.declaration.type.containsQualifier(this.di.builtin.qualifiers.get('const'));
             return new ExpressionType(vu.declaration.type.declaration, vu.declaration.type.array, constant);
-        } else {
-            return null;
         }
+        return null;
+
     }
 
     private isParenthesizedExpression(): boolean {

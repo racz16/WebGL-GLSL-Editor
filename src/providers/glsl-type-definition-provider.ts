@@ -4,7 +4,6 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { FunctionCall } from '../scope/function/function-call';
 import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
-import { Helper } from '../processor/helper';
 
 export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location> implements TypeDefinitionProvider {
 

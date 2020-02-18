@@ -40,7 +40,7 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
     }
 
     protected processTypeUsage(tu: TypeUsage): Hover {
-        if (tu.declaration && tu.declaration.typeCategory === TypeCategory.CUSTOM) {
+        if (tu.declaration && tu.declaration.typeCategory === TypeCategory.CUSTOM && !tu.declaration.interfaceBlock) {
             let md = new MarkdownString(tu.declaration.toStringDocumentation());
             return new Hover(md);
         }

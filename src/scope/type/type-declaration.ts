@@ -16,11 +16,12 @@ export class TypeDeclaration extends Element {
     public readonly typeCategory: TypeCategory;
     public readonly width: number;
     public readonly height: number;
+    public readonly interfaceBlock: boolean;
     public readonly members = new Array<VariableDeclaration>();
     public readonly usages = new Array<TypeUsage>();
     public readonly ctorCalls = new Array<FunctionCall>();
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.interval = interval;
@@ -28,6 +29,7 @@ export class TypeDeclaration extends Element {
         this.height = height;
         this.typeBase = typeBase;
         this.typeCategory = typeCategory;
+        this.interfaceBlock = interfaceBlock;
     }
 
     public isScalar(): boolean {
@@ -48,13 +50,16 @@ export class TypeDeclaration extends Element {
             this.typeCategory === TypeCategory.UNSIGNED_INTEGER_OPAQUE;
     }
 
-    public containsArrayDeclaration(): boolean {
-        for (const vd of this.members) {
-            if (vd.type.array.isArray() || (vd.type.declaration && vd.type.declaration.containsArrayDeclaration())) {
-                return true;
+    public toStringName(toOutline = false): string {
+        if (this.name) {
+            return this.name;
+        } else {
+            if (toOutline) {
+                return this.interfaceBlock ? '<unnamed interface block>' : '<unnamed type>';
+            } else {
+                return this.interfaceBlock ? 'uniform {...}' : 'struct {...}';
             }
         }
-        return false;
     }
 
     public toString(): string {

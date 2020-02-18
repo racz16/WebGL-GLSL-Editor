@@ -72,8 +72,16 @@ export class TypeUsage extends Element {
         return qualifiers + this.toStringWithoutQualifiers();
     }
 
-    public toStringWithoutQualifiers(): string {
-        return this.name + this.array.toString();
+    public toStringName(toOutline = false): string {
+        if (this.name) {
+            return this.name;
+        } else {
+            return this.declaration ? this.declaration.toStringName(toOutline) : '';
+        }
+    }
+
+    public toStringWithoutQualifiers(toOutline = false): string {
+        return this.toStringName(toOutline) + this.array.toString();
     }
 
 }

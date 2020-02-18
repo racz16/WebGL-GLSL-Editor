@@ -21,6 +21,7 @@ export class DocumentInfo {
     private version = 100;
     private stage: ShaderStage;
     private tokens: Array<Token>;
+    private visitor: GlslVisitor;
     public readonly completionRegions = new Array<TypeUsage>();
     public readonly foldingRegions = new Array<FoldingRegion>();
     public builtin: Builtin;
@@ -40,6 +41,10 @@ export class DocumentInfo {
         this.completionRegions.length = 0;
         this.foldingRegions.length = 0;
         this.rootScope = new Scope(null, null);
+    }
+
+    public getVIsitor(): GlslVisitor {
+        return this.visitor;
     }
 
     public getShaderStage(): ShaderStage {
@@ -129,12 +134,17 @@ export class DocumentInfo {
 
     private processVisitor(parser: AntlrGlslParser): void {
         const tree = parser.start();
-        new GlslVisitor(this.uri).visit(tree);
+        this.visitor = new GlslVisitor(this.uri);
+        this.visitor.visit(tree);
     }
 
     //
     //general
     //
+    public getLineCount(): number {
+        return this.document.lineCount;
+    }
+
     public intervalToLocation(interval: Interval): Location {
         const range = this.intervalToRange(interval);
         return new Location(this.document.uri, range);
@@ -205,7 +215,21 @@ export class DocumentInfo {
     }
 
     //generic
-    private getElementAt(position: Position, type: 'variableDeclarations' | 'variableUsages' | 'typeDeclarations' | 'typeUsages' | 'functionCalls' | 'functionPrototypes' | 'functionDefinitions'): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
+    private getElementAt(position: Position, type:
+        'variableDeclarations' |
+        'variableUsages' |
+        'typeDeclarations' |
+        'typeUsages' |
+        'functionCalls' |
+        'functionPrototypes' |
+        'functionDefinitions'):
+        VariableDeclaration |
+        VariableUsage |
+        TypeDeclaration |
+        TypeUsage |
+        FunctionCall |
+        FunctionDeclaration {
+
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {

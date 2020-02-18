@@ -3,18 +3,18 @@ import { Helper } from './helper';
 import { TypeDeclarationProcessor } from './type-declaration-processor';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
-import { Type_usageContext, QualifierContext } from '../_generated/AntlrGlslParser';
+import { Type_usageContext, QualifierContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { ArrayUsage } from '../scope/array-usage';
 
 export class TypeUsageProcessor {
 
-    private static di: DocumentInfo;
-    private static scope: Scope;
+    private di: DocumentInfo;
+    private scope: Scope;
 
-    private static tuc: Type_usageContext;
+    private tuc: Type_usageContext;
 
-    private static initialize(scope: Scope, di: DocumentInfo, tuc: Type_usageContext): void {
+    private initialize(scope: Scope, di: DocumentInfo, tuc: Type_usageContext): void {
         this.di = di;
         this.scope = scope;
         this.tuc = tuc;
@@ -23,7 +23,7 @@ export class TypeUsageProcessor {
     //
     //function return type
     //
-    public static getReturnType(tuc: Type_usageContext, scope: Scope, di: DocumentInfo): TypeUsage {
+    public getReturnType(tuc: Type_usageContext, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di, tuc);
         const tu = this.getType(0, new ArrayUsage());
         return tu;
@@ -32,23 +32,36 @@ export class TypeUsageProcessor {
     //
     //function parameter
     //
-    public static getParameterType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo): TypeUsage {
+    public getParameterType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di, tuc);
         const tu = this.getType(0, variableArray);
         this.addImplicitParameterQualifiers(tu);
         return tu;
     }
 
-    private static addImplicitParameterQualifiers(tu: TypeUsage): void {
+    private addImplicitParameterQualifiers(tu: TypeUsage): void {
         if (!tu.qualifiers.some(qu => qu.isParameterQualifier())) {
             tu.implicitQualifiers.push(this.di.builtin.qualifiers.get('in'));
         }
     }
 
     //
+    //interface block
+    //
+    public getInterfaceBlockType(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): TypeUsage {
+        this.di = di;
+        this.scope = scope;
+        const array = ibdc.identifier_optarray() ? Helper.getArraySizeFromIdentifierOptarray(ibdc.identifier_optarray(), this.scope, this.di) : null;
+        const ibd = new TypeDeclarationProcessor().getInterfaceBlockDeclaration(ibdc, this.scope, this.di);
+        const tu = new TypeUsage(ibd.name, ibd.interval, null, this.scope, ibd, array, true);
+        this.addQualifiers(tu, ibdc.qualifier());
+        return tu;
+    }
+
+    //
     //multiple variable declaration
     //
-    public static getMemberType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo, index: number): TypeUsage {
+    public getMemberType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo, index: number): TypeUsage {
         this.initialize(scope, di, tuc);
         const tu = this.getType(index, variableArray);
         return tu;
@@ -57,7 +70,7 @@ export class TypeUsageProcessor {
     //
     //general
     //
-    private static getType(index: number, variableArray: ArrayUsage): TypeUsage {
+    private getType(index: number, variableArray: ArrayUsage): TypeUsage {
         if (this.tuc.type()) {
             return this.getRealType(index, variableArray);
         } else {
@@ -65,14 +78,14 @@ export class TypeUsageProcessor {
         }
     }
 
-    private static getRealType(index: number, variableArray: ArrayUsage): TypeUsage {
+    private getRealType(index: number, variableArray: ArrayUsage): TypeUsage {
         const name = this.tuc.type().text;
         const nameInterval = Helper.getIntervalFromParserRule(this.tuc.type());
         const interval = Helper.getIntervalFromParserRule(this.tuc);
         const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
         const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
         const tu = new TypeUsage(name, interval, nameInterval, this.scope, td, au);
-        this.addQualifiers(tu);
+        this.addQualifiers(tu, this.tuc.qualifier());
         if (index === 0) {
             this.scope.typeUsages.push(tu);
             if (td) {
@@ -82,17 +95,17 @@ export class TypeUsageProcessor {
         return tu;
     }
 
-    private static getStructType(index: number, variableArray: ArrayUsage): TypeUsage {
+    private getStructType(index: number, variableArray: ArrayUsage): TypeUsage {
         const tdc = this.tuc.type_declaration();
         const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
-        const td = TypeDeclarationProcessor.getTypeDeclaration(tdc, this.scope, this.di, index);
+        const td = new TypeDeclarationProcessor().getTypeDeclaration(tdc, this.scope, this.di, index);
         const tu = new TypeUsage(td.name, td.interval, null, this.scope, td, au, true);
-        this.addQualifiers(tu);
+        this.addQualifiers(tu, this.tuc.qualifier());
         return tu;
     }
 
-    private static addQualifiers(tu: TypeUsage): void {
-        for (const qc of this.tuc.qualifier()) {
+    private addQualifiers(tu: TypeUsage, qualifiers: Array<QualifierContext>): void {
+        for (const qc of qualifiers) {
             const qu = this.getQualifierUsage(qc, this.scope);
             if (qu) {
                 tu.qualifiers.push(qu);
@@ -100,7 +113,7 @@ export class TypeUsageProcessor {
         }
     }
 
-    private static getQualifierUsage(qc: QualifierContext, scope: Scope): QualifierUsage {
+    private getQualifierUsage(qc: QualifierContext, scope: Scope): QualifierUsage {
         const name = qc.text;
         const nameInterval = Helper.getIntervalFromParserRule(qc);
         const q = this.di.builtin.qualifiers.get(name);

@@ -1,5 +1,5 @@
 import { GlslEditor } from './glsl-editor';
-import { Uri, FoldingRangeKind, Position } from 'vscode';
+import { Uri, FoldingRangeKind, } from 'vscode';
 import { DocumentInfo } from './document-info';
 import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, StatementContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
@@ -56,7 +56,8 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         for (let i = 0; i < this.di.getTokens().length; i++) {
             const token = this.di.getTokens()[i];
             if (token.type === AntlrGlslLexer.MULTI_LINE_COMMENT) {
-                this.addFoldingRangeFromComment(token, this.di.getTokens()[i + 1]);
+                const endToken = i + 1 === this.di.getTokens().length ? token : this.di.getTokens()[i + 1];
+                this.addFoldingRangeFromComment(token, endToken);
             }
         }
     }
@@ -71,20 +72,20 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitType_declaration(ctx: Type_declarationContext): void {
         this.addFoldingRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, true);
-        TypeDeclarationProcessor.getTypeDeclaration(ctx, this.scope, this.di, 0);
+        new TypeDeclarationProcessor().getTypeDeclaration(ctx, this.scope, this.di, 0);
     }
 
     public visitVariable_declaration(ctx: Variable_declarationContext): void {
-        VariableDeclarationProcessor.getDeclarations(ctx, this.scope, this.di);
+        new VariableDeclarationProcessor().getDeclarations(ctx, this.scope, this.di);
     }
 
     public visitInvariant_declaration(ctx: Invariant_declarationContext): void {
-        VariableUsageProcessor.getVariableUsage(ctx.IDENTIFIER(), this.scope, this.di);
+        new VariableUsageProcessor().getVariableUsage(ctx.IDENTIFIER(), this.scope, this.di);
     }
 
     public visitInterface_block_declaration(ctx: Interface_block_declarationContext): void {
         this.addFoldingRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, true);
-        this.visitChildren(ctx);
+        new VariableDeclarationProcessor().getInterfaceBlockVariableDeclaration(ctx, this.scope, this.di);
     }
 
     //
@@ -92,7 +93,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitFunction_prototype(ctx: Function_prototypeContext): void {
         this.scope = this.createScopeFromFunctionPrototype(this.scope, ctx);
-        FunctionProcessor.getFunctionPrototype(ctx, this.scope, this.di);
+        new FunctionProcessor().getFunctionPrototype(ctx, this.scope, this.di);
         this.scope = this.scope.parent;
     }
 
@@ -105,7 +106,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitFunction_definition(ctx: Function_definitionContext): void {
         this.scope = this.createScopeFromFunctionDefinition(this.scope, ctx);
-        FunctionProcessor.getFunctionDefinition(ctx, this.scope, this.di);
+        new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
         this.addFoldingRangeFromCompoundStatement(ctx.compound_statement());
         this.visitChildren(ctx.compound_statement());
         this.scope = this.scope.parent;
@@ -272,7 +273,12 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     }
 
     private addFoldingRangeFromComment(t: Token, t2: Token): void {
-        const fr = new FoldingRegion(t.line - 1, t2.line - 2, FoldingRangeKind.Comment);
+        let fr: FoldingRegion;
+        if (t === t2) {
+            fr = new FoldingRegion(t.line - 1, this.di.getLineCount() - 2, FoldingRangeKind.Comment);
+        } else {
+            fr = new FoldingRegion(t.line - 1, t2.line - 2, FoldingRangeKind.Comment);
+        }
         this.addFoldingRange(fr);
     }
 

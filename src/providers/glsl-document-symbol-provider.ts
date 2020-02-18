@@ -6,6 +6,7 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Interval } from '../scope/interval';
+import { TypeUsage } from '../scope/type/type-usage';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
 
@@ -35,7 +36,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private addFunction(fd: FunctionDeclaration): void {
         const range = this.di.intervalToRange(fd.interval);
         const selectionRange = this.di.intervalToRange(fd.nameInterval);
-        const type = fd.returnType.toStringWithoutQualifiers() ?? '<unnamed struct>';
+        const type = fd.returnType.toStringWithoutQualifiers();
         const ds = new DocumentSymbol(fd.name, type, SymbolKind.Function, range, selectionRange);
         this.addLocalElements(ds, fd, fd.functionScope);
         this.result.push(ds);
@@ -44,8 +45,9 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private addStruct(td: TypeDeclaration, parent: DocumentSymbol): void {
         const range = this.di.intervalToRange(td.interval);
         const selectionRange = this.getRange(td.nameInterval, td.interval);
-        const name = td.name ?? '<unnamed struct>';
-        const ds = new DocumentSymbol(name, null, SymbolKind.Struct, range, selectionRange);
+        const name = td.toStringName(true);
+        const kind = td.interfaceBlock ? SymbolKind.Interface : SymbolKind.Struct;
+        const ds = new DocumentSymbol(name, null, kind, range, selectionRange);
         for (const vd of td.members) {
             this.addVariable(vd, ds, true);
         }
@@ -60,7 +62,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         const range = this.di.intervalToRange(vd.declarationInterval);
         const selectionRange = this.getRange(vd.nameInterval, vd.declarationInterval);
         const name = vd.name ?? '<unnamed variable>';
-        let info = vd.type.toStringWithoutQualifiers() ?? '<unnamed struct>';
+        let info = vd.type.toStringWithoutQualifiers(true);
         info = vd.parameter ? info + ' (parameter)' : info;
         const sk = this.getSymbolKind(vd, property);
         const ds = new DocumentSymbol(name, info, sk, range, selectionRange);

@@ -55,7 +55,7 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private processDeclaration(element: VariableDeclaration | TypeDeclaration): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
-        if (!element.builtin) {
+        if (!element.builtin && !(element instanceof TypeDeclaration && element.interfaceBlock)) {
             const range = this.di.intervalToRange(element.nameInterval);
             ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
             this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);

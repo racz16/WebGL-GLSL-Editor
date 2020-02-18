@@ -4,16 +4,16 @@ import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeUsageProcessor } from './type-usage-processor';
-import { Single_variable_declarationContext, Variable_declarationContext } from '../_generated/AntlrGlslParser';
+import { Single_variable_declarationContext, Variable_declarationContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
 
 export class VariableDeclarationProcessor {
 
-    private static di: DocumentInfo;
-    private static scope: Scope;
+    private di: DocumentInfo;
+    private scope: Scope;
 
-    private static initialize(scope: Scope, di: DocumentInfo): void {
+    private initialize(scope: Scope, di: DocumentInfo): void {
         this.di = di;
         this.scope = scope;
     }
@@ -40,23 +40,41 @@ export class VariableDeclarationProcessor {
     //
     //function parameter
     //
-    public static getParameterDeclaration(svdc: Single_variable_declarationContext, scope: Scope, di: DocumentInfo): VariableDeclaration {
+    public getParameterDeclaration(svdc: Single_variable_declarationContext, scope: Scope, di: DocumentInfo): VariableDeclaration {
         this.initialize(scope, di);
         const ioc = svdc.identifier_optarray_optassignment() ? svdc.identifier_optarray_optassignment().identifier_optarray() : null;
         const name = ioc ? ioc.IDENTIFIER().text : null;
         const nameInterval = ioc ? Helper.getIntervalFromTerminalNode(ioc.IDENTIFIER()) : null;
         const declarationInterval = Helper.getIntervalFromParserRule(svdc);
         const arraySize = Helper.getArraySizeFromIdentifierOptarray(ioc, this.scope, this.di);
-        const tu = TypeUsageProcessor.getParameterType(svdc.type_usage(), arraySize, scope, di);
+        const tu = new TypeUsageProcessor().getParameterType(svdc.type_usage(), arraySize, scope, di);
         const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu, true);
         scope.variableDeclarations.push(vd);
         return vd;
     }
 
     //
+    //interface block
+    //
+    public getInterfaceBlockVariableDeclaration(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): VariableDeclaration {
+        this.initialize(scope, di);
+        const variable = !!ibdc.identifier_optarray();
+        const tu = new TypeUsageProcessor().getInterfaceBlockType(ibdc, scope, di);
+        if (variable) {
+            const name = ibdc.identifier_optarray().IDENTIFIER().text;
+            const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.identifier_optarray().IDENTIFIER());
+            const declarationInterval = Helper.getIntervalFromParserRule(ibdc);
+            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
+            this.scope.variableDeclarations.push(vd);
+            return vd;
+        }
+        return null;
+    }
+
+    //
     //variable declaration, struct member
     //
-    public static getDeclarations(vdc: Variable_declarationContext, scope: Scope, di: DocumentInfo): Array<VariableDeclaration> {
+    public getDeclarations(vdc: Variable_declarationContext, scope: Scope, di: DocumentInfo): Array<VariableDeclaration> {
         this.initialize(scope, di);
         const ioocs = vdc.identifier_optarray_optassignment();
         const vds = new Array<VariableDeclaration>();
@@ -65,7 +83,7 @@ export class VariableDeclarationProcessor {
                 const iooc = ioocs[i];
                 const array = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
                 const exp = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
-                const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
+                const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
@@ -74,7 +92,7 @@ export class VariableDeclarationProcessor {
                 vds.push(vd);
             }
         } else {
-            const tu = TypeUsageProcessor.getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);
+            const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);
             const name = null;
             const nameInterval = null;
             const declarationInterval = Helper.getIntervalFromParserRule(vdc);

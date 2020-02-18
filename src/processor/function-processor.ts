@@ -9,13 +9,13 @@ import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { ExpressionType } from './expression-processor';
 import { Interval } from '../scope/interval';
 
-export abstract class FunctionProcessor {
+export class FunctionProcessor {
 
-    private static di: DocumentInfo;
-    private static scope: Scope;
-    private static fhc: Function_headerContext;
+    private di: DocumentInfo;
+    private scope: Scope;
+    private fhc: Function_headerContext;
 
-    private static initialize(fhc: Function_headerContext, scope: Scope, di: DocumentInfo): void {
+    private initialize(fhc: Function_headerContext, scope: Scope, di: DocumentInfo): void {
         this.fhc = fhc;
         this.di = di;
         this.scope = scope;
@@ -58,11 +58,11 @@ export abstract class FunctionProcessor {
     //
     //function prototype
     //
-    public static getFunctionPrototype(fpc: Function_prototypeContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
+    public getFunctionPrototype(fpc: Function_prototypeContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
         this.initialize(fpc.function_header(), scope, di);
         const interval = Helper.getIntervalFromParserRule(fpc);
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
-        const returnType = TypeUsageProcessor.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
+        const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd);
@@ -74,11 +74,11 @@ export abstract class FunctionProcessor {
     //
     //function definition
     //
-    public static getFunctionDefinition(fdc: Function_definitionContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
+    public getFunctionDefinition(fdc: Function_definitionContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
         this.initialize(fdc.function_header(), scope, di);
         const interval = Helper.getIntervalFromParserRule(fdc);
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
-        const returnType = TypeUsageProcessor.getReturnType(this.fhc.type_usage(), this.scope.parent, di);
+        const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd);
@@ -90,7 +90,7 @@ export abstract class FunctionProcessor {
     //
     //general
     //
-    private static getLogicalFunction(fd: FunctionDeclaration): LogicalFunction {
+    private getLogicalFunction(fd: FunctionDeclaration): LogicalFunction {
         let lf = this.di.getRootScope().functions.find(lf => lf.connects(fd));
         if (!lf) {
             lf = new LogicalFunction();
@@ -100,11 +100,11 @@ export abstract class FunctionProcessor {
         return lf;
     }
 
-    private static addParameters(fd: FunctionDeclaration): void {
+    private addParameters(fd: FunctionDeclaration): void {
         const fplc = this.fhc.function_parameter_list();
         if (fplc && fplc.single_variable_declaration()) {
             for (const svdc of fplc.single_variable_declaration()) {
-                const vd = VariableDeclarationProcessor.getParameterDeclaration(svdc, this.scope, this.di);
+                const vd = new VariableDeclarationProcessor().getParameterDeclaration(svdc, this.scope, this.di);
                 fd.parameters.push(vd);
             }
         }

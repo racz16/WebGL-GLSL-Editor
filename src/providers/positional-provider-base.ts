@@ -40,17 +40,6 @@ export class PositionalProviderBase<T> {
             return this.processFunctionCall(fc);
         }
 
-        //type
-        const td = this.di.getTypeDeclarationAt(position);
-        if (td && td.name) {
-            return this.processTypeDeclaration(td);
-        }
-
-        const tu = this.di.getTypeUsageAt(position);
-        if (tu && tu.name) {
-            return this.processTypeUsage(tu);
-        }
-
         //variable
         const vd = this.di.getVariableDeclarationAt(position);
         if (vd && vd.name) {
@@ -60,6 +49,17 @@ export class PositionalProviderBase<T> {
         const vu = this.di.getVariableUsageAt(position);
         if (vu && vu.name) {
             return this.processVariableUsage(vu);
+        }
+
+        //type
+        const td = this.di.getTypeDeclarationAt(position);
+        if (td && td.name) {
+            return this.processTypeDeclaration(td);
+        }
+
+        const tu = this.di.getTypeUsageAt(position);
+        if (tu && tu.name) {
+            return this.processTypeUsage(tu);
         }
 
         return this.defaultReturn();

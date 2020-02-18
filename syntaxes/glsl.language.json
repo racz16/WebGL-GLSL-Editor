@@ -42,12 +42,24 @@
 		{
 			"comment": "OPERATOR",
 			"name": "keyword.operator.glsl",
-			"match": "[.+\\-*/%<>^|&~=!:,?]"
+			"match": "[.+\\-*/%<>^|&~=!:,?\\[\\]]"
 		},
 		{
 			"comment": "KEYWORD",
 			"name": "keyword.control.glsl",
 			"match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
+		},
+		{
+			"comment": "INTERFACE BLOCK",
+			"match": "(uniform)(\\s+(\\w+))?\\s*{",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.glsl"
+				},
+				"3": {
+					"name": "entity.name.type.glsl"
+				}
+			}
 		},
 		{
 			"comment": "QUALIFIER",
@@ -130,6 +142,13 @@
 			"beginCaptures": {
 				"1": {
 					"name": "entity.name.function.glsl"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
 				},
 				"4": {
 					"patterns": [
