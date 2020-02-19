@@ -21,5 +21,4 @@
 - Go to/Peek type definitions
 - Go to/Find all/Peek implementations
 - Go to/Find all/Peek references
-- Folding
 - Commands for online documentation
