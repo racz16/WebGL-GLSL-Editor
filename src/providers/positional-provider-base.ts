@@ -26,12 +26,12 @@ export class PositionalProviderBase<T> {
 
         //function
         const fp = this.di.getFunctionPrototypeAt(position);
-        if (fp) {
+        if (fp && !fp.ctor) {
             return this.processFunctionPrototype(fp);
         }
 
         const fd = this.di.getFunctionDefinitionAt(position);
-        if (fd) {
+        if (fd && !fp.ctor) {
             return this.processFunctionDefinition(fd);
         }
 
