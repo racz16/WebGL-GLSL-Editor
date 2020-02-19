@@ -69,8 +69,6 @@ export function activate(context: ExtensionContext) {
 		GlslCommandProvider.openGlEs3();
 	}));
 
-	//folding
-	context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
@@ -91,6 +89,8 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(languages.registerRenameProvider(selector, new GlslRenameProvider()));
 	//hover
 	context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
+	//folding
+	//context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting
 	//context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 }

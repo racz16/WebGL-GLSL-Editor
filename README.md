@@ -58,10 +58,6 @@ You can find (go to / find all / peek) the implementation of a function.
 You can find (go to / find all / peek) the references of a type, a variable, a function or a constructor.
 
 ![references](res/png/references.png)
-### Folding
-You can fold blocks, even blocks without curly braces (think about a single statement `if` for example) and comments.
-
-![folding](res/png/folding.png)
 ### Commands for online documentation
 You can easily access several online documentations by commands.
 
