@@ -31,7 +31,7 @@ export class PositionalProviderBase<T> {
         }
 
         const fd = this.di.getFunctionDefinitionAt(position);
-        if (fd && !fp.ctor) {
+        if (fd && !fd.ctor) {
             return this.processFunctionDefinition(fd);
         }
 
