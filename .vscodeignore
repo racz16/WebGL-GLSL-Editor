@@ -10,3 +10,4 @@ vsc-extension-quickstart.md
 **/*.ts
 syntaxes/.antlr
 syntaxes/*.g4
+res/png/screenshots

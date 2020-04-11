@@ -5,63 +5,63 @@ This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00
 ### Syntax highlight
 The extension colorizes types, builtin types, variables, builtin variables, functions, keywords, qualifiers, operators, macros and comments.
 
-![syntax highlighting](res/png/syntax-highlighting.png)
+![syntax highlighting](res/png/screenshots/syntax-highlighting.png)
 ### Diagnostics
 The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations.
 
-![diagnostics](res/png/diagnostics.png)
+![diagnostics](res/png/screenshots/diagnostics.png)
 ### Offline documentation
 The extension uses docs.gl to provide the offline documentation for builtin variables and builtin functions.
 
-![offline documentation](res/png/documentation.png)
+![offline documentation](res/png/screenshots/documentation.png)
 ### Code completion
 The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
-![code completion](res/png/completion.png)
+![code completion](res/png/screenshots/completion.png)
 ### Rename
 You can rename types (and constructors), interface blocks, variables and functions.
 
-![rename](res/png/rename.png)
+![rename](res/png/screenshots/rename.png)
 ### Highlights
 The extension can highlight all the occurrences of the selected type, variable function or constructor.
 
-![highlights](res/png/highlights.png)
+![highlights](res/png/screenshots/highlights.png)
 ### Hover
 The extension can provide useful informations or documentation summary if you hover over elements.
 
-![hover](res/png/hover.png)
+![hover](res/png/screenshots/hover.png)
 ### Symbols
 The extension can provide outline information and breadcrumbs about the types, variables and functions.
 
-![outline and breadcrumbs](res/png/outline-and-breadcrumbs.png)
+![outline and breadcrumbs](res/png/screenshots/outline-and-breadcrumbs.png)
 
 You can easily find types, interface blocks, variables and functions.
 
-![find symbol](res/png/find-symbol.png)
+![find symbol](res/png/screenshots/find-symbol.png)
 ### Go to/Peek declarations
 You can find (go to / peek) the declaration of a type, a variable, a function or a constructor.
 
-![declarations](res/png/declarations.png)
+![declarations](res/png/screenshots/declarations.png)
 ### Go to/Peek definitions
 You can find (go to / peek) the definition of a type, a variable, a function or a constructor.
 
-![definitions](res/png/definitions.png)
+![definitions](res/png/screenshots/definitions.png)
 ### Go to/Peek type definitions
 You can find (go to / peek) the type definition of a variable, a function or a constructor.
 
-![type definitions](res/png/type-definitions.png)
+![type definitions](res/png/screenshots/type-definitions.png)
 ### Go to/Find all/Peek implementations
 You can find (go to / find all / peek) the implementation of a function.
 
-![implementations](res/png/implementations.png)
+![implementations](res/png/screenshots/implementations.png)
 ### Go to/Find all/Peek references
 You can find (go to / find all / peek) the references of a type, a variable, a function or a constructor.
 
-![references](res/png/references.png)
+![references](res/png/screenshots/references.png)
 ### Commands for online documentation
 You can easily access several online documentations by commands.
 
-![online documentation](res/png/online-documentation.png)
+![online documentation](res/png/screenshots/online-documentation.png)
 
 ## Configuration
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames
