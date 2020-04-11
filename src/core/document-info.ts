@@ -92,6 +92,16 @@ export class DocumentInfo {
         return this.tokens;
     }
 
+    public getTokenAt(position: Position): Token {
+        for (const token of this.getTokens()) {
+            const range = this.intervalToRange(new Interval(token.startIndex, token.stopIndex + 1));
+            if (range.contains(position)) {
+                return token;
+            }
+        }
+        return null;
+    }
+
     public getUri(): Uri {
         return this.uri;
     }

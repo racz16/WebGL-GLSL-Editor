@@ -1,4 +1,4 @@
-import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, MarkdownString } from 'vscode';
+import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, MarkdownString, CompletionTriggerKind } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -9,23 +9,29 @@ import { Helper } from '../processor/helper';
 import { TypeUsage } from '../scope/type/type-usage';
 import { Interval } from '../scope/interval';
 import { Constants } from '../core/constants';
+import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
     private di: DocumentInfo;
     private position: Position;
+    private context: CompletionContext;
     private offset: number;
     private items: Array<CompletionItem>;
 
-    private initialize(document: TextDocument, position: Position): void {
+    private initialize(document: TextDocument, position: Position, context: CompletionContext): void {
         GlslEditor.processDocument(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
+        this.context = context;
         this.offset = document.offsetAt(position);
     }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
-        this.initialize(document, position);
+        this.initialize(document, position, context);
+        if (this.isCompletionTriggeredByFloatingPoint()) {
+            return null;
+        }
         const [cr, startsWith] = this.getCompletionExpression();
         this.items = new Array<CompletionItem>();
         if (cr) {
@@ -37,6 +43,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         }
         return this.items;
     }
+
+    private isCompletionTriggeredByFloatingPoint(): boolean {
+        return this.context.triggerKind === CompletionTriggerKind.TriggerCharacter && this.di.getTokenAt(this.position).type === AntlrGlslLexer.FLOAT_LITERAL;
+    }
+
 
     private completeAfterDot(cr: TypeUsage, startsWith: string): void {
         if (cr.array.isArray()) {
