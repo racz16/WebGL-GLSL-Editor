@@ -8,11 +8,11 @@
 - Generation of Shadertoy variables
 
 ## [1.0.1] - 2020.04.12.
-## Improved
+### Improved
 - Syntax highlight
 - Reduced package size
 - Updated dependencies
-## Fixed
+### Fixed
 - Function definition related features are working again
 - Floating point numbers no longer trigger code completion
 
