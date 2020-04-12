@@ -15,7 +15,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private newLineCount: number;
 
     private initialize(document: TextDocument, options: FormattingOptions): void {
-        GlslEditor.processDocument(document);
+        GlslEditor.processElements(document);
         this.document = document;
         this.options = options;
         this.di = GlslEditor.getDocumentInfo(document.uri);

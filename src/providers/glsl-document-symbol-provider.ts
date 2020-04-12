@@ -6,7 +6,6 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Interval } from '../scope/interval';
-import { TypeUsage } from '../scope/type/type-usage';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
 
@@ -14,7 +13,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private result: Array<DocumentSymbol>;
 
     private initialize(document: TextDocument): void {
-        GlslEditor.processDocument(document);
+        GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.result = new Array<DocumentSymbol>();
     }

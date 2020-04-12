@@ -50,174 +50,14 @@
 			"match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
 		},
 		{
-			"comment": "INTERFACE BLOCK",
-			"match": "(uniform)(\\s+(\\w+))?\\s*{",
-			"captures": {
-				"1": {
-					"name": "storage.modifier.glsl"
-				},
-				"3": {
-					"name": "entity.name.type.glsl"
-				}
-			}
-		},
-		{
 			"comment": "QUALIFIER",
 			"name": "storage.modifier.glsl",
 			"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
 		},
 		{
 			"comment": "STRUCT",
-			"match": "(struct)(\\s+(\\w+))?",
-			"captures": {
-				"1": {
-					"name": "storage.type.glsl"
-				},
-				"3": {
-					"name": "entity.name.type.glsl"
-				}
-			}
-		},
-		{
-			"comment": "FUNCTION HEADER",
-			"begin": "(((\\w+)|((struct)(\\s+\\w+)?\\s*{(.*?)}))(\\s+|(\\s*\\[(.*?)\\]\\s*)+))(\\w+\\s*)\\(",
-			"beginCaptures": {
-				"3": {
-					"patterns": [
-						{
-							"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
-							"name": "storage.type.glsl",
-							"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
-						},
-						{
-							"comment": "BUILTIN STRUCT TYPE",
-							"name": "storage.type.glsl",
-							"begin": "gl_",
-							"end": "\\s"
-						},
-						{
-							"comment": "USER TYPE",
-							"name": "entity.name.type.glsl",
-							"match": "[a-zA-Z_][a-zA-Z0-9_]*"
-						}
-					]
-				},
-				"5": {
-					"name": "storage.type.glsl"
-				},
-				"6": {
-					"name": "entity.name.type.glsl"
-				},
-				"7": {
-					"patterns": [
-						{
-							"comment": "STRUCT BODY",
-							"include": "$self"
-						}
-					]
-				},
-				"8": {
-					"patterns": [
-						{
-							"comment": "ARRAY USAGE",
-							"include": "$self"
-						}
-					]
-				},
-				"11": {
-					"name": "entity.name.function.glsl"
-				}
-			},
-			"patterns": [
-				{
-					"match": "(struct)(\\s+)([_a-zA-Z][_a-zA-Z0-9]*)(\\s*{.*?}\\s*)([_a-zA-Z][_a-zA-Z0-9]*)?",
-					"captures": {
-						"1": {
-							"name": "storage.type.glsl"
-						},
-						"3": {
-							"name": "entity.name.type.glsl"
-						},
-						"4": {
-							"patterns": [
-								{
-									"include": "$self"
-								}
-							]
-						},
-						"5": {
-							"name": "variable.glsl"
-						}
-					}
-				},
-				{
-					"name": "storage.modifier.glsl",
-					"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
-				},
-				{
-					"match": "(\\w+)(\\s*\\[.*?\\]\\s*)*(\\s*\\w+)*",
-					"captures": {
-						"1": {
-							"patterns": [
-								{
-									"match": "(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)",
-									"name": "storage.type.glsl"
-								},
-								{
-									"match": "\\w+",
-									"name": "entity.name.type.glsl"
-								}
-							]
-						},
-						"2": {
-							"patterns": [
-								{
-									"include": "$self"
-								}
-							]
-						},
-						"3": {
-							"patterns": [
-								{
-									"include": "$self"
-								}
-							]
-						}
-					}
-				}
-			],
-			"end": "\\)",
-			"applyEndPatternLast": 1
-		},
-		{
-			"comment": "FUNCTION CALL",
-			"begin": "(\\w+)(\\s*|(\\s*\\[([^\\]]*?)\\]\\s*)+)\\(",
-			"beginCaptures": {
-				"1": {
-					"name": "entity.name.function.glsl"
-				},
-				"3": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				},
-				"4": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			},
-			"patterns": [
-				{
-					"include": "$self"
-				}
-			],
-			"end": "\\)",
-			"applyEndPatternLast": 1
+			"match": "\\b(struct)\\b",
+			"name": "storage.type.glsl"
 		},
 		{
 			"comment": "BUILTIN TYPE USAGE",
@@ -230,37 +70,14 @@
 				{
 					"comment": "BUILTIN STRUCT TYPE",
 					"name": "storage.type.glsl",
-					"begin": "gl_",
-					"end": "\\s"
+					"match": "\\b(gl_[a-zA-Z_][a-zA-Z0-9_]*)\\b"
 				}
 			]
 		},
 		{
-			"match": "([_a-zA-Z][_a-zA-Z0-9]*)((\\s+)|(\\s*\\[.*?\\]\\s*)+)([_a-zA-Z][_a-zA-Z0-9]*)",
-			"captures": {
-				"1": {
-					"name": "entity.name.type.glsl"
-				},
-				"2": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				},
-				"5": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			}
-		},
-		{
 			"comment": "IDENTIFIER",
 			"name": "variable.glsl",
-			"match": "[a-zA-Z_][a-zA-Z0-9_]*"
+			"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b"
 		}
 	],
 	"scopeName": "source.glsl"

@@ -15,13 +15,13 @@ export class PositionalProviderBase<T> {
     protected position: Position;
 
     protected initialize(document: TextDocument, position: Position): void {
-        GlslEditor.processDocument(document);
+        GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
     }
 
-    public processElements(document: TextDocument, position: Position): T {
+    protected processElements(document: TextDocument, position: Position): T {
         this.initialize(document, position);
 
         //function

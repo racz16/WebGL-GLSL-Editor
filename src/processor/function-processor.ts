@@ -8,6 +8,7 @@ import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { ExpressionType } from './expression-processor';
 import { Interval } from '../scope/interval';
+import { SemanticElement, SemanticType } from '../scope/semantic-element';
 
 export class FunctionProcessor {
 
@@ -68,6 +69,7 @@ export class FunctionProcessor {
         this.addParameters(fd);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
+        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
         return fd;
     }
 
@@ -84,6 +86,7 @@ export class FunctionProcessor {
         this.addParameters(fd);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
+        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
         return fd;
     }
 

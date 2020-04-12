@@ -18,9 +18,9 @@ export class GlslEditor {
         return this.context;
     }
 
-    public static processDocument(document: TextDocument): void {
+    public static processElements(document: TextDocument): void {
         const di = this.getDocumentInfo(document.uri);
-        di.processDocument(document);
+        di.processElements(document);
     }
 
     public static getDocumentInfo(uri: Uri): DocumentInfo {

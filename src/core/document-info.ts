@@ -14,16 +14,26 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { FunctionCall } from '../scope/function/function-call';
 import { ShaderStage } from '../scope/shader-stage';
 import { FoldingRegion } from '../scope/folding-region';
+import { SemanticElement } from '../scope/semantic-element';
 
 export class DocumentInfo {
     private readonly uri: Uri;
+
+    private lexer: AntlrGlslLexer;
+    private parser: AntlrGlslParser;
+    private tokens: Array<Token>;
     private lastProcessedVersion = -1;
+
+    private visitor: GlslVisitor;
+    private lastGlslVisitorVersion = -1;
+
     private version = 100;
     private stage: ShaderStage;
-    private tokens: Array<Token>;
-    private visitor: GlslVisitor;
+
     public readonly completionRegions = new Array<TypeUsage>();
     public readonly foldingRegions = new Array<FoldingRegion>();
+    public readonly semanticElements = new Array<SemanticElement>();
+
     public builtin: Builtin;
 
     private document: TextDocument;
@@ -40,6 +50,7 @@ export class DocumentInfo {
         }
         this.completionRegions.length = 0;
         this.foldingRegions.length = 0;
+        this.semanticElements.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
@@ -102,29 +113,24 @@ export class DocumentInfo {
         return null;
     }
 
-    public getUri(): Uri {
-        return this.uri;
-    }
-
-    public getLastProcessedVersion(): number {
-        return this.lastProcessedVersion;
-    }
-
     //
     //process
     //
-    public processDocument(document: TextDocument): void {
-        this.document = document;
-        if (document.version > this.lastProcessedVersion) {
-            this.processDocumentUnsafe();
-            this.lastProcessedVersion = document.version;
+    public processElements(document: TextDocument): void {
+        this.processDocument(document);
+        if (document.version > this.lastGlslVisitorVersion) {
+            this.processVisitor();
+            this.lastGlslVisitorVersion = document.version;
         }
     }
 
-    private processDocumentUnsafe(): void {
-        const lexer = this.createLexer();
-        const parser = this.createParser(lexer);
-        this.processVisitor(parser);
+    private processDocument(document: TextDocument): void {
+        this.document = document;
+        if (document.version > this.lastProcessedVersion) {
+            this.lexer = this.createLexer();
+            this.parser = this.createParser();
+            this.lastProcessedVersion = document.version;
+        }
     }
 
     private createLexer(): AntlrGlslLexer {
@@ -135,17 +141,18 @@ export class DocumentInfo {
         return lexer;
     }
 
-    private createParser(lexer: AntlrGlslLexer): AntlrGlslParser {
-        const tokenStream = new CommonTokenStream(lexer);
+    private createParser(): AntlrGlslParser {
+        const tokenStream = new CommonTokenStream(this.lexer);
         const parser = new AntlrGlslParser(tokenStream);
         parser.removeErrorListeners();
         return parser;
     }
 
-    private processVisitor(parser: AntlrGlslParser): void {
-        const tree = parser.start();
+    private processVisitor(): void {
+        const tree = this.parser.start();
         this.visitor = new GlslVisitor(this.uri);
         this.visitor.visit(tree);
+        this.parser.reset();
     }
 
     //

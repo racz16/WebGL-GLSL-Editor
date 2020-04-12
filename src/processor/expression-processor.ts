@@ -17,6 +17,7 @@ import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Constants } from '../core/constants';
+import { SemanticElement, SemanticType } from '../scope/semantic-element';
 
 export class ExpressionProcessor {
 
@@ -244,6 +245,7 @@ export class ExpressionProcessor {
         const interval = Helper.getIntervalFromParserRule(this.ctx.function_call());
         const nameInterval = Helper.getIntervalFromTerminalNode(tn);
         const lf = this.getLogicalFunction(name, nameInterval, parameters);
+        this.di.semanticElements.push(new SemanticElement(tn.symbol, SemanticType.FUNCTION, this.di));
         if (lf) {
             const fd = lf.getDeclaration();
             const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn);

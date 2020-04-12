@@ -3,9 +3,11 @@ import { Helper } from './helper';
 import { TypeDeclarationProcessor } from './type-declaration-processor';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
-import { Type_usageContext, QualifierContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
+import { Type_usageContext, QualifierContext, Interface_block_declarationContext, TypeContext } from '../_generated/AntlrGlslParser';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { ArrayUsage } from '../scope/array-usage';
+import { SemanticElement, SemanticType } from '../scope/semantic-element';
+import { Token } from 'antlr4ts';
 
 export class TypeUsageProcessor {
 
@@ -85,6 +87,10 @@ export class TypeUsageProcessor {
         const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
         const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
         const tu = new TypeUsage(name, interval, nameInterval, this.scope, td, au);
+        const token = this.getToken(this.tuc.type());
+        if ((!td || (td && !td.builtin)) && token) {
+            this.di.semanticElements.push(new SemanticElement(token, SemanticType.TYPE, this.di));
+        }
         this.addQualifiers(tu, this.tuc.qualifier());
         if (index === 0) {
             this.scope.typeUsages.push(tu);
@@ -93,6 +99,16 @@ export class TypeUsageProcessor {
             }
         }
         return tu;
+    }
+
+    private getToken(tc: TypeContext): Token {
+        if (tc.TYPE()) {
+            return tc.TYPE().symbol;
+        } else if (tc.IDENTIFIER()) {
+            return tc.IDENTIFIER().symbol;
+        } else {
+            return null;
+        }
     }
 
     private getStructType(index: number, variableArray: ArrayUsage): TypeUsage {

@@ -20,7 +20,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private items: Array<CompletionItem>;
 
     private initialize(document: TextDocument, position: Position, context: CompletionContext): void {
-        GlslEditor.processDocument(document);
+        GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
         this.context = context;

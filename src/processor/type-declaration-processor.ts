@@ -11,6 +11,7 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { SemanticElement, SemanticType } from '../scope/semantic-element';
 
 export class TypeDeclarationProcessor {
 
@@ -55,6 +56,9 @@ export class TypeDeclarationProcessor {
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, true);
         scope.typeDeclarations.push(td);
+        if (name) {
+            this.di.semanticElements.push(new SemanticElement(ibdc.IDENTIFIER().symbol, SemanticType.TYPE, this.di));
+        }
         if (ibdc.identifier_optarray()) {
             this.createInnerScope(interval);
             this.addMembers(td, ibdc.variable_declaration());
@@ -87,6 +91,7 @@ export class TypeDeclarationProcessor {
         this.scope = this.scope.parent;
         if (name) {
             this.createConstructor(td);
+            this.di.semanticElements.push(new SemanticElement(tdc.IDENTIFIER().symbol, SemanticType.TYPE, this.di));
         }
         if (index === 0) {
             this.td = td;

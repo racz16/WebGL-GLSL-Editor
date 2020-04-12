@@ -14,6 +14,7 @@ import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslEditor } from './core/glsl-editor';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { GlslFoldingProvider } from './providers/glsl-folding-provider';
+import { GlslDocumentSemanticTokensProvider, GlslSemanticTokensLegend } from './providers/glsl-document-semantic-token-provider';
 
 export function activate(context: ExtensionContext) {
 	GlslEditor.initialize(context);
@@ -58,7 +59,7 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {
 		GlslCommandProvider.openDoc(param);
 	}));
-	//online docimentation
+	//online documentation
 	context.subscriptions.push(commands.registerCommand(`${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOCS_GL}`, () => {
 		GlslCommandProvider.openDocsGl();
 	}));
@@ -69,6 +70,8 @@ export function activate(context: ExtensionContext) {
 		GlslCommandProvider.openGlEs3();
 	}));
 
+	//syntax highlighting
+	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider(selector, new GlslDocumentSemanticTokensProvider(), new GlslSemanticTokensLegend()));
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//completion
