@@ -79,6 +79,10 @@ You can find the known issues on [GitHub](https://github.com/racz16/WebGL-GLSL-E
 ## Release Notes
 For more information, see the [changelog](CHANGELOG.md).
 
+### 1.0.1
+- Improved syntax highlight
+- Smaller changes and bugfixes
+
 ### 1.0.0
 - Syntax highlight
 - Diagnostics
