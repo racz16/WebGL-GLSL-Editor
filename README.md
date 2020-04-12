@@ -1,4 +1,7 @@
 # WebGL GLSL Editor
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e8500dbaa1d42449f785c4ba06372d5)](https://app.codacy.com/manual/racz1666/WebGL-GLSL-Editor?utm_source=github.com&utm_medium=referral&utm_content=racz16/WebGL-GLSL-Editor&utm_campaign=Badge_Grade_Dashboard)
+
 This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.
 
 ## Features
