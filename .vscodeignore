@@ -11,3 +11,5 @@ vsc-extension-quickstart.md
 syntaxes/.antlr
 syntaxes/*.g4
 res/png/screenshots
+private
+compile-antlr.bat
