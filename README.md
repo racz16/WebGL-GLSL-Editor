@@ -16,7 +16,7 @@ The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khron
 
 ![diagnostics](res/png/screenshots/diagnostics.png)
 ### Offline documentation
-The extension uses docs.gl to provide the offline documentation for builtin variables and builtin functions.
+The extension uses [docs.gl](http://docs.gl) to provide the offline documentation for builtin variables and builtin functions.
 
 ![offline documentation](res/png/screenshots/documentation.png)
 ### Code completion
