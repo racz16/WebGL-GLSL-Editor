@@ -1,5 +1,4 @@
 import { DocumentSemanticTokensProvider, TextDocument, CancellationToken, ProviderResult, SemanticTokens, SemanticTokensLegend, SemanticTokensBuilder } from "vscode";
-
 import { GlslEditor } from "../core/glsl-editor";
 
 export class GlslDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {

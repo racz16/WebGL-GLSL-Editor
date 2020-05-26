@@ -15,12 +15,14 @@ import { Interval } from '../scope/interval';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { VariableUsageProcessor } from '../processor/variable-usage-processor';
 import { FoldingRegion } from '../scope/folding-region';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
 
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
 
     private uri: Uri;
     private di: DocumentInfo;
     private scope: Scope;
+    private currentFunction: FunctionDeclaration;
 
     public constructor(uri: Uri) {
         super();
@@ -60,6 +62,10 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
                 this.addFoldingRangeFromComment(token, endToken);
             }
         }
+    }
+
+    public getCurrentFunction(): FunctionDeclaration {
+        return this.currentFunction;
     }
 
     public visitStart(ctx: StartContext): void {
@@ -106,9 +112,10 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitFunction_definition(ctx: Function_definitionContext): void {
         this.scope = this.createScopeFromFunctionDefinition(this.scope, ctx);
-        new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
+        this.currentFunction = new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
         this.addFoldingRangeFromCompoundStatement(ctx.compound_statement());
         this.visitChildren(ctx.compound_statement());
+        this.currentFunction = null;
         this.scope = this.scope.parent;
     }
 

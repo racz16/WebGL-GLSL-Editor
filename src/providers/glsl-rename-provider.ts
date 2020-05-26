@@ -2,7 +2,7 @@ import { RenameProvider, TextDocument, Position, CancellationToken, ProviderResu
 import { LogicalFunction } from '../scope/function/logical-function';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
-import { PositionalProviderBase } from './positional-provider-base';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';

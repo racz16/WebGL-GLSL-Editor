@@ -54,7 +54,7 @@ export class DocumentInfo {
         this.rootScope = new Scope(null, null);
     }
 
-    public getVIsitor(): GlslVisitor {
+    public getVisitor(): GlslVisitor {
         return this.visitor;
     }
 

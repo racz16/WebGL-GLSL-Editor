@@ -1,5 +1,5 @@
 import { TypeDefinitionProvider, TextDocument, Position, CancellationToken, ProviderResult, Location, LocationLink } from 'vscode';
-import { PositionalProviderBase } from './positional-provider-base';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { FunctionCall } from '../scope/function/function-call';

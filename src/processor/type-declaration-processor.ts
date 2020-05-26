@@ -65,7 +65,7 @@ export class TypeDeclarationProcessor {
             this.scope = this.scope.parent;
         } else {
             for (const vd of ibdc.variable_declaration()) {
-                this.di.getVIsitor().visit(vd);
+                this.di.getVisitor().visit(vd);
             }
         }
         return td;

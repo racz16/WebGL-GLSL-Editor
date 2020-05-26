@@ -248,7 +248,9 @@ export class ExpressionProcessor {
         this.di.semanticElements.push(new SemanticElement(tn.symbol, SemanticType.FUNCTION, this.di));
         if (lf) {
             const fd = lf.getDeclaration();
-            const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn);
+            const currentFunction = this.di.getVisitor().getCurrentFunction();
+            const fc = new FunctionCall(name, nameInterval, this.scope, interval, lf, fd.builtIn, currentFunction);
+            currentFunction?.outgoingCalls.push(fc);
             lf.calls.push(fc);
             this.scope.functionCalls.push(fc);
             if (fd.returnType.declaration) {

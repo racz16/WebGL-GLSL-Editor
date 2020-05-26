@@ -15,6 +15,7 @@ import { GlslEditor } from './core/glsl-editor';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { GlslFoldingProvider } from './providers/glsl-folding-provider';
 import { GlslDocumentSemanticTokensProvider, GlslSemanticTokensLegend } from './providers/glsl-document-semantic-token-provider';
+import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 
 export function activate(context: ExtensionContext) {
 	GlslEditor.initialize(context);
@@ -92,6 +93,8 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(languages.registerRenameProvider(selector, new GlslRenameProvider()));
 	//hover
 	context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
+	//call hierarchy
+	context.subscriptions.push(languages.registerCallHierarchyProvider(selector, new GlslCallHierarchyProvider()));
 	//folding
 	//context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting

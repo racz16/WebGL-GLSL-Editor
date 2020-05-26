@@ -1,5 +1,5 @@
 import { HoverProvider, TextDocument, Position, CancellationToken, ProviderResult, Hover, MarkdownString } from 'vscode';
-import { PositionalProviderBase } from './positional-provider-base';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 import { FunctionCall } from '../scope/function/function-call';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';

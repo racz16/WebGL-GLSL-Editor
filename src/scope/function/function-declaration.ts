@@ -6,6 +6,7 @@ import { VariableDeclaration } from '../variable/variable-declaration';
 import { DocumentInfo } from '../../core/document-info';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
+import { FunctionCall } from './function-call';
 
 export class FunctionDeclaration extends Element {
 
@@ -17,6 +18,7 @@ export class FunctionDeclaration extends Element {
     public readonly ctor: boolean;
     public readonly functionScope: Scope;
     public readonly stage: ShaderStage;
+    public readonly outgoingCalls = new Array<FunctionCall>();
 
     public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
