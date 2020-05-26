@@ -53,8 +53,8 @@ export class Helper {
         return new TypeUsage(name, null, null, null, td, array, false);
     }
 
-    public static createVariableDeclaration(name: string, tu: TypeUsage, parameter: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT): VariableDeclaration {
-        return new VariableDeclaration(name, null, null, true, null, tu, parameter, summary, stage);
+    public static createVariableDeclaration(name: string, tu: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT): VariableDeclaration {
+        return new VariableDeclaration(name, null, null, true, null, tu, fpp, fdp, summary, stage);
     }
 
     public static createFunctionDeclaration(name: string, tu: TypeUsage, ctor: boolean, stage = ShaderStage.DEFAULT): FunctionDeclaration {

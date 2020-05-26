@@ -14,14 +14,16 @@ export class VariableDeclaration extends Element {
     public readonly declarationInterval: Interval;
     public readonly summary: MarkdownString;
     public readonly stage: ShaderStage;
-    public readonly parameter: boolean;
+    public readonly functionPrototypeParameter: boolean;
+    public readonly functionDefinitionParameter: boolean;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, parameter: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.type = type;
         this.declarationInterval = declarationInterval;
-        this.parameter = parameter;
+        this.functionPrototypeParameter = fpp;
+        this.functionDefinitionParameter = fdp;
         this.summary = summary;
         this.stage = stage;
     }

@@ -62,7 +62,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         const selectionRange = this.getRange(vd.nameInterval, vd.declarationInterval);
         const name = vd.name ?? '<unnamed variable>';
         let info = vd.type.toStringWithoutQualifiers(true);
-        info = vd.parameter ? info + ' (parameter)' : info;
+        info = vd.functionDefinitionParameter ? info + ' (parameter)' : info;
         const sk = this.getSymbolKind(vd, property);
         const ds = new DocumentSymbol(name, info, sk, range, selectionRange);
         if (parent) {

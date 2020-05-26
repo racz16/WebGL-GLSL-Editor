@@ -156,7 +156,7 @@ export class Builtin {
         for (const member of type.members) {
             const td2 = this.types.get(member.memberType);
             const tu = Helper.createTypeUsage(member.memberType, td2, new ArrayUsage());
-            const vd = Helper.createVariableDeclaration(member.memberName, tu, false);
+            const vd = Helper.createVariableDeclaration(member.memberName, tu, false, false);
             this.addMemberPrecisionQualifier(tu, member);
             td.members.push(vd);
         }
@@ -212,7 +212,7 @@ export class Builtin {
             this.addVariableQualifiers(tu, variable);
             const summary = this.createVariableSummary(variable, tu);
             const stage = this.getStage(variable.stage);
-            const vd = Helper.createVariableDeclaration(variable.name, tu, false, summary, stage);
+            const vd = Helper.createVariableDeclaration(variable.name, tu, false, false, summary, stage);
             this.variables.set(variable.name, vd);
         }
     }
@@ -285,7 +285,7 @@ export class Builtin {
         for (const parameter of realFunc.parameters) {
             const td = this.types.get(parameter.type);
             const tu = Helper.createTypeUsage(parameter.type, td, new ArrayUsage());
-            const vd = Helper.createVariableDeclaration(parameter.name, tu, true);
+            const vd = Helper.createVariableDeclaration(parameter.name, tu, true, false);
             this.addVariableQualifiers(tu, parameter);
             fp.parameters.push(vd);
         }
@@ -376,7 +376,7 @@ export class Builtin {
                         const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                         tu.qualifiers.push(qu2);
                     }
-                    const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false);
+                    const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false, false);
                     td.members.push(vd);
                 }
                 bi.types.set(type.name, td);
@@ -392,7 +392,7 @@ export class Builtin {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, variable.summary, variable.stage);
+            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, false, variable.summary, variable.stage);
             bi.variables.set(variable.name, vd);
         }
         for (const olf of this.functions) {
@@ -408,7 +408,7 @@ export class Builtin {
             for (const parameter of ofp.parameters) {
                 const td = bi.types.get(parameter.type.name);
                 const tu = new TypeUsage(parameter.type.name, null, null, null, td, parameter.type.array);
-                const vd = new VariableDeclaration(parameter.name, null, null, true, null, tu, true);
+                const vd = new VariableDeclaration(parameter.name, null, null, true, null, tu, true, false);
                 for (const qualifier of parameter.type.qualifiers) {
                     const q = bi.qualifiers.get(qualifier.name);
                     const qu = new QualifierUsage(qualifier.name, null, null, q);

@@ -69,7 +69,7 @@ export class ConstructorProcessor {
             const ptd = parameters[i];
             const ptu = Helper.createTypeUsage(ptd.name, ptd, new ArrayUsage());
             const name = this.getParameterName(parameters, i);
-            const vd = Helper.createVariableDeclaration(name, ptu, true);
+            const vd = Helper.createVariableDeclaration(name, ptu, true, false);
             fd.parameters.push(vd);
         }
         const lf = new LogicalFunction();

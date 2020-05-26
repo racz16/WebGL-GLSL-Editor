@@ -33,7 +33,7 @@ export function activate(context: ExtensionContext) {
 		{ language: 'fs', scheme: 'untitled' }
 	];
 
-	//diagnostics
+	//diagnostic
 	const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
 		if (editor.document.languageId === 'glsl') {

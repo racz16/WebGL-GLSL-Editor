@@ -40,7 +40,7 @@ export class VariableDeclarationProcessor {
     //
     //function parameter
     //
-    public getParameterDeclaration(svdc: Single_variable_declarationContext, scope: Scope, di: DocumentInfo): VariableDeclaration {
+    public getParameterDeclaration(svdc: Single_variable_declarationContext, prototype: boolean, scope: Scope, di: DocumentInfo): VariableDeclaration {
         this.initialize(scope, di);
         const ioc = svdc.identifier_optarray_optassignment() ? svdc.identifier_optarray_optassignment().identifier_optarray() : null;
         const name = ioc ? ioc.IDENTIFIER().text : null;
@@ -48,7 +48,7 @@ export class VariableDeclarationProcessor {
         const declarationInterval = Helper.getIntervalFromParserRule(svdc);
         const arraySize = Helper.getArraySizeFromIdentifierOptarray(ioc, this.scope, this.di);
         const tu = new TypeUsageProcessor().getParameterType(svdc.type_usage(), arraySize, scope, di);
-        const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu, true);
+        const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu, prototype, !prototype);
         scope.variableDeclarations.push(vd);
         return vd;
     }
@@ -64,7 +64,7 @@ export class VariableDeclarationProcessor {
             const name = ibdc.identifier_optarray().IDENTIFIER().text;
             const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.identifier_optarray().IDENTIFIER());
             const declarationInterval = Helper.getIntervalFromParserRule(ibdc);
-            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
+            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
             this.scope.variableDeclarations.push(vd);
             return vd;
         }
@@ -87,7 +87,7 @@ export class VariableDeclarationProcessor {
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
-                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
+                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
             }
@@ -96,7 +96,7 @@ export class VariableDeclarationProcessor {
             const name = null;
             const nameInterval = null;
             const declarationInterval = Helper.getIntervalFromParserRule(vdc);
-            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false);
+            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
             this.scope.variableDeclarations.push(vd);
             vds.push(vd);
         }

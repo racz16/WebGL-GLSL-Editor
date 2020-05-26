@@ -66,7 +66,7 @@ export class FunctionProcessor {
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
-        this.addParameters(fd);
+        this.addParameters(fd, true);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
         this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
@@ -83,7 +83,7 @@ export class FunctionProcessor {
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
-        this.addParameters(fd);
+        this.addParameters(fd, false);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
         this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
@@ -103,11 +103,11 @@ export class FunctionProcessor {
         return lf;
     }
 
-    private addParameters(fd: FunctionDeclaration): void {
+    private addParameters(fd: FunctionDeclaration, prototype: boolean): void {
         const fplc = this.fhc.function_parameter_list();
         if (fplc && fplc.single_variable_declaration()) {
             for (const svdc of fplc.single_variable_declaration()) {
-                const vd = new VariableDeclarationProcessor().getParameterDeclaration(svdc, this.scope, this.di);
+                const vd = new VariableDeclarationProcessor().getParameterDeclaration(svdc, prototype, this.scope, this.di);
                 fd.parameters.push(vd);
             }
         }
