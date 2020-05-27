@@ -1,32 +1,32 @@
-export interface Functions {
-    functions: Array<Function>;
+export interface IFunctions {
+    functions: Array<IFunction>;
 }
 
-export interface Function {
+export interface IFunction {
     qualifiers: Array<string>;
     returnType: string;
     name: string;
-    parameters: Array<Parameter>;
+    parameters: Array<IParameter>;
     stage: string;
 }
 
-export interface Parameter {
+export interface IParameter {
     qualifiers: Array<string>;
     type: string;
     name: string;
 }
 
-export interface FunctionSummaries {
-    functions: Array<FunctionSummary>;
+export interface IFunctionSummaries {
+    functions: Array<IFunctionSummary>;
 }
 
-export interface FunctionSummary {
+export interface IFunctionSummary {
     name: string;
     summary: string;
     customSummary: string;
     stage: string;
 }
 
-export interface ImportantFunctions {
+export interface IImportantFunctions {
     importantFunctions: Array<string>;
 }

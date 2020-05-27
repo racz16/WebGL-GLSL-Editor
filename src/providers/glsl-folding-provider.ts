@@ -1,4 +1,4 @@
-import { FoldingRangeProvider, FoldingRange, FoldingRangeKind, TextDocument, FoldingContext, CancellationToken, ProviderResult } from "vscode";
+import { FoldingRangeProvider, FoldingRange, TextDocument, FoldingContext, CancellationToken, ProviderResult } from "vscode";
 
 import { GlslEditor } from "../core/glsl-editor";
 

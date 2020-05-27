@@ -1,8 +1,8 @@
-export interface Keywords {
-    keywords: Array<Keyword>;
+export interface IKeywords {
+    keywords: Array<IKeyword>;
 }
 
-export interface Keyword {
+export interface IKeyword {
     name: string;
     stage: string;
 }

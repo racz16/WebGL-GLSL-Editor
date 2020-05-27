@@ -268,15 +268,12 @@ export class DocumentInfo {
         return null;
     }
 
-    public getScopeAt(position: Position): Scope {
-        let scope: Scope = this.rootScope;
-        while (true) {
-            const newScope = this.getChildScope(scope, position);
-            if (!newScope) {
-                return scope;
-            } else {
-                scope = newScope;
-            }
+    public getScopeAt(position: Position, scope = this.rootScope): Scope {
+        const newScope = this.getChildScope(scope, position);
+        if (!newScope) {
+            return scope;
+        } else {
+            return this.getScopeAt(position, newScope);
         }
     }
 

@@ -1,20 +1,20 @@
-export interface Qualifiers {
-    qualifiers: Array<Qualifier>;
+export interface IQualifiers {
+    qualifiers: Array<IQualifier>;
 }
 
-export interface Qualifier {
+export interface IQualifier {
     name: string;
     order: number;
 }
 
-export interface QualifierRules {
-    qualifierRules: Array<QualifierRule>;
+export interface IQualifierRules {
+    qualifierRules: Array<IQualifierRule>;
 }
 
-export interface QualifierRule {
+export interface IQualifierRule {
     qualifierRule: Array<string>;
 }
 
-export interface LayoutParameters {
+export interface ILayoutParameters {
     layoutParameters: Array<string>;
 }

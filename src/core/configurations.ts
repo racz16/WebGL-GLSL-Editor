@@ -1,5 +1,5 @@
 import { workspace, ConfigurationChangeEvent } from "vscode";
-import { GlslEditor } from "./glsl-editor";
+import { Constants } from "./constants";
 
 export class Configurations {
 
@@ -12,18 +12,18 @@ export class Configurations {
     private alwaysOpenOfflineDocInNewTab: boolean;
 
     public constructor() {
-        const config = workspace.getConfiguration(GlslEditor.EXTENSION_NAME);
+        const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
         this.strictRename = config.get(Configurations.STRICT_RENAME);
         this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
         this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
 
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
-            const config = workspace.getConfiguration(GlslEditor.EXTENSION_NAME);
-            if (e.affectsConfiguration(`${GlslEditor.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
+            const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
+            if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
                 this.strictRename = config.get(Configurations.STRICT_RENAME);
-            } else if (e.affectsConfiguration(`${GlslEditor.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_ONLINE_DOC}`)) {
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_ONLINE_DOC}`)) {
                 this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
-            } else if (e.affectsConfiguration(`${GlslEditor.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB}`)) {
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB}`)) {
                 this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
             }
         });

@@ -1,6 +1,6 @@
-import { Types, OpaqueType, CustomType, TypeMember, GenericTypes } from './interfaces/types';
-import { Keywords } from './interfaces/keywords';
-import { Qualifiers, LayoutParameters } from './interfaces/qualifiers';
+import { ITypes, IOpaqueType, ICustomType, ITypeMember, IGenericTypes } from './interfaces/types';
+import { IKeywords } from './interfaces/keywords';
+import { IQualifiers, ILayoutParameters } from './interfaces/qualifiers';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -9,14 +9,13 @@ import { Qualifier } from '../scope/qualifier/qualifier';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeBase } from '../scope/type/type-base';
 import { TypeUsage } from '../scope/type/type-usage';
-import { Variables, Variable } from './interfaces/variables';
+import { IVariables, IVariable } from './interfaces/variables';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
-import { ReservedWords } from './interfaces/reserved-words';
-import { Functions, Parameter, FunctionSummaries, FunctionSummary, ImportantFunctions, Function } from './interfaces/functions';
+import { IReservedWords } from './interfaces/reserved-words';
+import { IFunctions, IParameter, IFunctionSummaries, IFunctionSummary, IImportantFunctions, IFunction } from './interfaces/functions';
 import { MarkdownString } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { GlslCommandProvider } from '../providers/glsl-command-provider';
-import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
 import { FunctionInfo } from '../scope/function/function-info';
 import { GenericTypeProcessor } from './generic-type-processor';
@@ -47,7 +46,7 @@ export class Builtin {
 
     private constructor() { }
 
-    public setValues(postfix: string) {
+    public setValues(postfix: string): void {
         this.postfix = postfix;
         this.loadReservedWords();
         this.loadKeywords();
@@ -66,7 +65,7 @@ export class Builtin {
     //reserved
     //
     private loadReservedWords(): void {
-        const reservedWords: ReservedWords = require(this.getPath('reserved'));
+        const reservedWords: IReservedWords = require(this.getPath('reserved'));
         for (const reserved of reservedWords.reservedWords) {
             this.reservedWords.push(reserved);
         }
@@ -76,7 +75,7 @@ export class Builtin {
     //keywords
     //
     private loadKeywords(): void {
-        const keywords: Keywords = require(this.getPath('keywords'));
+        const keywords: IKeywords = require(this.getPath('keywords'));
         for (const keyword of keywords.keywords) {
             const stage = this.getStage(keyword.stage);
             this.keywords.push(new Keyword(keyword.name, stage));
@@ -87,7 +86,7 @@ export class Builtin {
     //qualifiers
     //
     private loadQualifiers(): void {
-        const qualifiers: Qualifiers = require(this.getPath('qualifiers'));
+        const qualifiers: IQualifiers = require(this.getPath('qualifiers'));
         for (const qualifier of qualifiers.qualifiers) {
             this.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
         }
@@ -95,7 +94,7 @@ export class Builtin {
 
     private loadLayoutParameters(): void {
         if (this.postfix !== '100') {
-            const layoutParameters: LayoutParameters = require(`${Builtin.JSON_PATH}/layout_parameters.json`);
+            const layoutParameters: ILayoutParameters = require(`${Builtin.JSON_PATH}/layout_parameters.json`);
             for (const param of layoutParameters.layoutParameters) {
                 this.layoutParameters.push(param);
             }
@@ -106,7 +105,7 @@ export class Builtin {
     //types
     //
     private loadTypes(): void {
-        const types: Types = require(this.getPath('types'));
+        const types: ITypes = require(this.getPath('types'));
         this.loadTransparentTypes(types);
         this.loadOpaqueTypes(types.floatingPointOpaque, TypeCategory.FLOATING_POINT_OPAQUE, TypeBase.FLOAT);
         this.loadOpaqueTypes(types.signedIntegerOpaque, TypeCategory.SIGNED_INTEGER_OPAQUE, TypeBase.INT);
@@ -114,7 +113,7 @@ export class Builtin {
         this.loadCustomTypes(types);
     }
 
-    private loadTransparentTypes(types: Types): void {
+    private loadTransparentTypes(types: ITypes): void {
         for (const type of types.transparent) {
             let td: TypeDeclaration;
             if (type.alias) {
@@ -137,14 +136,14 @@ export class Builtin {
         }
     }
 
-    private loadOpaqueTypes(opaqueTypes: Array<OpaqueType>, typeCategory: TypeCategory, typeBase: TypeBase): void {
+    private loadOpaqueTypes(opaqueTypes: Array<IOpaqueType>, typeCategory: TypeCategory, typeBase: TypeBase): void {
         for (const type of opaqueTypes) {
             const td = Helper.createTypeDeclaration(type.name, -1, -1, typeBase, typeCategory);
             this.types.set(type.name, td);
         }
     }
 
-    private loadCustomTypes(types: Types): void {
+    private loadCustomTypes(types: ITypes): void {
         for (const type of types.custom) {
             const td = Helper.createTypeDeclaration(type.name, -1, -1, TypeBase.NONE, TypeCategory.CUSTOM);
             this.addMembers(td, type);
@@ -152,7 +151,7 @@ export class Builtin {
         }
     }
 
-    private addMembers(td: TypeDeclaration, type: CustomType): void {
+    private addMembers(td: TypeDeclaration, type: ICustomType): void {
         for (const member of type.members) {
             const td2 = this.types.get(member.memberType);
             const tu = Helper.createTypeUsage(member.memberType, td2, new ArrayUsage());
@@ -162,7 +161,7 @@ export class Builtin {
         }
     }
 
-    private addMemberPrecisionQualifier(tu: TypeUsage, member: TypeMember): void {
+    private addMemberPrecisionQualifier(tu: TypeUsage, member: ITypeMember): void {
         if (member.memberPrecision) {
             const q = this.qualifiers.get(member.memberPrecision);
             const qu = new QualifierUsage(member.memberPrecision, null, null, q);
@@ -174,7 +173,7 @@ export class Builtin {
     //generic types
     //
     private loadGenericTypes(): void {
-        const genTypes: GenericTypes = require(this.getPath('generic_types'));
+        const genTypes: IGenericTypes = require(this.getPath('generic_types'));
         for (const genType of genTypes.types) {
             const generic = genType.generic;
             const reals = new Array<string>();
@@ -204,7 +203,7 @@ export class Builtin {
     //variables
     //
     private loadVariables(): void {
-        const variables: Variables = require(this.getPath('variables'));
+        const variables: IVariables = require(this.getPath('variables'));
         for (const variable of variables.variables) {
             const array = variable.array === undefined ? -1 : variable.array;
             const td = this.types.get(variable.type);
@@ -217,7 +216,7 @@ export class Builtin {
         }
     }
 
-    private createVariableSummary(variable: Variable, tu: TypeUsage): MarkdownString {
+    private createVariableSummary(variable: IVariable, tu: TypeUsage): MarkdownString {
         const mds = new MarkdownString();
         mds.appendCodeblock(tu.toString() + ' ' + variable.name + ';');
         mds.appendText(Constants.CRLF);
@@ -234,13 +233,13 @@ export class Builtin {
         mds.appendText(Constants.CRLF);
         if (variable.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: variable.name, active: true }));
-            mds.appendMarkdown(`[Open documentation](command:${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+            mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;
     }
 
-    private addVariableQualifiers(tu: TypeUsage, variable: Variable | Parameter): void {
+    private addVariableQualifiers(tu: TypeUsage, variable: IVariable | IParameter): void {
         if (variable.qualifiers) {
             for (const qualifier of variable.qualifiers) {
                 const q = this.qualifiers.get(qualifier);
@@ -254,7 +253,7 @@ export class Builtin {
     //functions
     //
     private loadFunctions(): void {
-        const functions: Functions = require(this.getPath('functions'));
+        const functions: IFunctions = require(this.getPath('functions'));
         for (const genericFunc of functions.functions) {
             for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
                 const td = this.types.get(realFunc.returnType);
@@ -271,7 +270,7 @@ export class Builtin {
         }
     }
 
-    private addReturnTypeQualifiers(realFunc: Function, tu: TypeUsage): void {
+    private addReturnTypeQualifiers(realFunc: IFunction, tu: TypeUsage): void {
         if (realFunc.qualifiers) {
             for (const qualifier of realFunc.qualifiers) {
                 const q = this.qualifiers.get(qualifier);
@@ -281,7 +280,7 @@ export class Builtin {
         }
     }
 
-    private addParameters(realFunc: Function, fp: FunctionDeclaration): void {
+    private addParameters(realFunc: IFunction, fp: FunctionDeclaration): void {
         for (const parameter of realFunc.parameters) {
             const td = this.types.get(parameter.type);
             const tu = Helper.createTypeUsage(parameter.type, td, new ArrayUsage());
@@ -292,7 +291,7 @@ export class Builtin {
     }
 
     private loadFunctionSummaries(): void {
-        const functions: FunctionSummaries = require(this.getPath('function_summaries'));
+        const functions: IFunctionSummaries = require(this.getPath('function_summaries'));
         for (const func of functions.functions) {
             const summary = this.createFunctionSummary(func);
             const stage = this.getStage(func.stage);
@@ -301,7 +300,7 @@ export class Builtin {
         }
     }
 
-    private createFunctionSummary(func: FunctionSummary): MarkdownString {
+    private createFunctionSummary(func: IFunctionSummary): MarkdownString {
         const mds = new MarkdownString();
         mds.appendText(`${func.name} — `);
         if (func.summary) {
@@ -314,14 +313,14 @@ export class Builtin {
         mds.appendText(Constants.CRLF);
         if (func.summary) {
             const parameter = encodeURIComponent(JSON.stringify({ name: func.name, active: true }));
-            mds.appendMarkdown(`[Open documentation](command:${GlslEditor.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+            mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
         return mds;
     }
 
     private loadImportantFunctions(): void {
-        const functions: ImportantFunctions = require(`${Builtin.JSON_PATH}/important_functions.json`);
+        const functions: IImportantFunctions = require(`${Builtin.JSON_PATH}/important_functions.json`);
         for (const func of functions.importantFunctions) {
             this.importantFunctions.push(func);
         }

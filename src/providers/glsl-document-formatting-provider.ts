@@ -37,7 +37,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             }
             this.updateBlockDepth(t1, t2);
             if (this.noModificationNeeded(t1, t2)) {
-
+                //no modification needed
             } else if (this.newLineNeeded(t1, t2)) {
                 const indentation = this.calculareIndentation();
                 ret.push(new TextEdit(range, indentation));

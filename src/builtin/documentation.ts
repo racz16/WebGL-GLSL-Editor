@@ -1,8 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
-
 import { Uri } from 'vscode';
-import { Redirections } from './interfaces/redirections';
+import { IRedirections } from './interfaces/redirections';
 
 export class Documentation {
 
@@ -12,7 +11,7 @@ export class Documentation {
 
     private static initialize(): void {
         if (!this.initialized) {
-            const redirections: Redirections = require('../../res/json/documentation_redirections.json');
+            const redirections: IRedirections = require('../../res/json/documentation_redirections.json');
             for (const redirection of redirections.redirections) {
                 this.redirections.set(redirection.from, redirection.to);
             }

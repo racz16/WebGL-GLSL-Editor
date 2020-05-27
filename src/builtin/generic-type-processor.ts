@@ -1,19 +1,19 @@
-import { Function, Parameter } from "./interfaces/functions";
+import { IFunction, IParameter } from "./interfaces/functions";
 
 export class GenericTypeProcessor {
 
-    private static func: Function;
+    private static func: IFunction;
     private static genTypes: Map<string, Array<string>>;
 
-    private static initialize(func: Function, genTypes: Map<string, Array<string>>): void {
+    private static initialize(func: IFunction, genTypes: Map<string, Array<string>>): void {
         this.func = func;
         this.genTypes = genTypes;
     }
 
-    public static getFunctions(func: Function, genTypes: Map<string, Array<string>>): Array<Function> {
+    public static getFunctions(func: IFunction, genTypes: Map<string, Array<string>>): Array<IFunction> {
         this.initialize(func, genTypes);
         const gtg = this.getGenericTypeGroup();
-        const ret = new Array<Function>();
+        const ret = new Array<IFunction>();
         if (gtg === GenericTypeGroup.NONE) {
             ret.push(func);
             return ret;
@@ -27,21 +27,21 @@ export class GenericTypeProcessor {
         }
     }
 
-    private static createFunction(i: number): Function {
-        const f: Function = {
+    private static createFunction(i: number): IFunction {
+        const f: IFunction = {
             name: this.func.name,
             qualifiers: this.func.qualifiers,
             stage: this.func.stage,
             returnType: this.getType(this.func.returnType, i),
-            parameters: new Array<Parameter>()
+            parameters: new Array<IParameter>()
         };
         this.addParameters(f, i);
         return f;
     }
 
-    private static addParameters(func: Function, i: number): void {
+    private static addParameters(func: IFunction, i: number): void {
         for (const param of this.func.parameters) {
-            const p: Parameter = {
+            const p: IParameter = {
                 name: param.name,
                 qualifiers: param.qualifiers,
                 type: this.getType(param.type, i)

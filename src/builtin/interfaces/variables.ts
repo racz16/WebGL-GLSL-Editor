@@ -1,8 +1,8 @@
-export interface Variables {
-    variables: Array<Variable>;
+export interface IVariables {
+    variables: Array<IVariable>;
 }
 
-export interface Variable {
+export interface IVariable {
     min: number;
     customSummary: string;
     summary: string;

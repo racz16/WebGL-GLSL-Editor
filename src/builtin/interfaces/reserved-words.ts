@@ -1,3 +1,3 @@
-export interface ReservedWords {
+export interface IReservedWords {
     reservedWords: Array<string>;
 }

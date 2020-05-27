@@ -1,8 +1,8 @@
-export interface Redirections {
-    redirections: Array<Redirection>;
+export interface IRedirections {
+    redirections: Array<IRedirection>;
 }
 
-export interface Redirection {
+export interface IRedirection {
     from: string;
     to: string;
 }

@@ -1,12 +1,12 @@
-export interface Types {
-    transparent: Array<TransparentType>;
-    floatingPointOpaque: Array<OpaqueType>;
-    signedIntegerOpaque: Array<OpaqueType>;
-    unsignedIntegerOpaque: Array<OpaqueType>;
-    custom: Array<CustomType>;
+export interface ITypes {
+    transparent: Array<ITransparentType>;
+    floatingPointOpaque: Array<IOpaqueType>;
+    signedIntegerOpaque: Array<IOpaqueType>;
+    unsignedIntegerOpaque: Array<IOpaqueType>;
+    custom: Array<ICustomType>;
 }
 
-export interface TransparentType {
+export interface ITransparentType {
     name: string;
     width: number;
     height: number;
@@ -14,26 +14,26 @@ export interface TransparentType {
     alias: string;
 }
 
-export interface OpaqueType {
+export interface IOpaqueType {
     name: string;
 }
 
-export interface CustomType {
+export interface ICustomType {
     name: string;
-    members: Array<TypeMember>;
+    members: Array<ITypeMember>;
 }
 
-export interface TypeMember {
+export interface ITypeMember {
     memberPrecision: string;
     memberType: string;
     memberName: string;
 }
 
-export interface GenericTypes {
-    types: Array<GenericType>;
+export interface IGenericTypes {
+    types: Array<IGenericType>;
 }
 
-export interface GenericType {
+export interface IGenericType {
     generic: string;
     real: Array<string>;
 }

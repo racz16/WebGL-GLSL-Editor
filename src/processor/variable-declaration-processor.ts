@@ -82,7 +82,7 @@ export class VariableDeclarationProcessor {
             for (let i = 0; i < ioocs.length; i++) {
                 const iooc = ioocs[i];
                 const array = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
-                const exp = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
+                new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
                 const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
