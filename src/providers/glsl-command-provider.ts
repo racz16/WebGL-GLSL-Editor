@@ -29,34 +29,33 @@ export class GlslCommandProvider {
     public static openDoc(param: any): void {
         const name = param.name ? param.name : param.toString();
         const vc = param.name ? ViewColumn.Beside : ViewColumn.Active;
-        const context = GlslEditor.getContext();
-        this.openDocUnsafe(name, vc, context);
+        this.openDocUnsafe(name, vc);
     }
 
-    private static openDocUnsafe(name: string, vc: ViewColumn, context: ExtensionContext): void {
+    private static openDocUnsafe(name: string, vc: ViewColumn): void {
         if (GlslEditor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
             env.openExternal(Uri.parse(`http://docs.gl/el3/${name}`));
         } else {
-            this.openOfflineDoc(name, vc, context);
+            this.openOfflineDoc(name, vc);
         }
     }
 
-    private static openOfflineDoc(name: string, vc: ViewColumn, context: ExtensionContext): void {
+    private static openOfflineDoc(name: string, vc: ViewColumn): void {
         if (!this.panel || !this.isPanelUsable || GlslEditor.CONFIGURATIONS.getAlwaysOpenOfflineDocInNewTab()) {
-            this.panel = this.createPanel(name, vc, context);
+            this.panel = this.createPanel(name, vc);
         }
         this.panel.title = name;
-        const filePath = Uri.file(path.join(context.extensionPath, 'res', 'js', 'mml-svg.js'));
+        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js', 'mml-svg.js'));
         const specialFilePath = this.panel.webview.asWebviewUri(filePath);
-        this.panel.webview.html = Documentation.getDocumentation(context.extensionPath, name, specialFilePath);
+        this.panel.webview.html = Documentation.getDocumentation(name, specialFilePath);
     }
 
-    private static createPanel(name: string, vc: ViewColumn, context: ExtensionContext): WebviewPanel {
+    private static createPanel(name: string, vc: ViewColumn): WebviewPanel {
         const panel = window.createWebviewPanel('documentation', name, vc,
             {
                 enableScripts: true,
                 enableCommandUris: true,
-                localResourceRoots: [Uri.file(path.join(context.extensionPath, 'res', 'js'))]
+                localResourceRoots: [Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js'))]
             }
         );
 

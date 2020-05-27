@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Uri, TextDocument, ExtensionContext } from 'vscode';
 import { DocumentInfo } from './document-info';
 import { Configurations } from './configurations';
@@ -15,6 +16,10 @@ export class GlslEditor {
 
     public static getContext(): ExtensionContext {
         return this.context;
+    }
+
+    public static loadJson<T>(name: string): T {
+        return JSON.parse(fs.readFileSync(`${this.context.extensionPath}/res/json/${name}.json`, 'utf8'));
     }
 
     public static processElements(document: TextDocument): void {

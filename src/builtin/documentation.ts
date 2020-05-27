@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Uri } from 'vscode';
 import { IRedirections } from './interfaces/redirections';
+import { GlslEditor } from '../core/glsl-editor';
 
 export class Documentation {
 
@@ -11,7 +12,7 @@ export class Documentation {
 
     private static initialize(): void {
         if (!this.initialized) {
-            const redirections: IRedirections = require('../../res/json/documentation_redirections.json');
+            const redirections = GlslEditor.loadJson<IRedirections>('documentation_redirections');
             for (const redirection of redirections.redirections) {
                 this.redirections.set(redirection.from, redirection.to);
             }
@@ -19,19 +20,19 @@ export class Documentation {
         }
     }
 
-    public static getDocumentation(extensionPath: string, name: string, uri: Uri): string {
+    public static getDocumentation(name: string, uri: Uri): string {
         this.initialize();
         const redirectedName = this.redirections.get(name) ?? name;
         let documentation = this.documentations.get(redirectedName);
         if (!documentation) {
-            documentation = this.getDocumentationFromFile(extensionPath, name, redirectedName, uri);
+            documentation = this.getDocumentationFromFile(name, redirectedName, uri);
             this.documentations.set(redirectedName, documentation);
         }
         return documentation;
     }
 
-    private static getDocumentationFromFile(extensionPath: string, name: string, redirectedName: string, uri: Uri): string {
-        const filePath = Uri.file(path.join(extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
+    private static getDocumentationFromFile(name: string, redirectedName: string, uri: Uri): string {
+        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
         if (!fs.existsSync(filePath.fsPath)) {
             return `${name} — documentation is not available`;
         }

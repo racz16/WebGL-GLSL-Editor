@@ -23,6 +23,7 @@ import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { ConstructorProcessor } from './constructor-processor';
 import { Helper } from '../processor/helper';
+import { GlslEditor } from '../core/glsl-editor';
 
 export class Builtin {
 
@@ -30,7 +31,7 @@ export class Builtin {
     private static builtin_100: Builtin;
     private static builtin_300: Builtin;
 
-    private postfix: string;
+    private postfix: '100' | '300';
 
     public readonly functions = new Array<LogicalFunction>();
     public readonly functionSummaries = new Map<string, FunctionInfo>();
@@ -46,7 +47,7 @@ export class Builtin {
 
     private constructor() { }
 
-    public setValues(postfix: string): void {
+    public setValues(postfix: '100' | '300'): void {
         this.postfix = postfix;
         this.loadReservedWords();
         this.loadKeywords();
@@ -61,11 +62,15 @@ export class Builtin {
         this.loadImportantFunctions();
     }
 
+    private getVersionedName(name: string): string {
+        return `${name}_${this.postfix}`;
+    }
+
     //
     //reserved
     //
     private loadReservedWords(): void {
-        const reservedWords: IReservedWords = require(this.getPath('reserved'));
+        const reservedWords = GlslEditor.loadJson<IReservedWords>(this.getVersionedName('reserved'));
         for (const reserved of reservedWords.reservedWords) {
             this.reservedWords.push(reserved);
         }
@@ -75,7 +80,7 @@ export class Builtin {
     //keywords
     //
     private loadKeywords(): void {
-        const keywords: IKeywords = require(this.getPath('keywords'));
+        const keywords = GlslEditor.loadJson<IKeywords>(this.getVersionedName('keywords'));
         for (const keyword of keywords.keywords) {
             const stage = this.getStage(keyword.stage);
             this.keywords.push(new Keyword(keyword.name, stage));
@@ -86,7 +91,7 @@ export class Builtin {
     //qualifiers
     //
     private loadQualifiers(): void {
-        const qualifiers: IQualifiers = require(this.getPath('qualifiers'));
+        const qualifiers = GlslEditor.loadJson<IQualifiers>(this.getVersionedName('qualifiers'));
         for (const qualifier of qualifiers.qualifiers) {
             this.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
         }
@@ -94,7 +99,7 @@ export class Builtin {
 
     private loadLayoutParameters(): void {
         if (this.postfix !== '100') {
-            const layoutParameters: ILayoutParameters = require(`${Builtin.JSON_PATH}/layout_parameters.json`);
+            const layoutParameters = GlslEditor.loadJson<ILayoutParameters>(`layout_parameters`);
             for (const param of layoutParameters.layoutParameters) {
                 this.layoutParameters.push(param);
             }
@@ -105,7 +110,7 @@ export class Builtin {
     //types
     //
     private loadTypes(): void {
-        const types: ITypes = require(this.getPath('types'));
+        const types = GlslEditor.loadJson<ITypes>(this.getVersionedName('types'));
         this.loadTransparentTypes(types);
         this.loadOpaqueTypes(types.floatingPointOpaque, TypeCategory.FLOATING_POINT_OPAQUE, TypeBase.FLOAT);
         this.loadOpaqueTypes(types.signedIntegerOpaque, TypeCategory.SIGNED_INTEGER_OPAQUE, TypeBase.INT);
@@ -173,7 +178,7 @@ export class Builtin {
     //generic types
     //
     private loadGenericTypes(): void {
-        const genTypes: IGenericTypes = require(this.getPath('generic_types'));
+        const genTypes = GlslEditor.loadJson<IGenericTypes>(this.getVersionedName('generic_types'));
         for (const genType of genTypes.types) {
             const generic = genType.generic;
             const reals = new Array<string>();
@@ -203,7 +208,7 @@ export class Builtin {
     //variables
     //
     private loadVariables(): void {
-        const variables: IVariables = require(this.getPath('variables'));
+        const variables = GlslEditor.loadJson<IVariables>(this.getVersionedName('variables'));
         for (const variable of variables.variables) {
             const array = variable.array === undefined ? -1 : variable.array;
             const td = this.types.get(variable.type);
@@ -253,7 +258,7 @@ export class Builtin {
     //functions
     //
     private loadFunctions(): void {
-        const functions: IFunctions = require(this.getPath('functions'));
+        const functions = GlslEditor.loadJson<IFunctions>(this.getVersionedName('functions'));
         for (const genericFunc of functions.functions) {
             for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
                 const td = this.types.get(realFunc.returnType);
@@ -291,7 +296,7 @@ export class Builtin {
     }
 
     private loadFunctionSummaries(): void {
-        const functions: IFunctionSummaries = require(this.getPath('function_summaries'));
+        const functions = GlslEditor.loadJson<IFunctionSummaries>(this.getVersionedName('function_summaries'));
         for (const func of functions.functions) {
             const summary = this.createFunctionSummary(func);
             const stage = this.getStage(func.stage);
@@ -320,7 +325,7 @@ export class Builtin {
     }
 
     private loadImportantFunctions(): void {
-        const functions: IImportantFunctions = require(`${Builtin.JSON_PATH}/important_functions.json`);
+        const functions = GlslEditor.loadJson<IImportantFunctions>('important_functions');
         for (const func of functions.importantFunctions) {
             this.importantFunctions.push(func);
         }
@@ -335,10 +340,6 @@ export class Builtin {
             case 'fragment': return ShaderStage.FRAGMENT;
             default: return ShaderStage.DEFAULT;
         }
-    }
-
-    private getPath(name: string): string {
-        return `${Builtin.JSON_PATH}/${name}_${this.postfix}.json`;
     }
 
     public clone(): Builtin {

@@ -1,5 +1,7 @@
 /out
 /node_modules
+/dist
+*.vsix
 
 .vscode/*
 !.vscode/settings.json

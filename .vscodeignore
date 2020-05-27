@@ -1,6 +1,8 @@
 .vscode/**
 .vscode-test/**
 out/test/**
+out
+node_modules
 src/**
 .gitignore
 vsc-extension-quickstart.md
@@ -13,3 +15,4 @@ syntaxes/*.g4
 res/png/screenshots
 private
 compile-antlr.bat
+webpack.config.js
