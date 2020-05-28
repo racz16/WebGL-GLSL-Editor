@@ -26,23 +26,17 @@ export class GlslCommandProvider {
         env.openExternal(Uri.parse('https://www.khronos.org/registry/OpenGL-Refpages/es3.0'));
     }
 
-    public static openDoc(param: any): void {
-        const name = param.name ? param.name : param.toString();
-        const vc = param.name ? ViewColumn.Beside : ViewColumn.Active;
-        this.openDocUnsafe(name, vc);
-    }
-
-    private static openDocUnsafe(name: string, vc: ViewColumn): void {
+    public static openDoc(name: string): void {
         if (GlslEditor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
             env.openExternal(Uri.parse(`http://docs.gl/el3/${name}`));
         } else {
-            this.openOfflineDoc(name, vc);
+            this.openOfflineDoc(name);
         }
     }
 
-    private static openOfflineDoc(name: string, vc: ViewColumn): void {
+    private static openOfflineDoc(name: string): void {
         if (!this.panel || !this.isPanelUsable || GlslEditor.CONFIGURATIONS.getAlwaysOpenOfflineDocInNewTab()) {
-            this.panel = this.createPanel(name, vc);
+            this.panel = this.createPanel(name);
         }
         this.panel.title = name;
         const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js', 'mml-svg.js'));
@@ -50,8 +44,8 @@ export class GlslCommandProvider {
         this.panel.webview.html = Documentation.getDocumentation(name, specialFilePath);
     }
 
-    private static createPanel(name: string, vc: ViewColumn): WebviewPanel {
-        const panel = window.createWebviewPanel('documentation', name, vc,
+    private static createPanel(name: string): WebviewPanel {
+        const panel = window.createWebviewPanel('documentation', name, ViewColumn.Beside,
             {
                 enableScripts: true,
                 enableCommandUris: true,

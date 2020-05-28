@@ -56,8 +56,8 @@ export function activate(context: ExtensionContext): void {
 	}));
 
 	//offline documentation
-	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (param: any) => {
-		GlslCommandProvider.openDoc(param);
+	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (name: string) => {
+		GlslCommandProvider.openDoc(name);
 	}));
 	//online documentation
 	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOCS_GL}`, () => {

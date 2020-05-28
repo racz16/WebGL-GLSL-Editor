@@ -237,7 +237,7 @@ export class Builtin {
         }
         mds.appendText(Constants.CRLF);
         if (variable.summary) {
-            const parameter = encodeURIComponent(JSON.stringify({ name: variable.name, active: true }));
+            const parameter = encodeURIComponent(JSON.stringify(variable.name));
             mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
@@ -317,7 +317,7 @@ export class Builtin {
         }
         mds.appendText(Constants.CRLF);
         if (func.summary) {
-            const parameter = encodeURIComponent(JSON.stringify({ name: func.name, active: true }));
+            const parameter = encodeURIComponent(JSON.stringify(func.name));
             mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
         }
