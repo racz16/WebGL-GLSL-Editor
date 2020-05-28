@@ -15,6 +15,7 @@ import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { GlslDocumentSemanticTokensProvider, GlslSemanticTokensLegend } from './providers/glsl-document-semantic-token-provider';
 import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 import { Constants } from './core/constants';
+import { GlslShadertoyActionProvider } from './providers/glsl-shadertoy-action-provider';
 
 export function activate(context: ExtensionContext): void {
 	GlslEditor.initialize(context);
@@ -94,6 +95,8 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
 	//call hierarchy
 	context.subscriptions.push(languages.registerCallHierarchyProvider(selector, new GlslCallHierarchyProvider()));
+	//shadertoy
+	context.subscriptions.push(languages.registerCodeActionsProvider(selector, new GlslShadertoyActionProvider()));
 	//folding
 	//context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting

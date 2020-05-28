@@ -1,0 +1,58 @@
+{
+    "variables": [
+        {
+            "type": "vec3",
+            "name": "iResolution"
+        },
+        {
+            "type": "float",
+            "name": "iTime"
+        },
+        {
+            "type": "float",
+            "name": "iTimeDelta"
+        },
+        {
+            "type": "int",
+            "name": "iFrame"
+        },
+        {
+            "type": "float",
+            "name": "iChannelTime",
+            "array": 4
+        },
+        {
+            "type": "vec3",
+            "name": "iChannelResolution",
+            "array": 4
+        },
+        {
+            "type": "vec4",
+            "name": "iMouse"
+        },
+        {
+            "type": "sampler2D",
+            "name": "iChannel0"
+        },
+        {
+            "type": "sampler2D",
+            "name": "iChannel1"
+        },
+        {
+            "type": "sampler2D",
+            "name": "iChannel2"
+        },
+        {
+            "type": "sampler2D",
+            "name": "iChannel3"
+        },
+        {
+            "type": "vec4",
+            "name": "iDate"
+        },
+        {
+            "type": "float",
+            "name": "iSampleRate"
+        }
+    ]
+}

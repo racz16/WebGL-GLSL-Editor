@@ -27,7 +27,6 @@ import { GlslEditor } from '../core/glsl-editor';
 
 export class Builtin {
 
-    private static readonly JSON_PATH = '../../res/json';
     private static builtin_100: Builtin;
     private static builtin_300: Builtin;
 

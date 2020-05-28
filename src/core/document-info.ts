@@ -33,6 +33,7 @@ export class DocumentInfo {
     public readonly completionRegions = new Array<TypeUsage>();
     public readonly foldingRegions = new Array<FoldingRegion>();
     public readonly semanticElements = new Array<SemanticElement>();
+    public readonly shadertoyVariables = new Array<VariableUsage>();
 
     public builtin: Builtin;
 
@@ -51,6 +52,7 @@ export class DocumentInfo {
         this.completionRegions.length = 0;
         this.foldingRegions.length = 0;
         this.semanticElements.length = 0;
+        this.shadertoyVariables.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
