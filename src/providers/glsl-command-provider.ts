@@ -39,7 +39,7 @@ export class GlslCommandProvider {
             this.panel = this.createPanel(name);
         }
         this.panel.title = name;
-        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js', 'mml-svg.js'));
+        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js', 'mml-chtml.js'));
         const specialFilePath = this.panel.webview.asWebviewUri(filePath);
         this.panel.webview.html = Documentation.getDocumentation(name, specialFilePath);
     }
