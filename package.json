@@ -105,13 +105,10 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "webpack --mode production",
-		"compile": "webpack --mode development",
-		"watch": "webpack --mode development --watch",
-		"pretest": "npm run compile",
-		"test-compile": "tsc -p ./",
-		"test": "node ./out/test/runTest.js",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
 		"compile-antlr": "compile-antlr.bat",
-		"lint": "eslint -c .eslintrc.js --ext .ts src"
+		"lint": "npx eslint -c .eslintrc.js --ext .ts --ignore-pattern src/_generated src"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
