@@ -7,6 +7,8 @@ import { TypeUsageProcessor } from './type-usage-processor';
 import { Single_variable_declarationContext, Variable_declarationContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
+import { ColorRegion } from '../scope/color-region';
+import { ExpressionResult } from './expression-result';
 
 export class VariableDeclarationProcessor {
 
@@ -82,12 +84,13 @@ export class VariableDeclarationProcessor {
             for (let i = 0; i < ioocs.length; i++) {
                 const iooc = ioocs[i];
                 const array = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
-                new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
+                const right = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
                 const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER());
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc);
                 const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
+                this.handleColorRegion(vd, right);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
             }
@@ -101,6 +104,13 @@ export class VariableDeclarationProcessor {
             vds.push(vd);
         }
         return vds;
+    }
+
+    private handleColorRegion(vd: VariableDeclaration, right: ExpressionResult | ExpressionResult[]): void {
+        if (right instanceof ExpressionResult && vd.isColorVariable() && right.constructorCall) {
+            const cr = new ColorRegion(right.constructorCall, right.constructorParameters);
+            this.di.colorRegions.push(cr);
+        }
     }
 
 }

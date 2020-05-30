@@ -1,6 +1,11 @@
 export class Constants {
     public static readonly EXTENSION_NAME = 'webgl-glsl-editor';
 
+    public static readonly VEC3 = 'vec3';
+    public static readonly VEC4 = 'vec4';
+    public static readonly COLOR = 'color';
+    public static readonly COLOUR = 'colour';
+
     public static readonly EMPTY = '';
     public static readonly LRB = '(';
     public static readonly RRB = ')';

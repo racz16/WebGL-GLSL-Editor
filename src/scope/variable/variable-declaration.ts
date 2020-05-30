@@ -5,6 +5,7 @@ import { Interval } from '../interval';
 import { MarkdownString } from 'vscode';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
+import { Constants } from '../../core/constants';
 
 export class VariableDeclaration extends Element {
 
@@ -26,6 +27,11 @@ export class VariableDeclaration extends Element {
         this.functionDefinitionParameter = fdp;
         this.summary = summary;
         this.stage = stage;
+    }
+
+    public isColorVariable(): boolean {
+        return (this.type?.declaration?.name === Constants.VEC3 || this.type?.declaration?.name === Constants.VEC4) &&
+            (this.name?.toLowerCase().includes(Constants.COLOR) || this.name?.toLowerCase().includes(Constants.COLOUR));
     }
 
     public toString(): string {

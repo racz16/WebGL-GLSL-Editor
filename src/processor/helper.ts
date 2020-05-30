@@ -4,7 +4,7 @@ import { ParserRuleContext } from 'antlr4ts';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
 import { ArrayUsage } from '../scope/array-usage';
-import { ExpressionProcessor, ExpressionType } from './expression-processor';
+import { ExpressionProcessor } from './expression-processor';
 import { DocumentInfo } from '../core/document-info';
 import { TypeBase } from '../scope/type/type-base';
 import { TypeCategory } from '../scope/type/type-category';
@@ -14,6 +14,7 @@ import { MarkdownString, Position } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { ExpressionResult } from './expression-result';
 
 export class Helper {
 
@@ -27,7 +28,7 @@ export class Helper {
         }
         const tn = ascs[0].LSB();
         const tn2 = ascs[ascs.length - 1].RSB();
-        const arraySize = exp && exp instanceof ExpressionType && exp.value ? exp.value : 0;
+        const arraySize = exp && exp instanceof ExpressionResult && exp.value ? exp.value : 0;
         return new ArrayUsage(arraySize, this.getIntervalFromTerminalNodes(tn, tn2), ascs.length > 1);
     }
 

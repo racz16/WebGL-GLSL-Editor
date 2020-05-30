@@ -15,6 +15,7 @@ import { FunctionCall } from '../scope/function/function-call';
 import { ShaderStage } from '../scope/shader-stage';
 import { FoldingRegion } from '../scope/folding-region';
 import { SemanticElement } from '../scope/semantic-element';
+import { ColorRegion } from '../scope/color-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -34,6 +35,7 @@ export class DocumentInfo {
     public readonly foldingRegions = new Array<FoldingRegion>();
     public readonly semanticElements = new Array<SemanticElement>();
     public readonly shadertoyVariables = new Array<VariableUsage>();
+    public readonly colorRegions = new Array<ColorRegion>();
 
     public builtin: Builtin;
 
@@ -53,6 +55,7 @@ export class DocumentInfo {
         this.foldingRegions.length = 0;
         this.semanticElements.length = 0;
         this.shadertoyVariables.length = 0;
+        this.colorRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 

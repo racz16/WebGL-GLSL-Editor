@@ -6,9 +6,9 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
-import { ExpressionType } from './expression-processor';
 import { Interval } from '../scope/interval';
 import { SemanticElement, SemanticType } from '../scope/semantic-element';
+import { ExpressionResult } from './expression-result';
 
 export class FunctionProcessor {
 
@@ -22,7 +22,7 @@ export class FunctionProcessor {
         this.scope = scope;
     }
 
-    public static searchFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionType>, scope: Scope, di: DocumentInfo): LogicalFunction {
+    public static searchFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>, scope: Scope, di: DocumentInfo): LogicalFunction {
         while (scope) {
             const lf = scope.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters));
             if (lf) {
@@ -35,14 +35,14 @@ export class FunctionProcessor {
         return di.builtin.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
     }
 
-    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Interval, parameters: Array<ExpressionType>): boolean {
+    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): boolean {
         const fd = lf.getDeclaration();
         return fd.name === name && fd.parameters.length === parameters.length &&
             this.areParametersMatch(fd, parameters) &&
             Helper.isALowerThanB(fd.interval, nameInterval);
     }
 
-    private static areParametersMatch(fd: FunctionDeclaration, parameters: Array<ExpressionType>): boolean {
+    private static areParametersMatch(fd: FunctionDeclaration, parameters: Array<ExpressionResult>): boolean {
         for (let i = 0; i < parameters.length; i++) {
             if (fd.parameters[i].type?.declaration !== parameters[i].type) {
                 return false;
