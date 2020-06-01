@@ -1,7 +1,7 @@
 {
     "variables": [
         {
-            "summary": "gl_Position — contains the position of the current vertex",
+            "summary": "Contains the position of the current vertex.",
             "type": "vec4",
             "name": "gl_Position",
             "qualifiers": [
@@ -10,7 +10,7 @@
             "stage": "vertex"
         },
         {
-            "summary": "gl_PointSize — contains size of rasterized points, in pixels",
+            "summary": "Contains size of rasterized points, in pixels.",
             "type": "float",
             "name": "gl_PointSize",
             "qualifiers": [
@@ -19,7 +19,7 @@
             "stage": "vertex"
         },
         {
-            "summary": "gl_FragCoord — contains the window-relative coordinates of the current fragment",
+            "summary": "Contains the window-relative coordinates of the current fragment.",
             "type": "vec4",
             "name": "gl_FragCoord",
             "qualifiers": [
@@ -28,13 +28,13 @@
             "stage": "fragment"
         },
         {
-            "summary": "gl_FrontFacing — indicates whether a primitive is front or back facing",
+            "summary": "Indicates whether a primitive is front or back facing.",
             "type": "bool",
             "name": "gl_FrontFacing",
             "stage": "fragment"
         },
         {
-            "summary": "gl_PointCoord — contains the coordinate of a fragment within a point",
+            "summary": "Contains the coordinate of a fragment within a point.",
             "type": "vec2",
             "name": "gl_PointCoord",
             "qualifiers": [
@@ -43,7 +43,7 @@
             "stage": "fragment"
         },
         {
-            "customSummary": "Writing to gl_FragColor specifies the fragment color that will be used by the subsequent fixed functionality pipeline.",
+            "summary": "Writing to gl_FragColor specifies the fragment color that will be used by the subsequent fixed functionality pipeline.",
             "type": "vec4",
             "name": "gl_FragColor",
             "qualifiers": [
@@ -52,7 +52,7 @@
             "stage": "fragment"
         },
         {
-            "customSummary": "The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array's length is gl_MaxDrawBuffers.",
+            "summary": "The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array's length is gl_MaxDrawBuffers.",
             "type": "vec4",
             "name": "gl_FragData",
             "array": 0,
@@ -62,7 +62,7 @@
             "stage": "fragment"
         },
         {
-            "customSummary": "depth range in window coordinates",
+            "summary": "Depth range in window coordinates.",
             "type": "gl_DepthRangeParameters",
             "name": "gl_DepthRange",
             "qualifiers": [

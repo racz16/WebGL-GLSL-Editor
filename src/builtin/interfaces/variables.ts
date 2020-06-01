@@ -4,7 +4,6 @@ export interface IVariables {
 
 export interface IVariable {
     min: number;
-    customSummary: string;
     summary: string;
     type: string;
     name: string;

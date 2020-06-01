@@ -222,23 +222,16 @@ export class Builtin {
 
     private createVariableSummary(variable: IVariable, tu: TypeUsage): MarkdownString {
         const mds = new MarkdownString();
-        mds.appendCodeblock(tu.toString() + ' ' + variable.name + ';');
+        mds.appendCodeblock(`${tu.toString()} ${variable.name};`);
         mds.appendText(Constants.CRLF);
-        mds.appendText(`${variable.name} — `);
         if (variable.summary) {
             mds.appendText(variable.summary);
-        } else if (variable.customSummary) {
-            mds.appendText(variable.customSummary);
-        } else if (variable.min) {
-            mds.appendText(`the actual value used is implementation dependent, but must be at least ${variable.min}`);
-        } else {
-            mds.appendText('documentation is not available');
-        }
-        mds.appendText(Constants.CRLF);
-        if (variable.summary) {
+            mds.appendText(Constants.CRLF);
             const parameter = encodeURIComponent(JSON.stringify(variable.name));
             mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
             mds.isTrusted = true;
+        } else if (variable.min) {
+            mds.appendText(`The actual value used is implementation dependent, but must be at least ${variable.min}.`);
         }
         return mds;
     }
@@ -300,26 +293,23 @@ export class Builtin {
             const summary = this.createFunctionSummary(func);
             const stage = this.getStage(func.stage);
             const fi = new FunctionInfo(func.name, summary, stage, false);
+            for (const funcParam of func.parameters) {
+                fi.parameters.set(funcParam.name, funcParam.summary);
+            }
             this.functionSummaries.set(func.name, fi);
         }
     }
 
     private createFunctionSummary(func: IFunctionSummary): MarkdownString {
+        if (!func.summary) {
+            return null;
+        }
         const mds = new MarkdownString();
-        mds.appendText(`${func.name} — `);
-        if (func.summary) {
-            mds.appendText(func.summary);
-        } else if (func.customSummary) {
-            mds.appendText(func.customSummary);
-        } else {
-            mds.appendText('documentation is not available');
-        }
+        mds.appendText(func.summary);
         mds.appendText(Constants.CRLF);
-        if (func.summary) {
-            const parameter = encodeURIComponent(JSON.stringify(func.name));
-            mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
-            mds.isTrusted = true;
-        }
+        const parameter = encodeURIComponent(JSON.stringify(func.name));
+        mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+        mds.isTrusted = true;
         return mds;
     }
 

@@ -16,6 +16,7 @@ import { ShaderStage } from '../scope/shader-stage';
 import { FoldingRegion } from '../scope/folding-region';
 import { SemanticElement } from '../scope/semantic-element';
 import { ColorRegion } from '../scope/color-region';
+import { SignatureRegion } from '../scope/signature-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -36,6 +37,7 @@ export class DocumentInfo {
     public readonly semanticElements = new Array<SemanticElement>();
     public readonly shadertoyVariables = new Array<VariableUsage>();
     public readonly colorRegions = new Array<ColorRegion>();
+    public readonly signatureRegions = new Array<SignatureRegion>();
 
     public builtin: Builtin;
 
@@ -56,6 +58,7 @@ export class DocumentInfo {
         this.semanticElements.length = 0;
         this.shadertoyVariables.length = 0;
         this.colorRegions.length = 0;
+        this.signatureRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 

@@ -23,8 +23,13 @@ export interface IFunctionSummaries {
 export interface IFunctionSummary {
     name: string;
     summary: string;
-    customSummary: string;
     stage: string;
+    parameters: Array<IFunctionParameterSummary>;
+}
+
+export interface IFunctionParameterSummary {
+    name: string;
+    summary: string;
 }
 
 export interface IImportantFunctions {

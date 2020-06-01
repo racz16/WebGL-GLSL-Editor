@@ -17,6 +17,7 @@ import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provi
 import { Constants } from './core/constants';
 import { GlslShadertoyActionProvider } from './providers/glsl-shadertoy-action-provider';
 import { GlslDocumentColorProvider } from './providers/glsl-document-color-provider';
+import { GlslSignatureHelpProvider } from './providers/glsl-signature-help-provider';
 
 export function activate(context: ExtensionContext): void {
 	GlslEditor.initialize(context);
@@ -100,6 +101,8 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerCodeActionsProvider(selector, new GlslShadertoyActionProvider()));
 	//color
 	context.subscriptions.push(languages.registerColorProvider(selector, new GlslDocumentColorProvider()));
+	//function signature help
+	context.subscriptions.push(languages.registerSignatureHelpProvider(selector, new GlslSignatureHelpProvider(), '(', ','));
 	//folding
 	//context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting

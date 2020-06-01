@@ -20,6 +20,8 @@ import { Constants } from '../core/constants';
 import { SemanticElement, SemanticType } from '../scope/semantic-element';
 import { ColorRegion } from '../scope/color-region';
 import { ExpressionResult } from './expression-result';
+import { SignatureRegion } from '../scope/signature-region';
+import { SignatureParameterRegion } from '../scope/signature-parameter-region';
 
 export class ExpressionProcessor {
 
@@ -124,7 +126,6 @@ export class ExpressionProcessor {
             return new ExpressionResult(vu.declaration.type.declaration, vu.declaration.type.array, constant, null, false, vu.declaration.isColorVariable());
         }
         return null;
-
     }
 
     private isParenthesizedExpression(): boolean {
@@ -256,6 +257,7 @@ export class ExpressionProcessor {
         const nameInterval = Helper.getIntervalFromTerminalNode(tn);
         const lf = this.getLogicalFunction(name, nameInterval, parameters);
         this.di.semanticElements.push(new SemanticElement(tn.symbol, SemanticType.FUNCTION, this.di));
+        this.addSignatureRegion(name, parameters);
         if (lf) {
             const fd = lf.getDeclaration();
             const currentFunction = this.di.getVisitor().getCurrentFunction();
@@ -287,6 +289,34 @@ export class ExpressionProcessor {
         return null;
     }
 
+    private addSignatureRegion(name: string, parameters: Array<ExpressionResult>): void {
+        const fc = this.ctx.function_call();
+        const paramsInterval = new Interval(fc.LRB().symbol.startIndex + 1, fc.RRB().symbol.stopIndex);
+        const sr = new SignatureRegion(name, paramsInterval);
+        for (let i = 0; i < fc.function_call_parameter_list()?.expression_list()?.COMMA().length + 1; i++) {
+            const param = parameters.length > i ? parameters[i] : null;
+            const interval = this.computeParameterInterval(i);
+            const spr = new SignatureParameterRegion(param?.type, param?.array, interval);
+            sr.parameters.push(spr);
+        }
+        if (!fc.function_call_parameter_list() || !fc.function_call_parameter_list().expression_list()) {
+            const start = fc.LRB().symbol.stopIndex;
+            const stop = fc.RRB().symbol.startIndex;
+            const interval = new Interval(start, stop);
+            const spr = new SignatureParameterRegion(null, null, interval);
+            sr.parameters.push(spr);
+        }
+        this.di.signatureRegions.push(sr);
+    }
+
+    private computeParameterInterval(index: number): Interval {
+        const fc = this.ctx.function_call();
+        const expList = fc.function_call_parameter_list().expression_list();
+        const start = index === 0 ? fc.LRB().symbol.startIndex : expList.COMMA()[index - 1].symbol.startIndex;
+        const stop = index >= expList.COMMA().length ? fc.RRB().symbol.startIndex : expList.COMMA()[index].symbol.startIndex;
+        return new Interval(start, stop);
+    }
+
     private isColorConstructor(fd: FunctionDeclaration, parameters: Array<ExpressionResult>): boolean {
         const constructorAndAllParametersNumber = fd.ctor && parameters.every(p => p && p.numberLiteral);
         const vec3 = fd.name === Constants.VEC3 && (parameters.length === 1 || parameters.length === 3);
@@ -305,6 +335,8 @@ export class ExpressionProcessor {
                     for (const param of parameter) {
                         parameters.push(param);
                     }
+                } else {
+                    parameters.push(null);
                 }
             }
         }
@@ -312,6 +344,9 @@ export class ExpressionProcessor {
     }
 
     private getLogicalFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): LogicalFunction {
+        if (parameters.some(param => !param)) {
+            return null;
+        }
         const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
         if (lf) {
             return lf;

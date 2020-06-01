@@ -2,10 +2,12 @@ import { MarkdownString } from "vscode";
 import { ShaderStage } from "../shader-stage";
 
 export class FunctionInfo {
-    name: string;
-    summary: MarkdownString;
-    stage: ShaderStage;
-    ctor: boolean;
+
+    public readonly name: string;
+    public readonly summary: MarkdownString;
+    public readonly stage: ShaderStage;
+    public readonly ctor: boolean;
+    public readonly parameters = new Map<string, string>();
 
     public constructor(name: string, summary: MarkdownString, stage: ShaderStage, ctor: boolean) {
         this.name = name;
@@ -13,4 +15,5 @@ export class FunctionInfo {
         this.stage = stage;
         this.ctor = ctor;
     }
+
 }
