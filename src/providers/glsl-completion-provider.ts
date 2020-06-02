@@ -10,6 +10,8 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { Interval } from '../scope/interval';
 import { Constants } from '../core/constants';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
+import { TypeBase } from '../scope/type/type-base';
+import { TypeDeclaration } from '../scope/type/type-declaration';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
@@ -32,10 +34,10 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         if (this.isCompletionTriggeredByFloatingPoint()) {
             return null;
         }
-        const [cr, startsWith] = this.getCompletionExpression();
+        const [tu, startsWith] = this.getCompletionExpression();
         this.items = new Array<CompletionItem>();
-        if (cr) {
-            this.completeAfterDot(cr, startsWith);
+        if (tu) {
+            this.completeAfterDot(tu, startsWith);
         } else {
             const scope = this.di.getScopeAt(this.position);
             this.addKeywordAndQualifierItems();
@@ -49,35 +51,38 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
 
-    private completeAfterDot(cr: TypeUsage, startsWith: string): void {
-        if (cr.array.isArray()) {
+    private completeAfterDot(tu: TypeUsage, startsWith: string): void {
+        if (tu.array.isArray()) {
             if ('length'.startsWith(startsWith)) {
                 this.items.push(new CompletionItem('length', CompletionItemKind.Function));
             }
-        } else if (cr.declaration.isVector()) {
-            this.addSwizzles(cr.declaration.width, Constants.xyzw, 0, startsWith);
-            this.addSwizzles(cr.declaration.width, Constants.rgba, 1, startsWith);
-            this.addSwizzles(cr.declaration.width, Constants.stpq, 2, startsWith);
+        } else if (tu.declaration.isVector()) {
+            this.addSwizzles(tu.declaration, Constants.xyzw, 0, startsWith);
+            this.addSwizzles(tu.declaration, Constants.rgba, 1, startsWith);
+            this.addSwizzles(tu.declaration, Constants.stpq, 2, startsWith);
         } else {
-            for (const memeber of cr.declaration.members) {
+            for (const memeber of tu.declaration.members) {
                 if (memeber.name.startsWith(startsWith)) {
-                    this.items.push(new CompletionItem(memeber.name, CompletionItemKind.Property));
+                    const ci = new CompletionItem(memeber.name, CompletionItemKind.Property);
+                    ci.detail = memeber.type?.name;
+                    this.items.push(ci);
                 }
             }
         }
     }
 
-    private addSwizzles(width: number, swizzleCharacters: Array<string>, swizzleCharactersPriority: number, startsWith: string, swizzle = ''): void {
+    private addSwizzles(td: TypeDeclaration, swizzleCharacters: Array<string>, swizzleCharactersPriority: number, startsWith: string, swizzle = ''): void {
         if (swizzle.length < 4) {
-            for (let i = 0; i < width; i++) {
+            for (let i = 0; i < td.width; i++) {
                 const char = swizzleCharacters[i];
                 const newSwizzle = swizzle + char;
                 if (newSwizzle.startsWith(startsWith)) {
                     const ci = new CompletionItem(newSwizzle, CompletionItemKind.Property);
+                    ci.detail = Helper.getTypeName(td.typeBase, newSwizzle.length);
                     ci.sortText = this.getSwizzleSortText(swizzleCharacters, swizzleCharactersPriority, newSwizzle);
                     this.items.push(ci);
                 }
-                this.addSwizzles(width, swizzleCharacters, swizzleCharactersPriority, startsWith, newSwizzle);
+                this.addSwizzles(td, swizzleCharacters, swizzleCharactersPriority, startsWith, newSwizzle);
             }
         }
     }
@@ -171,7 +176,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 const ci = new CompletionItem(name, CompletionItemKind.Class);
                 if (td.typeCategory === TypeCategory.CUSTOM) {
                     ci.documentation = new MarkdownString(td.toStringDocumentation());
-                    ci.detail = 'Built-In Type';
                 }
                 localItems.push(ci);
             }
@@ -186,7 +190,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
                 ci.documentation = vd.summary;
-                ci.detail = 'Built-In Variable';
+                ci.detail = vd.type?.name;
                 localItems.push(ci);
             }
         }
@@ -203,7 +207,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 if (this.di.builtin.importantFunctions.includes(ci.label)) {
                     this.makeItImportant(ci);
                 }
-                ci.detail = func.ctor ? null : 'Built-In Function';
                 ci.documentation = func.summary;
                 localItems.push(ci);
             }
@@ -242,7 +245,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             if (Helper.isALowerThanOffset(td.interval, this.offset) && !this.items.some(ci => this.getName(ci) === td.name) && !td.interfaceBlock) {
                 const ci = new CompletionItem(td.name, CompletionItemKind.Struct);
                 ci.documentation = new MarkdownString(td.toStringDocumentation());
-                ci.detail = 'Type';
                 localItems.push(ci);
             }
         }
@@ -256,7 +258,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some(ci => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
                 ci.documentation = new MarkdownString(vd.toStringDocumentation());
-                ci.detail = 'Variable';
+                ci.detail = vd.type?.name;
                 localItems.push(ci);
             }
         }

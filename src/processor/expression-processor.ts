@@ -419,7 +419,7 @@ export class ExpressionProcessor {
                 if (name.length === 1) {
                     return new ExpressionResult(this.typeBaseToType(exp.type.typeBase), new ArrayUsage(), exp.constant);
                 } else if (name.length <= 4) {
-                    const typeName = `${this.typeBaseToPrefix(exp.type.typeBase)}vec${name.length}`;
+                    const typeName = Helper.getVectorTypeName(exp.type.typeBase, name.length);
                     return new ExpressionResult(this.di.builtin.types.get(typeName), new ArrayUsage(), exp.constant);
                 }
             }
@@ -598,25 +598,10 @@ export class ExpressionProcessor {
     //
     //general
     //
-    private typeBaseToType(bt: TypeBase): TypeDeclaration {
+    private typeBaseToType(tb: TypeBase): TypeDeclaration {
+        const name = Helper.getScalarTypeName(tb);
         const types = this.di.builtin.types;
-        switch (bt) {
-            case TypeBase.BOOL: return types.get('bool');
-            case TypeBase.FLOAT: return types.get('float');
-            case TypeBase.INT: return types.get('int');
-            case TypeBase.UINT: return types.get('uint');
-            default: return null;
-        }
-    }
-
-    private typeBaseToPrefix(bt: TypeBase): string {
-        switch (bt) {
-            case TypeBase.BOOL: return 'b';
-            case TypeBase.FLOAT: return '';
-            case TypeBase.INT: return 'i';
-            case TypeBase.UINT: return 'u';
-            default: return null;
-        }
+        return types.get(name);
     }
 
     private isSwizzle(str: string): boolean {

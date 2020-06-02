@@ -90,4 +90,36 @@ export class Helper {
         return scope && (di.intervalToRange(scope.interval)?.contains(position) || scope.isGlobal());
     }
 
+    public static getTypeName(tb: TypeBase, width: number): string {
+        if (width === 1) {
+            return this.getScalarTypeName(tb);
+        } else {
+            return this.getVectorTypeName(tb, width);
+        }
+    }
+
+    public static getVectorTypeName(tb: TypeBase, width: number): string {
+        return `${Helper.typeBaseToPrefix(tb)}vec${width}`;
+    }
+
+    public static getScalarTypeName(bt: TypeBase): string {
+        switch (bt) {
+            case TypeBase.BOOL: return 'bool';
+            case TypeBase.FLOAT: return 'float';
+            case TypeBase.INT: return 'int';
+            case TypeBase.UINT: return 'uint';
+            default: return null;
+        }
+    }
+
+    public static typeBaseToPrefix(tb: TypeBase): string {
+        switch (tb) {
+            case TypeBase.BOOL: return 'b';
+            case TypeBase.FLOAT: return '';
+            case TypeBase.INT: return 'i';
+            case TypeBase.UINT: return 'u';
+            default: return null;
+        }
+    }
+
 }
