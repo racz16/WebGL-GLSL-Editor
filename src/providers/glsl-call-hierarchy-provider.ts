@@ -38,9 +38,23 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         return results;
     }
 
+    protected processFunctionPrototype(fp: FunctionDeclaration): Array<HierarchyElement> {
+        if (fp.logicalFunction.definitions.length) {
+            return this.processFunctionDefinition(fp.logicalFunction.definitions[0]);
+        }
+        if (this.stage === HierarcySearchStage.PREPARE) {
+            const item = this.createItemFromDeclaration(fp);
+            return [new HierarchyElement(item, fp.logicalFunction)];
+        } else if (this.stage === HierarcySearchStage.INCOMING) {
+            return this.createIncomingElements(fp.logicalFunction);
+        } else {
+            return [];
+        }
+    }
+
     protected processFunctionDefinition(fd: FunctionDeclaration): Array<HierarchyElement> {
         if (this.stage === HierarcySearchStage.PREPARE) {
-            const item = this.createItemFromDefinition(fd);
+            const item = this.createItemFromDeclaration(fd);
             return [new HierarchyElement(item, fd.logicalFunction)];
         } else if (this.stage === HierarcySearchStage.INCOMING) {
             return this.createIncomingElements(fd.logicalFunction);
@@ -83,7 +97,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
 
     private createPrepareElementsFromCall(fc: FunctionCall): Array<HierarchyElement> {
         if (fc.logicalFunction.definitions.length) {
-            const item = this.createItemFromDefinition(fc.logicalFunction.definitions[0]);
+            const item = this.createItemFromDeclaration(fc.logicalFunction.definitions[0]);
             return [new HierarchyElement(item, fc.logicalFunction)];
         } else if (fc.logicalFunction.hasDeclaration()) {
             const item = this.createItemWithoutDefinition(fc);
@@ -144,7 +158,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
     private createOutgoingElement(call: FunctionCall): HierarchyElement {
         let item: CallHierarchyItem;
         if (call.logicalFunction.definitions.length) {
-            item = this.createItemFromDefinition(call.logicalFunction.definitions[0]);
+            item = this.createItemFromDeclaration(call.logicalFunction.definitions[0]);
         } else if (call.logicalFunction.hasDeclaration()) {
             item = this.createItemWithoutDefinition(call);
         }
@@ -154,7 +168,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         return element;
     }
 
-    private createItemFromDefinition(fd: FunctionDeclaration): CallHierarchyItem {
+    private createItemFromDeclaration(fd: FunctionDeclaration): CallHierarchyItem {
         const lineFocusRange = this.di.intervalToRange(fd.nameInterval);
         return new CallHierarchyItem(SymbolKind.Function, fd.name, null, this.document.uri, lineFocusRange, lineFocusRange);
     }
