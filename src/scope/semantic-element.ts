@@ -19,6 +19,7 @@ export class SemanticElement {
 }
 
 export enum SemanticType {
-    TYPE = 0,
-    FUNCTION = 1
+    USER_TYPE = 0,
+    BUILTIN_TYPE = 1,
+    FUNCTION = 2,
 }

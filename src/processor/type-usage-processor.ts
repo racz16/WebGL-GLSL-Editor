@@ -89,7 +89,8 @@ export class TypeUsageProcessor {
         const tu = new TypeUsage(name, interval, nameInterval, this.scope, td, au);
         const token = this.getToken(this.tuc.type());
         if ((!td || (td && !td.builtin)) && token) {
-            this.di.semanticElements.push(new SemanticElement(token, SemanticType.TYPE, this.di));
+            const st = tu?.name.startsWith('gl_') ? SemanticType.BUILTIN_TYPE : SemanticType.USER_TYPE;
+            this.di.semanticElements.push(new SemanticElement(token, st, this.di));
         }
         this.addQualifiers(tu, this.tuc.qualifier());
         if (index === 0) {

@@ -19,6 +19,10 @@ export class GlslDocumentSemanticTokensProvider implements DocumentSemanticToken
 }
 
 export class GlslSemanticTokensLegend implements SemanticTokensLegend {
-    public readonly tokenTypes = ['type', 'function'];
+    public readonly tokenTypes = [
+        'type',     //user type
+        'struct',   //builtin type
+        'function'
+    ];
     public readonly tokenModifiers = [];
 }
