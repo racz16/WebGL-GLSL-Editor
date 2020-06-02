@@ -3,6 +3,22 @@
 	"name": "GLSL",
 	"patterns": [
 		{
+			"comment": "STRUCT",
+			"match": "(struct)(\\s+)([_a-zA-Z][_a-zA-Z0-9]*)",
+			"captures": {
+				"1": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"3": {
+					"name": "entity.name.type.glsl"
+				}
+			}
+		},
+		{
 			"comment": "BLOCK COMMENT",
 			"name": "comment.block.glsl",
 			"begin": "\\/\\*",
@@ -60,6 +76,29 @@
 			"name": "storage.type.glsl"
 		},
 		{
+			"comment": "FUNCTION CALL",
+			"match": "([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s*)(\\()",
+			"captures": {
+				"1": {
+					"name": "entity.name.function.glsl"
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"8": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			}
+		},
+		{
 			"comment": "BUILTIN TYPE USAGE",
 			"patterns": [
 				{
@@ -73,6 +112,62 @@
 					"match": "\\b(gl_[a-zA-Z_][a-zA-Z0-9_]*)\\b"
 				}
 			]
+		},
+		{
+			"comment": "FUNCTION DECLARATION",
+			"match": "(([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s+))?([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s*)(\\()",
+			"captures": {
+				"2": {
+					"name": "entity.name.type.glsl"
+				},
+				"6": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"9": {
+					"name": "entity.name.function.glsl"
+				},
+				"13": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"16": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			}
+		},
+		{
+			"comment": "USER TYPE",
+			"match": "([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s+)([_a-zA-Z][_a-zA-Z0-9]*)",
+			"captures": {
+				"1": {
+					"name": "entity.name.type.glsl"
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				},
+				"8": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			}
 		},
 		{
 			"comment": "IDENTIFIER",
