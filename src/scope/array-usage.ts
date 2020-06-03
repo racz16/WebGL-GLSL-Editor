@@ -25,6 +25,8 @@ export class ArrayUsage {
             return this;
         } else if (!this.isArray() && au.isArray()) {
             return au;
+        } else if (!this.isArray() && !au.isArray()) {
+            return new ArrayUsage();
         } else {
             return new ArrayUsage(this.arraySize, this.interval, true);
         }
