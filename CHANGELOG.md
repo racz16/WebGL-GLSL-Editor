@@ -1,11 +1,27 @@
 # Change Log
 
 ## [Unreleased]
-- Function signature helper
 - Formatting
-- Color Picker
+- Other smaller improvements
+
+## [1.1.0] - 2020.06.03.
+### Added
+- Function signature helper
 - Call hierarchy
-- Generation of Shadertoy variables
+- Color picker
+- Generating Shadertoy variables
+### Improved
+- Syntax highlight
+- Completion item details
+- Diagnostic (hints for unused types, functions, variables)
+- Bundling
+- Reduced package size
+- Updated packages
+- Other small updates
+### Fixed
+- Marking non-array variables as multidimensional arrays
+- Wrong tokenization of builtin types in some cases 
+- Other small fixes
 
 ## [1.0.1] - 2020.04.12.
 ### Improved

@@ -11,14 +11,18 @@ This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00
 The extension colorizes types, builtin types, variables, builtin variables, functions, keywords, qualifiers, operators, macros and comments.
 
 ![syntax highlighting](res/png/screenshots/syntax-highlighting.png)
-### Diagnostics
-The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations.
+### Diagnostic
+The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations. It also grays out the unused functions, types and variables.
 
-![diagnostics](res/png/screenshots/diagnostics.png)
+![diagnostic](res/png/screenshots/diagnostic.png)
 ### Offline documentation
 The extension uses [docs.gl](http://docs.gl) to provide the offline documentation for builtin variables and builtin functions.
 
 ![offline documentation](res/png/screenshots/documentation.png)
+### Signature help
+The extension can display a signature helper for functions and constructors (except matrix constructors).
+
+![signature help](res/png/screenshots/signature-help.png)
 ### Code completion
 The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
@@ -32,17 +36,29 @@ The extension can highlight all the occurrences of the selected type, variable f
 
 ![highlights](res/png/screenshots/highlights.png)
 ### Hover
-The extension can provide useful informations or documentation summary if you hover over elements.
+The extension can provide useful informations or documentation summary if you hover over types, variables, functions or constructors.
 
 ![hover](res/png/screenshots/hover.png)
 ### Symbols
-The extension can provide outline information and breadcrumbs about the types, variables and functions.
+The extension can provide outline information and breadcrumbs about the types, interface blocks, variables and functions.
 
 ![outline and breadcrumbs](res/png/screenshots/outline-and-breadcrumbs.png)
 
 You can easily find types, interface blocks, variables and functions.
 
 ![find symbol](res/png/screenshots/find-symbol.png)
+### Color picker
+The extension can display a color picker if you initialize or reassign a vec3 or vec4 variable whihch name contains the word 'color' or 'colour' and the assigned expression is a vec3 or vec4 constructor and it's parameters are number literals.
+
+![color picker](res/png/screenshots/color-picker.png)
+### Generation of Shadertoy variables
+The extension can generate all the Shadertoy uniform vairables if necessary.
+
+![shadertoy](res/png/screenshots/shadertoy.png)
+### Show/Peek call hierarchy
+The extension can visualize the functions' and constructors' incoming ang outgoing calls as a graph.
+
+![call hierarchy](res/png/screenshots/call-hierarchy.png)
 ### Go to/Peek declarations
 You can find (go to / peek) the declaration of a type, a variable, a function or a constructor.
 
@@ -79,9 +95,19 @@ You can find the known issues on [GitHub](https://github.com/racz16/WebGL-GLSL-E
 ## Release Notes
 For more information, see the [changelog](CHANGELOG.md).
 
+### 1.1.0
+- Function signature helper
+- Call hierarchy
+- Color picker
+- Generating Shadertoy variables
+- Improved syntax highlight
+- Improved code completion
+- Improved diagnostic
+- Other small changes and bugfixes
+
 ### 1.0.1
 - Improved syntax highlight
-- Smaller changes and bugfixes
+- Other small changes and bugfixes
 
 ### 1.0.0
 - Syntax highlight
