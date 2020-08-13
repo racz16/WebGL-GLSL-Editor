@@ -226,10 +226,12 @@ export class Builtin {
         mds.appendText(Constants.CRLF);
         if (variable.summary) {
             mds.appendText(variable.summary);
-            mds.appendText(Constants.CRLF);
-            const parameter = encodeURIComponent(JSON.stringify(variable.name));
-            mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
-            mds.isTrusted = true;
+            if (!variable.notDocumented) {
+                mds.appendText(Constants.CRLF);
+                const parameter = encodeURIComponent(JSON.stringify(variable.name));
+                mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+                mds.isTrusted = true;
+            }
         } else if (variable.min) {
             mds.appendText(`The actual value used is implementation dependent, but must be at least ${variable.min}.`);
         }

@@ -44,6 +44,7 @@
         },
         {
             "summary": "Writing to gl_FragColor specifies the fragment color that will be used by the subsequent fixed functionality pipeline.",
+            "notDocumented": true,
             "type": "vec4",
             "name": "gl_FragColor",
             "qualifiers": [
@@ -53,6 +54,7 @@
         },
         {
             "summary": "The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array's length is gl_MaxDrawBuffers.",
+            "notDocumented": true,
             "type": "vec4",
             "name": "gl_FragData",
             "array": 0,
@@ -63,6 +65,7 @@
         },
         {
             "summary": "Depth range in window coordinates.",
+            "notDocumented": true,
             "type": "gl_DepthRangeParameters",
             "name": "gl_DepthRange",
             "qualifiers": [

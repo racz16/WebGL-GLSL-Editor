@@ -81,6 +81,7 @@
         },
         {
             "summary": "Depth range in window coordinates",
+            "notDocumented": true,
             "type": "gl_DepthRangeParameters",
             "name": "gl_DepthRange",
             "qualifiers": [

@@ -5,6 +5,7 @@ export interface IVariables {
 export interface IVariable {
     min: number;
     summary: string;
+    notDocumented: boolean;
     type: string;
     name: string;
     array: number;
