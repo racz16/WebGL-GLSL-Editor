@@ -13,6 +13,8 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 
 export class GlslDiagnosticProvider {
 
+    private static newestLintId = 0;
+
     private di: DocumentInfo;
     private diagnostics = new Array<Diagnostic>();
     private document: TextDocument;
@@ -106,12 +108,15 @@ export class GlslDiagnosticProvider {
     }
 
     private executeCommand(validatorPath: string, stageName: string): void {
-        const result = exec(`${validatorPath} --stdin -S ${stageName}`);
+        const result = exec(`${validatorPath} --stdin -C -S ${stageName}`);
+        const lintId = ++GlslDiagnosticProvider.newestLintId;
         result.stdout.on('data', (data: string) => {
             this.handleErrors(data);
         });
         result.stdout.on('close', () => {
-            this.collection.set(this.document.uri, this.diagnostics);
+            if (lintId === GlslDiagnosticProvider.newestLintId) {
+                this.collection.set(this.document.uri, this.diagnostics);
+            }
         });
 
         this.provideInput(result);
