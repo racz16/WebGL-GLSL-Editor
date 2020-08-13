@@ -95,6 +95,10 @@ You can find the known issues on [GitHub](https://github.com/racz16/WebGL-GLSL-E
 ## Release Notes
 For more information, see the [changelog](CHANGELOG.md).
 
+### 1.1.1
+- Improved diagnostic
+- Other small changes and bugfixes
+
 ### 1.1.0
 - Function signature helper
 - Call hierarchy

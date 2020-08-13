@@ -4,6 +4,15 @@
 - Formatting
 - Other smaller improvements
 
+## [1.1.1] - 2020.08.13.
+### Improved
+- Diagnostic (can show more than one errors)
+- Updated packages
+- Other small updates
+### Fixed
+- Showing outdated diagnostic results
+- Trying to show documentation for undocumented variables
+
 ## [1.1.0] - 2020.06.03.
 ### Added
 - Function signature helper
