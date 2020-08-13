@@ -15,18 +15,22 @@
 	},
 	"license": "MIT",
 	"keywords": [
+		"GLSL",
+		"shader",
 		"WebGL",
 		"OpenGL",
 		"ES",
-		"GLSL",
-		"shader"
+		"OpenGL Shading Language",
+		"linters"
 	],
 	"version": "1.1.0",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
 	"categories": [
-		"Programming Languages"
+		"Programming Languages",
+		"Linters",
+		"Snippets"
 	],
 	"activationEvents": [
 		"onLanguage:glsl",
