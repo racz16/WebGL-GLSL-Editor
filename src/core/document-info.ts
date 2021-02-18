@@ -1,5 +1,5 @@
 import { Uri, TextDocument, Position, Location, Range } from 'vscode';
-import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
+import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
 import { GlslVisitor } from './glsl-visitor';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
@@ -142,8 +142,8 @@ export class DocumentInfo {
     }
 
     private createLexer(): AntlrGlslLexer {
-        const inputStream = new ANTLRInputStream(this.document.getText());
-        const lexer = new AntlrGlslLexer(inputStream);
+        const charStream = CharStreams.fromString(this.document.getText());
+        const lexer = new AntlrGlslLexer(charStream);
         this.tokens = lexer.getAllTokens();
         lexer.reset();
         return lexer;
