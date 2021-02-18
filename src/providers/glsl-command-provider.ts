@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { ViewColumn, window, Uri, env, ExtensionContext, WebviewPanel, Disposable } from 'vscode';
+import { ViewColumn, window, Uri, env, WebviewPanel, Disposable } from 'vscode';
 import { Documentation } from '../builtin/documentation';
 import { GlslEditor } from '../core/glsl-editor';
 

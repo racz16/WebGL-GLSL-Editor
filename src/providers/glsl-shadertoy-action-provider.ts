@@ -1,4 +1,4 @@
-import { CodeActionProvider, TextDocument, Range, Selection, CancellationToken, ProviderResult, Command, CodeAction, CodeActionContext, CodeActionKind, WorkspaceEdit, Position, Diagnostic } from "vscode";
+import { CodeActionProvider, TextDocument, Range, Selection, CancellationToken, ProviderResult, Command, CodeAction, CodeActionContext, CodeActionKind, WorkspaceEdit, Position } from "vscode";
 import { GlslEditor } from "../core/glsl-editor";
 import { DocumentInfo } from "../core/document-info";
 import { Shadertoy } from "../builtin/shadertoy";

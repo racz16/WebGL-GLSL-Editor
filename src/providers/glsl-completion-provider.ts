@@ -10,7 +10,6 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { Interval } from '../scope/interval';
 import { Constants } from '../core/constants';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
-import { TypeBase } from '../scope/type/type-base';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 
 export class GlslCompletionProvider implements CompletionItemProvider {

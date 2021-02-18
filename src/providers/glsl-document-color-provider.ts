@@ -1,4 +1,4 @@
-import { DocumentColorProvider, TextDocument, CodeActionContext, CancellationToken, ProviderResult, ColorInformation, Color, Range, ColorPresentation, WorkspaceEdit, TextEdit } from "vscode";
+import { DocumentColorProvider, TextDocument, CancellationToken, ProviderResult, ColorInformation, Color, Range, ColorPresentation, TextEdit } from "vscode";
 import { DocumentInfo } from "../core/document-info";
 import { GlslEditor } from "../core/glsl-editor";
 import { ColorRegion } from "../scope/color-region";
