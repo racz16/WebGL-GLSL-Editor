@@ -220,7 +220,7 @@ export class ExpressionProcessor {
     private processArrayExpression(): ExpressionResult {
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         new ExpressionProcessor().processExpression(this.ctx.array_subscript().expression(), this.scope, this.di);
-        if (exp && exp instanceof ExpressionResult) {
+        if (exp && exp instanceof ExpressionResult && exp.type) {
             if (exp.array.isArray()) {
                 return new ExpressionResult(exp.type, new ArrayUsage(), exp.constant);
             } else if (exp.type.isVector()) {
