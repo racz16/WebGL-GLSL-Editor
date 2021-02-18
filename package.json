@@ -62,6 +62,13 @@
 				"language": "glsl",
 				"scopeName": "source.glsl",
 				"path": "./syntaxes/glsl.language.json"
+			},
+			{
+				"scopeName": "source.injected.glsl",
+				"path": "./syntaxes/glsl-injected.language.json",
+				"injectTo": [
+					"text.html.derivative"
+				]
 			}
 		],
 		"snippets": [
