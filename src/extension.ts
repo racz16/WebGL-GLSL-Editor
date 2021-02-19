@@ -18,6 +18,9 @@ import { Constants } from './core/constants';
 import { GlslShadertoyActionProvider } from './providers/glsl-shadertoy-action-provider';
 import { GlslDocumentColorProvider } from './providers/glsl-document-color-provider';
 import { GlslSignatureHelpProvider } from './providers/glsl-signature-help-provider';
+import { GlslFoldingProvider } from './providers/glsl-folding-provider';
+import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
+import { ScopeDebugHighlighter } from './providers/helper/scope-debug-highlighter';
 
 export function activate(context: ExtensionContext): void {
 	GlslEditor.initialize(context);
@@ -77,6 +80,7 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider(selector, new GlslDocumentSemanticTokensProvider(), new GlslSemanticTokensLegend()));
 	//highlight
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
+	//context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new ScopeDebugHighlighter()));
 	//completion
 	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), '.'));
 	//symbols
@@ -104,7 +108,7 @@ export function activate(context: ExtensionContext): void {
 	//function signature help
 	context.subscriptions.push(languages.registerSignatureHelpProvider(selector, new GlslSignatureHelpProvider(), '(', ','));
 	//folding
-	//context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
+	context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting
 	//context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 }
