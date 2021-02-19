@@ -68,6 +68,7 @@ export class VariableDeclarationProcessor {
             const declarationInterval = Helper.getIntervalFromParserRule(ibdc);
             const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
             this.scope.variableDeclarations.push(vd);
+            tu.declaration.usages.push(tu);
             return vd;
         }
         return null;
@@ -93,6 +94,10 @@ export class VariableDeclarationProcessor {
                 this.handleColorRegion(vd, right);
                 this.scope.variableDeclarations.push(vd);
                 vds.push(vd);
+            }
+            if (vdc.type_usage().type_declaration()) {
+                const tu = vds[0].type;
+                tu.declaration.usages.push(tu);
             }
         } else {
             const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);

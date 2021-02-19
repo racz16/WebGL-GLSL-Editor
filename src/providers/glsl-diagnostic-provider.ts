@@ -57,10 +57,17 @@ export class GlslDiagnosticProvider {
 
     private addTypeHints(scope: Scope): void {
         for (const td of scope.typeDeclarations) {
-            if (!td.usages.length && td.members.length) {
+            if (!td.usages.length && !this.isInterfaceBlockUsed(td)) {
                 this.addUnusedHint(td, this.getUnusedTypeMessage(td));
             }
         }
+    }
+
+    private isInterfaceBlockUsed(td: TypeDeclaration): boolean {
+        if (!td.interfaceBlock || td.members.length) {
+            return false;
+        }
+        return td.interfaceMembers.some(td => td.usages.length);
     }
 
     private addVariableHints(scope: Scope): void {
@@ -76,7 +83,8 @@ export class GlslDiagnosticProvider {
     }
 
     private getUnusedTypeMessage(td: TypeDeclaration): string {
-        return `Type '${td.name}' is never used.`;
+        const type = td.interfaceBlock ? 'Interface block' : 'Type';
+        return `${type} '${td.name}' is never used.`;
     }
 
     private getUnusedVariableMessage(vd: VariableDeclaration): string {

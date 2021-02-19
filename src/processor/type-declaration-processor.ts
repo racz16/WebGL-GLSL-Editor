@@ -64,8 +64,9 @@ export class TypeDeclarationProcessor {
             this.addMembers(td, ibdc.variable_declaration());
             this.scope = this.scope.parent;
         } else {
-            for (const vd of ibdc.variable_declaration()) {
-                this.di.getVisitor().visit(vd);
+            for (const vdc of ibdc.variable_declaration()) {
+                const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
+                vds.forEach(vd => td.interfaceMembers.push(vd));
             }
         }
         return td;

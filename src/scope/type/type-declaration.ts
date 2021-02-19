@@ -18,6 +18,7 @@ export class TypeDeclaration extends Element {
     public readonly height: number;
     public readonly interfaceBlock: boolean;
     public readonly members = new Array<VariableDeclaration>();
+    public readonly interfaceMembers = new Array<VariableDeclaration>();
     public readonly usages = new Array<TypeUsage>();
     public readonly ctorCalls = new Array<FunctionCall>();
 
