@@ -37,7 +37,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
     private getSignatureRegion(): SignatureRegion {
         for (const sr of this.di.signatureRegions) {
-            if (this.di.intervalToRange(sr.interval).contains(this.position)) {
+            if (!sr.interval.isInjected() && this.di.intervalToRange(sr.interval).contains(this.position)) {
                 return sr;
             }
         }
@@ -62,8 +62,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     private computeActiveParameter(sr: SignatureRegion): number {
         for (let i = 0; i < sr.parameters.length; i++) {
             const spr = sr.parameters[i];
-            const region = this.di.intervalToRange(spr.interval);
-            if (region.contains(this.position)) {
+            if (!spr.interval.isInjected() && this.di.intervalToRange(spr.interval).contains(this.position)) {
                 return i;
             }
         }

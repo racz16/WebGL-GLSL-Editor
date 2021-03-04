@@ -18,10 +18,12 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         this.initialize(document);
         const results = new Array<ColorInformation>();
         for (const colorRegion of this.di.colorRegions) {
-            const range = this.di.intervalToRange(colorRegion.constructorCall.interval);
-            const color = this.computeColorFromParameters(colorRegion);
-            const ci = new ColorInformation(range, color);
-            results.push(ci);
+            if (!colorRegion.constructorCall.interval.isInjected()) {
+                const range = this.di.intervalToRange(colorRegion.constructorCall.interval);
+                const color = this.computeColorFromParameters(colorRegion);
+                const ci = new ColorInformation(range, color);
+                results.push(ci);
+            }
         }
         return results;
     }
@@ -48,7 +50,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         const label = this.computeColorLabel(color, cr);
         const cps = this.computeColorPresentationString(color, cr);
         const cp = new ColorPresentation(label);
-        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + 1, cr.constructorCall.interval.stopIndex - 1));
+        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + 1, cr.constructorCall.interval.stopIndex - 1, this.di));
         const te = new TextEdit(range, cps);
         cp.textEdit = te;
         return [cp];

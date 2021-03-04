@@ -14,14 +14,14 @@ export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location>
     protected processFunctionCall(fc: FunctionCall): Location {
         const scope = this.di.getScopeAt(this.position);
         const td = TypeDeclarationProcessor.searchTypeDeclaration(fc.name, fc.nameInterval, scope, this.di);
-        if (td && !td.builtin) {
+        if (td && !td.builtin && !td.nameInterval.isInjected()) {
             return this.di.intervalToLocation(td.nameInterval);
         }
         return null;
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
-        if (vd.type.declaration && !vd.type.declaration.builtin) {
+        if (vd.type.declaration && !vd.type.declaration.builtin && !vd.type.declaration.nameInterval.isInjected()) {
             return this.di.intervalToLocation(vd.type.declaration.nameInterval);
         }
         return null;

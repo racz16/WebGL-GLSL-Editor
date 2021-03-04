@@ -82,15 +82,15 @@ export class TypeUsageProcessor {
 
     private getRealType(index: number, variableArray: ArrayUsage): TypeUsage {
         const name = this.tuc.type().text;
-        const nameInterval = Helper.getIntervalFromParserRule(this.tuc.type());
-        const interval = Helper.getIntervalFromParserRule(this.tuc);
+        const nameInterval = Helper.getIntervalFromParserRule(this.tuc.type(), this.di);
+        const interval = Helper.getIntervalFromParserRule(this.tuc, this.di);
         const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
         const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
         const tu = new TypeUsage(name, interval, nameInterval, this.scope, td, au);
         const token = this.getToken(this.tuc.type());
         if ((!td || (td && !td.builtin)) && token) {
             const st = tu?.name.startsWith('gl_') ? SemanticType.BUILTIN_TYPE : SemanticType.USER_TYPE;
-            this.di.semanticElements.push(new SemanticElement(token, st, this.di));
+            this.di.semanticElements.push(new SemanticElement(token, st));
         }
         this.addQualifiers(tu, this.tuc.qualifier());
         if (index === 0) {
@@ -132,7 +132,7 @@ export class TypeUsageProcessor {
 
     private getQualifierUsage(qc: QualifierContext, scope: Scope): QualifierUsage {
         const name = qc.text;
-        const nameInterval = Helper.getIntervalFromParserRule(qc);
+        const nameInterval = Helper.getIntervalFromParserRule(qc, this.di);
         const q = this.di.builtin.qualifiers.get(name);
         const qu = new QualifierUsage(name, nameInterval, scope, q);
         if (q) {

@@ -105,7 +105,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             }
         }
         if (tu) {
-            const text = this.di.getTextInInterval(new Interval(tu.interval.stopIndex + 1, offset));
+            const text = this.di.getTextInInterval(new Interval(tu.interval.stopIndex + 1, offset, this.di));
             if (this.isIdentifier(text)) {
                 return [tu, text];
             }

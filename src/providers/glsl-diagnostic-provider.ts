@@ -13,22 +13,20 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 
 export class GlslDiagnosticProvider {
 
-    private static newestLintId = 0;
+    private static newestLintIds = new Map<Uri, number>();
 
     private di: DocumentInfo;
     private diagnostics = new Array<Diagnostic>();
     private document: TextDocument;
-    private collection: DiagnosticCollection;
 
-    private initialize(document: TextDocument, collection: DiagnosticCollection): void {
+    private initialize(document: TextDocument): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
-        this.collection = collection;
     }
 
-    public textChanged(document: TextDocument, collection: DiagnosticCollection): void {
-        this.initialize(document, collection);
+    public textChanged(document: TextDocument): void {
+        this.initialize(document);
         this.addHints();
         this.addErrors();
     }
@@ -92,10 +90,12 @@ export class GlslDiagnosticProvider {
     }
 
     private addUnusedHint(element: Element, message: string): void {
-        const range = this.di.intervalToRange(element.nameInterval);
-        const d = new Diagnostic(range, message, DiagnosticSeverity.Hint);
-        d.tags = [DiagnosticTag.Unnecessary];
-        this.diagnostics.push(d);
+        if (element.nameInterval && !element.nameInterval.isInjected()) {
+            const range = this.di.intervalToRange(element.nameInterval);
+            const d = new Diagnostic(range, message, DiagnosticSeverity.Hint);
+            d.tags = [DiagnosticTag.Unnecessary];
+            this.diagnostics.push(d);
+        }
     }
 
     private isTheMainFunction(lf: LogicalFunction): boolean {
@@ -117,17 +117,28 @@ export class GlslDiagnosticProvider {
 
     private executeCommand(validatorPath: string, stageName: string): void {
         const result = exec(`${validatorPath} --stdin -C -S ${stageName}`);
-        const lintId = ++GlslDiagnosticProvider.newestLintId;
+        const lintId = this.increaseLintId();
         result.stdout.on('data', (data: string) => {
             this.handleErrors(data);
         });
         result.stdout.on('close', () => {
-            if (lintId === GlslDiagnosticProvider.newestLintId) {
-                this.collection.set(this.document.uri, this.diagnostics);
+            if (lintId === this.getCurrentLintId()) {
+                GlslEditor.getDiagnosticCollection().set(this.document.uri, this.diagnostics);
             }
         });
 
         this.provideInput(result);
+    }
+
+    private increaseLintId(): number {
+        const currentLintId = this.getCurrentLintId();
+        const newLintId = currentLintId + 1;
+        GlslDiagnosticProvider.newestLintIds.set(this.di.getDocument().uri, newLintId);
+        return newLintId;
+    }
+
+    private getCurrentLintId(): number {
+        return GlslDiagnosticProvider.newestLintIds.get(this.di.getDocument().uri) ?? 0;
     }
 
     private handleErrors(data: string): void {
@@ -142,9 +153,11 @@ export class GlslDiagnosticProvider {
             if (row.includes('ERROR: 0:')) {
                 const t1 = row.substring(9);
                 const i = t1.indexOf(':');
-                const line = +t1.substring(0, i);
-                const error = row.substring(9 + i + 2);
-                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+                const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
+                if (line > 0) {
+                    const error = row.substring(9 + i + 2);
+                    this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+                }
             } else if (row.includes('ERROR: ')) {
                 const error = row.substring(7);
                 this.diagnostics.push(new Diagnostic(this.document.lineAt(0).range, error, DiagnosticSeverity.Error));
@@ -154,7 +167,8 @@ export class GlslDiagnosticProvider {
 
     private provideInput(result: ChildProcess): void {
         const stdinStream = new Stream.Readable();
-        stdinStream.push(this.document.getText());
+        const text = this.di.getText();
+        stdinStream.push(text);
         stdinStream.push(null);
         stdinStream.pipe(result.stdin);
     }

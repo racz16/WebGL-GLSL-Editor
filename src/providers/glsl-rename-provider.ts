@@ -20,8 +20,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     private newName: string;
 
     private initializeRename(document: TextDocument, position: Position, newName: string): void {
-        this.document = document;
-        this.position = position;
+        this.initialize(document, position);
         this.newName = newName;
     }
 
@@ -45,13 +44,13 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         this.validateFunction();
         const we = new WorkspaceEdit();
         for (const fp of this.lf.prototypes) {
-            we.replace(this.document.uri, this.di.intervalToRange(fp.nameInterval), this.newName);
+            this.rename(we, fp.nameInterval);
         }
         for (const fd of this.lf.definitions) {
-            we.replace(this.document.uri, this.di.intervalToRange(fd.nameInterval), this.newName);
+            this.rename(we, fd.nameInterval);
         }
         for (const fc of this.lf.calls) {
-            we.replace(this.document.uri, this.di.intervalToRange(fc.nameInterval), this.newName);
+            this.rename(we, fc.nameInterval);
         }
         return we;
     }
@@ -59,9 +58,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     private renameVariable(): WorkspaceEdit {
         this.validateStructOrVariable();
         const we = new WorkspaceEdit();
-        we.replace(this.document.uri, this.di.intervalToRange(this.vd.nameInterval), this.newName);
+        this.rename(we, this.vd.nameInterval);
         for (const vu of this.vd.usages) {
-            we.replace(this.document.uri, this.di.intervalToRange(vu.nameInterval), this.newName);
+            this.rename(we, vu.nameInterval);
         }
         return we;
     }
@@ -69,14 +68,20 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     private renameType(): WorkspaceEdit {
         this.validateStructOrVariable();
         const we = new WorkspaceEdit();
-        we.replace(this.document.uri, this.di.intervalToRange(this.td.nameInterval), this.newName);
+        this.rename(we, this.td.nameInterval);
         for (const tu of this.td.usages) {
-            we.replace(this.document.uri, this.di.intervalToRange(tu.nameInterval), this.newName);
+            this.rename(we, tu.nameInterval);
         }
         for (const fc of this.td.ctorCalls) {
-            we.replace(this.document.uri, this.di.intervalToRange(fc.nameInterval), this.newName);
+            this.rename(we, fc.nameInterval);
         }
         return we;
+    }
+
+    private rename(we: WorkspaceEdit, interval: Interval): void {
+        if (!interval.isInjected()) {
+            we.replace(this.document.uri, this.di.intervalToRange(interval), this.newName);
+        }
     }
 
     //
@@ -211,13 +216,16 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Range {
-        this.vd = vd;
-        this.scope = vd.scope;
-        return this.di.intervalToRange(vd.nameInterval);
+        if (!vd.declarationInterval.isInjected()) {
+            this.vd = vd;
+            this.scope = vd.scope;
+            return this.di.intervalToRange(vd.nameInterval);
+        }
+        return this.defaultReturn();
     }
 
     protected processVariableUsage(vu: VariableUsage): Range {
-        if (vu.declaration && !vu.declaration.builtin) {
+        if (vu.declaration && !vu.declaration.builtin && !vu.declaration.nameInterval.isInjected()) {
             this.vd = vu.declaration;
             this.scope = vu.scope;
             return this.di.intervalToRange(vu.nameInterval);
@@ -226,13 +234,16 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Range {
-        this.td = td;
-        this.scope = td.scope;
-        return this.di.intervalToRange(td.nameInterval);
+        if (!td.interval.isInjected()) {
+            this.td = td;
+            this.scope = td.scope;
+            return this.di.intervalToRange(td.nameInterval);
+        }
+        return this.defaultReturn();
     }
 
     protected processTypeUsage(tu: TypeUsage): Range {
-        if (tu.declaration && !tu.declaration.builtin) {
+        if (tu.declaration && !tu.declaration.builtin && !tu.declaration.interval.isInjected()) {
             this.td = tu.declaration;
             this.scope = tu.scope;
             return this.di.intervalToRange(tu.nameInterval);
@@ -241,9 +252,12 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
-        this.lf = lf;
-        this.scope = lf.getDeclaration().scope;
-        return this.di.intervalToRange(nameInterval);
+        if (!lf.prototypes.some(fp => fp.interval.isInjected()) && !lf.definitions.some(fd => fd.interval.isInjected())) {
+            this.lf = lf;
+            this.scope = lf.getDeclaration().scope;
+            return this.di.intervalToRange(nameInterval);
+        }
+        return this.defaultReturn();
     }
 
     protected defaultReturn(): Range {

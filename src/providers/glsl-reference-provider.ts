@@ -46,14 +46,14 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
         const ret = new Array<Location>();
         if (!lf.getDeclaration().builtIn && !lf.getDeclaration().ctor) {
             for (const fp of lf.prototypes) {
-                ret.push(this.di.intervalToLocation(fp.nameInterval));
+                this.addLocation(ret, fp.nameInterval);
             }
             for (const fd of lf.definitions) {
-                ret.push(this.di.intervalToLocation(fd.nameInterval));
+                this.addLocation(ret, fd.nameInterval);
             }
         }
         for (const fc of lf.calls) {
-            ret.push(this.di.intervalToLocation(fc.nameInterval));
+            this.addLocation(ret, fc.nameInterval);
         }
         return ret;
     }
@@ -61,29 +61,27 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
     private processDeclaration(element: TypeDeclaration | VariableDeclaration): Array<Location> {
         const ret = new Array<Location>();
         if (!element.builtin) {
-            ret.push(this.di.intervalToLocation(element.nameInterval));
+            this.addLocation(ret, element.nameInterval);
             for (const usage of element.usages) {
-                ret.push(this.di.intervalToLocation(usage.nameInterval));
+                this.addLocation(ret, usage.nameInterval);
             }
         }
         return ret;
     }
 
     private processUsage(element: TypeUsage | VariableUsage): Array<Location> {
-        const ret = new Array<Location>();
         const declaration = element.declaration;
         if (declaration && !declaration.builtin) {
-            ret.push(this.di.intervalToLocation(declaration.nameInterval));
-            for (const usage of declaration.usages) {
-                ret.push(this.di.intervalToLocation(usage.nameInterval));
-            }
+            const ret = this.processDeclaration(declaration);
             if (element instanceof TypeUsage) {
                 for (const ctorCall of element.declaration.ctorCalls) {
-                    ret.push(this.di.intervalToLocation(ctorCall.nameInterval));
+                    this.addLocation(ret, ctorCall.nameInterval);
                 }
             }
+            return ret;
+        } else {
+            return new Array<Location>();
         }
-        return ret;
     }
 
 }

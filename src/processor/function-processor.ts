@@ -61,15 +61,15 @@ export class FunctionProcessor {
     //
     public getFunctionPrototype(fpc: Function_prototypeContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
         this.initialize(fpc.function_header(), scope, di);
-        const interval = Helper.getIntervalFromParserRule(fpc);
-        const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
+        const interval = Helper.getIntervalFromParserRule(fpc, this.di);
+        const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER(), this.di);
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd, true);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
-        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
+        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION));
         return fd;
     }
 
@@ -78,15 +78,15 @@ export class FunctionProcessor {
     //
     public getFunctionDefinition(fdc: Function_definitionContext, scope: Scope, di: DocumentInfo): FunctionDeclaration {
         this.initialize(fdc.function_header(), scope, di);
-        const interval = Helper.getIntervalFromParserRule(fdc);
-        const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER());
+        const interval = Helper.getIntervalFromParserRule(fdc, this.di);
+        const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER(), this.di);
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
         const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
         this.addParameters(fd, false);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
-        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, this.di));
+        this.di.semanticElements.push(new SemanticElement(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION));
         return fd;
     }
 

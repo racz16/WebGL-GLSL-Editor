@@ -29,7 +29,7 @@ export class Helper {
         const tn = ascs[0].LSB();
         const tn2 = ascs[ascs.length - 1].RSB();
         const arraySize = exp && exp instanceof ExpressionResult && exp.value ? exp.value : 0;
-        return new ArrayUsage(arraySize, this.getIntervalFromTerminalNodes(tn, tn2), ascs.length > 1);
+        return new ArrayUsage(arraySize, this.getIntervalFromTerminalNodes(tn, tn2, di), ascs.length > 1);
     }
 
     public static getArraySizeFromIdentifierOptarray(ioc: Identifier_optarrayContext, scope: Scope, di: DocumentInfo): ArrayUsage {
@@ -62,20 +62,20 @@ export class Helper {
         return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage);
     }
 
-    public static getIntervalFromParserRule(ctx: ParserRuleContext): Interval {
-        return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1) : null;
+    public static getIntervalFromParserRule(ctx: ParserRuleContext, di: DocumentInfo): Interval {
+        return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1, di) : null;
     }
 
-    public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext): Interval {
-        return new Interval(startRule.start.startIndex, endRule.stop.stopIndex + 1);
+    public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext, di: DocumentInfo): Interval {
+        return new Interval(startRule.start.startIndex, endRule.stop.stopIndex + 1, di);
     }
 
-    public static getIntervalFromTerminalNode(tn: TerminalNode): Interval {
-        return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1) : null;
+    public static getIntervalFromTerminalNode(tn: TerminalNode, di: DocumentInfo): Interval {
+        return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1, di) : null;
     }
 
-    public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode): Interval {
-        return new Interval(tn.symbol.startIndex, tn2.symbol.stopIndex + 1);
+    public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode, di: DocumentInfo): Interval {
+        return new Interval(tn.symbol.startIndex, tn2.symbol.stopIndex + 1, di);
     }
 
     public static isALowerThanB(a: Interval, b: Interval): boolean {

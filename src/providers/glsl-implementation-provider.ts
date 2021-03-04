@@ -26,7 +26,7 @@ export class GlslImplementationProvider extends PositionalProviderBase<Array<Loc
         const ret = new Array<Location>();
         if (!lf.getDeclaration().builtIn) {
             for (const fd of lf.definitions) {
-                ret.push(this.di.intervalToLocation(fd.nameInterval));
+                this.addLocation(ret, fd.nameInterval);
             }
         }
         return ret;

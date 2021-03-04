@@ -21,13 +21,19 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     public provideDocumentSymbols(document: TextDocument, token: CancellationToken): ProviderResult<SymbolInformation[] | DocumentSymbol[]> {
         this.initialize(document);
         for (const td of this.di.getRootScope().typeDeclarations) {
-            this.addStruct(td, null);
+            if (!td.interval.isInjected()) {
+                this.addStruct(td, null);
+            }
         }
         for (const vd of this.di.getRootScope().variableDeclarations) {
-            this.addVariable(vd, null, false);
+            if (!vd.declarationInterval.isInjected()) {
+                this.addVariable(vd, null, false);
+            }
         }
         for (const fd of this.di.getRootScope().functionDefinitions) {
-            this.addFunction(fd);
+            if (!fd.interval.isInjected()) {
+                this.addFunction(fd);
+            }
         }
         return this.result;
     }

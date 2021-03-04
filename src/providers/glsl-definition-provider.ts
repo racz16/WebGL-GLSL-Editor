@@ -27,7 +27,10 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
-        return this.di.intervalToLocation(vd.nameInterval);
+        if (!vd.nameInterval.isInjected()) {
+            return this.di.intervalToLocation(vd.nameInterval);
+        }
+        return null;
     }
 
     protected processVariableUsage(vu: VariableUsage): Location {
@@ -35,7 +38,10 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Location {
-        return this.di.intervalToLocation(td.nameInterval);
+        if (!td.nameInterval.isInjected()) {
+            return this.di.intervalToLocation(td.nameInterval);
+        }
+        return null;
     }
 
     protected processTypeUsage(tu: TypeUsage): Location {
@@ -49,7 +55,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
                 return this.processTypeDeclaration(lf.getDeclaration().returnType.declaration);
             } else {
                 for (const fd of lf.definitions) {
-                    ret.push(this.di.intervalToLocation(fd.nameInterval));
+                    this.addLocation(ret, fd.nameInterval);
                 }
             }
         }
@@ -58,7 +64,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
 
     private processUsage(element: TypeUsage | VariableUsage): Location {
         const declaration = element.declaration;
-        if (declaration && !declaration.builtin) {
+        if (declaration && !declaration.builtin && !declaration.nameInterval.isInjected()) {
             return this.di.intervalToLocation(declaration.nameInterval);
         }
         return null;

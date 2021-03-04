@@ -50,14 +50,14 @@ export class TypeDeclarationProcessor {
     public getInterfaceBlockDeclaration(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): TypeDeclaration {
         this.initialize(scope, di);
         const name = ibdc.IDENTIFIER() ? ibdc.IDENTIFIER().text : null;
-        const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.IDENTIFIER());
-        const interval = new Interval(ibdc.start.startIndex, ibdc.RCB().symbol.stopIndex + 1);
+        const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.IDENTIFIER(), this.di);
+        const interval = new Interval(ibdc.start.startIndex, ibdc.RCB().symbol.stopIndex + 1, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, true);
         scope.typeDeclarations.push(td);
         if (name) {
-            this.di.semanticElements.push(new SemanticElement(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE, this.di));
+            this.di.semanticElements.push(new SemanticElement(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (ibdc.identifier_optarray()) {
             this.createInnerScope(interval);
@@ -81,8 +81,8 @@ export class TypeDeclarationProcessor {
             return this.td;
         }
         const name = tdc.IDENTIFIER() ? tdc.IDENTIFIER().text : null;
-        const nameInterval = Helper.getIntervalFromTerminalNode(tdc.IDENTIFIER());
-        const interval = Helper.getIntervalFromParserRule(tdc);
+        const nameInterval = Helper.getIntervalFromTerminalNode(tdc.IDENTIFIER(), this.di);
+        const interval = Helper.getIntervalFromParserRule(tdc, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory);
@@ -92,7 +92,7 @@ export class TypeDeclarationProcessor {
         this.scope = this.scope.parent;
         if (name) {
             this.createConstructor(td);
-            this.di.semanticElements.push(new SemanticElement(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE, this.di));
+            this.di.semanticElements.push(new SemanticElement(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (index === 0) {
             this.td = td;

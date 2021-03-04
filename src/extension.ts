@@ -15,7 +15,6 @@ import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { GlslDocumentSemanticTokensProvider, GlslSemanticTokensLegend } from './providers/glsl-document-semantic-token-provider';
 import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 import { Constants } from './core/constants';
-import { GlslShadertoyActionProvider } from './providers/glsl-shadertoy-action-provider';
 import { GlslDocumentColorProvider } from './providers/glsl-document-color-provider';
 import { GlslSignatureHelpProvider } from './providers/glsl-signature-help-provider';
 import { GlslFoldingProvider } from './providers/glsl-folding-provider';
@@ -26,38 +25,42 @@ export function activate(context: ExtensionContext): void {
 	GlslEditor.initialize(context);
 
 	const selector = [
-		{ language: 'glsl', scheme: 'file' },
-		{ language: 'glsl', scheme: 'untitled' },
-		{ language: 'vert', scheme: 'file' },
-		{ language: 'vert', scheme: 'untitled' },
-		{ language: 'vs', scheme: 'file' },
-		{ language: 'vs', scheme: 'untitled' },
-		{ language: 'frag', scheme: 'file' },
-		{ language: 'frag', scheme: 'untitled' },
-		{ language: 'fs', scheme: 'file' },
-		{ language: 'fs', scheme: 'untitled' }
+		{ language: Constants.GLSL, scheme: Constants.FILE },
+		{ language: Constants.GLSL, scheme: Constants.UNTITLED },
+		{ language: Constants.VERT, scheme: Constants.FILE },
+		{ language: Constants.VERT, scheme: Constants.UNTITLED },
+		{ language: Constants.VS, scheme: Constants.FILE },
+		{ language: Constants.VS, scheme: Constants.UNTITLED },
+		{ language: Constants.FRAG, scheme: Constants.FILE },
+		{ language: Constants.FRAG, scheme: Constants.UNTITLED },
+		{ language: Constants.FS, scheme: Constants.FILE },
+		{ language: Constants.FS, scheme: Constants.UNTITLED }
 	];
 
+
 	//diagnostic
-	const collection = languages.createDiagnosticCollection('glsl');
 	for (const editor of window.visibleTextEditors) {
-		if (editor.document.languageId === 'glsl') {
-			new GlslDiagnosticProvider().textChanged(editor.document, collection);
+		if (editor.document.languageId === Constants.GLSL) {
+			try {
+				new GlslDiagnosticProvider().textChanged(editor.document);
+			} catch (error) {
+				//if i catch the error here, it can't break the activation
+			}
 		}
 	}
 	context.subscriptions.push(workspace.onDidOpenTextDocument(event => {
-		if (event.languageId === 'glsl') {
-			new GlslDiagnosticProvider().textChanged(event, collection);
+		if (event.languageId === Constants.GLSL) {
+			new GlslDiagnosticProvider().textChanged(event);
 		}
 	}));
 	context.subscriptions.push(workspace.onDidCloseTextDocument(event => {
-		if (event.languageId === 'glsl') {
-			collection.delete(event.uri);
+		if (event.languageId === Constants.GLSL) {
+			GlslEditor.getDiagnosticCollection().delete(event.uri);
 		}
 	}));
 	context.subscriptions.push(workspace.onDidChangeTextDocument(event => {
-		if (event.document.languageId === 'glsl') {
-			new GlslDiagnosticProvider().textChanged(event.document, collection);
+		if (event.document.languageId === Constants.GLSL) {
+			new GlslDiagnosticProvider().textChanged(event.document);
 		}
 	}));
 
@@ -101,8 +104,6 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
 	//call hierarchy
 	context.subscriptions.push(languages.registerCallHierarchyProvider(selector, new GlslCallHierarchyProvider()));
-	//shadertoy
-	context.subscriptions.push(languages.registerCodeActionsProvider(selector, new GlslShadertoyActionProvider()));
 	//color
 	context.subscriptions.push(languages.registerColorProvider(selector, new GlslDocumentColorProvider()));
 	//function signature help

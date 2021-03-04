@@ -1,7 +1,9 @@
 import * as fs from 'fs';
-import { Uri, TextDocument, ExtensionContext } from 'vscode';
+import { Uri, TextDocument, ExtensionContext, DiagnosticCollection, languages } from 'vscode';
 import { DocumentInfo } from './document-info';
 import { Configurations } from './configurations';
+import { GlslDiagnosticProvider } from '../providers/glsl-diagnostic-provider';
+import { Constants } from './constants';
 
 export class GlslEditor {
 
@@ -9,6 +11,7 @@ export class GlslEditor {
 
     private static readonly documentInfos = new Map<Uri, DocumentInfo>();
     private static context: ExtensionContext;
+    private static readonly collection = languages.createDiagnosticCollection(Constants.GLSL);
 
     public static initialize(context: ExtensionContext): void {
         this.context = context;
@@ -34,6 +37,17 @@ export class GlslEditor {
             this.documentInfos.set(uri, di);
         }
         return di;
+    }
+
+    public static invalidateDocuments(): void {
+        for (const di of this.documentInfos.values()) {
+            di.invalidate();
+            new GlslDiagnosticProvider().textChanged(di.getDocument());
+        }
+    }
+
+    public static getDiagnosticCollection(): DiagnosticCollection {
+        return this.collection;
     }
 
 }

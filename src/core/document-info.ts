@@ -17,6 +17,8 @@ import { FoldingRegion } from '../scope/folding-region';
 import { SemanticElement } from '../scope/semantic-element';
 import { ColorRegion } from '../scope/color-region';
 import { SignatureRegion } from '../scope/signature-region';
+import { Constants } from './constants';
+import { GlslEditor } from './glsl-editor';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -26,8 +28,11 @@ export class DocumentInfo {
     private tokens: Array<Token>;
     private lastProcessedVersion = -1;
 
+    private injectionOffset = 0;
+    private injectionLineCount = 0;
+    private invalid = false;
+
     private visitor: GlslVisitor;
-    private lastGlslVisitorVersion = -1;
 
     private version = 100;
     private stage: ShaderStage;
@@ -35,7 +40,6 @@ export class DocumentInfo {
     public readonly completionRegions = new Array<TypeUsage>();
     public readonly foldingRegions = new Array<FoldingRegion>();
     public readonly semanticElements = new Array<SemanticElement>();
-    public readonly shadertoyVariables = new Array<VariableUsage>();
     public readonly colorRegions = new Array<ColorRegion>();
     public readonly signatureRegions = new Array<SignatureRegion>();
 
@@ -56,7 +60,6 @@ export class DocumentInfo {
         this.completionRegions.length = 0;
         this.foldingRegions.length = 0;
         this.semanticElements.length = 0;
-        this.shadertoyVariables.length = 0;
         this.colorRegions.length = 0;
         this.signatureRegions.length = 0;
         this.rootScope = new Scope(null, null);
@@ -113,7 +116,7 @@ export class DocumentInfo {
 
     public getTokenAt(position: Position): Token {
         for (const token of this.getTokens()) {
-            const range = this.intervalToRange(new Interval(token.startIndex, token.stopIndex + 1));
+            const range = this.intervalToRange(new Interval(token.startIndex, token.stopIndex + 1, this));
             if (range.contains(position)) {
                 return token;
             }
@@ -125,28 +128,42 @@ export class DocumentInfo {
     //process
     //
     public processElements(document: TextDocument): void {
-        this.processDocument(document);
-        if (document.version > this.lastGlslVisitorVersion) {
+        if (document.version > this.lastProcessedVersion || this.invalid) {
+            this.processDocument(document);
             this.processVisitor();
-            this.lastGlslVisitorVersion = document.version;
+            this.lastProcessedVersion = document.version;
+            this.invalid = false;
         }
     }
 
     private processDocument(document: TextDocument): void {
         this.document = document;
-        if (document.version > this.lastProcessedVersion) {
-            this.lexer = this.createLexer();
-            this.parser = this.createParser();
-            this.lastProcessedVersion = document.version;
-        }
+        this.lexer = this.createLexer();
+        this.parser = this.createParser();
     }
 
     private createLexer(): AntlrGlslLexer {
-        const charStream = CharStreams.fromString(this.document.getText());
+        const charStream = CharStreams.fromString(this.getText());
         const lexer = new AntlrGlslLexer(charStream);
         this.tokens = lexer.getAllTokens();
         lexer.reset();
         return lexer;
+    }
+
+    public getText(): string {
+        const originalText = this.document.getText();
+        if (GlslEditor.CONFIGURATIONS.getCodeInjection()) {
+            const injectionSource = GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
+            let text = injectionSource.join(Constants.CRLF) + Constants.CRLF;
+            this.injectionLineCount = injectionSource.length;
+            this.injectionOffset = text.length;
+            text += originalText;
+            return text;
+        } else {
+            this.injectionLineCount = 0;
+            this.injectionOffset = 0;
+            return originalText;
+        }
     }
 
     private createParser(): AntlrGlslParser {
@@ -258,7 +275,7 @@ export class DocumentInfo {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (this.intervalToRange(element.nameInterval)?.contains(position)) {
+                if (!element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
                     return element;
                 }
             }
@@ -283,6 +300,22 @@ export class DocumentInfo {
         } else {
             return this.getScopeAt(position, newScope);
         }
+    }
+
+    public getInjectionLineCount(): number {
+        return this.injectionLineCount;
+    }
+
+    public getInjectionOffset(): number {
+        return this.injectionOffset;
+    }
+
+    public invalidate(): void {
+        this.invalid = true;
+    }
+
+    public getDocument(): TextDocument {
+        return this.document;
     }
 
 }
