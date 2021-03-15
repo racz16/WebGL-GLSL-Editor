@@ -7,6 +7,7 @@ import { DocumentInfo } from '../../core/document-info';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
 import { FunctionCall } from './function-call';
+import { Constants } from '../../core/constants';
 
 export class FunctionDeclaration extends Element {
 
@@ -67,16 +68,16 @@ export class FunctionDeclaration extends Element {
     //
     public toStringSignature(showParameters: boolean): string {
         const arrayCtor = this.returnType.array.isArray && this.ctor ? this.returnType.array.toString() : '';
-        let ret = this.name + arrayCtor + '(';
+        let ret = this.name + arrayCtor + Constants.LRB;
         if (showParameters) {
             ret += this.toStringParameters();
         }
-        ret += ')';
+        ret += Constants.RRB;
         return ret;
     }
 
     public toStringParameters(): string {
-        let ret = '';
+        let ret = Constants.EMPTY;
         for (let i = 0; i < this.parameters.length; i++) {
             ret += this.toStringParameter(i);
         }

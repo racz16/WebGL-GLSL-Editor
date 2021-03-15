@@ -99,7 +99,7 @@ export class PositionalProviderBase<T> {
     }
 
     protected addLocation(list: Array<Location>, interval: Interval): void {
-        if (!interval.isInjected()) {
+        if (interval && !interval.isInjected()) {
             list.push(this.di.intervalToLocation(interval));
         }
     }

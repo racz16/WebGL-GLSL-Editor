@@ -21,8 +21,9 @@ export class TypeDeclaration extends Element {
     public readonly interfaceMembers = new Array<VariableDeclaration>();
     public readonly usages = new Array<TypeUsage>();
     public readonly ctorCalls = new Array<FunctionCall>();
+    public readonly inline: boolean;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false, inline = false) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.interval = interval;
@@ -31,6 +32,7 @@ export class TypeDeclaration extends Element {
         this.typeBase = typeBase;
         this.typeCategory = typeCategory;
         this.interfaceBlock = interfaceBlock;
+        this.inline = inline;
     }
 
     public isScalar(): boolean {

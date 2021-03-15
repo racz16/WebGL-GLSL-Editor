@@ -30,12 +30,12 @@
 				{
 					"comment": "FLOATING POINT NUMBER",
 					"name": "constant.numeric.glsl",
-					"match": "\\b(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?\\b"
+					"match": "(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?"
 				},
 				{
 					"comment": "FIXED POINT NUMBER",
 					"name": "constant.numeric.glsl",
-					"match": "\\b([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?\\b"
+					"match": "([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?"
 				}
 			]
 		},
@@ -94,12 +94,15 @@
 		},
 		{
 			"comment": "STRUCT",
-			"match": "(struct)(\\s+)([_a-zA-Z][_a-zA-Z0-9]*)",
+			"match": "(struct)(\\s|(\/\\*.*?\\*\/))*([_a-zA-Z][_a-zA-Z0-9]*)?",
 			"captures": {
 				"1": {
 					"name": "storage.type.glsl"
 				},
 				"3": {
+					"name": "comment.block.glsl"
+				},
+				"4": {
 					"patterns": [
 						{
 							"comment": "BUILTIN STRUCT TYPE",

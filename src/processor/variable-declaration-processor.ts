@@ -51,6 +51,9 @@ export class VariableDeclarationProcessor {
         const arraySize = Helper.getArraySizeFromIdentifierOptarray(ioc, this.scope, this.di);
         const tu = new TypeUsageProcessor().getParameterType(svdc.type_usage(), arraySize, scope, di);
         const vd = new VariableDeclaration(name, nameInterval, scope, false, declarationInterval, tu, prototype, !prototype);
+        if (svdc.type_usage().type_declaration()) {
+            tu.declaration.usages.push(tu);
+        }
         scope.variableDeclarations.push(vd);
         return vd;
     }
@@ -85,14 +88,14 @@ export class VariableDeclarationProcessor {
             for (let i = 0; i < ioocs.length; i++) {
                 const iooc = ioocs[i];
                 const array = Helper.getArraySizeFromIdentifierOptarrayOptassignment(iooc, this.scope, this.di);
-                const right = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
                 const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), array, this.scope, this.di, i);
                 const name = iooc.identifier_optarray().IDENTIFIER().text;
                 const nameInterval = Helper.getIntervalFromTerminalNode(iooc.identifier_optarray().IDENTIFIER(), this.di);
                 const declarationInterval = Helper.getIntervalFromParserRules(vdc, iooc, this.di);
                 const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
-                this.handleColorRegion(vd, right);
+                const right = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
                 this.scope.variableDeclarations.push(vd);
+                this.handleColorRegion(vd, right);
                 vds.push(vd);
             }
             if (vdc.type_usage().type_declaration()) {

@@ -50,7 +50,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         const label = this.computeColorLabel(color, cr);
         const cps = this.computeColorPresentationString(color, cr);
         const cp = new ColorPresentation(label);
-        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + 1, cr.constructorCall.interval.stopIndex - 1, this.di));
+        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + this.di.getInjectionOffset() + 1, cr.constructorCall.interval.stopIndex + this.di.getInjectionOffset() - 1, this.di));
         const te = new TextEdit(range, cps);
         cp.textEdit = te;
         return [cp];
@@ -72,7 +72,6 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         if (cr.constructorCall.name === Constants.VEC3) {
             return `${red}, ${green}, ${blue}`;
         } else {
-
             const alpha = color.alpha.toFixed(2);
             return `${red}, ${green}, ${blue}, ${alpha}`;
         }

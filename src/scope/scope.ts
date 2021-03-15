@@ -24,9 +24,12 @@ export class Scope {
     public readonly typeDeclarations = new Array<TypeDeclaration>();
     public readonly typeUsages = new Array<TypeUsage>();
 
-    public constructor(interval: Interval, parent: Scope) {
+    public readonly elseIfScope: boolean
+
+    public constructor(interval: Interval, parent: Scope, elseIfScope = false) {
         this.interval = interval;
         this.parent = parent;
+        this.elseIfScope = elseIfScope;
     }
 
     public isGlobal(): boolean {

@@ -21,8 +21,13 @@ export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location>
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
-        if (vd.type.declaration && !vd.type.declaration.builtin && !vd.type.declaration.nameInterval.isInjected()) {
-            return this.di.intervalToLocation(vd.type.declaration.nameInterval);
+        const td = vd.type.declaration;
+        if (td && !td.builtin) {
+            if (td.nameInterval && !td.nameInterval.isInjected()) {
+                return this.di.intervalToLocation(td.nameInterval);
+            } else {
+                return this.di.intervalToLocation(td.interval);
+            }
         }
         return null;
     }

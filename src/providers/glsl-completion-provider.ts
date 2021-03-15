@@ -257,7 +257,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some(ci => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
                 ci.documentation = new MarkdownString(vd.toStringDocumentation());
-                ci.detail = vd.type?.name;
+                ci.detail = vd.type?.toStringWithoutQualifiers();
                 localItems.push(ci);
             }
         }

@@ -55,15 +55,17 @@ export class TypeDeclarationProcessor {
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, true);
+        di.typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
         scope.typeDeclarations.push(td);
         if (name) {
             this.di.semanticElements.push(new SemanticElement(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (ibdc.identifier_optarray()) {
-            this.createInnerScope(interval);
+            this.createInnerScope(ibdc);
             this.addMembers(td, ibdc.variable_declaration());
             this.scope = this.scope.parent;
         } else {
+            this.di.scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
             for (const vdc of ibdc.variable_declaration()) {
                 const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
                 vds.forEach(vd => td.interfaceMembers.push(vd));
@@ -75,8 +77,9 @@ export class TypeDeclarationProcessor {
     //
     //type declaration
     //
-    public getTypeDeclaration(tdc: Type_declarationContext, scope: Scope, documentInfo: DocumentInfo, index: number): TypeDeclaration {
+    public getTypeDeclaration(tdc: Type_declarationContext, scope: Scope, documentInfo: DocumentInfo, index: number, parameter: boolean, returnType: boolean): TypeDeclaration {
         this.initialize(scope, documentInfo);
+        Helper.addFoldingRegionFromTokens(this.di, tdc.KW_STRUCT().symbol, tdc.RCB().symbol);
         if (index !== 0) {
             return this.td;
         }
@@ -85,9 +88,14 @@ export class TypeDeclarationProcessor {
         const interval = Helper.getIntervalFromParserRule(tdc, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
-        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory);
-        scope.typeDeclarations.push(td);
-        this.createInnerScope(interval);
+        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, false, returnType || parameter);
+        this.di.typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
+        if (parameter) {
+            this.di.getRootScope().typeDeclarations.push(td);
+        } else {
+            scope.typeDeclarations.push(td);
+        }
+        this.createInnerScope(tdc);
         this.addMembers(td, tdc.variable_declaration());
         this.scope = this.scope.parent;
         if (name) {
@@ -113,7 +121,8 @@ export class TypeDeclarationProcessor {
         this.scope.functionPrototypes.push(ctor);
     }
 
-    private createInnerScope(interval: Interval): void {
+    private createInnerScope(ctx: Type_declarationContext | Interface_block_declarationContext): void {
+        const interval = new Interval(ctx.LCB().symbol.stopIndex, ctx.RCB().symbol.startIndex, this.di);
         const innerScope = new Scope(interval, this.scope);
         this.scope.children.push(innerScope);
         this.scope = innerScope;

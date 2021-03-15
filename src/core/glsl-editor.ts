@@ -42,7 +42,9 @@ export class GlslEditor {
     public static invalidateDocuments(): void {
         for (const di of this.documentInfos.values()) {
             di.invalidate();
-            new GlslDiagnosticProvider().textChanged(di.getDocument());
+            if (!di.getDocument().isClosed) {
+                new GlslDiagnosticProvider().textChanged(di.getDocument());
+            }
         }
     }
 

@@ -203,10 +203,11 @@ export class ExpressionProcessor {
     }
 
     private isArithmeticUnaryExpression(): boolean {
-        return this.ctx.expression().length === 1 && (!!this.ctx.OP_INC() || !!this.ctx.OP_DEC() || !!this.ctx.OP_SUB());
+        return this.ctx.expression().length === 1 && (!!this.ctx.OP_INC() || !!this.ctx.OP_DEC() || !!this.ctx.OP_SUB() || !!this.ctx.OP_ADD());
     }
 
     private processArithmeticUnaryExpression(): ExpressionResult {
+        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && !exp.array.isArray() && exp.type &&
             (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT || exp.type.typeBase === TypeBase.FLOAT)) {
@@ -434,6 +435,7 @@ export class ExpressionProcessor {
     }
 
     private processComplementExpression(): ExpressionResult {
+        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && exp.type &&
             (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT)) {
@@ -489,6 +491,7 @@ export class ExpressionProcessor {
     }
 
     private processLogicalUnaryExpression(): ExpressionResult {
+        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && exp.type && exp.type.name === 'bool' && !exp.array.isArray()) {
             return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), exp.constant);

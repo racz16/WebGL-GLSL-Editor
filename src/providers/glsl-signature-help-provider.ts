@@ -6,6 +6,7 @@ import { FunctionDeclaration } from "../scope/function/function-declaration";
 import { SignatureParameterRegion } from "../scope/signature-parameter-region";
 import { TypeUsage } from "../scope/type/type-usage";
 import { LogicalFunction } from "../scope/function/logical-function";
+import { Scope } from "../scope/scope";
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
@@ -29,7 +30,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         const sh = new SignatureHelp();
         sh.signatures = [];
         this.addSignatures(this.di.builtin.functions, sh, sr);
-        this.addSignatures(this.di.getRootScope().functions, sh, sr);
+        this.addUserSignatures(this.di.getScopeAt(position), sh, sr);
         sh.activeSignature = this.computeActiveSignature(sr);
         sh.activeParameter = this.computeActiveParameter(sr);
         return sh;
@@ -56,6 +57,13 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
             }
             sh.signatures.push(si);
             this.functions.push(fp);
+        }
+    }
+
+    private addUserSignatures(scope: Scope, sh: SignatureHelp, sr: SignatureRegion): void {
+        this.addSignatures(scope.functions, sh, sr);
+        if (scope.parent) {
+            this.addUserSignatures(scope.parent, sh, sr);
         }
     }
 

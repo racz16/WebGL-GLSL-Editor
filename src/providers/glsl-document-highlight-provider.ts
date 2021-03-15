@@ -78,7 +78,7 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private addHighlight(ret: Array<DocumentHighlight>, elements: Array<Element>, dhk: DocumentHighlightKind): void {
         for (const element of elements) {
-            if (!element.nameInterval.isInjected()) {
+            if (element.nameInterval && !element.nameInterval.isInjected()) {
                 const range = this.di.intervalToRange(element.nameInterval);
                 ret.push(new DocumentHighlight(range, dhk));
             }

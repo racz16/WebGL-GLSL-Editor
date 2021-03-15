@@ -1,6 +1,6 @@
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
-import { Array_subscriptContext, Identifier_optarrayContext, Identifier_optarray_optassignmentContext } from '../_generated/AntlrGlslParser';
-import { ParserRuleContext } from 'antlr4ts';
+import { Array_subscriptContext, Compound_statementContext, Identifier_optarrayContext, Identifier_optarray_optassignmentContext, StatementContext } from '../_generated/AntlrGlslParser';
+import { ParserRuleContext, Token } from 'antlr4ts';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
 import { ArrayUsage } from '../scope/array-usage';
@@ -10,11 +10,12 @@ import { TypeBase } from '../scope/type/type-base';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
-import { MarkdownString, Position } from 'vscode';
+import { FoldingRangeKind, MarkdownString, Position } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { ExpressionResult } from './expression-result';
+import { FoldingRegion } from '../scope/folding-region';
 
 export class Helper {
 
@@ -62,6 +63,18 @@ export class Helper {
         return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage);
     }
 
+    public static getIntervalFromStatement(ctx: StatementContext, di: DocumentInfo): Interval {
+        if (ctx?.compound_statement()) {
+            return this.getIntervalFromCompoundStatement(ctx.compound_statement(), di);
+        } else {
+            return this.getIntervalFromParserRule(ctx, di);
+        }
+    }
+
+    public static getIntervalFromCompoundStatement(ctx: Compound_statementContext, di: DocumentInfo): Interval {
+        return ctx ? new Interval(ctx.start.stopIndex + 1, ctx.stop.startIndex, di) : null;
+    }
+
     public static getIntervalFromParserRule(ctx: ParserRuleContext, di: DocumentInfo): Interval {
         return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1, di) : null;
     }
@@ -76,6 +89,26 @@ export class Helper {
 
     public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode, di: DocumentInfo): Interval {
         return new Interval(tn.symbol.startIndex, tn2.symbol.stopIndex + 1, di);
+    }
+
+    public static addFoldingRegionFromTokens(di: DocumentInfo, t: Token, t2: Token, endOffset = -2): void {
+        this.addFoldingRegion(di, t.line - 1, t2.line + endOffset);
+    }
+
+    public static addFoldingRegionFromComment(di: DocumentInfo, t: Token, t2: Token): void {
+        if (t === t2) {
+            this.addFoldingRegion(di, t.line - 1, di.getLineCount() - 1, FoldingRangeKind.Comment);
+        } else {
+            this.addFoldingRegion(di, t.line - 1, t2.line - 1, FoldingRangeKind.Comment);
+        }
+    }
+
+    private static addFoldingRegion(di: DocumentInfo, startLine: number, stopLine: number, kind?: FoldingRangeKind): void {
+        const realStartLine = startLine - di.getInjectionLineCount();
+        const realStopLine = stopLine - di.getInjectionLineCount();
+        if (realStartLine >= 0) {
+            di.foldingRegions.push(new FoldingRegion(realStartLine, realStopLine, kind));
+        }
     }
 
     public static isALowerThanB(a: Interval, b: Interval): boolean {

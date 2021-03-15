@@ -42,6 +42,12 @@ export class DocumentInfo {
     public readonly semanticElements = new Array<SemanticElement>();
     public readonly colorRegions = new Array<ColorRegion>();
     public readonly signatureRegions = new Array<SignatureRegion>();
+    public readonly forHeaderRegions = new Array<Interval>();
+    public readonly typeDeclarationRegions = new Array<Interval>()
+    public readonly unaryExpressionRegions = new Array<Interval>();
+    public readonly caseHeaderRegions = new Array<Interval>();
+    public readonly caseStatementsRegions = new Array<Interval>();
+    public readonly scopelessInterfaceBlockRegions = new Array<Interval>();
 
     public builtin: Builtin;
 
@@ -62,6 +68,12 @@ export class DocumentInfo {
         this.semanticElements.length = 0;
         this.colorRegions.length = 0;
         this.signatureRegions.length = 0;
+        this.forHeaderRegions.length = 0;
+        this.typeDeclarationRegions.length = 0;
+        this.unaryExpressionRegions.length = 0;
+        this.caseHeaderRegions.length = 0;
+        this.caseStatementsRegions.length = 0;
+        this.scopelessInterfaceBlockRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
@@ -300,6 +312,32 @@ export class DocumentInfo {
         } else {
             return this.getScopeAt(position, newScope);
         }
+    }
+
+    public getDepthAt(position: Position): number {
+        const scopeDepth = this.getScopeDepthAt(position, this.rootScope, 0);
+        const caseDepth = this.getCaseDepthAt(position);
+        return scopeDepth + caseDepth;
+    }
+
+    private getScopeDepthAt(position: Position, scope: Scope, depth: number): number {
+        const newScope = this.getChildScope(scope, position);
+        if (!newScope) {
+            return depth;
+        } else {
+            const increment = newScope.elseIfScope ? 0 : 1;
+            return this.getScopeDepthAt(position, newScope, depth + increment);
+        }
+    }
+
+    private getCaseDepthAt(position: Position): number {
+        let depth = 0;
+        for (const cr of this.caseStatementsRegions) {
+            if (this.intervalToRange(cr)?.contains(position)) {
+                depth++;
+            }
+        }
+        return depth;
     }
 
     public getInjectionLineCount(): number {

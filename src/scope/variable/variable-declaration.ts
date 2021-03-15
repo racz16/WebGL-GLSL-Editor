@@ -35,7 +35,8 @@ export class VariableDeclaration extends Element {
     }
 
     public toString(): string {
-        return this.type.toString() + ' ' + this.name;
+        const name = this.name ? Constants.SPACE + this.name : Constants.EMPTY;
+        return this.type.toString() + name;
     }
 
     public toStringDocumentation(): string {

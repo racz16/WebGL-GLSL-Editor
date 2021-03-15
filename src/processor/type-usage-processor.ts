@@ -27,7 +27,7 @@ export class TypeUsageProcessor {
     //
     public getReturnType(tuc: Type_usageContext, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di, tuc);
-        const tu = this.getType(0, new ArrayUsage());
+        const tu = this.getType(0, new ArrayUsage(), false, true);
         return tu;
     }
 
@@ -36,7 +36,7 @@ export class TypeUsageProcessor {
     //
     public getParameterType(tuc: Type_usageContext, variableArray: ArrayUsage, scope: Scope, di: DocumentInfo): TypeUsage {
         this.initialize(scope, di, tuc);
-        const tu = this.getType(0, variableArray);
+        const tu = this.getType(0, variableArray, true);
         this.addImplicitParameterQualifiers(tu);
         return tu;
     }
@@ -72,11 +72,11 @@ export class TypeUsageProcessor {
     //
     //general
     //
-    private getType(index: number, variableArray: ArrayUsage): TypeUsage {
+    private getType(index: number, variableArray: ArrayUsage, parameter = false, returnType = false): TypeUsage {
         if (this.tuc.type()) {
             return this.getRealType(index, variableArray);
         } else {
-            return this.getStructType(index, variableArray);
+            return this.getStructType(index, variableArray, parameter, returnType);
         }
     }
 
@@ -112,10 +112,10 @@ export class TypeUsageProcessor {
         }
     }
 
-    private getStructType(index: number, variableArray: ArrayUsage): TypeUsage {
+    private getStructType(index: number, variableArray: ArrayUsage, parameter: boolean, returnType: boolean): TypeUsage {
         const tdc = this.tuc.type_declaration();
         const au = Helper.getArraySizeFromArraySubscript(this.tuc.array_subscript(), this.scope, this.di).mergeArrays(variableArray);
-        const td = new TypeDeclarationProcessor().getTypeDeclaration(tdc, this.scope, this.di, index);
+        const td = new TypeDeclarationProcessor().getTypeDeclaration(tdc, this.scope, this.di, index, parameter, returnType);
         const tu = new TypeUsage(td.name, td.interval, null, this.scope, td, au, true);
         this.addQualifiers(tu, this.tuc.qualifier());
         return tu;
@@ -131,7 +131,7 @@ export class TypeUsageProcessor {
     }
 
     private getQualifierUsage(qc: QualifierContext, scope: Scope): QualifierUsage {
-        const name = qc.text;
+        const name = qc.text.replace(new RegExp(',', 'g'), ', ').replace(new RegExp('=', 'g'), ' = ');
         const nameInterval = Helper.getIntervalFromParserRule(qc, this.di);
         const q = this.di.builtin.qualifiers.get(name);
         const qu = new QualifierUsage(name, nameInterval, scope, q);

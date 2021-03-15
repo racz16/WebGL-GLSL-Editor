@@ -5,6 +5,7 @@ import { QualifierUsage } from '../qualifier/qualifier-usage';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { ArrayUsage } from '../array-usage';
+import { Constants } from '../../core/constants';
 
 export class TypeUsage extends Element {
 
@@ -65,9 +66,9 @@ export class TypeUsage extends Element {
     //toString
     //
     public toString(): string {
-        let qualifiers = '';
+        let qualifiers = Constants.EMPTY;
         for (let i = 0; i < this.qualifiers.length; i++) {
-            qualifiers += this.qualifiers[i].toString() + ' ';
+            qualifiers += this.qualifiers[i].toString() + Constants.SPACE;
         }
         return qualifiers + this.toStringWithoutQualifiers();
     }
@@ -76,7 +77,7 @@ export class TypeUsage extends Element {
         if (this.name) {
             return this.name;
         } else {
-            return this.declaration ? this.declaration.toStringName(toOutline) : '';
+            return this.declaration ? this.declaration.toStringName(toOutline) : Constants.EMPTY;
         }
     }
 

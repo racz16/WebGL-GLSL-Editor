@@ -32,4 +32,6 @@ export class Constants {
     public static readonly xyzw = ['x', 'y', 'z', 'w'];
     public static readonly rgba = ['r', 'g', 'b', 'a'];
     public static readonly stpq = ['s', 't', 'p', 'q'];
+
+    public static readonly INVALID = -1;
 }

@@ -1,7 +1,7 @@
 import { exec, ChildProcess } from 'child_process';
 import { Stream } from 'stream';
 import { platform } from 'os';
-import { TextDocument, DiagnosticCollection, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag } from "vscode";
+import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag } from "vscode";
 import { GlslEditor } from '../core/glsl-editor';
 import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -55,7 +55,7 @@ export class GlslDiagnosticProvider {
 
     private addTypeHints(scope: Scope): void {
         for (const td of scope.typeDeclarations) {
-            if (!td.usages.length && !this.isInterfaceBlockUsed(td)) {
+            if (!td.usages.length && !this.isInterfaceBlockUsed(td) && !td.inline) {
                 this.addUnusedHint(td, this.getUnusedTypeMessage(td));
             }
         }
@@ -122,7 +122,7 @@ export class GlslDiagnosticProvider {
             this.handleErrors(data);
         });
         result.stdout.on('close', () => {
-            if (lintId === this.getCurrentLintId()) {
+            if (lintId === this.getCurrentLintId() && !this.document.isClosed) {
                 GlslEditor.getDiagnosticCollection().set(this.document.uri, this.diagnostics);
             }
         });
