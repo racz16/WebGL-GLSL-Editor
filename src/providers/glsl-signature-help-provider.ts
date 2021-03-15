@@ -7,6 +7,7 @@ import { SignatureParameterRegion } from "../scope/signature-parameter-region";
 import { TypeUsage } from "../scope/type/type-usage";
 import { LogicalFunction } from "../scope/function/logical-function";
 import { Scope } from "../scope/scope";
+import { Constants } from "../core/constants";
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
@@ -74,12 +75,12 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
                 return i;
             }
         }
-        return -1;
+        return Constants.INVALID;
     }
 
     private computeActiveSignature(sr: SignatureRegion): number {
         const index = this.functions.findIndex(fp => this.isFunctionCompatible(fp, sr));
-        return index === -1 ? 0 : index;
+        return index === Constants.INVALID ? 0 : index;
     }
 
     private isFunctionCompatible(fp: FunctionDeclaration, sr: SignatureRegion): boolean {

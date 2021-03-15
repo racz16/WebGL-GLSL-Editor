@@ -132,24 +132,24 @@ export class Builtin {
 
     private stringToTypeBase(str: string): TypeBase {
         switch (str) {
-            case 'bool': return TypeBase.BOOL;
-            case 'int': return TypeBase.INT;
-            case 'uint': return TypeBase.UINT;
-            case 'float': return TypeBase.FLOAT;
+            case Constants.BOOL: return TypeBase.BOOL;
+            case Constants.INT: return TypeBase.INT;
+            case Constants.UINT: return TypeBase.UINT;
+            case Constants.FLOAT: return TypeBase.FLOAT;
             default: return TypeBase.NONE;
         }
     }
 
     private loadOpaqueTypes(opaqueTypes: Array<IOpaqueType>, typeCategory: TypeCategory, typeBase: TypeBase): void {
         for (const type of opaqueTypes) {
-            const td = Helper.createTypeDeclaration(type.name, -1, -1, typeBase, typeCategory);
+            const td = Helper.createTypeDeclaration(type.name, Constants.INVALID, Constants.INVALID, typeBase, typeCategory);
             this.types.set(type.name, td);
         }
     }
 
     private loadCustomTypes(types: ITypes): void {
         for (const type of types.custom) {
-            const td = Helper.createTypeDeclaration(type.name, -1, -1, TypeBase.NONE, TypeCategory.CUSTOM);
+            const td = Helper.createTypeDeclaration(type.name, Constants.INVALID, Constants.INVALID, TypeBase.NONE, TypeCategory.CUSTOM);
             this.addMembers(td, type);
             this.types.set(type.name, td);
         }
@@ -209,7 +209,7 @@ export class Builtin {
     private loadVariables(): void {
         const variables = GlslEditor.loadJson<IVariables>(this.getVersionedName('variables'));
         for (const variable of variables.variables) {
-            const array = variable.array === undefined ? -1 : variable.array;
+            const array = variable.array === undefined ? Constants.INVALID : variable.array;
             const td = this.types.get(variable.type);
             const tu = Helper.createTypeUsage(variable.type, td, new ArrayUsage(array));
             this.addVariableQualifiers(tu, variable);

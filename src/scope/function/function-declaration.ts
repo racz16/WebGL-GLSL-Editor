@@ -67,7 +67,7 @@ export class FunctionDeclaration extends Element {
     //toString
     //
     public toStringSignature(showParameters: boolean): string {
-        const arrayCtor = this.returnType.array.isArray && this.ctor ? this.returnType.array.toString() : '';
+        const arrayCtor = this.returnType.array.isArray && this.ctor ? this.returnType.array.toString() : Constants.EMPTY;
         let ret = this.name + arrayCtor + Constants.LRB;
         if (showParameters) {
             ret += this.toStringParameters();
@@ -96,7 +96,7 @@ export class FunctionDeclaration extends Element {
         if (this.ctor) {
             return this.toStringSignature(true);
         } else {
-            return this.returnType + ' ' + this.toStringSignature(true);
+            return this.returnType + Constants.SPACE + this.toStringSignature(true);
         }
     }
 

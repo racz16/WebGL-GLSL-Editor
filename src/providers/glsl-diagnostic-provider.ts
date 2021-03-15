@@ -10,6 +10,7 @@ import { Element } from '../scope/element';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { Constants } from '../core/constants';
 
 export class GlslDiagnosticProvider {
 
@@ -142,7 +143,7 @@ export class GlslDiagnosticProvider {
     }
 
     private handleErrors(data: string): void {
-        const rows = data.split('\r\n');
+        const rows = data.split(Constants.CRLF);
         for (const row of rows) {
             this.addDiagnostic(row);
         }
@@ -152,7 +153,7 @@ export class GlslDiagnosticProvider {
         if (!row.includes('compilation terminated') && !row.includes('No code generated')) {
             if (row.includes('ERROR: 0:')) {
                 const t1 = row.substring(9);
-                const i = t1.indexOf(':');
+                const i = t1.indexOf(Constants.COLON);
                 const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
                 if (line > 0) {
                     const error = row.substring(9 + i + 2);
@@ -178,24 +179,24 @@ export class GlslDiagnosticProvider {
             case "win32": return 'Windows';
             case "linux": return 'Linux';
             case "darwin": return 'Mac';
-            default: return '';
+            default: return Constants.EMPTY;
         }
     }
 
     private getExtension(uri: Uri): string {
-        return uri.fsPath.substring(uri.fsPath.lastIndexOf('.'));
+        return uri.fsPath.substring(uri.fsPath.lastIndexOf(Constants.DOT) + 1);
     }
 
     private getStageName(extension: string): string {
         switch (extension) {
-            case '.vert':
-            case '.vs':
-                return 'vert';
-            case '.frag':
-            case '.fs':
-                return 'frag';
+            case Constants.VERT:
+            case Constants.VS:
+                return Constants.VERT;
+            case Constants.FRAG:
+            case Constants.FS:
+                return Constants.FRAG;
             default:
-                return '';
+                return Constants.EMPTY;
         }
     }
 

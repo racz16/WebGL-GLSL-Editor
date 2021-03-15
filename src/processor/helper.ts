@@ -16,6 +16,7 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { ExpressionResult } from './expression-result';
 import { FoldingRegion } from '../scope/folding-region';
+import { Constants } from '../core/constants';
 
 export class Helper {
 
@@ -137,10 +138,10 @@ export class Helper {
 
     public static getScalarTypeName(bt: TypeBase): string {
         switch (bt) {
-            case TypeBase.BOOL: return 'bool';
-            case TypeBase.FLOAT: return 'float';
-            case TypeBase.INT: return 'int';
-            case TypeBase.UINT: return 'uint';
+            case TypeBase.BOOL: return Constants.BOOL;
+            case TypeBase.FLOAT: return Constants.FLOAT;
+            case TypeBase.INT: return Constants.INT;
+            case TypeBase.UINT: return Constants.UINT;
             default: return null;
         }
     }
@@ -148,7 +149,7 @@ export class Helper {
     public static typeBaseToPrefix(tb: TypeBase): string {
         switch (tb) {
             case TypeBase.BOOL: return 'b';
-            case TypeBase.FLOAT: return '';
+            case TypeBase.FLOAT: return Constants.EMPTY;
             case TypeBase.INT: return 'i';
             case TypeBase.UINT: return 'u';
             default: return null;

@@ -10,6 +10,10 @@ export class Constants {
 
     public static readonly VEC3 = 'vec3';
     public static readonly VEC4 = 'vec4';
+    public static readonly BOOL = 'bool';
+    public static readonly FLOAT = 'float';
+    public static readonly INT = 'int';
+    public static readonly UINT = 'uint';
     public static readonly COLOR = 'color';
     public static readonly COLOUR = 'colour';
 
@@ -28,6 +32,7 @@ export class Constants {
     public static readonly COMMA = ',';
     public static readonly COLON = ':';
     public static readonly SEMICOLON = ';';
+    public static readonly DOT = '.';
 
     public static readonly xyzw = ['x', 'y', 'z', 'w'];
     public static readonly rgba = ['r', 'g', 'b', 'a'];

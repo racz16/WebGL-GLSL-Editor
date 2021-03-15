@@ -26,7 +26,7 @@ export class DocumentInfo {
     private lexer: AntlrGlslLexer;
     private parser: AntlrGlslParser;
     private tokens: Array<Token>;
-    private lastProcessedVersion = -1;
+    private lastProcessedVersion = Constants.INVALID;
 
     private injectionOffset = 0;
     private injectionLineCount = 0;
@@ -86,9 +86,9 @@ export class DocumentInfo {
     }
 
     private setShaderStage(): void {
-        if (this.uri.path.endsWith('.fs') || this.uri.path.endsWith('.frag')) {
+        if (this.uri.path.endsWith(Constants.FS) || this.uri.path.endsWith(Constants.FRAG)) {
             this.stage = ShaderStage.FRAGMENT;
-        } else if (this.uri.path.endsWith('.vs') || this.uri.path.endsWith('.vert')) {
+        } else if (this.uri.path.endsWith(Constants.VS) || this.uri.path.endsWith(Constants.VERT)) {
             this.stage = ShaderStage.VERTEX;
         } else {
             this.stage = ShaderStage.DEFAULT;
@@ -287,7 +287,7 @@ export class DocumentInfo {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (!element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
+                if (element.nameInterval && !element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
                     return element;
                 }
             }

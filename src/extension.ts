@@ -85,7 +85,7 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
 	//context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new DebugHighlighter()));
 	//completion
-	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), '.'));
+	context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), Constants.DOT));
 	//symbols
 	context.subscriptions.push(languages.registerDocumentSymbolProvider(selector, new GlslDocumentSymbolProvider()));
 	//declaration
@@ -107,7 +107,7 @@ export function activate(context: ExtensionContext): void {
 	//color
 	context.subscriptions.push(languages.registerColorProvider(selector, new GlslDocumentColorProvider()));
 	//function signature help
-	context.subscriptions.push(languages.registerSignatureHelpProvider(selector, new GlslSignatureHelpProvider(), '(', ','));
+	context.subscriptions.push(languages.registerSignatureHelpProvider(selector, new GlslSignatureHelpProvider(), Constants.LRB, Constants.COMMA));
 	//folding
 	context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting

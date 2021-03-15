@@ -12,6 +12,7 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { SemanticElement, SemanticType } from '../scope/semantic-element';
+import { Constants } from '../core/constants';
 
 export class TypeDeclarationProcessor {
 
@@ -54,7 +55,7 @@ export class TypeDeclarationProcessor {
         const interval = new Interval(ibdc.start.startIndex, ibdc.RCB().symbol.stopIndex + 1, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
-        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, true);
+        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, true);
         di.typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
         scope.typeDeclarations.push(td);
         if (name) {
@@ -88,7 +89,7 @@ export class TypeDeclarationProcessor {
         const interval = Helper.getIntervalFromParserRule(tdc, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
-        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, -1, -1, typeBase, typeCategory, false, returnType || parameter);
+        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, false, returnType || parameter);
         this.di.typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
         if (parameter) {
             this.di.getRootScope().typeDeclarations.push(td);

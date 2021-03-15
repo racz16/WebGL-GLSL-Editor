@@ -1,3 +1,4 @@
+import { Constants } from "../core/constants";
 import { Interval } from "./interval";
 
 export class ArrayUsage {
@@ -6,14 +7,14 @@ export class ArrayUsage {
     public readonly interval: Interval;
     public readonly multidimensional: boolean;
 
-    public constructor(arraySize = -1, interval = null, multidimensional = false) {
+    public constructor(arraySize = Constants.INVALID, interval = null, multidimensional = false) {
         this.arraySize = arraySize;
         this.interval = interval;
         this.multidimensional = multidimensional;
     }
 
     public isArray(): boolean {
-        return this.arraySize !== -1;
+        return this.arraySize !== Constants.INVALID;
     }
 
     public isUndefinedSize(): boolean {
@@ -42,7 +43,7 @@ export class ArrayUsage {
 
     public toString(): string {
         if (!this.isArray()) {
-            return '';
+            return Constants.EMPTY;
         } else if (this.isUndefinedSize()) {
             return '[]';
         } else {

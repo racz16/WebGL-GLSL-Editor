@@ -93,15 +93,15 @@ export class ExpressionProcessor {
 
     private processLiteral(): ExpressionResult {
         if (this.ctx.literal().BOOL_LITERAL()) {
-            return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), true);
+            return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), true);
         } else {
             if (this.ctx.literal().number_literal().FLOAT_LITERAL()) {
-                return new ExpressionResult(this.di.builtin.types.get('float'), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                return new ExpressionResult(this.di.builtin.types.get(Constants.FLOAT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
             } else {
                 if (this.ctx.literal().text.toLowerCase().endsWith('u')) {
-                    return new ExpressionResult(this.di.builtin.types.get('uint'), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                    return new ExpressionResult(this.di.builtin.types.get(Constants.UINT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
                 } else {
-                    return new ExpressionResult(this.di.builtin.types.get('int'), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                    return new ExpressionResult(this.di.builtin.types.get(Constants.INT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
                 }
             }
         }
@@ -243,7 +243,7 @@ export class ExpressionProcessor {
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         this.processCompletionRegion(exp);
         if (exp && exp instanceof ExpressionResult && exp.array.isArray()) {
-            return new ExpressionResult(this.di.builtin.types.get('int'), new ArrayUsage(), true, exp.array.arraySize);
+            return new ExpressionResult(this.di.builtin.types.get(Constants.INT), new ArrayUsage(), true, exp.array.arraySize);
         }
         return null;
     }
@@ -480,8 +480,8 @@ export class ExpressionProcessor {
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
         if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
             left.type && right.type &&
-            left.type.name === 'bool' && left.type.name === right.type.name && !left.array.isArray() && !right.array.isArray()) {
-            return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), left.constant && right.constant);
+            left.type.name === Constants.BOOL && left.type.name === right.type.name && !left.array.isArray() && !right.array.isArray()) {
+            return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), left.constant && right.constant);
         }
         return null;
     }
@@ -493,8 +493,8 @@ export class ExpressionProcessor {
     private processLogicalUnaryExpression(): ExpressionResult {
         this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
-        if (exp && exp instanceof ExpressionResult && exp.type && exp.type.name === 'bool' && !exp.array.isArray()) {
-            return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), exp.constant);
+        if (exp && exp instanceof ExpressionResult && exp.type && exp.type.name === Constants.BOOL && !exp.array.isArray()) {
+            return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), exp.constant);
         }
         return null;
     }
@@ -510,7 +510,7 @@ export class ExpressionProcessor {
             left.type && right.type &&
             left.type.name === right.type.name && !left.array.isArray() && !right.array.isArray() && left.type.isScalar() &&
             (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT || left.type.typeBase === TypeBase.FLOAT)) {
-            return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), left.constant && right.constant);
+            return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), left.constant && right.constant);
         }
         return null;
     }
@@ -523,7 +523,7 @@ export class ExpressionProcessor {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
         if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult) {
-            return new ExpressionResult(this.di.builtin.types.get('bool'), new ArrayUsage(), left.constant && right.constant);
+            return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), left.constant && right.constant);
         }
         return null;
     }

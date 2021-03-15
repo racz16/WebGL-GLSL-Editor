@@ -1,13 +1,15 @@
+import { Constants } from "../../core/constants";
+
 export class FormattingContext {
-    lastt1TokenIndex = -1;
-    lastt2TokenIndex = -1;
+    lastt1TokenIndex = Constants.INVALID;
+    lastt2TokenIndex = Constants.INVALID;
     t1NewLine = false;
     t2NewLineCount = 0;
 
     currentTokenIndex = 0;
 
-    firstNewLineIndex = -1;
-    lastNewLineIndex = -1;
+    firstNewLineIndex = Constants.INVALID;
+    lastNewLineIndex = Constants.INVALID;
 
     forHeader: boolean;
     forHeaderEnd: boolean;
