@@ -27,6 +27,16 @@ The extension can display a signature helper for functions and constructors (exc
 The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
 ![code completion](res/png/screenshots/completion.png)
+### Formatting
+The extension can format the source code.
+#### Before formatting
+![before formatting](res/png/screenshots/formatting-before.png)
+#### After formatting
+![after formatting](res/png/screenshots/formatting-after.png)
+### Syntax highlight in HTML scripts
+The extension can colorize GLSL code in HTML scripts if the script's type is "x-shader/x-vertex" or "x-shader/x-fragment".
+
+![html](res/png/screenshots/html.png)
 ### Rename
 You can rename types (and constructors), interface blocks, variables and functions.
 
@@ -51,10 +61,10 @@ You can easily find types, interface blocks, variables and functions.
 The extension can display a color picker if you initialize or reassign a vec3 or vec4 variable whihch name contains the word 'color' or 'colour' and the assigned expression is a vec3 or vec4 constructor and it's parameters are number literals.
 
 ![color picker](res/png/screenshots/color-picker.png)
-### Generation of Shadertoy variables
-The extension can generate all the Shadertoy uniform vairables if necessary.
+### Code injection
+The extension can inject code into the GLSL files. You can specify the code in the Settings.
 
-![shadertoy](res/png/screenshots/shadertoy.png)
+![code injection](res/png/screenshots/code-injection.png)
 ### Show/Peek call hierarchy
 The extension can visualize the functions' and constructors' incoming ang outgoing calls as a graph.
 
@@ -85,15 +95,27 @@ You can easily access several online documentations by commands.
 ![online documentation](res/png/screenshots/online-documentation.png)
 
 ## Configuration
-* `webgl-glsl-editor.strictRename`: Prevents invalid renames
-* `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser
-* `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab
+* `webgl-glsl-editor.strictRename`: Prevents invalid renames.
+* `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser.
+* `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.
+* `codeInjection`: Enable/disable code injection.
+* `codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
 
 ## Known Issues
-You can find the known issues on [GitHub](https://github.com/racz16/WebGL-GLSL-Editor/issues). Feel free to add new issues, but please provide some sort of informations to I can reproduce the problem.
+- Preprocessor directives may cause problems
+- Incorrect GLSL code (like an if statement without parentheses) may cause problems
+
+You can find the user provided issues on [GitHub](https://github.com/racz16/WebGL-GLSL-Editor/issues). Feel free to add new issues, but please provide some sort of informations to I can reproduce the problem.
 
 ## Release Notes
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.2.0
+- Formatting
+- Syntax highlight in HTML scritps
+- Code injection
+- Improved folding
+- Other small changes and bugfixes
 
 ### 1.1.1
 - Improved diagnostic
@@ -130,7 +152,7 @@ For more information, see the [changelog](CHANGELOG.md).
 - Commands for online documentation
 
 ## License
-Copyright 2020 Rácz Zalán
+Copyright 2021 Rácz Zalán
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

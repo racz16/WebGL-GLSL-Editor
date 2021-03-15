@@ -1,8 +1,37 @@
 # Change Log
 
 ## [Unreleased]
-- Formatting
+- Preprocessor related improvements
 - Other smaller improvements
+
+## [1.2.0] - 2021.03.16.
+### Added
+- Formatting
+- Syntax highlight in HTML scritps
+- Code injection
+### Removed
+- Generation of ShaderToy variables (replaced by the more general code injection)
+### Improved
+- Improved folding
+- Updated packages and other dependencies
+- Other small updates
+### Fixed
+- Wrong documentation of the acos and the round functions
+- Trying to use the type of variables with unknown type
+- Local variables don't hide other vairables properly
+- Variable marked as unused, if it's declaration contains type declaration or interface block
+- The extension can't start properly if the first opened file contains build error
+- Different files' diagnostic results interfere with each other
+- Trying to use the name of unnamed type declarations or variable declarations
+- Types declared in function header scoped locally and marked as unused
+- Array variables appear without []-s in the completion window
+- Closed files provide diagnostic information
+- Local types' constructors don't provide signature help
+- Go to type definition doesn't work if the type is unnamed
+- Signature helper tries to show the name of unnamed parameters
+- Incorrect syntax highlight of some number literals
+- Incorrect syntax highlight if there is a comment between the keyword struct and the type name
+- Other small fixes
 
 ## [1.1.1] - 2020.08.13.
 ### Improved
