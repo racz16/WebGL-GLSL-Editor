@@ -2,7 +2,7 @@
 
 [![VS Code Marketplace version](https://vsmarketplacebadge.apphb.com/version-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![VS Code Marketplace installs](https://vsmarketplacebadge.apphb.com/installs/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace downloads](https://vsmarketplacebadge.apphb.com/downloads-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![VS Code Marketplace downloads](https://vsmarketplacebadge.apphb.com/downloads/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![VS Code Marketplace rating](https://vsmarketplacebadge.apphb.com/rating-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e8500dbaa1d42449f785c4ba06372d5)](https://app.codacy.com/manual/racz1666/WebGL-GLSL-Editor?utm_source=github.com&utm_medium=referral&utm_content=racz16/WebGL-GLSL-Editor&utm_campaign=Badge_Grade_Dashboard)
 
