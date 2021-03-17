@@ -2,7 +2,7 @@
 	"name": "webgl-glsl-editor",
 	"displayName": "WebGL GLSL Editor",
 	"icon": "res/png/icon.png",
-	"description": "Language support for WebGL GLSL.",
+	"description": "Language support for WebGL GLSL shaders.",
 	"author": "Rácz Zalán",
 	"publisher": "raczzalan",
 	"repository": {
@@ -13,7 +13,7 @@
 		"email": "racz1666@gmail.com",
 		"url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
 	},
-	"license": "MIT",
+	"license": "SEE LICENSE IN LICENSE.txt",
 	"keywords": [
 		"GLSL",
 		"shader",
@@ -24,6 +24,10 @@
 		"linters",
 		"HTML"
 	],
+	"galleryBanner": {
+		"color": "#990000",
+		"theme": "dark"
+	},
 	"version": "1.2.0",
 	"engines": {
 		"vscode": "^1.54.0"
@@ -31,7 +35,8 @@
 	"categories": [
 		"Programming Languages",
 		"Linters",
-		"Snippets"
+		"Snippets",
+		"Formatters"
 	],
 	"activationEvents": [
 		"onLanguage:glsl",
