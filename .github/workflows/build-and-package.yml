@@ -1,8 +1,14 @@
 name: build and package
-on: [push]
+on:
+  push:
+    branches:
+      - master
 jobs:
   build-and-package:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
