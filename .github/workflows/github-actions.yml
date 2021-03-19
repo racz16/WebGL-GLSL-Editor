@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-node@v1
       - run: npm install
       - run: npm install -g vsce
-      - run: npm install -g antlr4ts
+      - run: npm install -g antlr4ts-cli
       - run: antlr4ts -o "src/_generated" "syntaxes/AntlrGlslLexer.g4"
       - run: antlr4ts -o "src/_generated" -no-listener -visitor "syntaxes/AntlrGlslParser.g4"
       - run: vsce package
