@@ -5,7 +5,7 @@
 [![VS Code Marketplace downloads](https://vsmarketplacebadge.apphb.com/downloads/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![VS Code Marketplace rating](https://vsmarketplacebadge.apphb.com/rating-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e8500dbaa1d42449f785c4ba06372d5)](https://app.codacy.com/manual/racz1666/WebGL-GLSL-Editor?utm_source=github.com&utm_medium=referral&utm_content=racz16/WebGL-GLSL-Editor&utm_campaign=Badge_Grade_Dashboard)
-[![build and package](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml/badge.svg)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
+[![build and package](https://img.shields.io/github/workflow/status/racz16/WebGL-GLSL-Editor/build%20and%20package.svg?logo=github)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
 
 This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.
 
