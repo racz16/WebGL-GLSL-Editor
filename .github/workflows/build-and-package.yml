@@ -1,4 +1,4 @@
-name: github-actions
+name: build and package
 on: [push]
 jobs:
   build-and-package:
