@@ -112,5 +112,5 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
 	//formatting
 	context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
+	context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 }
-

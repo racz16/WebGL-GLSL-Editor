@@ -1,4 +1,4 @@
-import { DocumentFormattingEditProvider, TextDocument, FormattingOptions, CancellationToken, ProviderResult, TextEdit, Range, Position } from 'vscode';
+import { DocumentFormattingEditProvider, TextDocument, FormattingOptions, CancellationToken, ProviderResult, TextEdit, Range, Position, DocumentRangeFormattingEditProvider } from 'vscode';
 import { DocumentInfo } from '../core/document-info';
 import { Token } from 'antlr4ts';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
@@ -6,24 +6,36 @@ import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
 import { FormattingContext } from './helper/formatting-context';
 
-export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider {
+export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider, DocumentRangeFormattingEditProvider {
+
     private di: DocumentInfo;
     private options: FormattingOptions;
+    private range: Range
     private tokens: Array<Token>;
     private ctx: FormattingContext;
     private results: Array<TextEdit>;
 
-    private initialize(document: TextDocument, options: FormattingOptions): void {
+    private initialize(document: TextDocument, options: FormattingOptions, range: Range): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
-        this.tokens = this.di.getTokens();
         this.options = options;
+        this.range = range;
+        this.tokens = this.di.getTokens();
         this.ctx = new FormattingContext();
         this.results = new Array<TextEdit>();
     }
 
     public provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
-        this.initialize(document, options);
+        this.initialize(document, options, null);
+        return this.format()
+    }
+
+    public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
+        this.initialize(document, options, range);
+        return this.format()
+    }
+
+    private format(): Array<TextEdit> {
         this.ctx.currentTokenIndex = this.getFirstTokenIndex();
         if (this.ctx.currentTokenIndex !== Constants.INVALID) {
             while (this.ctx.currentTokenIndex < this.tokens.length) {
@@ -84,7 +96,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
         const p1 = this.di.offsetToPosition(t1.stopIndex - this.di.getInjectionOffset() + 1);
         const p2 = this.di.offsetToPosition(ct.stopIndex - this.di.getInjectionOffset() + 1);
-        this.results.push(new TextEdit(new Range(p1, p2), result));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), result));
     }
 
     private processT2(ct: Token): void {
@@ -106,7 +118,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const p1 = this.di.offsetToPosition(fnl.startIndex - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(lnl.startIndex - this.di.getInjectionOffset());
         const text = this.ctx.t2NewLineCount > 1 ? Constants.CRLF : Constants.EMPTY;
-        this.results.push(new TextEdit(new Range(p1, p2), text));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), text));
     }
 
     private isT1BeforeMacroWithoutNewLine(ct: Token): boolean {
@@ -115,7 +127,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
 
     private addNewLineBeforeMacroTextEdit(ct: Token): void {
         const p1 = this.di.offsetToPosition(ct.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p1), Constants.CRLF));
+        this.addTextEdit(new TextEdit(new Range(p1, p1), Constants.CRLF));
     }
 
     private afterProcessT2(): void {
@@ -145,7 +157,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private addClearT3BeforeTheFirstT1TextEdit(ct: Token): void {
         const p1 = new Position(0, 0);
         const p2 = this.di.offsetToPosition(ct.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), Constants.EMPTY));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), Constants.EMPTY));
     }
 
     private processT2T1(ct: Token): void {
@@ -185,7 +197,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private addRequiredNewLineBeforeT1TextEdit(t2: Token): void {
         const result = this.getNewLineAndIndentation(t2, 1);
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p2, p2), result));
+        this.addTextEdit(new TextEdit(new Range(p2, p2), result));
     }
 
     private isNewLineCountMoreThanZeroAfterT2(): boolean {
@@ -198,7 +210,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const result = this.getNewLineAndIndentation(t2, 1, depthIncrement);
         const p1 = this.di.offsetToPosition(t1.startIndex - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), result));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), result));
     }
 
     private processT1T1(ct: Token): void {
@@ -240,7 +252,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
         const p1 = this.di.offsetToPosition(t1.stopIndex + 1 - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), Constants.EMPTY));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), Constants.EMPTY));
     }
 
     private addNewLineTextEdit(t2: Token): void {
@@ -248,7 +260,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const result = this.getNewLineAndIndentation(t2, this.ctx.t2NewLineCount);
         const p1 = this.di.offsetToPosition(t1.stopIndex + 1 - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), result));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), result));
     }
 
     private isOperatorSplitRequired(): boolean {
@@ -281,14 +293,14 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const result = this.getNewLineAndIndentation(t2, 1, 1);
         const p1 = this.di.offsetToPosition(t1.stopIndex - this.di.getInjectionOffset() + 1);
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), result));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), result));
     }
 
     private addSpaceTextEdit(t2: Token): void {
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
         const p1 = this.di.offsetToPosition(t1.stopIndex + 1 - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
-        this.results.push(new TextEdit(new Range(p1, p2), Constants.SPACE));
+        this.addTextEdit(new TextEdit(new Range(p1, p2), Constants.SPACE));
     }
 
     private afterProcessT1(): void {
@@ -454,6 +466,31 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
                 }
             }
             scope = scope.parent;
+        }
+    }
+
+    private addTextEdit(te: TextEdit): void {
+        if (this.isEditInRange()) {
+            this.results.push(te);
+        }
+    }
+
+    private isEditInRange(): boolean {
+        if (!this.range) {
+            return true;
+        } else if (this.ctx.lastt2TokenIndex !== Constants.INVALID) {
+            const t1 = this.tokens[this.ctx.lastt2TokenIndex];
+            const t2 = this.tokens[this.ctx.currentTokenIndex];
+            const p1 = this.di.offsetToPosition(t1.stopIndex - this.di.getInjectionOffset() + 1);
+            const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
+            const p3 = this.di.offsetToPosition(t1.startIndex - this.di.getInjectionOffset());
+            return (this.range.start.isBefore(p1) && this.range.end.isAfter(p2)) ||
+                (this.isT3(t2.type) && this.range.start.isBefore(p1) && this.range.end.isAfter(p3));
+        } else {
+            const t2 = this.tokens[this.ctx.currentTokenIndex];
+            const p1 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
+            const p2 = this.di.offsetToPosition(t2.stopIndex - this.di.getInjectionOffset() + 1);
+            return this.range.start.isBefore(p2) && this.range.end.isAfter(p1);
         }
     }
 
