@@ -1,5 +1,5 @@
 import { GlslEditor } from './glsl-editor';
-import { Uri, Position, } from 'vscode';
+import { Uri } from 'vscode';
 import { DocumentInfo } from './document-info';
 import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext, AntlrGlslParser } from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
@@ -24,7 +24,6 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     private scope: Scope;
 
     private currentFunction: FunctionDeclaration;
-    private versionEndPosition: Position;
 
     public constructor(uri: Uri) {
         super();
@@ -33,51 +32,36 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     private initialize(): void {
         this.di = GlslEditor.getDocumentInfo(this.uri);
-        this.setVersion();
         this.di.reset();
+        this.setTokenInformations();
         this.scope = this.di.getRootScope();
-        this.addCommentFoldingRegions();
     }
 
-    private setVersion(): void {
-        this.versionEndPosition = null;
+    private setTokenInformations(): void {
         this.di.setVersion(100);
-        for (const token of this.di.getTokens()) {
-            const versionFound = this.setVersionIfTokenAppropirate(token);
-            if (versionFound) {
-                break;
-            }
-        }
-    }
-
-    private setVersionIfTokenAppropirate(token: Token): boolean {
-        if (token.type === AntlrGlslLexer.TAB || token.type === AntlrGlslLexer.SPACE) {
-            return false;
-        } else {
-            this.setVersionIfTokenIsVersionMacro(token);
-            return true;
-        }
-    }
-
-    private setVersionIfTokenIsVersionMacro(token: Token): void {
-        if (token.type === AntlrGlslLexer.MACRO && token.text.startsWith('#version')) {
-            const version = token.text.includes('300') ? 300 : 100;
-            this.di.setVersion(version);
-            this.versionEndPosition = new Position(token.line - 1, token.charPositionInLine + token.text.length);
-        }
-    }
-
-    private addCommentFoldingRegions(): void {
+        let onlyTabsAndSpaces = true;
         const ctx = new CommentContext();
         for (let i = 0; i < this.di.getTokens().length; i++) {
             const token = this.di.getTokens()[i];
             this.addCommentFoldingRegionBasedOnToken(ctx, token, i);
+            if (token.type !== AntlrGlslLexer.TAB && token.type !== AntlrGlslLexer.SPACE) {
+                this.setVersionIfTokenIsVersionMacro(token, onlyTabsAndSpaces);
+                onlyTabsAndSpaces = false;
+            }
         }
         this.addSingleLineCommentFoldingRegionIfExists(ctx);
     }
 
+    private setVersionIfTokenIsVersionMacro(token: Token, onlyTabsAndSpaces: boolean): void {
+        if (onlyTabsAndSpaces && token.type === AntlrGlslLexer.MACRO && token.text.startsWith('#version')) {
+            const version = token.text.includes('300') ? 300 : 100;
+            this.di.setVersion(version);
+        }
+    }
+
     private addCommentFoldingRegionBasedOnToken(ctx: CommentContext, token: Token, index: number): void {
         if (token.type === AntlrGlslLexer.SINGLE_LINE_COMMENT) {
+            this.di.commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
             this.growSingleLineComment(ctx, token);
         } else {
             this.addCommentFoldingRegionIfExists(ctx, token, index);
@@ -95,6 +79,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         if (token.type === AntlrGlslLexer.MULTI_LINE_COMMENT) {
             const endToken = index + 1 === this.di.getTokens().length ? token : this.di.getTokens()[index + 1];
             Helper.addFoldingRegionFromComment(this.di, token, endToken);
+            this.di.commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
         }
         if (token.type !== AntlrGlslLexer.NEW_LINE && token.type !== AntlrGlslLexer.TAB && token.type !== AntlrGlslLexer.SPACE) {
             this.addSingleLineCommentFoldingRegionIfExists(ctx);
@@ -111,10 +96,6 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public getCurrentFunction(): FunctionDeclaration {
         return this.currentFunction;
-    }
-
-    public getVersionEndPosition(): Position {
-        return this.versionEndPosition;
     }
 
     public visitStart(ctx: StartContext): void {

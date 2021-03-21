@@ -30,7 +30,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position, context);
-        if (this.isCompletionTriggeredByFloatingPoint()) {
+        if (this.isCompletionTriggeredByFloatingPoint() || this.isInCommentRegion()) {
             return null;
         }
         const [tu, startsWith] = this.getCompletionExpression();
@@ -49,6 +49,15 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return this.context.triggerKind === CompletionTriggerKind.TriggerCharacter && this.di.getTokenAt(this.position).type === AntlrGlslLexer.FLOAT_LITERAL;
     }
 
+    private isInCommentRegion(): boolean {
+        const offset = this.di.positionToOffset(this.position);
+        for (const cr of this.di.commentRegions) {
+            if (offset > cr.startIndex && offset <= cr.stopIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private completeAfterDot(tu: TypeUsage, startsWith: string): void {
         if (tu.array.isArray()) {

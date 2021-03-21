@@ -48,6 +48,7 @@ export class DocumentInfo {
     public readonly caseHeaderRegions = new Array<Interval>();
     public readonly caseStatementsRegions = new Array<Interval>();
     public readonly scopelessInterfaceBlockRegions = new Array<Interval>();
+    public readonly commentRegions = new Array<Interval>();
 
     public builtin: Builtin;
 
@@ -74,6 +75,7 @@ export class DocumentInfo {
         this.caseHeaderRegions.length = 0;
         this.caseStatementsRegions.length = 0;
         this.scopelessInterfaceBlockRegions.length = 0;
+        this.commentRegions.length = 0;
         this.rootScope = new Scope(null, null);
     }
 
