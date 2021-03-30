@@ -16,6 +16,7 @@ jobs:
       - run: npm install -g vsce
       - run: npm install -g antlr4ts-cli
       - run: cd "syntaxes"
+      - run: dir
       - run: antlr4ts -o "../src/_generated" "AntlrGlslLexer.g4"
       - run: antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
       - run: cd ..
