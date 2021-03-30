@@ -50,13 +50,9 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
 
     private processFunction(lf: LogicalFunction): Array<Location> | Location {
         const ret = new Array<Location>();
-        if (!lf.getDeclaration().builtIn) {
-            if (lf.getDeclaration().ctor) {
-                return this.processTypeDeclaration(lf.getDeclaration().returnType.declaration);
-            } else {
-                for (const fd of lf.definitions) {
-                    this.addLocation(ret, fd.nameInterval);
-                }
+        if (!lf.getDeclaration().builtIn && !lf.getDeclaration().ctor) {
+            for (const fd of lf.definitions) {
+                this.addLocation(ret, fd.nameInterval);
             }
         }
         return ret;
