@@ -92,7 +92,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private addMaxOneNewLineAtTheEndTextEdit(ct: Token): void {
-        const result = this.ctx.t2NewLineCount > 0 ? Constants.CRLF : Constants.EMPTY;
+        const result = this.ctx.t2NewLineCount > 0 ? Constants.NEW_LINE : Constants.EMPTY;
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
         const p1 = this.di.offsetToPosition(t1.stopIndex - this.di.getInjectionOffset() + 1);
         const p2 = this.di.offsetToPosition(ct.stopIndex - this.di.getInjectionOffset() + 1);
@@ -117,7 +117,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const lnl = this.tokens[this.ctx.lastNewLineIndex];
         const p1 = this.di.offsetToPosition(fnl.startIndex - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(lnl.startIndex - this.di.getInjectionOffset());
-        const text = this.ctx.t2NewLineCount > 1 ? Constants.CRLF : Constants.EMPTY;
+        const text = this.ctx.t2NewLineCount > 1 ? Constants.NEW_LINE : Constants.EMPTY;
         this.addTextEdit(new TextEdit(new Range(p1, p2), text));
     }
 
@@ -127,7 +127,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
 
     private addNewLineBeforePreprocessorTextEdit(ct: Token): void {
         const p1 = this.di.offsetToPosition(ct.startIndex - this.di.getInjectionOffset());
-        this.addTextEdit(new TextEdit(new Range(p1, p1), Constants.CRLF));
+        this.addTextEdit(new TextEdit(new Range(p1, p1), Constants.NEW_LINE));
     }
 
     private afterProcessT2(): void {
@@ -317,7 +317,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const indentation = this.getIndentation(ct, depthIncrement);
         let result = Constants.EMPTY;
         for (let i = 0; i < realNewLineCount; i++) {
-            result += Constants.CRLF;
+            result += Constants.NEW_LINE;
         }
         result += indentation;
         return result;

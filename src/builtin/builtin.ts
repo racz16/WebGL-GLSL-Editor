@@ -243,11 +243,11 @@ export class Builtin {
     private createVariableSummary(variable: IVariable, tu: TypeUsage): MarkdownString {
         const mds = new MarkdownString();
         mds.appendCodeblock(`${tu.toString()} ${variable.name};`);
-        mds.appendText(Constants.CRLF);
+        mds.appendText(Constants.NEW_LINE);
         if (variable.summary) {
             mds.appendText(variable.summary);
             if (!variable.notDocumented) {
-                mds.appendText(Constants.CRLF);
+                mds.appendText(Constants.NEW_LINE);
                 const parameter = encodeURIComponent(JSON.stringify(variable.name));
                 mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
                 mds.isTrusted = true;
@@ -328,7 +328,7 @@ export class Builtin {
         }
         const mds = new MarkdownString();
         mds.appendText(func.summary);
-        mds.appendText(Constants.CRLF);
+        mds.appendText(Constants.NEW_LINE);
         const parameter = encodeURIComponent(JSON.stringify(func.name));
         mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
         mds.isTrusted = true;

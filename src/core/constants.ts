@@ -1,3 +1,5 @@
+import { EOL } from 'os';
+
 export class Constants {
     public static readonly EXTENSION_NAME = 'webgl-glsl-editor';
     public static readonly GLSL = 'glsl';
@@ -24,9 +26,7 @@ export class Constants {
     public static readonly RCB = '}';
     public static readonly LSB = '[';
     public static readonly RSB = ']';
-    public static readonly CR = '\r';
-    public static readonly LF = '\n';
-    public static readonly CRLF = '\r\n';
+    public static readonly NEW_LINE = EOL;
     public static readonly TAB = '\t';
     public static readonly SPACE = ' ';
     public static readonly COMMA = ',';

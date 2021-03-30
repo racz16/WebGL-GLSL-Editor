@@ -12,3 +12,4 @@
 
 /syntaxes/.antlr/*
 /private
+/src/_generated

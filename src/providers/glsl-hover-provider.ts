@@ -18,7 +18,7 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
             const fi = this.di.builtin.functionSummaries.get(fd.name);
             const md = new MarkdownString(fd.toStringDocumentation());
             if (fi && fi.summary) {
-                md.appendText(Constants.CRLF);
+                md.appendText(Constants.NEW_LINE);
                 md.appendMarkdown(fi.summary.value);
                 md.isTrusted = true;
             }

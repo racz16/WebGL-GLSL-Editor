@@ -75,9 +75,9 @@ export class TypeDeclaration extends Element {
     }
 
     public toStringDocumentation(): string {
-        let result = `\tstruct ${this.name} {${Constants.CRLF}`;
+        let result = `\tstruct ${this.name} {${Constants.NEW_LINE}`;
         for (const vd of this.members) {
-            result += `\t\t${vd.toString()};${Constants.CRLF}`;
+            result += `\t\t${vd.toString()};${Constants.NEW_LINE}`;
         }
         result += '\t};';
         return result;

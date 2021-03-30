@@ -142,7 +142,7 @@ export class DocumentInfo {
         const originalText = this.document.getText();
         if (GlslEditor.CONFIGURATIONS.getCodeInjection()) {
             const injectionSource = GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
-            let text = injectionSource.join(Constants.CRLF) + Constants.CRLF;
+            let text = injectionSource.join(Constants.NEW_LINE) + Constants.NEW_LINE;
             this.injectionLineCount = injectionSource.length;
             this.injectionOffset = text.length;
             text += originalText;

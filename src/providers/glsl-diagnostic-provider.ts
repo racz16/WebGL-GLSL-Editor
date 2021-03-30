@@ -112,7 +112,7 @@ export class GlslDiagnosticProvider {
         const platformName = this.getPlatformName();
         const extension = this.getExtension(this.document.uri);
         const stageName = this.getStageName(extension);
-        const validatorPath = `${GlslEditor.getContext().extensionPath}\\res\\bin\\glslangValidator${platformName}`;
+        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
         this.executeCommand(validatorPath, stageName);
     }
 
@@ -143,7 +143,7 @@ export class GlslDiagnosticProvider {
     }
 
     private handleErrors(data: string): void {
-        const rows = data.split(Constants.CRLF);
+        const rows = data.split(Constants.NEW_LINE);
         for (const row of rows) {
             this.addDiagnostic(row);
         }
