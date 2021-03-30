@@ -1,4 +1,4 @@
-// Generated from syntaxes/AntlrGlslParser.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from syntaxes/AntlrGlslParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -81,7 +81,7 @@ export class AntlrGlslParser extends Parser {
 	public static readonly OP_LOGICAL_UNARY = 52;
 	public static readonly OP_MODIFY = 53;
 	public static readonly OP_ASSIGN = 54;
-	public static readonly MACRO = 55;
+	public static readonly PREPROCESSOR = 55;
 	public static readonly NEW_LINE = 56;
 	public static readonly SPACE = 57;
 	public static readonly TAB = 58;
@@ -176,7 +176,7 @@ export class AntlrGlslParser extends Parser {
 		"OP_DIV", "OP_MOD", "OP_INC", "OP_DEC", "OP_SHIFT", "OP_RELATIONAL", "OP_EQUALITY", 
 		"OP_BIT_AND", "OP_BIT_XOR", "OP_BIT_OR", "OP_BIT_UNARY", "OP_LOGICAL_AND", 
 		"OP_LOGICAL_OR", "OP_LOGICAL_XOR", "OP_LOGICAL_UNARY", "OP_MODIFY", "OP_ASSIGN", 
-		"MACRO", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
+		"PREPROCESSOR", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
 		"IDENTIFIER", "DOT", "COMMA", "COLON", "SEMICOLON", "QUESTION", "LRB", 
 		"RRB", "LCB", "RCB", "LSB", "RSB",
 	];
@@ -197,6 +197,10 @@ export class AntlrGlslParser extends Parser {
 
 	// @Override
 	public get serializedATN(): string { return AntlrGlslParser._serializedATN; }
+
+	protected createFailedPredicateException(predicate?: string, message?: string): FailedPredicateException {
+		return new FailedPredicateException(this, predicate, message);
+	}
 
 	constructor(input: TokenStream) {
 		super(input);
@@ -1717,7 +1721,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 349;
 						if (!(this.precpred(this._ctx, 13))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 13)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 13)");
 						}
 						this.state = 350;
 						_la = this._input.LA(1);
@@ -1742,7 +1746,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 352;
 						if (!(this.precpred(this._ctx, 12))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 12)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 12)");
 						}
 						this.state = 353;
 						_la = this._input.LA(1);
@@ -1767,7 +1771,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 355;
 						if (!(this.precpred(this._ctx, 11))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 11)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
 						}
 						this.state = 356;
 						this.match(AntlrGlslParser.OP_SHIFT);
@@ -1782,7 +1786,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 358;
 						if (!(this.precpred(this._ctx, 10))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 10)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
 						}
 						this.state = 359;
 						this.match(AntlrGlslParser.OP_RELATIONAL);
@@ -1797,7 +1801,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 361;
 						if (!(this.precpred(this._ctx, 9))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 9)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
 						this.state = 362;
 						this.match(AntlrGlslParser.OP_EQUALITY);
@@ -1812,7 +1816,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 364;
 						if (!(this.precpred(this._ctx, 8))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 8)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
 						this.state = 365;
 						this.match(AntlrGlslParser.OP_BIT_AND);
@@ -1827,7 +1831,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 367;
 						if (!(this.precpred(this._ctx, 7))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 7)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
 						this.state = 368;
 						this.match(AntlrGlslParser.OP_BIT_XOR);
@@ -1842,7 +1846,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 370;
 						if (!(this.precpred(this._ctx, 6))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 6)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
 						this.state = 371;
 						this.match(AntlrGlslParser.OP_BIT_OR);
@@ -1857,7 +1861,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 373;
 						if (!(this.precpred(this._ctx, 5))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 5)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
 						}
 						this.state = 374;
 						this.match(AntlrGlslParser.OP_LOGICAL_AND);
@@ -1872,7 +1876,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 376;
 						if (!(this.precpred(this._ctx, 4))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 4)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
 						}
 						this.state = 377;
 						this.match(AntlrGlslParser.OP_LOGICAL_XOR);
@@ -1887,7 +1891,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 379;
 						if (!(this.precpred(this._ctx, 3))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
 						}
 						this.state = 380;
 						this.match(AntlrGlslParser.OP_LOGICAL_OR);
@@ -1902,7 +1906,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 382;
 						if (!(this.precpred(this._ctx, 1))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 1)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 1)");
 						}
 						this.state = 383;
 						_la = this._input.LA(1);
@@ -1927,7 +1931,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 385;
 						if (!(this.precpred(this._ctx, 15))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 15)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 15)");
 						}
 						this.state = 394;
 						this._errHandler.sync(this);
@@ -1987,7 +1991,7 @@ export class AntlrGlslParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, AntlrGlslParser.RULE_expression);
 						this.state = 396;
 						if (!(this.precpred(this._ctx, 2))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
 						this.state = 397;
 						this.match(AntlrGlslParser.QUESTION);

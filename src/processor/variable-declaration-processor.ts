@@ -7,7 +7,7 @@ import { TypeUsageProcessor } from './type-usage-processor';
 import { Single_variable_declarationContext, Variable_declarationContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
-import { ColorRegion } from '../scope/color-region';
+import { ColorRegion } from '../scope/regions/color-region';
 import { ExpressionResult } from './expression-result';
 
 export class VariableDeclarationProcessor {
@@ -117,7 +117,7 @@ export class VariableDeclarationProcessor {
     private handleColorRegion(vd: VariableDeclaration, right: ExpressionResult | ExpressionResult[]): void {
         if (right instanceof ExpressionResult && vd.isColorVariable() && right.constructorCall) {
             const cr = new ColorRegion(right.constructorCall, right.constructorParameters);
-            this.di.colorRegions.push(cr);
+            this.di.getRegions().colorRegions.push(cr);
         }
     }
 

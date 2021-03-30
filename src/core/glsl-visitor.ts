@@ -16,6 +16,7 @@ import { Token } from 'antlr4ts';
 import { VariableUsageProcessor } from '../processor/variable-usage-processor';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { RuleNode } from 'antlr4ts/tree/RuleNode';
+import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
 
@@ -44,24 +45,32 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         for (let i = 0; i < this.di.getTokens().length; i++) {
             const token = this.di.getTokens()[i];
             this.addCommentFoldingRegionBasedOnToken(ctx, token, i);
+            this.addPreprocessorRegion(token);
             if (token.type !== AntlrGlslLexer.TAB && token.type !== AntlrGlslLexer.SPACE) {
-                this.setVersionIfTokenIsVersionMacro(token, onlyTabsAndSpaces);
+                this.setVersionIfTokenIsVersionPreprocessor(token, onlyTabsAndSpaces);
                 onlyTabsAndSpaces = false;
             }
         }
         this.addSingleLineCommentFoldingRegionIfExists(ctx);
     }
 
-    private setVersionIfTokenIsVersionMacro(token: Token, onlyTabsAndSpaces: boolean): void {
-        if (onlyTabsAndSpaces && token.type === AntlrGlslLexer.MACRO && token.text.startsWith('#version')) {
+    private setVersionIfTokenIsVersionPreprocessor(token: Token, onlyTabsAndSpaces: boolean): void {
+        if (onlyTabsAndSpaces && token.type === AntlrGlslLexer.PREPROCESSOR && token.text.startsWith('#version')) {
             const version = token.text.includes('300') ? 300 : 100;
             this.di.setVersion(version);
         }
     }
 
+    private addPreprocessorRegion(token: Token): void {
+        if (token.type === AntlrGlslLexer.PREPROCESSOR) {
+            const interval = new Interval(token.startIndex, token.stopIndex + 1, this.di);
+            this.di.getRegions().preprocessorRegions.push(new PreprocessorRegion(token.text, interval));
+        }
+    }
+
     private addCommentFoldingRegionBasedOnToken(ctx: CommentContext, token: Token, index: number): void {
         if (token.type === AntlrGlslLexer.SINGLE_LINE_COMMENT) {
-            this.di.commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
+            this.di.getRegions().commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
             this.growSingleLineComment(ctx, token);
         } else {
             this.addCommentFoldingRegionIfExists(ctx, token, index);
@@ -79,7 +88,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         if (token.type === AntlrGlslLexer.MULTI_LINE_COMMENT) {
             const endToken = index + 1 === this.di.getTokens().length ? token : this.di.getTokens()[index + 1];
             Helper.addFoldingRegionFromComment(this.di, token, endToken);
-            this.di.commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
+            this.di.getRegions().commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
         }
         if (token.type !== AntlrGlslLexer.NEW_LINE && token.type !== AntlrGlslLexer.TAB && token.type !== AntlrGlslLexer.SPACE) {
             this.addSingleLineCommentFoldingRegionIfExists(ctx);
@@ -167,7 +176,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitFor_iteration(ctx: For_iterationContext): void {
         this.scope = this.createScopeFromForIteration(this.scope, ctx);
-        this.di.forHeaderRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
+        this.di.getRegions().forHeaderRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
         if (ctx.statement().compound_statement()) {
             Helper.addFoldingRegionFromTokens(this.di, ctx.KW_FOR().symbol, ctx.stop);
         }
@@ -274,8 +283,8 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitCase_group(ctx: Case_groupContext): void {
         Helper.addFoldingRegionFromTokens(this.di, ctx.start, ctx.stop, -1);
-        this.di.caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
-        this.di.caseStatementsRegions.push(new Interval(ctx.statement()[0].start.startIndex, ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1, this.di));
+        this.di.getRegions().caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
+        this.di.getRegions().caseStatementsRegions.push(new Interval(ctx.statement()[0].start.startIndex, ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1, this.di));
         this.visitChildren(ctx);
     }
 

@@ -6,8 +6,8 @@ import { Scope } from '../scope/scope';
 import { Type_usageContext, QualifierContext, Interface_block_declarationContext, TypeContext } from '../_generated/AntlrGlslParser';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { ArrayUsage } from '../scope/array-usage';
-import { SemanticElement, SemanticType } from '../scope/semantic-element';
 import { Token } from 'antlr4ts';
+import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class TypeUsageProcessor {
 
@@ -90,7 +90,7 @@ export class TypeUsageProcessor {
         const token = this.getToken(this.tuc.type());
         if ((!td || (td && !td.builtin)) && token) {
             const st = tu?.name.startsWith('gl_') ? SemanticType.BUILTIN_TYPE : SemanticType.USER_TYPE;
-            this.di.semanticElements.push(new SemanticElement(token, st));
+            this.di.getRegions().semanticRegions.push(new SemanticRegion(token, st));
         }
         this.addQualifiers(tu, this.tuc.qualifier());
         if (index === 0) {

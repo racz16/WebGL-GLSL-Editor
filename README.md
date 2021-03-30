@@ -11,7 +11,7 @@ This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00
 
 ## Features
 ### Syntax highlight
-The extension colorizes types, builtin types, variables, builtin variables, functions, keywords, qualifiers, operators, macros and comments.
+The extension colorizes types, builtin types, variables, builtin variables, functions, keywords, qualifiers, operators, preprocessor directives and comments.
 
 ![syntax highlighting](res/png/screenshots/syntax-highlighting.png)
 ### Diagnostic

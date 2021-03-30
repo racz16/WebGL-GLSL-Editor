@@ -17,11 +17,11 @@ import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Constants } from '../core/constants';
-import { SemanticElement, SemanticType } from '../scope/semantic-element';
-import { ColorRegion } from '../scope/color-region';
+import { ColorRegion } from '../scope/regions/color-region';
 import { ExpressionResult } from './expression-result';
-import { SignatureRegion } from '../scope/signature-region';
-import { SignatureParameterRegion } from '../scope/signature-parameter-region';
+import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { SignatureParameterRegion } from '../scope/regions/signature-parameter-region';
+import { SignatureRegion } from '../scope/regions/signature-region';
 
 export class ExpressionProcessor {
 
@@ -207,7 +207,7 @@ export class ExpressionProcessor {
     }
 
     private processArithmeticUnaryExpression(): ExpressionResult {
-        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
+        this.di.getRegions().unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && !exp.array.isArray() && exp.type &&
             (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT || exp.type.typeBase === TypeBase.FLOAT)) {
@@ -259,7 +259,7 @@ export class ExpressionProcessor {
         const interval = Helper.getIntervalFromParserRule(this.ctx.function_call(), this.di);
         const nameInterval = Helper.getIntervalFromTerminalNode(tn, this.di);
         const lf = this.getLogicalFunction(name, nameInterval, parameters);
-        this.di.semanticElements.push(new SemanticElement(tn.symbol, SemanticType.FUNCTION));
+        this.di.getRegions().semanticRegions.push(new SemanticRegion(tn.symbol, SemanticType.FUNCTION));
         this.addSignatureRegion(name, parameters);
         if (lf) {
             const fd = lf.getDeclaration();
@@ -273,7 +273,7 @@ export class ExpressionProcessor {
                 if (param && param.constructorCall &&
                     (lf.prototypes.some(fp => fp.parameters[i].isColorVariable()) || lf.definitions.some(fd => fd.parameters[i].isColorVariable()))) {
                     const cr = new ColorRegion(param.constructorCall, param.constructorParameters);
-                    this.di.colorRegions.push(cr);
+                    this.di.getRegions().colorRegions.push(cr);
                 }
             }
             if (fd.returnType.declaration) {
@@ -309,7 +309,7 @@ export class ExpressionProcessor {
             const spr = new SignatureParameterRegion(null, null, interval);
             sr.parameters.push(spr);
         }
-        this.di.signatureRegions.push(sr);
+        this.di.getRegions().signatureRegions.push(sr);
     }
 
     private computeParameterInterval(index: number): Interval {
@@ -435,7 +435,7 @@ export class ExpressionProcessor {
     }
 
     private processComplementExpression(): ExpressionResult {
-        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
+        this.di.getRegions().unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && exp.type &&
             (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT)) {
@@ -491,7 +491,7 @@ export class ExpressionProcessor {
     }
 
     private processLogicalUnaryExpression(): ExpressionResult {
-        this.di.unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
+        this.di.getRegions().unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         if (exp && exp instanceof ExpressionResult && exp.type && exp.type.name === Constants.BOOL && !exp.array.isArray()) {
             return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), exp.constant);
@@ -582,7 +582,7 @@ export class ExpressionProcessor {
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
         if (left instanceof ExpressionResult && right instanceof ExpressionResult && left.colorVariable && right.constructorCall) {
             const cr = new ColorRegion(right.constructorCall, right.constructorParameters);
-            this.di.colorRegions.push(cr);
+            this.di.getRegions().colorRegions.push(cr);
         }
         return left;
     }
@@ -601,7 +601,7 @@ export class ExpressionProcessor {
         if (exp && exp instanceof ExpressionResult && (exp.array.isArray() || exp.type?.isVector() || exp.type?.typeCategory === TypeCategory.CUSTOM)) {
             const interval = Helper.getIntervalFromParserRule(this.ctx.expression()[0], this.di);
             const tu = new TypeUsage(exp.type.name, interval, null, this.scope, exp.type, exp.array);
-            this.di.completionRegions.push(tu);
+            this.di.getRegions().completionRegions.push(tu);
         }
     }
 

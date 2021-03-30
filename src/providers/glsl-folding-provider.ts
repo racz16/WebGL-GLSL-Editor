@@ -8,7 +8,7 @@ export class GlslFoldingProvider implements FoldingRangeProvider {
         GlslEditor.processElements(document);
         const di = GlslEditor.getDocumentInfo(document.uri);
         const results = new Array<FoldingRange>();
-        for (const fr of di.foldingRegions) {
+        for (const fr of di.getRegions().foldingRegions) {
             results.push(new FoldingRange(fr.startLine, fr.stopLine, fr.kind));
         }
         return results;

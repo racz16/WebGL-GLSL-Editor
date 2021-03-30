@@ -13,12 +13,9 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { FunctionCall } from '../scope/function/function-call';
 import { ShaderStage } from '../scope/shader-stage';
-import { FoldingRegion } from '../scope/folding-region';
-import { SemanticElement } from '../scope/semantic-element';
-import { ColorRegion } from '../scope/color-region';
-import { SignatureRegion } from '../scope/signature-region';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
+import { DocumentRegions } from './document-regions';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -36,19 +33,7 @@ export class DocumentInfo {
 
     private version = 100;
     private stage: ShaderStage;
-
-    public readonly completionRegions = new Array<TypeUsage>();
-    public readonly foldingRegions = new Array<FoldingRegion>();
-    public readonly semanticElements = new Array<SemanticElement>();
-    public readonly colorRegions = new Array<ColorRegion>();
-    public readonly signatureRegions = new Array<SignatureRegion>();
-    public readonly forHeaderRegions = new Array<Interval>();
-    public readonly typeDeclarationRegions = new Array<Interval>()
-    public readonly unaryExpressionRegions = new Array<Interval>();
-    public readonly caseHeaderRegions = new Array<Interval>();
-    public readonly caseStatementsRegions = new Array<Interval>();
-    public readonly scopelessInterfaceBlockRegions = new Array<Interval>();
-    public readonly commentRegions = new Array<Interval>();
+    private regions = new DocumentRegions();
 
     public builtin: Builtin;
 
@@ -64,18 +49,7 @@ export class DocumentInfo {
         if (this.builtin) {
             this.builtin.reset();
         }
-        this.completionRegions.length = 0;
-        this.foldingRegions.length = 0;
-        this.semanticElements.length = 0;
-        this.colorRegions.length = 0;
-        this.signatureRegions.length = 0;
-        this.forHeaderRegions.length = 0;
-        this.typeDeclarationRegions.length = 0;
-        this.unaryExpressionRegions.length = 0;
-        this.caseHeaderRegions.length = 0;
-        this.caseStatementsRegions.length = 0;
-        this.scopelessInterfaceBlockRegions.length = 0;
-        this.commentRegions.length = 0;
+        this.regions.reset();
         this.rootScope = new Scope(null, null);
     }
 
@@ -334,7 +308,7 @@ export class DocumentInfo {
 
     private getCaseDepthAt(position: Position): number {
         let depth = 0;
-        for (const cr of this.caseStatementsRegions) {
+        for (const cr of this.regions.caseStatementsRegions) {
             if (this.intervalToRange(cr)?.contains(position)) {
                 depth++;
             }
@@ -356,6 +330,10 @@ export class DocumentInfo {
 
     public getDocument(): TextDocument {
         return this.document;
+    }
+
+    public getRegions(): DocumentRegions {
+        return this.regions;
     }
 
 }

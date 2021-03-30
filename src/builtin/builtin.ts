@@ -24,6 +24,7 @@ import { LogicalFunction } from '../scope/function/logical-function';
 import { ConstructorProcessor } from './constructor-processor';
 import { Helper } from '../processor/helper';
 import { GlslEditor } from '../core/glsl-editor';
+import { IPreprocessor } from './interfaces/preprocessor';
 
 export class Builtin {
 
@@ -38,11 +39,13 @@ export class Builtin {
     public readonly variables = new Map<string, VariableDeclaration>();
     public readonly types = new Map<string, TypeDeclaration>();
     public readonly keywords = new Array<Keyword>();
+    public readonly preprocessor = new Array<Array<Array<string>>>();
     public readonly qualifiers = new Map<string, Qualifier>();
     public readonly layoutParameters = new Array<string>();
     public readonly qualifierRules = new Array<Set<Qualifier>>();
     public readonly reservedWords = new Array<string>();
     public readonly genericTypes = new Map<string, Array<string>>();
+    public readonly macros = new Array<string>();
 
     private constructor() { }
 
@@ -51,6 +54,7 @@ export class Builtin {
         this.loadReservedWords();
         this.loadKeywords();
         this.loadQualifiers();
+        this.loadPreprocessor();
         this.loadLayoutParameters();
         this.loadTypes();
         this.loadGenericTypes();
@@ -96,9 +100,25 @@ export class Builtin {
         }
     }
 
+    //
+    //preprocessor
+    //
+    private loadPreprocessor(): void {
+        const preprocessor = GlslEditor.loadJson<IPreprocessor>('preprocessor');
+        for (const preprocessorDirective of preprocessor.directives) {
+            this.preprocessor.push(preprocessorDirective);
+        }
+        for (const macro of preprocessor.macros) {
+            this.macros.push(macro);
+        }
+    }
+
+    //
+    //layout parameters
+    //
     private loadLayoutParameters(): void {
         if (this.postfix !== '100') {
-            const layoutParameters = GlslEditor.loadJson<ILayoutParameters>(`layout_parameters`);
+            const layoutParameters = GlslEditor.loadJson<ILayoutParameters>('layout_parameters');
             for (const param of layoutParameters.layoutParameters) {
                 this.layoutParameters.push(param);
             }
@@ -344,6 +364,9 @@ export class Builtin {
         for (const qualifier of this.qualifiers.values()) {
             bi.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
         }
+        for (const pd of this.preprocessor) {
+            bi.preprocessor.push(pd);
+        }
         for (const param of this.layoutParameters) {
             bi.layoutParameters.push(param);
         }
@@ -417,6 +440,9 @@ export class Builtin {
         }
         for (const func of this.importantFunctions) {
             bi.importantFunctions.push(func);
+        }
+        for (const macro of this.macros) {
+            bi.macros.push(macro);
         }
         return bi;
     }

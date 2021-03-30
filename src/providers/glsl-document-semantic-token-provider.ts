@@ -9,10 +9,10 @@ export class GlslDocumentSemanticTokensProvider implements DocumentSemanticToken
         const legend = new GlslSemanticTokensLegend();
         const result = new SemanticTokensBuilder(legend);
 
-        for (const semanticElement of di.semanticElements) {
-            const realLine = semanticElement.line - di.getInjectionLineCount();
+        for (const sr of di.getRegions().semanticRegions) {
+            const realLine = sr.line - di.getInjectionLineCount();
             if (realLine >= 0) {
-                result.push(realLine, semanticElement.offset, semanticElement.length, semanticElement.code);
+                result.push(realLine, sr.offset, sr.length, sr.code);
             }
         }
 

@@ -1,6 +1,6 @@
 import { Token } from "antlr4ts";
 
-export class SemanticElement {
+export class SemanticRegion {
 
     public readonly line: number;
     public readonly offset: number;

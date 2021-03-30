@@ -1,4 +1,4 @@
-import { FunctionCall } from "./function/function-call";
+import { FunctionCall } from "../function/function-call";
 
 export class ColorRegion {
 

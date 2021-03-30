@@ -1,4 +1,4 @@
-// Generated from syntaxes/AntlrGlslLexer.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from syntaxes/AntlrGlslLexer.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";
@@ -70,7 +70,7 @@ export class AntlrGlslLexer extends Lexer {
 	public static readonly OP_LOGICAL_UNARY = 52;
 	public static readonly OP_MODIFY = 53;
 	public static readonly OP_ASSIGN = 54;
-	public static readonly MACRO = 55;
+	public static readonly PREPROCESSOR = 55;
 	public static readonly NEW_LINE = 56;
 	public static readonly SPACE = 57;
 	public static readonly TAB = 58;
@@ -113,7 +113,7 @@ export class AntlrGlslLexer extends Lexer {
 		"OP_MOD", "OP_INC", "OP_DEC", "OP_SHIFT", "OP_RELATIONAL", "OP_EQUALITY", 
 		"OP_BIT_AND", "OP_BIT_XOR", "OP_BIT_OR", "OP_BIT_UNARY", "OP_LOGICAL_AND", 
 		"OP_LOGICAL_OR", "OP_LOGICAL_XOR", "OP_LOGICAL_UNARY", "OP_MODIFY", "OP_ASSIGN", 
-		"MACRO", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
+		"PREPROCESSOR", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
 		"IDENTIFIER", "LETTER", "DIGIT", "NONZERO_DIGIT", "OCTAL_DIGIT", "HEXADECIMAL_DIGIT", 
 		"DOT", "COMMA", "COLON", "SEMICOLON", "QUESTION", "LRB", "RRB", "LCB", 
 		"RCB", "LSB", "RSB",
@@ -141,7 +141,7 @@ export class AntlrGlslLexer extends Lexer {
 		"OP_DIV", "OP_MOD", "OP_INC", "OP_DEC", "OP_SHIFT", "OP_RELATIONAL", "OP_EQUALITY", 
 		"OP_BIT_AND", "OP_BIT_XOR", "OP_BIT_OR", "OP_BIT_UNARY", "OP_LOGICAL_AND", 
 		"OP_LOGICAL_OR", "OP_LOGICAL_XOR", "OP_LOGICAL_UNARY", "OP_MODIFY", "OP_ASSIGN", 
-		"MACRO", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
+		"PREPROCESSOR", "NEW_LINE", "SPACE", "TAB", "MULTI_LINE_COMMENT", "SINGLE_LINE_COMMENT", 
 		"IDENTIFIER", "DOT", "COMMA", "COLON", "SEMICOLON", "QUESTION", "LRB", 
 		"RRB", "LCB", "RCB", "LSB", "RSB",
 	];

@@ -1,4 +1,4 @@
-import { Interval } from "./interval";
+import { Interval } from "../interval";
 import { SignatureParameterRegion } from "./signature-parameter-region";
 
 export class SignatureRegion {

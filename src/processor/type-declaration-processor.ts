@@ -11,8 +11,8 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
-import { SemanticElement, SemanticType } from '../scope/semantic-element';
 import { Constants } from '../core/constants';
+import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class TypeDeclarationProcessor {
 
@@ -56,17 +56,17 @@ export class TypeDeclarationProcessor {
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, true);
-        di.typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
+        di.getRegions().typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
         scope.typeDeclarations.push(td);
         if (name) {
-            this.di.semanticElements.push(new SemanticElement(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
+            this.di.getRegions().semanticRegions.push(new SemanticRegion(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (ibdc.identifier_optarray()) {
             this.createInnerScope(ibdc);
             this.addMembers(td, ibdc.variable_declaration());
             this.scope = this.scope.parent;
         } else {
-            this.di.scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
+            this.di.getRegions().scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
             for (const vdc of ibdc.variable_declaration()) {
                 const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
                 vds.forEach(vd => td.interfaceMembers.push(vd));
@@ -90,7 +90,7 @@ export class TypeDeclarationProcessor {
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, false, returnType || parameter);
-        this.di.typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
+        this.di.getRegions().typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
         if (parameter) {
             this.di.getRootScope().typeDeclarations.push(td);
         } else {
@@ -101,7 +101,7 @@ export class TypeDeclarationProcessor {
         this.scope = this.scope.parent;
         if (name) {
             this.createConstructor(td);
-            this.di.semanticElements.push(new SemanticElement(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
+            this.di.getRegions().semanticRegions.push(new SemanticRegion(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (index === 0) {
             this.td = td;

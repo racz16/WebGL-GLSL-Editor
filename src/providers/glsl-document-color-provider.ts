@@ -1,7 +1,7 @@
 import { DocumentColorProvider, TextDocument, CancellationToken, ProviderResult, ColorInformation, Color, Range, ColorPresentation, TextEdit } from "vscode";
 import { DocumentInfo } from "../core/document-info";
 import { GlslEditor } from "../core/glsl-editor";
-import { ColorRegion } from "../scope/color-region";
+import { ColorRegion } from "../scope/regions/color-region";
 import { Constants } from "../core/constants";
 import { Interval } from "../scope/interval";
 
@@ -17,7 +17,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
     public provideDocumentColors(document: TextDocument, token: CancellationToken): ProviderResult<ColorInformation[]> {
         this.initialize(document);
         const results = new Array<ColorInformation>();
-        for (const colorRegion of this.di.colorRegions) {
+        for (const colorRegion of this.di.getRegions().colorRegions) {
             if (!colorRegion.constructorCall.interval.isInjected()) {
                 const range = this.di.intervalToRange(colorRegion.constructorCall.interval);
                 const color = this.computeColorFromParameters(colorRegion);
@@ -57,7 +57,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
     }
 
     private getColorRegion(range: Range): ColorRegion {
-        for (const colorRegion of this.di.colorRegions) {
+        for (const colorRegion of this.di.getRegions().colorRegions) {
             if (range.intersection(this.di.intervalToRange(colorRegion.constructorCall.interval))) {
                 return colorRegion;
             }

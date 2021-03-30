@@ -75,7 +75,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private isT2(type: number): boolean {
         return type === AntlrGlslLexer.SINGLE_LINE_COMMENT ||
             type === AntlrGlslLexer.MULTI_LINE_COMMENT ||
-            type === AntlrGlslLexer.MACRO;
+            type === AntlrGlslLexer.PREPROCESSOR;
     }
 
     private processT3(ct: Token): void {
@@ -102,8 +102,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private processT2(ct: Token): void {
         if (this.isNewLineCountMoreThanOne()) {
             this.addMaxTwoNewLinesTextEdit();
-        } else if (this.isT1BeforeMacroWithoutNewLine(ct)) {
-            this.addNewLineBeforeMacroTextEdit(ct);
+        } else if (this.isT1BeforePreprocessorWithoutNewLine(ct)) {
+            this.addNewLineBeforePreprocessorTextEdit(ct);
         }
         this.afterProcessT2();
     }
@@ -121,11 +121,11 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         this.addTextEdit(new TextEdit(new Range(p1, p2), text));
     }
 
-    private isT1BeforeMacroWithoutNewLine(ct: Token): boolean {
-        return !this.ctx.t1NewLine && ct.type === AntlrGlslLexer.MACRO && this.ctx.lastt1TokenIndex !== Constants.INVALID;
+    private isT1BeforePreprocessorWithoutNewLine(ct: Token): boolean {
+        return !this.ctx.t1NewLine && ct.type === AntlrGlslLexer.PREPROCESSOR && this.ctx.lastt1TokenIndex !== Constants.INVALID;
     }
 
-    private addNewLineBeforeMacroTextEdit(ct: Token): void {
+    private addNewLineBeforePreprocessorTextEdit(ct: Token): void {
         const p1 = this.di.offsetToPosition(ct.startIndex - this.di.getInjectionOffset());
         this.addTextEdit(new TextEdit(new Range(p1, p1), Constants.CRLF));
     }
@@ -387,7 +387,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private refreshForState(t1: Token, position: number): void {
-        for (const interval of this.di.forHeaderRegions) {
+        for (const interval of this.di.getRegions().forHeaderRegions) {
             if (interval.startIndex <= position && interval.stopIndex >= position) {
                 this.ctx.forHeader = true;
                 if (interval.stopIndex === t1.stopIndex - this.di.getInjectionOffset()) {
@@ -399,7 +399,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private refreshTypeDeclarationState(position: number): void {
-        for (const interval of this.di.typeDeclarationRegions) {
+        for (const interval of this.di.getRegions().typeDeclarationRegions) {
             if (interval.startIndex <= position && interval.stopIndex >= position) {
                 this.ctx.typeDeclaration = true;
                 break;
@@ -410,7 +410,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private refreshUnaryExpressionState(t1: Token, t2: Token): void {
         const t1Unary = this.isUnaryOperator(t1.type);
         const t2Unary = this.isUnaryOperator(t2.type);
-        for (const interval of this.di.unaryExpressionRegions) {
+        for (const interval of this.di.getRegions().unaryExpressionRegions) {
             if (t1Unary && interval.startIndex === t1.startIndex - this.di.getInjectionOffset()) {
                 this.ctx.unaryExpression = true;
             } else if (t2Unary && interval.stopIndex === t2.stopIndex - this.di.getInjectionOffset() + 1) {
@@ -430,12 +430,12 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
 
     private refreshCaseState(t1: Token, t2: Token): void {
         const position = t1.startIndex - this.di.getInjectionOffset();
-        for (const interval of this.di.caseHeaderRegions) {
+        for (const interval of this.di.getRegions().caseHeaderRegions) {
             if (position >= interval.startIndex && position <= interval.stopIndex) {
                 this.ctx.caseHeader = true;
             }
         }
-        for (const interval of this.di.caseStatementsRegions) {
+        for (const interval of this.di.getRegions().caseStatementsRegions) {
             if (t2.startIndex - this.di.getInjectionOffset() === interval.startIndex) {
                 this.ctx.caseStatementsStart = true;
                 break;
@@ -446,7 +446,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private refreshScopelessInterfaceBlock(t2: Token): void {
         this.ctx.scopelessInterfaceBlock = false;
         const position = t2.stopIndex - this.di.getInjectionOffset();
-        for (const interval of this.di.scopelessInterfaceBlockRegions) {
+        for (const interval of this.di.getRegions().scopelessInterfaceBlockRegions) {
             if (interval.startIndex < position && interval.stopIndex > position) {
                 this.ctx.scopelessInterfaceBlock = true;
                 break;

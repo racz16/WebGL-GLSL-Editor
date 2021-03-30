@@ -15,8 +15,8 @@ import { ShaderStage } from '../scope/shader-stage';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { ExpressionResult } from './expression-result';
-import { FoldingRegion } from '../scope/folding-region';
 import { Constants } from '../core/constants';
+import { FoldingRegion } from '../scope/regions/folding-region';
 
 export class Helper {
 
@@ -108,7 +108,7 @@ export class Helper {
         const realStartLine = startLine - di.getInjectionLineCount();
         const realStopLine = stopLine - di.getInjectionLineCount();
         if (realStartLine >= 0) {
-            di.foldingRegions.push(new FoldingRegion(realStartLine, realStopLine, kind));
+            di.getRegions().foldingRegions.push(new FoldingRegion(realStartLine, realStopLine, kind));
         }
     }
 

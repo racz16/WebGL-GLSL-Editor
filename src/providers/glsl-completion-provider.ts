@@ -11,6 +11,8 @@ import { Interval } from '../scope/interval';
 import { Constants } from '../core/constants';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { TypeDeclaration } from '../scope/type/type-declaration';
+import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
+import { PreprocessorCompletionContext } from './helper/preprocessor-completion-context';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
@@ -26,6 +28,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         this.position = position;
         this.context = context;
         this.offset = document.offsetAt(position);
+        this.items = new Array<CompletionItem>();
     }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
@@ -33,16 +36,127 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         if (this.isCompletionTriggeredByFloatingPoint() || this.isInCommentRegion()) {
             return null;
         }
+        const mr = this.getPreprocessorRegion();
+        if (mr) {
+            return this.getPreprocessorCompletions(mr);
+        }
+        this.addNonPreprocessorElements();
+        return this.items;
+    }
+
+    private addNonPreprocessorElements(): void {
         const [tu, startsWith] = this.getCompletionExpression();
-        this.items = new Array<CompletionItem>();
         if (tu) {
             this.completeAfterDot(tu, startsWith);
         } else {
             const scope = this.di.getScopeAt(this.position);
-            this.addKeywordAndQualifierItems();
+            this.addLanguageElements();
             this.addItems(scope);
         }
+    }
+
+    private getPreprocessorCompletions(mr: PreprocessorRegion): Array<CompletionItem> {
+        const mcc = this.getPreprocessorCompletionContext(mr);
+        if (mcc.nextWordIndex === 0) {
+            this.addPreprocessorDirectives();
+        } else {
+            const pd = this.di.builtin.preprocessor.find(pd => pd[0][0] === mcc.words[1]);
+            this.addPreprocessorArguments(mcc, pd);
+            this.addPreprocessorSelectionArguments(pd);
+        }
         return this.items;
+    }
+
+    private addPreprocessorDirectives(): void {
+        for (const pd of this.di.builtin.preprocessor) {
+            const ci = new CompletionItem(`#${pd[0][0]}`, CompletionItemKind.Value);
+            ci.filterText = `${pd[0][0]}`;
+            ci.insertText = `${pd[0][0]}`;
+            this.items.push(ci);
+        }
+    }
+
+    private addPreprocessorSelectionArguments(pd: Array<Array<string>>): void {
+        if (pd[0][0] === 'if' || pd[0][0] === 'ifdef' || pd[0][0] === 'ifndef' || pd[0][0] === 'elif') {
+            this.addMacros();
+            if (pd[0][0] === 'if' || pd[0][0] === 'elif') {
+                this.items.push(new CompletionItem('defined', CompletionItemKind.Value));
+            }
+        }
+    }
+
+    private addPreprocessorArguments(mcc: PreprocessorCompletionContext, pd: Array<Array<string>>): void {
+        if (pd && pd.length > mcc.nextWordIndex) {
+            for (const arg of pd[mcc.nextWordIndex]) {
+                if (this.isArgumentValid(mcc, arg)) {
+                    this.addPreprocessorArgument(mcc, pd, arg);
+                }
+            }
+        }
+    }
+
+    private addPreprocessorArgument(mcc: PreprocessorCompletionContext, pd: Array<Array<string>>, arg: string): void {
+        const ci = new CompletionItem(arg, CompletionItemKind.Value);
+        if (pd[0][0] === 'extension' && mcc.nextWordIndex === 1) {
+            ci.insertText = `${arg} : `;
+        } else if (pd[0][0] === 'extension' && mcc.nextWordIndex === 2 && (mcc.words.length === 3 || (mcc.words.length === 4 && mcc.words[3] !== ':'))) {
+            ci.insertText = `: ${arg}`;
+        }
+        this.items.push(ci);
+    }
+
+    private isArgumentValid(mcc: PreprocessorCompletionContext, argument: string): boolean {
+        return !(mcc.words[1] === 'extension' && mcc.nextWordIndex === 2 && mcc.words[2] === 'all' && (argument === 'require' || argument === 'enable')) &&
+            !(mcc.words[1] === 'version' && mcc.words[2] === '100');
+    }
+
+    private addMacros(): void {
+        for (const macro of this.di.builtin.macros) {
+            const ci = new CompletionItem(macro, CompletionItemKind.Value);
+            this.items.push(ci);
+        }
+    }
+
+    private getPreprocessorCompletionContext(mr: PreprocessorRegion): PreprocessorCompletionContext {
+        const text = mr.text.substring(0, this.position.character);
+        const words = new Array<string>();
+        let startNewWord = true;
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            startNewWord = this.addCharacter(words, char, startNewWord);
+        }
+        const nextWordIndex = this.computeNextWordIndex(words, startNewWord);
+        return new PreprocessorCompletionContext(nextWordIndex, words);
+    }
+
+    private addCharacter(words: Array<string>, char: string, startNewWord: boolean): boolean {
+        if (char === Constants.SPACE || char === Constants.TAB) {
+            return true;
+        } else {
+            return this.addNonWhitespaceCharacter(words, char, startNewWord);
+        }
+    }
+
+    private addNonWhitespaceCharacter(words: Array<string>, char: string, startNewWord: boolean): boolean {
+        if (startNewWord || char === ':') {
+            words.push(char);
+        } else {
+            words[words.length - 1] += char;
+        }
+        if (char === '#' || char === ':') {
+            return true
+        } else {
+            return false;
+        }
+    }
+
+    private computeNextWordIndex(words: Array<string>, startNewWord: boolean): number {
+        const nextWordIndex = words.length + (startNewWord ? 1 : 0) - 2;
+        if (words[1] === 'extension' && nextWordIndex === 3) {
+            return nextWordIndex - 1;
+        } else {
+            return nextWordIndex;
+        }
     }
 
     private isCompletionTriggeredByFloatingPoint(): boolean {
@@ -51,12 +165,22 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private isInCommentRegion(): boolean {
         const offset = this.di.positionToOffset(this.position);
-        for (const cr of this.di.commentRegions) {
+        for (const cr of this.di.getRegions().commentRegions) {
             if (offset > cr.startIndex && offset <= cr.stopIndex) {
                 return true;
             }
         }
         return false;
+    }
+
+    private getPreprocessorRegion(): PreprocessorRegion {
+        const offset = this.di.positionToOffset(this.position);
+        for (const mr of this.di.getRegions().preprocessorRegions) {
+            if (offset > mr.interval.startIndex && offset <= mr.interval.stopIndex) {
+                return mr;
+            }
+        }
+        return null;
     }
 
     private completeAfterDot(tu: TypeUsage, startsWith: string): void {
@@ -106,7 +230,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private getCompletionExpression(): [TypeUsage, string] {
         const offset = this.di.positionToOffset(this.position);
         let tu: TypeUsage = null;
-        for (const cr of this.di.completionRegions) {
+        for (const cr of this.di.getRegions().completionRegions) {
             if (cr.interval.stopIndex < offset) {
                 tu = cr;
             } else {
@@ -138,9 +262,10 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     //builtin items
     //
-    private addKeywordAndQualifierItems(): void {
+    private addLanguageElements(): void {
         this.addKeywordItems();
         this.addQualifierItems();
+        this.addPreprocessorGlobal();
     }
 
     private addBuiltinItems(localItems: Array<CompletionItem>): void {
@@ -173,6 +298,18 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             const ci = new CompletionItem(param, CompletionItemKind.EnumMember);
             this.items.push(ci);
         }
+    }
+
+    //
+    //preprocessor
+    //
+    private addPreprocessorGlobal(): void {
+        for (const pd of this.di.builtin.preprocessor) {
+            const ci = new CompletionItem(`#${pd[0][0]}`, CompletionItemKind.Value);
+            this.items.push(ci);
+        }
+        const ci = new CompletionItem('#', CompletionItemKind.Value);
+        this.items.push(ci);
     }
 
     //
@@ -224,7 +361,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private makeItImportant(ci: CompletionItem): void {
         ci.insertText = ci.label;
         ci.filterText = ci.label;
-        ci.sortText = '*' + ci.label;
+        ci.sortText = ' ' + ci.label;
         ci.label = '★ ' + ci.label;
     }
 

@@ -1,6 +1,6 @@
-import { TypeDeclaration } from "./type/type-declaration";
-import { ArrayUsage } from "./array-usage";
-import { Interval } from "./interval";
+import { ArrayUsage } from "../array-usage";
+import { Interval } from "../interval";
+import { TypeDeclaration } from "../type/type-declaration";
 
 export class SignatureParameterRegion {
 

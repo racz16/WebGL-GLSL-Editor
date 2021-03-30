@@ -1,13 +1,13 @@
 import { SignatureHelpProvider, TextDocument, Position, CancellationToken, SignatureHelpContext, ProviderResult, SignatureHelp, SignatureInformation, ParameterInformation } from "vscode";
 import { GlslEditor } from "../core/glsl-editor";
 import { DocumentInfo } from "../core/document-info";
-import { SignatureRegion } from "../scope/signature-region";
 import { FunctionDeclaration } from "../scope/function/function-declaration";
-import { SignatureParameterRegion } from "../scope/signature-parameter-region";
 import { TypeUsage } from "../scope/type/type-usage";
 import { LogicalFunction } from "../scope/function/logical-function";
 import { Scope } from "../scope/scope";
 import { Constants } from "../core/constants";
+import { SignatureParameterRegion } from "../scope/regions/signature-parameter-region";
+import { SignatureRegion } from "../scope/regions/signature-region";
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
@@ -38,7 +38,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     }
 
     private getSignatureRegion(): SignatureRegion {
-        for (const sr of this.di.signatureRegions) {
+        for (const sr of this.di.getRegions().signatureRegions) {
             if (!sr.interval.isInjected() && this.di.intervalToRange(sr.interval).contains(this.position)) {
                 return sr;
             }
