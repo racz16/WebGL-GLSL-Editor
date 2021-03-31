@@ -207,7 +207,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (!fc.builtin) {
             const fd = fc.logicalFunction.getDeclaration();
             if (fd.ctor) {
-                return this.processTypeDeclaration(fd.returnType.declaration);
+                return this.processTypeDeclaration(fd.returnType.declaration, fc.nameInterval);
             } else {
                 return this.processFunction(fc.logicalFunction, fc.nameInterval);
             }
@@ -233,11 +233,11 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         return this.defaultReturn();
     }
 
-    protected processTypeDeclaration(td: TypeDeclaration): Range {
+    protected processTypeDeclaration(td: TypeDeclaration, interval: Interval = null): Range {
         if (!td.interval.isInjected()) {
             this.td = td;
             this.scope = td.scope;
-            return this.di.intervalToRange(td.nameInterval);
+            return this.di.intervalToRange(interval || td.nameInterval);
         }
         return this.defaultReturn();
     }
