@@ -153,3 +153,6 @@ For more information, see the [changelog](CHANGELOG.md).
 - Go to/Find all/Peek implementations
 - Go to/Find all/Peek references
 - Commands for online documentation
+
+## How to build, run and package the extension
+[Detailed build instructions](BUILD.md)
