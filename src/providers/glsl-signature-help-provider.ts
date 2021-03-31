@@ -8,6 +8,7 @@ import { Scope } from "../scope/scope";
 import { Constants } from "../core/constants";
 import { SignatureParameterRegion } from "../scope/regions/signature-parameter-region";
 import { SignatureRegion } from "../scope/regions/signature-region";
+import { Helper } from "../processor/helper";
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
@@ -50,14 +51,16 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         const fi = this.di.builtin.functionSummaries.get(sr.name);
         for (const lf of lfs.filter(func => func.getDeclaration().name === sr.name)) {
             const fp = lf.getDeclaration();
-            const si = new SignatureInformation(fp.toString(), fi?.summary);
-            si.parameters = [];
-            for (const vd of fp.parameters) {
-                const pi = new ParameterInformation(vd.toString(), fi?.parameters.get(vd.name));
-                si.parameters.push(pi);
+            if (Helper.isInCorrectStage(fp.stage, this.di)) {
+                const si = new SignatureInformation(fp.toString(), fi?.summary);
+                si.parameters = [];
+                for (const vd of fp.parameters) {
+                    const pi = new ParameterInformation(vd.toString(), fi?.parameters.get(vd.name));
+                    si.parameters.push(pi);
+                }
+                sh.signatures.push(si);
+                this.functions.push(fp);
             }
-            sh.signatures.push(si);
-            this.functions.push(fp);
         }
     }
 

@@ -156,4 +156,8 @@ export class Helper {
         }
     }
 
+    public static isInCorrectStage(stage: ShaderStage, di: DocumentInfo): boolean {
+        return stage === ShaderStage.DEFAULT || stage === di.getShaderStage();
+    }
+
 }

@@ -5,6 +5,7 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';
 import { TypeCategory } from '../scope/type/type-category';
 import { Constants } from '../core/constants';
+import { Helper } from '../processor/helper';
 
 export class GlslHoverProvider extends PositionalProviderBase<Hover> implements HoverProvider {
 
@@ -14,7 +15,7 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
 
     protected processFunctionCall(fc: FunctionCall): Hover {
         const fd = fc.logicalFunction?.getDeclaration();
-        if (fd) {
+        if (fd && Helper.isInCorrectStage(fd.stage, this.di)) {
             const fi = this.di.builtin.functionSummaries.get(fd.name);
             const md = new MarkdownString(fd.toStringDocumentation());
             if (fi && fi.summary) {
@@ -28,7 +29,7 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
     }
 
     protected processVariableUsage(vu: VariableUsage): Hover {
-        if (vu.declaration) {
+        if (vu.declaration && Helper.isInCorrectStage(vu.declaration.stage, this.di)) {
             if (vu.declaration.summary) {
                 return new Hover(vu.declaration.summary);
             } else {
