@@ -9,6 +9,7 @@ import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
 import { ColorRegion } from '../scope/regions/color-region';
 import { ExpressionResult } from './expression-result';
+import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class VariableDeclarationProcessor {
 
@@ -55,6 +56,10 @@ export class VariableDeclarationProcessor {
             tu.declaration.usages.push(tu);
         }
         scope.variableDeclarations.push(vd);
+        if (vd.type.qualifiers.some(q => q.name === 'const') && vd.name) {
+            const sr = new SemanticRegion(ioc.IDENTIFIER().symbol, SemanticType.VARIABLE, [SemanticModifier.CONST]);
+            this.di.getRegions().semanticRegions.push(sr);
+        }
         return vd;
     }
 
@@ -72,6 +77,10 @@ export class VariableDeclarationProcessor {
             const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
             this.scope.variableDeclarations.push(vd);
             tu.declaration.usages.push(tu);
+            if (vd.type.qualifiers.some(q => q.name === 'const') && vd.name) {
+                const sr = new SemanticRegion(ibdc.identifier_optarray().IDENTIFIER().symbol, SemanticType.VARIABLE, [SemanticModifier.CONST]);
+                this.di.getRegions().semanticRegions.push(sr);
+            }
             return vd;
         }
         return null;
@@ -95,6 +104,10 @@ export class VariableDeclarationProcessor {
                 const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
                 const right = new ExpressionProcessor().processExpression(iooc.expression(), this.scope, this.di);
                 this.scope.variableDeclarations.push(vd);
+                if (vd.type.qualifiers.some(q => q.name === 'const') && vd.name) {
+                    const sr = new SemanticRegion(iooc.identifier_optarray().IDENTIFIER().symbol, SemanticType.VARIABLE, [SemanticModifier.CONST]);
+                    this.di.getRegions().semanticRegions.push(sr);
+                }
                 this.handleColorRegion(vd, right);
                 vds.push(vd);
             }
