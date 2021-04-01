@@ -72,13 +72,7 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
     private processUsage(element: TypeUsage | VariableUsage): Array<Location> {
         const declaration = element.declaration;
         if (declaration && !declaration.builtin) {
-            const ret = this.processDeclaration(declaration);
-            if (element instanceof TypeUsage) {
-                for (const ctorCall of element.declaration.ctorCalls) {
-                    this.addLocation(ret, ctorCall.nameInterval);
-                }
-            }
-            return ret;
+            return this.processDeclaration(declaration);
         } else {
             return new Array<Location>();
         }
