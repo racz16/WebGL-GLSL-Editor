@@ -17,7 +17,7 @@ function_header : type_usage IDENTIFIER LRB function_parameter_list? RRB;
 
 function_parameter_list 
     : KW_VOID
-    | single_variable_declaration (COMMA single_variable_declaration)*
+    | single_variable_declaration (COMMA single_variable_declaration)* COMMA?
     ;
 
 function_call : (TYPE | IDENTIFIER) array_subscript* LRB function_call_parameter_list? RRB;
@@ -82,13 +82,14 @@ declaration_statement
     | type_declaration SEMICOLON
     | variable_declaration SEMICOLON
     | interface_block_declaration SEMICOLON
+    | qualifier+ SEMICOLON
     ;
 
 precision_declaration : Q_PRECISION qualifier* type;
 
 invariant_declaration : Q_INVARIANT IDENTIFIER;
 
-variable_declaration : type_usage (identifier_optarray_optassignment (COMMA identifier_optarray_optassignment)*)?;
+variable_declaration : type_usage (identifier_optarray_optassignment (COMMA identifier_optarray_optassignment)* COMMA?)?;
 
 single_variable_declaration : type_usage identifier_optarray_optassignment?;
 
@@ -162,9 +163,9 @@ qualifier
     | Q_LOWP
     ;
 
-layout_qualifier : Q_LAYOUT LRB layout_qualifier_id_list RRB;
+layout_qualifier : Q_LAYOUT LRB layout_qualifier_id_list? RRB;
 
-layout_qualifier_id_list : layout_qualifier_id (COMMA layout_qualifier_id)*;
+layout_qualifier_id_list : layout_qualifier_id (COMMA layout_qualifier_id)* COMMA?;
 
 layout_qualifier_id : IDENTIFIER (OP_ASSIGN (IDENTIFIER | literal))?;
 

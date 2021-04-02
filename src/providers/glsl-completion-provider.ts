@@ -33,18 +33,24 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position, context);
-        if (this.isCompletionTriggeredByFloatingPoint() || this.isInCommentRegion()) {
-            return null;
+        if (!this.isCompletionTriggeredByFloatingPoint() && !this.isInCommentRegion()) {
+            this.addCompletionItems();
         }
-        const mr = this.getPreprocessorRegion();
-        if (mr) {
-            return this.getPreprocessorCompletions(mr);
-        }
-        this.addNonPreprocessorElements();
         return this.items;
     }
 
-    private addNonPreprocessorElements(): void {
+    private addCompletionItems(): void {
+        const mr = this.getPreprocessorRegion();
+        if (mr) {
+            this.addPreprocessorCompletionItems(mr);
+        } else if (this.isInLayoutQualifier()) {
+            this.addLayoutQualifierParameterCompletionItems();
+        } else {
+            this.addGeneralCompletionItems();
+        }
+    }
+
+    private addGeneralCompletionItems(): void {
         const [tu, startsWith] = this.getCompletionExpression();
         if (tu) {
             this.completeAfterDot(tu, startsWith);
@@ -55,7 +61,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         }
     }
 
-    private getPreprocessorCompletions(mr: PreprocessorRegion): Array<CompletionItem> {
+    private addPreprocessorCompletionItems(mr: PreprocessorRegion): void {
         const mcc = this.getPreprocessorCompletionContext(mr);
         if (mcc.nextWordIndex === 0) {
             this.addPreprocessorDirectives();
@@ -64,7 +70,6 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             this.addPreprocessorArguments(mcc, pd);
             this.addPreprocessorSelectionArguments(pd);
         }
-        return this.items;
     }
 
     private addPreprocessorDirectives(): void {
@@ -183,6 +188,16 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return null;
     }
 
+    private isInLayoutQualifier(): boolean {
+        const offset = this.di.positionToOffset(this.position);
+        for (const interval of this.di.getRegions().layoutRegions) {
+            if (offset > interval.startIndex && offset <= interval.stopIndex) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private completeAfterDot(tu: TypeUsage, startsWith: string): void {
         if (tu.array.isArray()) {
             if ('length'.startsWith(startsWith)) {
@@ -264,7 +279,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addLanguageElements(): void {
         this.addKeywordItems();
-        this.addQualifierItems();
+        this.addQualifiers();
         this.addPreprocessorGlobal();
     }
 
@@ -289,13 +304,19 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     //qualifiers
     //
-    private addQualifierItems(): void {
+    private addQualifiers(): void {
         for (const q of this.di.builtin.qualifiers.values()) {
             const ci = new CompletionItem(q.name, CompletionItemKind.Keyword);
             this.items.push(ci);
         }
+    }
+
+    private addLayoutQualifierParameterCompletionItems(): void {
         for (const param of this.di.builtin.layoutParameters) {
             const ci = new CompletionItem(param, CompletionItemKind.EnumMember);
+            if (param === 'location') {
+                ci.insertText = param + ' = ';
+            }
             this.items.push(ci);
         }
     }

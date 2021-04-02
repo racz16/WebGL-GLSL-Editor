@@ -117,12 +117,14 @@ export class VariableDeclarationProcessor {
             }
         } else {
             const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);
-            const name = null;
-            const nameInterval = null;
-            const declarationInterval = Helper.getIntervalFromParserRule(vdc, this.di);
-            const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
-            this.scope.variableDeclarations.push(vd);
-            vds.push(vd);
+            if (!tu.qualifiers.some(q => q.name.startsWith('layout'))) {
+                const name = null;
+                const nameInterval = null;
+                const declarationInterval = Helper.getIntervalFromParserRule(vdc, this.di);
+                const vd = new VariableDeclaration(name, nameInterval, this.scope, false, declarationInterval, tu, false, false);
+                this.scope.variableDeclarations.push(vd);
+                vds.push(vd);
+            }
         }
         return vds;
     }

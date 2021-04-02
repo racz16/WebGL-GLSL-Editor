@@ -1,7 +1,7 @@
 import { GlslEditor } from './glsl-editor';
 import { Uri } from 'vscode';
 import { DocumentInfo } from './document-info';
-import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext, AntlrGlslParser } from '../_generated/AntlrGlslParser';
+import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext, AntlrGlslParser, Layout_qualifierContext } from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
 import { Helper } from '../processor/helper';
 import { Scope } from '../scope/scope';
@@ -121,6 +121,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitVariable_declaration(ctx: Variable_declarationContext): void {
         new VariableDeclarationProcessor().getDeclarations(ctx, this.scope, this.di);
+        this.visitList(ctx.type_usage().qualifier());
     }
 
     public visitInvariant_declaration(ctx: Invariant_declarationContext): void {
@@ -317,6 +318,10 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
         return newScope;
+    }
+
+    public visitLayout_qualifier(ctx: Layout_qualifierContext): void {
+        this.di.getRegions().layoutRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
     }
 
     protected visitList(rules: Array<RuleNode>): void {
