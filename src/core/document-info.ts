@@ -40,6 +40,8 @@ export class DocumentInfo {
     private document: TextDocument;
     private rootScope: Scope;
 
+    private preprocessedText: string;
+
     public constructor(uri: Uri) {
         this.uri = uri;
         this.setShaderStage();
@@ -140,7 +142,7 @@ export class DocumentInfo {
 
     public getText(): string {
         const originalText = this.document.getText();
-        if (GlslEditor.CONFIGURATIONS.getCodeInjection()) {
+        if (GlslEditor.CONFIGURATIONS.getCodeInjection() && this.uri.scheme !== Constants.PREPROCESSED_GLSL) {
             const injectionSource = GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
             let text = injectionSource.join(Constants.NEW_LINE) + Constants.NEW_LINE;
             this.injectionLineCount = injectionSource.length;
@@ -317,11 +319,19 @@ export class DocumentInfo {
     }
 
     public getInjectionLineCount(): number {
-        return this.injectionLineCount;
+        if (this.uri.scheme === Constants.PREPROCESSED_GLSL) {
+            return 0;
+        } else {
+            return this.injectionLineCount;
+        }
     }
 
     public getInjectionOffset(): number {
-        return this.injectionOffset;
+        if (this.uri.scheme === Constants.PREPROCESSED_GLSL) {
+            return 0;
+        } else {
+            return this.injectionOffset;
+        }
     }
 
     public invalidate(): void {
@@ -334,6 +344,14 @@ export class DocumentInfo {
 
     public getRegions(): DocumentRegions {
         return this.regions;
+    }
+
+    public getPreprocessedText(): string {
+        return this.preprocessedText;
+    }
+
+    public setPreprocessedText(preprocessedText: string): void {
+        this.preprocessedText = preprocessedText;
     }
 
 }

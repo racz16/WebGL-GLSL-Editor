@@ -1,7 +1,7 @@
 import { exec, ChildProcess } from 'child_process';
 import { Stream } from 'stream';
 import { platform } from 'os';
-import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag } from "vscode";
+import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag, window } from "vscode";
 import { GlslEditor } from '../core/glsl-editor';
 import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -11,6 +11,7 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Constants } from '../core/constants';
+import { GlslTextProvider } from './glsl-text-provider';
 
 export class GlslDiagnosticProvider {
 
@@ -108,15 +109,40 @@ export class GlslDiagnosticProvider {
         return lf.getDeclaration().ctor;
     }
 
+    public displayPreprocessedCode(document: TextDocument): void {
+        this.document = document;
+        this.di = GlslEditor.getDocumentInfo(this.document.uri);
+        const platformName = this.getPlatformName();
+        const extension = this.getExtension(this.document.uri);
+        const stageName = this.getStageName(extension);
+        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
+        this.executeGeneration(validatorPath, stageName);
+    }
+
+    private executeGeneration(validatorPath: string, stageName: string): void {
+        const result = exec(`${validatorPath} --stdin -E -S ${stageName}`);
+        let preprocessedText = Constants.EMPTY;
+        result.stdout.on('data', (data: string) => {
+            preprocessedText = data;
+        });
+        result.stdout.on('close', async () => {
+            const uri = Uri.parse(`${Constants.PREPROCESSED_GLSL}: ${this.document.fileName}`);
+            GlslEditor.getDocumentInfo(uri).setPreprocessedText(preprocessedText);
+            GlslTextProvider.onDidChangeEmitter.fire(uri);
+            await window.showTextDocument(uri, { preview: false });
+        });
+        this.provideInput(result);
+    }
+
     private addErrors(): void {
         const platformName = this.getPlatformName();
         const extension = this.getExtension(this.document.uri);
         const stageName = this.getStageName(extension);
         const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
-        this.executeCommand(validatorPath, stageName);
+        this.executeValidation(validatorPath, stageName);
     }
 
-    private executeCommand(validatorPath: string, stageName: string): void {
+    private executeValidation(validatorPath: string, stageName: string): void {
         const result = exec(`${validatorPath} --stdin -C -S ${stageName}`);
         const lintId = this.increaseLintId();
         result.stdout.on('data', (data: string) => {

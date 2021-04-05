@@ -19,6 +19,8 @@ import { GlslDocumentColorProvider } from './providers/glsl-document-color-provi
 import { GlslSignatureHelpProvider } from './providers/glsl-signature-help-provider';
 import { GlslFoldingProvider } from './providers/glsl-folding-provider';
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
+import { GlslTextProvider } from './providers/glsl-text-provider';
+import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
 import { DebugHighlighter } from './providers/helper/debug-highlighter';
 
 export function activate(context: ExtensionContext): void {
@@ -27,14 +29,19 @@ export function activate(context: ExtensionContext): void {
 	const selector = [
 		{ language: Constants.GLSL, scheme: Constants.FILE },
 		{ language: Constants.GLSL, scheme: Constants.UNTITLED },
+		{ language: Constants.GLSL, scheme: Constants.PREPROCESSED_GLSL },
 		{ language: Constants.VERT, scheme: Constants.FILE },
 		{ language: Constants.VERT, scheme: Constants.UNTITLED },
+		{ language: Constants.VERT, scheme: Constants.PREPROCESSED_GLSL },
 		{ language: Constants.VS, scheme: Constants.FILE },
 		{ language: Constants.VS, scheme: Constants.UNTITLED },
+		{ language: Constants.VS, scheme: Constants.PREPROCESSED_GLSL },
 		{ language: Constants.FRAG, scheme: Constants.FILE },
 		{ language: Constants.FRAG, scheme: Constants.UNTITLED },
+		{ language: Constants.FRAG, scheme: Constants.PREPROCESSED_GLSL },
 		{ language: Constants.FS, scheme: Constants.FILE },
-		{ language: Constants.FS, scheme: Constants.UNTITLED }
+		{ language: Constants.FS, scheme: Constants.UNTITLED },
+		{ language: Constants.FS, scheme: Constants.PREPROCESSED_GLSL },
 	];
 
 
@@ -78,6 +85,12 @@ export function activate(context: ExtensionContext): void {
 	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_GL_ES_3}`, () => {
 		GlslCommandProvider.openGlEs3();
 	}));
+	//preprocessed glsl
+	context.subscriptions.push(workspace.registerTextDocumentContentProvider(Constants.PREPROCESSED_GLSL, new GlslTextProvider()));
+	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.GENERATE_PREPROCESSED}`, () => {
+		GlslCommandProvider.openPreprocessedGlsl();
+	}));
+	window.registerFileDecorationProvider(new GlslFileDecorationProvider());
 
 	//syntax highlighting
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider(selector, new GlslDocumentSemanticTokensProvider(), new GlslSemanticTokensLegend()));

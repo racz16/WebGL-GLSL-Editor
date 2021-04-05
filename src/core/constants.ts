@@ -9,6 +9,7 @@ export class Constants {
     public static readonly FS = 'fs';
     public static readonly FILE = 'file';
     public static readonly UNTITLED = 'untitled';
+    public static readonly PREPROCESSED_GLSL = 'webgl-glsl-editor-preprocessed';
 
     public static readonly VEC3 = 'vec3';
     public static readonly VEC4 = 'vec4';

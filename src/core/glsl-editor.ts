@@ -9,7 +9,7 @@ export class GlslEditor {
 
     public static readonly CONFIGURATIONS = new Configurations();
 
-    private static readonly documentInfos = new Map<Uri, DocumentInfo>();
+    private static readonly documentInfos = new Map<string, DocumentInfo>();
     private static context: ExtensionContext;
     private static readonly collection = languages.createDiagnosticCollection(Constants.GLSL);
 
@@ -31,10 +31,11 @@ export class GlslEditor {
     }
 
     public static getDocumentInfo(uri: Uri): DocumentInfo {
-        let di = this.documentInfos.get(uri);
+        const key = `${uri.scheme}:${uri.path}`;
+        let di = this.documentInfos.get(key);
         if (!di) {
             di = new DocumentInfo(uri);
-            this.documentInfos.set(uri, di);
+            this.documentInfos.set(key, di);
         }
         return di;
     }

@@ -42,7 +42,8 @@
 		"onLanguage:glsl",
 		"onCommand:webgl-glsl-editor.opendocsgl",
 		"onCommand:webgl-glsl-editor.opengles2",
-		"onCommand:webgl-glsl-editor.opengles3"
+		"onCommand:webgl-glsl-editor.opengles3",
+		"onCommand:webgl-glsl-editor.generatepreprocessed"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -95,6 +96,11 @@
 			{
 				"command": "webgl-glsl-editor.opengles3",
 				"title": "Open official OpenGL ES 3.0 documentation"
+			},
+			{
+				"command": "webgl-glsl-editor.generatepreprocessed",
+				"title": "Generate preprocessed GLSL source code",
+				"enablement": "editorLangId == glsl && !editorReadonly"
 			}
 		],
 		"configuration": [
