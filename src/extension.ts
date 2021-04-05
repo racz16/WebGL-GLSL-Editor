@@ -21,6 +21,7 @@ import { GlslFoldingProvider } from './providers/glsl-folding-provider';
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
 import { GlslTextProvider } from './providers/glsl-text-provider';
 import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
+import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
 import { DebugHighlighter } from './providers/helper/debug-highlighter';
 
 export function activate(context: ExtensionContext): void {
@@ -70,6 +71,7 @@ export function activate(context: ExtensionContext): void {
 			new GlslDiagnosticProvider().textChanged(event.document);
 		}
 	}));
+	context.subscriptions.push(languages.registerCodeLensProvider(selector, new GlslInjectionErrorProvider()));
 
 	//offline documentation
 	context.subscriptions.push(commands.registerCommand(`${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}`, (name: string) => {

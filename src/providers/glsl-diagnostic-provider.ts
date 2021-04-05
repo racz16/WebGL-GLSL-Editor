@@ -153,7 +153,7 @@ export class GlslDiagnosticProvider {
                 GlslEditor.getDiagnosticCollection().set(this.document.uri, this.diagnostics);
             }
         });
-
+        this.di.setInjectionError(false);
         this.provideInput(result);
     }
 
@@ -184,6 +184,8 @@ export class GlslDiagnosticProvider {
                 if (line > 0) {
                     const error = row.substring(9 + i + 2);
                     this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+                } else {
+                    this.di.setInjectionError(true);
                 }
             } else if (row.includes('ERROR: ')) {
                 const error = row.substring(7);

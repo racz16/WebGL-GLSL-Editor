@@ -27,6 +27,7 @@ export class DocumentInfo {
 
     private injectionOffset = 0;
     private injectionLineCount = 0;
+    private injectionError = false;
     private invalid = false;
 
     private visitor: GlslVisitor;
@@ -352,6 +353,14 @@ export class DocumentInfo {
 
     public setPreprocessedText(preprocessedText: string): void {
         this.preprocessedText = preprocessedText;
+    }
+
+    public hasInjectionError(): boolean {
+        return this.injectionError;
+    }
+
+    public setInjectionError(injectionError: boolean): void {
+        this.injectionError = injectionError;
     }
 
 }
