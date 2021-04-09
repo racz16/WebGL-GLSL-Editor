@@ -169,27 +169,43 @@ export class GlslDiagnosticProvider {
     }
 
     private handleErrors(data: string): void {
-        const rows = data.split(Constants.NEW_LINE);
+        const rows = this.getDiagnosticRows(data);
         for (const row of rows) {
             this.addDiagnostic(row);
         }
     }
 
+    private getDiagnosticRows(data: string): Array<string> {
+        const rows = data.split(Constants.NEW_LINE);
+        const results = new Array<string>();
+        for (const row of rows) {
+            if (row.startsWith('ERROR: ') || row.startsWith('WARNING: ')) {
+                results.push(row);
+            } else if (results.length) {
+                results[results.length - 1] += ` ${row}`;
+            }
+        }
+        return results;
+    }
+
     private addDiagnostic(row: string): void {
-        if (!row.includes('compilation terminated') && !row.includes('No code generated')) {
-            if (row.includes('ERROR: 0:')) {
-                const t1 = row.substring(9);
-                const i = t1.indexOf(Constants.COLON);
-                const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
-                if (line > 0) {
-                    const error = row.substring(9 + i + 2);
-                    this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
-                } else {
-                    this.di.setInjectionError(true);
-                }
-            } else if (row.includes('ERROR: ')) {
-                const error = row.substring(7);
-                this.diagnostics.push(new Diagnostic(this.document.lineAt(0).range, error, DiagnosticSeverity.Error));
+        if (row.startsWith('ERROR: 0:')) {
+            const t1 = row.substring(9);
+            const i = t1.indexOf(Constants.COLON);
+            const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
+            if (line > 0) {
+                const error = row.substring(9 + i + 2);
+                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+            } else {
+                this.di.setInjectionError(true);
+            }
+        } else if (row.startsWith('WARNING: 0:')) {
+            const t1 = row.substring(11);
+            const i = t1.indexOf(Constants.COLON);
+            const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
+            if (line > 0) {
+                const error = row.substring(11 + i + 2);
+                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Warning));
             }
         }
     }
