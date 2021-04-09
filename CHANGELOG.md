@@ -1,8 +1,29 @@
 # Change Log
 
 ## [Unreleased]
-- Preprocessor related improvements
-- Other smaller improvements
+For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
+
+## [1.2.1] - 2021.04.09.
+### Added
+- Support for the extensions
+- Range formatting
+- Generating preprocessed GLSL
+### Improved
+- Improved code completion in preprocessor directives, in layout qualifiers and before struct members
+- Improved syntax highlight (const variables)
+- Improved diagnostic (warnings)
+- Displaying a message if the injected code contains errors
+- Updated packages
+- Other small updates
+### Fixed
+- Diagnostic problems in Linux
+- Code completion in comments
+- Inconsistent go to definition behaviour
+- Inconsistent find references behaviour
+- Displaying signature and hover information even if the variable or the function not exist
+- Problem with renaming constructors
+- Truncated diagnostic messages
+- Other small fixes
 
 ## [1.2.0] - 2021.03.16.
 ### Added
