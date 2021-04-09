@@ -1,14 +1,14 @@
 
 import { ColorRegion } from "../scope/regions/color-region";
 import { Interval } from "../scope/interval";
-import { TypeUsage } from "../scope/type/type-usage";
 import { PreprocessorRegion } from "../scope/regions/preprocessor-region";
 import { FoldingRegion } from "../scope/regions/folding-region";
 import { SignatureRegion } from "../scope/regions/signature-region";
 import { SemanticRegion } from "../scope/regions/semantic-region";
+import { CompletionRegion } from "../scope/regions/completion-region";
 
 export class DocumentRegions {
-    public readonly completionRegions = new Array<TypeUsage>();
+    public readonly completionRegions = new Array<CompletionRegion>();
     public readonly foldingRegions = new Array<FoldingRegion>();
     public readonly semanticRegions = new Array<SemanticRegion>();
     public readonly colorRegions = new Array<ColorRegion>();

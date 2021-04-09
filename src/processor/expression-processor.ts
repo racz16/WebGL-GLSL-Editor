@@ -22,6 +22,7 @@ import { ExpressionResult } from './expression-result';
 import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 import { SignatureParameterRegion } from '../scope/regions/signature-parameter-region';
 import { SignatureRegion } from '../scope/regions/signature-region';
+import { CompletionRegion } from '../scope/regions/completion-region';
 
 export class ExpressionProcessor {
 
@@ -601,7 +602,11 @@ export class ExpressionProcessor {
         if (exp && exp instanceof ExpressionResult && (exp.array.isArray() || exp.type?.isVector() || exp.type?.typeCategory === TypeCategory.CUSTOM)) {
             const interval = Helper.getIntervalFromParserRule(this.ctx.expression()[0], this.di);
             const tu = new TypeUsage(exp.type.name, interval, null, this.scope, exp.type, exp.array);
-            this.di.getRegions().completionRegions.push(tu);
+            const dotOffset = this.ctx.DOT().symbol.stopIndex + 1;
+            const endOffset = this.ctx.IDENTIFIER() ? this.ctx.IDENTIFIER().symbol.stopIndex + 1 : dotOffset;
+            const completionInterval = new Interval(dotOffset, endOffset, this.di);
+            const cr = new CompletionRegion(tu, completionInterval, this.ctx.IDENTIFIER()?.text || '');
+            this.di.getRegions().completionRegions.push(cr);
         }
     }
 

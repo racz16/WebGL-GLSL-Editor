@@ -6,13 +6,12 @@ import { Scope } from '../scope/scope';
 import { TypeCategory } from '../scope/type/type-category';
 import { ShaderStage } from '../scope/shader-stage';
 import { Helper } from '../processor/helper';
-import { TypeUsage } from '../scope/type/type-usage';
-import { Interval } from '../scope/interval';
 import { Constants } from '../core/constants';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 import { PreprocessorCompletionContext } from './helper/preprocessor-completion-context';
+import { CompletionRegion } from '../scope/regions/completion-region';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
 
@@ -51,9 +50,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private addGeneralCompletionItems(): void {
-        const [tu, startsWith] = this.getCompletionExpression();
-        if (tu) {
-            this.completeAfterDot(tu, startsWith);
+        const cr = this.getCompletionExpression();
+        if (cr) {
+            this.completeAfterDot(cr);
         } else {
             const scope = this.di.getScopeAt(this.position);
             this.addLanguageElements();
@@ -198,18 +197,20 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return false;
     }
 
-    private completeAfterDot(tu: TypeUsage, startsWith: string): void {
-        if (tu.array.isArray()) {
-            if ('length'.startsWith(startsWith)) {
+    private completeAfterDot(cr: CompletionRegion): void {
+        const offset = this.di.positionToOffset(this.position)/* - this.di.getInjectionOffset()*/;
+        const text = cr.text.substring(0, offset - cr.interval.startIndex);
+        if (cr.type.array.isArray()) {
+            if ('length'.startsWith(text)) {
                 this.items.push(new CompletionItem('length', CompletionItemKind.Function));
             }
-        } else if (tu.declaration.isVector()) {
-            this.addSwizzles(tu.declaration, Constants.xyzw, 0, startsWith);
-            this.addSwizzles(tu.declaration, Constants.rgba, 1, startsWith);
-            this.addSwizzles(tu.declaration, Constants.stpq, 2, startsWith);
+        } else if (cr.type.declaration.isVector()) {
+            this.addSwizzles(cr.type.declaration, Constants.xyzw, 0, text);
+            this.addSwizzles(cr.type.declaration, Constants.rgba, 1, text);
+            this.addSwizzles(cr.type.declaration, Constants.stpq, 2, text);
         } else {
-            for (const memeber of tu.declaration.members) {
-                if (memeber.name.startsWith(startsWith)) {
+            for (const memeber of cr.type.declaration.members) {
+                if (memeber.name.startsWith(text)) {
                     const ci = new CompletionItem(memeber.name, CompletionItemKind.Property);
                     ci.detail = memeber.type?.name;
                     this.items.push(ci);
@@ -242,23 +243,14 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return sortText;
     }
 
-    private getCompletionExpression(): [TypeUsage, string] {
-        const offset = this.di.positionToOffset(this.position);
-        let tu: TypeUsage = null;
+    private getCompletionExpression(): CompletionRegion {
+        const offset = this.di.positionToOffset(this.position)/* - this.di.getInjectionOffset()*/;
         for (const cr of this.di.getRegions().completionRegions) {
-            if (cr.interval.stopIndex < offset) {
-                tu = cr;
-            } else {
-                break;
+            if (cr.interval.startIndex <= offset && cr.interval.stopIndex >= offset && this.isIdentifier(cr.text)) {
+                return cr;
             }
         }
-        if (tu) {
-            const text = this.di.getTextInInterval(new Interval(tu.interval.stopIndex + 1, offset, this.di));
-            if (this.isIdentifier(text)) {
-                return [tu, text];
-            }
-        }
-        return [null, null];
+        return null;
     }
 
     private isIdentifier(text: string): boolean {
