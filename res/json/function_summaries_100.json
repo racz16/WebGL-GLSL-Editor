@@ -669,6 +669,176 @@
           "summary": "Specifies the second matrix multiplicand."
         }
       ]
+    },
+    {
+      "name": "fwidth",
+      "parameters": [
+        {
+          "name": "p"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_OES_standard_derivatives"
+    },
+    {
+      "name": "dFdx",
+      "parameters": [
+        {
+          "name": "p"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_OES_standard_derivatives"
+    },
+    {
+      "name": "dFdy",
+      "parameters": [
+        {
+          "name": "p"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_OES_standard_derivatives"
+    },
+    {
+      "name": "texture2DLodEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "coord"
+        },
+        {
+          "name": "lod"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "texture2DProjLodEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "coord"
+        },
+        {
+          "name": "lod"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "texture2DProjLodEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "coord"
+        },
+        {
+          "name": "lod"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "textureCubeLodEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "coord"
+        },
+        {
+          "name": "lod"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "texture2DGradEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "P"
+        },
+        {
+          "name": "dPdx"
+        },
+        {
+          "name": "dPdy"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "texture2DProjGradEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "P"
+        },
+        {
+          "name": "dPdx"
+        },
+        {
+          "name": "dPdy"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "texture2DProjGradEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "P"
+        },
+        {
+          "name": "dPdx"
+        },
+        {
+          "name": "dPdy"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
+    },
+    {
+      "name": "textureCubeGradEXT",
+      "parameters": [
+        {
+          "name": "sampler"
+        },
+        {
+          "name": "P"
+        },
+        {
+          "name": "dPdx"
+        },
+        {
+          "name": "dPdy"
+        }
+      ],
+      "stage": "fragment",
+      "extension": "GL_EXT_shader_texture_lod"
     }
   ]
 }

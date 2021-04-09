@@ -11,4 +11,5 @@ export interface IVariable {
     array: number;
     qualifiers: Array<string>;
     stage: string;
+    extension: string;
 }

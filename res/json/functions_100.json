@@ -989,6 +989,218 @@
                     "name": "y"
                 }
             ]
+        },
+        {
+            "returnType": "genType",
+            "name": "fwidth",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "p"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_OES_standard_derivatives"
+        },
+        {
+            "returnType": "genType",
+            "name": "dFdx",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "p"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_OES_standard_derivatives"
+        },
+        {
+            "returnType": "genType",
+            "name": "dFdy",
+            "parameters": [
+                {
+                    "type": "genType",
+                    "name": "p"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_OES_standard_derivatives"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DLodEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjLodEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjLodEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec4",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "textureCubeLodEXT",
+            "parameters": [
+                {
+                    "type": "samplerCube",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "coord"
+                },
+                {
+                    "type": "float",
+                    "name": "lod"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DGradEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec2",
+                    "name": "P"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdx"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdy"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjGradEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "P"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdx"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdy"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "texture2DProjGradEXT",
+            "parameters": [
+                {
+                    "type": "sampler2D",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec4",
+                    "name": "P"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdx"
+                },
+                {
+                    "type": "vec2",
+                    "name": "dPdy"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
+        },
+        {
+            "returnType": "vec4",
+            "name": "textureCubeGradEXT",
+            "parameters": [
+                {
+                    "type": "samplerCube",
+                    "name": "sampler"
+                },
+                {
+                    "type": "vec3",
+                    "name": "P"
+                },
+                {
+                    "type": "vec3",
+                    "name": "dPdx"
+                },
+                {
+                    "type": "vec3",
+                    "name": "dPdy"
+                }
+            ],
+            "stage": "fragment",
+            "extension": "GL_EXT_shader_texture_lod"
         }
     ]
 }

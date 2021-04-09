@@ -8,6 +8,7 @@ export interface IFunction {
     name: string;
     parameters: Array<IParameter>;
     stage: string;
+    extension: string;
 }
 
 export interface IParameter {
@@ -25,6 +26,7 @@ export interface IFunctionSummary {
     summary: string;
     stage: string;
     parameters: Array<IFunctionParameterSummary>;
+    extension: string;
 }
 
 export interface IFunctionParameterSummary {

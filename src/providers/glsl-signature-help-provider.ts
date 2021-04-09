@@ -14,12 +14,14 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
     private di: DocumentInfo;
     private position: Position;
+    private offset: number;
     private functions: Array<FunctionDeclaration>;
 
     private initialize(document: TextDocument, position: Position): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
+        this.offset = this.di.positionToOffset(this.position);
         this.functions = new Array<FunctionDeclaration>();
     }
 
@@ -51,7 +53,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         const fi = this.di.builtin.functionSummaries.get(sr.name);
         for (const lf of lfs.filter(func => func.getDeclaration().name === sr.name)) {
             const fp = lf.getDeclaration();
-            if (Helper.isInCorrectStage(fp.stage, this.di)) {
+            if (Helper.isInCorrectStage(fp.stage, this.di) && this.di.isExtensionAvailable(fi.extension, this.offset)) {
                 const si = new SignatureInformation(fp.toString(), fi?.summary);
                 si.parameters = [];
                 for (const vd of fp.parameters) {

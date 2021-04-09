@@ -25,6 +25,7 @@ import { ConstructorProcessor } from './constructor-processor';
 import { Helper } from '../processor/helper';
 import { GlslEditor } from '../core/glsl-editor';
 import { IPreprocessor } from './interfaces/preprocessor';
+import { LayoutParameter } from '../scope/qualifier/layout-parameter';
 
 export class Builtin {
 
@@ -41,7 +42,7 @@ export class Builtin {
     public readonly keywords = new Array<Keyword>();
     public readonly preprocessor = new Array<Array<Array<string>>>();
     public readonly qualifiers = new Map<string, Qualifier>();
-    public readonly layoutParameters = new Array<string>();
+    public readonly layoutParameters = new Array<LayoutParameter>();
     public readonly qualifierRules = new Array<Set<Qualifier>>();
     public readonly reservedWords = new Array<string>();
     public readonly genericTypes = new Map<string, Array<string>>();
@@ -120,7 +121,7 @@ export class Builtin {
         if (this.postfix !== '100') {
             const layoutParameters = GlslEditor.loadJson<ILayoutParameters>('layout_parameters');
             for (const param of layoutParameters.layoutParameters) {
-                this.layoutParameters.push(param);
+                this.layoutParameters.push(new LayoutParameter(param.name, param.assignable, param.extension));
             }
         }
     }
@@ -214,7 +215,7 @@ export class Builtin {
     private addConstructors(): void {
         for (const [name, td] of this.types) {
             if (!td.isOpaque()) {
-                this.functionSummaries.set(name, new FunctionInfo(name, null, ShaderStage.DEFAULT, true));
+                this.functionSummaries.set(name, new FunctionInfo(name, null, ShaderStage.DEFAULT, true, ''));
                 const ctors = ConstructorProcessor.getConstructors(td, this.types);
                 for (const ctor of ctors) {
                     this.functions.push(ctor);
@@ -235,7 +236,7 @@ export class Builtin {
             this.addVariableQualifiers(tu, variable);
             const summary = this.createVariableSummary(variable, tu);
             const stage = this.getStage(variable.stage);
-            const vd = Helper.createVariableDeclaration(variable.name, tu, false, false, summary, stage);
+            const vd = Helper.createVariableDeclaration(variable.name, tu, false, false, summary, stage, variable.extension);
             this.variables.set(variable.name, vd);
         }
     }
@@ -279,7 +280,7 @@ export class Builtin {
                 const tu = Helper.createTypeUsage(realFunc.returnType, td, new ArrayUsage());
                 this.addReturnTypeQualifiers(realFunc, tu);
                 const stage = this.getStage(realFunc.stage);
-                const fp = Helper.createFunctionDeclaration(realFunc.name, tu, false, stage);
+                const fp = Helper.createFunctionDeclaration(realFunc.name, tu, false, stage, realFunc.extension);
                 this.addParameters(realFunc, fp);
                 const lf = new LogicalFunction();
                 lf.prototypes.push(fp);
@@ -314,7 +315,7 @@ export class Builtin {
         for (const func of functions.functions) {
             const summary = this.createFunctionSummary(func);
             const stage = this.getStage(func.stage);
-            const fi = new FunctionInfo(func.name, summary, stage, false);
+            const fi = new FunctionInfo(func.name, summary, stage, false, func.extension);
             for (const funcParam of func.parameters) {
                 fi.parameters.set(funcParam.name, funcParam.summary);
             }
@@ -406,7 +407,7 @@ export class Builtin {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, false, variable.summary, variable.stage);
+            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, false, variable.summary, variable.stage, variable.extension);
             bi.variables.set(variable.name, vd);
         }
         for (const olf of this.functions) {
@@ -418,7 +419,7 @@ export class Builtin {
                 const qu = new QualifierUsage(qualifier.name, null, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, null, ofp.stage);
+            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, null, ofp.stage, ofp.extension);
             for (const parameter of ofp.parameters) {
                 const td = bi.types.get(parameter.type.name);
                 const tu = new TypeUsage(parameter.type.name, null, null, null, td, parameter.type.array);

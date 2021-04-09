@@ -16,5 +16,11 @@ export interface IQualifierRule {
 }
 
 export interface ILayoutParameters {
-    layoutParameters: Array<string>;
+    layoutParameters: Array<ILayoutParameter>;
+}
+
+export interface ILayoutParameter {
+    name: string;
+    assignable: boolean;
+    extension: string;
 }

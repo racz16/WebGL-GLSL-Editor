@@ -17,8 +17,9 @@ export class VariableDeclaration extends Element {
     public readonly stage: ShaderStage;
     public readonly functionPrototypeParameter: boolean;
     public readonly functionDefinitionParameter: boolean;
+    public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = '') {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.type = type;
@@ -27,6 +28,7 @@ export class VariableDeclaration extends Element {
         this.functionDefinitionParameter = fdp;
         this.summary = summary;
         this.stage = stage;
+        this.extension = extension;
     }
 
     public isColorVariable(): boolean {

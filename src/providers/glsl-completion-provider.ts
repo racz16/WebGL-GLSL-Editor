@@ -26,7 +26,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
         this.context = context;
-        this.offset = document.offsetAt(position);
+        this.offset = this.di.positionToOffset(this.position);
         this.items = new Array<CompletionItem>();
     }
 
@@ -198,7 +198,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private completeAfterDot(cr: CompletionRegion): void {
-        const offset = this.di.positionToOffset(this.position)/* - this.di.getInjectionOffset()*/;
+        const offset = this.di.positionToOffset(this.position);
         const text = cr.text.substring(0, offset - cr.interval.startIndex);
         if (cr.type.array.isArray()) {
             if ('length'.startsWith(text)) {
@@ -244,7 +244,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private getCompletionExpression(): CompletionRegion {
-        const offset = this.di.positionToOffset(this.position)/* - this.di.getInjectionOffset()*/;
+        const offset = this.di.positionToOffset(this.position);
         for (const cr of this.di.getRegions().completionRegions) {
             if (cr.interval.startIndex <= offset && cr.interval.stopIndex >= offset && this.isIdentifier(cr.text)) {
                 return cr;
@@ -305,11 +305,13 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private addLayoutQualifierParameterCompletionItems(): void {
         for (const param of this.di.builtin.layoutParameters) {
-            const ci = new CompletionItem(param, CompletionItemKind.EnumMember);
-            if (param === 'location') {
-                ci.insertText = param + ' = ';
+            if (this.di.isExtensionAvailable(param.extension, this.offset)) {
+                const ci = new CompletionItem(param.name, CompletionItemKind.EnumMember);
+                if (param.assignable) {
+                    ci.insertText = param.name + ' = ';
+                }
+                this.items.push(ci);
             }
-            this.items.push(ci);
         }
     }
 
@@ -345,7 +347,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addBuiltinVariableItems(localItems: Array<CompletionItem>): void {
         for (const vd of this.di.builtin.variables.values()) {
-            if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name)) {
+            if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name) &&
+                this.di.isExtensionAvailable(vd.extension, this.offset)) {
                 const ci = new CompletionItem(vd.name, CompletionItemKind.Variable);
                 ci.documentation = vd.summary;
                 ci.detail = vd.type?.name;
@@ -359,7 +362,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addBuiltinFunctionItems(localItems: Array<CompletionItem>): void {
         for (const func of this.di.builtin.functionSummaries.values()) {
-            if (this.isAvailableInThisStage(func.stage) && !this.items.some(ci => this.getName(ci) === func.name)) {
+            if (this.isAvailableInThisStage(func.stage) && !this.items.some(ci => this.getName(ci) === func.name) &&
+                this.di.isExtensionAvailable(func.extension, this.offset)) {
                 const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
                 const ci = new CompletionItem(func.name, kind);
                 if (this.di.builtin.importantFunctions.includes(ci.label)) {

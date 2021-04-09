@@ -33,7 +33,8 @@ export class GenericTypeProcessor {
             qualifiers: this.func.qualifiers,
             stage: this.func.stage,
             returnType: this.getType(this.func.returnType, i),
-            parameters: new Array<IParameter>()
+            parameters: new Array<IParameter>(),
+            extension: this.func.extension,
         };
         this.addParameters(f, i);
         return f;

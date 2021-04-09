@@ -56,12 +56,12 @@ export class Helper {
         return new TypeUsage(name, null, null, null, td, array, false);
     }
 
-    public static createVariableDeclaration(name: string, tu: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT): VariableDeclaration {
-        return new VariableDeclaration(name, null, null, true, null, tu, fpp, fdp, summary, stage);
+    public static createVariableDeclaration(name: string, tu: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = ''): VariableDeclaration {
+        return new VariableDeclaration(name, null, null, true, null, tu, fpp, fdp, summary, stage, extension);
     }
 
-    public static createFunctionDeclaration(name: string, tu: TypeUsage, ctor: boolean, stage = ShaderStage.DEFAULT): FunctionDeclaration {
-        return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage);
+    public static createFunctionDeclaration(name: string, tu: TypeUsage, ctor: boolean, stage = ShaderStage.DEFAULT, extension = ''): FunctionDeclaration {
+        return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage, extension);
     }
 
     public static getIntervalFromStatement(ctx: StatementContext, di: DocumentInfo): Interval {

@@ -14,12 +14,14 @@ export class PositionalProviderBase<T> {
     protected di: DocumentInfo;
     protected document: TextDocument;
     protected position: Position;
+    protected offset: number;
 
     protected initialize(document: TextDocument, position: Position): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
+        this.offset = this.di.positionToOffset(this.position);
     }
 
     protected processElements(document: TextDocument, position: Position): T {
@@ -27,28 +29,28 @@ export class PositionalProviderBase<T> {
 
         //function
         const fp = this.di.getFunctionPrototypeAt(position);
-        if (fp && !fp.ctor) {
+        if (fp && !fp.ctor && this.di.isExtensionAvailable(fp.extension, this.offset)) {
             return this.processFunctionPrototype(fp);
         }
 
         const fd = this.di.getFunctionDefinitionAt(position);
-        if (fd && !fd.ctor) {
+        if (fd && !fd.ctor && this.di.isExtensionAvailable(fd.extension, this.offset)) {
             return this.processFunctionDefinition(fd);
         }
 
         const fc = this.di.getFunctionCallAt(position);
-        if (fc) {
+        if (fc && (fc.logicalFunction.prototypes.length === 0 || this.di.isExtensionAvailable(fc.logicalFunction.getDeclaration().extension, this.offset))) {
             return this.processFunctionCall(fc);
         }
 
         //variable
         const vd = this.di.getVariableDeclarationAt(position);
-        if (vd && vd.name) {
+        if (vd && vd.name && this.di.isExtensionAvailable(vd.extension, this.offset)) {
             return this.processVariableDeclaration(vd);
         }
 
         const vu = this.di.getVariableUsageAt(position);
-        if (vu && vu.name) {
+        if (vu && vu.name && (!vu.declaration || this.di.isExtensionAvailable(vu.declaration.extension, this.offset))) {
             return this.processVariableUsage(vu);
         }
 

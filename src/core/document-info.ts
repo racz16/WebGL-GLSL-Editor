@@ -16,6 +16,7 @@ import { ShaderStage } from '../scope/shader-stage';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 import { DocumentRegions } from './document-regions';
+import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -361,6 +362,23 @@ export class DocumentInfo {
 
     public setInjectionError(injectionError: boolean): void {
         this.injectionError = injectionError;
+    }
+
+    public isExtensionAvailable(extension: string, offset: number): boolean {
+        if (!extension) {
+            return true;
+        }
+        let available = false;
+        for (const pr of this.regions.preprocessorRegions) {
+            if (pr.interval.stopIndex <= offset && (pr.extension === extension || pr.extension === 'all')) {
+                if (pr.extensionState === 'disable') {
+                    available = false;
+                } else {
+                    available = true;
+                }
+            }
+        }
+        return available;
     }
 
 }

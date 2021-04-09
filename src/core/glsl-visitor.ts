@@ -64,7 +64,16 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     private addPreprocessorRegion(token: Token): void {
         if (token.type === AntlrGlslLexer.PREPROCESSOR) {
             const interval = new Interval(token.startIndex, token.stopIndex + 1, this.di);
-            this.di.getRegions().preprocessorRegions.push(new PreprocessorRegion(token.text, interval));
+            const r = new RegExp('\\s*#\\s*extension\\s+.*?\\s*:\\s*.*?\\s*');
+            let extension = '';
+            let extensionState = '';
+            if (r.test(token.text)) {
+                const index = token.text.indexOf('extension') + 9;
+                const values = token.text.substring(index).split(':');
+                extension = values[0].trim();
+                extensionState = values[1].trim();
+            }
+            this.di.getRegions().preprocessorRegions.push(new PreprocessorRegion(token.text, interval, extension, extensionState));
         }
     }
 

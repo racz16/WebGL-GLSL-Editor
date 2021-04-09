@@ -20,8 +20,9 @@ export class FunctionDeclaration extends Element {
     public readonly functionScope: Scope;
     public readonly stage: ShaderStage;
     public readonly outgoingCalls = new Array<FunctionCall>();
+    public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT) {
+    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT, extension = '') {
         super(name, nameInterval, scope);
         this.interval = interval;
         this.returnType = returnType;
@@ -29,6 +30,7 @@ export class FunctionDeclaration extends Element {
         this.ctor = ctor;
         this.functionScope = functionScope;
         this.stage = stage;
+        this.extension = extension;
     }
 
     public isConnectableWith(fd: FunctionDeclaration): boolean {
