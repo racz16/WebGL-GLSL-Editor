@@ -123,7 +123,7 @@ export class GlslDiagnosticProvider {
         const result = exec(`${validatorPath} --stdin -E -S ${stageName}`);
         let preprocessedText = Constants.EMPTY;
         result.stdout.on('data', (data: string) => {
-            preprocessedText = data;
+            preprocessedText += data;
         });
         result.stdout.on('close', async () => {
             const uri = Uri.parse(`${Constants.PREPROCESSED_GLSL}: ${this.document.fileName}`);
