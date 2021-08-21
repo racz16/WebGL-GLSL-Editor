@@ -1,13 +1,11 @@
 # How to build, run and package
 
-
-
 ## Windows
 
-1. Download and install Visual Studio Code (https://code.visualstudio.com/Download)
-2. Download and install NodeJS (https://nodejs.org/en/download)
-3. Download and install git (https://git-scm.com/downloads)
-4. Download and install the JRE (https://java.com/en/download)
+1. Download and install Visual Studio Code (<https://code.visualstudio.com/Download>)
+2. Download and install NodeJS (<https://nodejs.org/en/download>)
+3. Download and install git (<https://git-scm.com/downloads>)
+4. Download and install the JRE (<https://java.com/en/download>)
 5. Open PowerShell
 6. Install the Antlr CLI
 
@@ -35,7 +33,6 @@
 
     Open the repository's root folder in Visual Studio Code and press F5.
 
-
 ### Package the extension (optional)
 
 12. Install the VSCE CLI
@@ -45,8 +42,6 @@
 13. Package the extension
 
         vsce package
-
-
 
 ## Linux
 
@@ -60,7 +55,7 @@
         sudo apt install npm
 
 4. Install git
-    
+
         sudo apt install git
 
 5. Install the JRE
@@ -92,7 +87,6 @@
 11. Run the extension
 
     Open the repository's root folder in Visual Studio Code and press F5.
-
 
 ### Package the extension (optional)
 
