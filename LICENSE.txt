@@ -9,3 +9,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 For diagnostics, the extension uses the glslang, you can read it's license here: https://raw.githubusercontent.com/KhronosGroup/glslang/master/LICENSE.txt .
 
 For the documentation, the extension uses docs.gl, you can read it's license here: http://docs.gl/about.html .
+
+For the math formulas, the extension uses MathJax, you can read it's license here: https://github.com/mathjax/MathJax/blob/master/LICENSE .

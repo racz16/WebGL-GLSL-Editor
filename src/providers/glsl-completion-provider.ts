@@ -366,7 +366,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
                 this.di.isExtensionAvailable(func.extension, this.offset)) {
                 const kind = func.ctor ? CompletionItemKind.Constructor : CompletionItemKind.Function;
                 const ci = new CompletionItem(func.name, kind);
-                if (this.di.builtin.importantFunctions.includes(ci.label)) {
+                if (this.di.builtin.importantFunctions.includes(ci.label.toString())) {
                     this.makeItImportant(ci);
                 }
                 ci.documentation = func.summary;
@@ -376,8 +376,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private makeItImportant(ci: CompletionItem): void {
-        ci.insertText = ci.label;
-        ci.filterText = ci.label;
+        ci.insertText = ci.label.toString();
+        ci.filterText = ci.label.toString();
         ci.sortText = ' ' + ci.label;
         ci.label = '★ ' + ci.label;
     }
@@ -467,7 +467,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private getName(ci: CompletionItem): string {
-        return ci.filterText ?? ci.label;
+        return ci.filterText ?? ci.label.toString();
     }
 
 }
