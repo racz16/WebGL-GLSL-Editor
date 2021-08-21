@@ -8,7 +8,7 @@ export class FunctionInfo {
     public readonly stage: ShaderStage;
     public readonly ctor: boolean;
     public readonly parameters = new Map<string, string>();
-    public readonly extension;
+    public readonly extension: string;
 
     public constructor(name: string, summary: MarkdownString, stage: ShaderStage, ctor: boolean, extension: string) {
         this.name = name;
