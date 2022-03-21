@@ -74,7 +74,7 @@
 				"scopeName": "source.injected.glsl",
 				"path": "./syntaxes/glsl-injected.language.json",
 				"injectTo": [
-					"text.html.derivative"
+					"text.html"
 				]
 			}
 		],
