@@ -233,6 +233,10 @@ For more information, see the [changelog](CHANGELOG.md).
 * Go to/Find all/Peek references
 * Commands for online documentation
 
+## Contributions
+
+Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz) for contributing.
+
 ## How to build, run and package the extension
 
 [Detailed build instructions](BUILD.md)
