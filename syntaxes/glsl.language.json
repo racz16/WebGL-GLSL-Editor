@@ -1,6 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "GLSL",
+	"scopeName": "source.glsl",
 	"patterns": [
 		{
 			"comment": "BLOCK COMMENT",
@@ -17,7 +18,7 @@
 		{
 			"comment": "PREPROCESSOR",
 			"name": "meta.preprocessor.glsl",
-			"match": "#([a-zA-Z0-9_.+\\-*%<>\\[\\](){}^|&~=!:;,?\\s]|(\\/(?!(\\*|\\/))))*"
+			"match": "#.*?($|(?=(\\/\\/|\\/\\*)))"
 		},
 		{
 			"comment": "BOOL LITERAL",
@@ -56,19 +57,12 @@
 		},
 		{
 			"comment": "FUNCTION CALL",
-			"match": "([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s*)(\\()",
+			"match": "([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))*)(?=\\()",
 			"captures": {
 				"1": {
 					"name": "entity.name.function.glsl"
 				},
-				"5": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				},
-				"8": {
+				"2": {
 					"patterns": [
 						{
 							"include": "$self"
@@ -88,13 +82,13 @@
 				{
 					"comment": "BUILTIN STRUCT TYPE",
 					"name": "storage.type.glsl",
-					"match": "\\b(gl_[a-zA-Z_][a-zA-Z0-9_]*)\\b"
+					"match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
 				}
 			]
 		},
 		{
 			"comment": "STRUCT",
-			"match": "(struct)(\\s|(\/\\*.*?\\*\/))*([_a-zA-Z][_a-zA-Z0-9]*)?",
+			"match": "(struct)(\\s|(\/\\*.*?\\*\/))*([_a-zA-Z]\\w*)?",
 			"captures": {
 				"1": {
 					"name": "storage.type.glsl"
@@ -107,12 +101,12 @@
 						{
 							"comment": "BUILTIN STRUCT TYPE",
 							"name": "storage.type.glsl",
-							"match": "\\b(gl_[a-zA-Z_][a-zA-Z0-9_]*)\\b"
+							"match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
 						},
 						{
 							"comment": "USER STRUCT TYPE",
 							"name": "entity.name.type.glsl",
-							"match": "[_a-zA-Z][_a-zA-Z0-9]*"
+							"match": "[_a-zA-Z]\\w*"
 						}
 					]
 				}
@@ -120,50 +114,20 @@
 		},
 		{
 			"comment": "FUNCTION DECLARATION",
-			"match": "(([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s+))?([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s*)(\\()",
+			"match": "(([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+))?([_a-zA-Z]\\w*)((\\s|(\\/\\*.*?\\*\\/))*)(?=\\()",
 			"captures": {
 				"2": {
 					"name": "entity.name.type.glsl"
 				},
-				"6": {
+				"3": {
 					"patterns": [
 						{
 							"include": "$self"
 						}
 					]
 				},
-				"9": {
+				"7": {
 					"name": "entity.name.function.glsl"
-				},
-				"13": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				},
-				"16": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			}
-		},
-		{
-			"comment": "USER TYPE",
-			"match": "([_a-zA-Z][_a-zA-Z0-9]*)(((\\s*)(\\[(.*?)\\])(\\s*))+|\\s+)([_a-zA-Z][_a-zA-Z0-9]*)",
-			"captures": {
-				"1": {
-					"name": "entity.name.type.glsl"
-				},
-				"5": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
 				},
 				"8": {
 					"patterns": [
@@ -175,10 +139,25 @@
 			}
 		},
 		{
+			"comment": "USER TYPE",
+			"match": "([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+[_a-zA-Z]\\w*)",
+			"captures": {
+				"1": {
+					"name": "entity.name.type.glsl"
+				},
+				"2": {
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
+				}
+			}
+		},
+		{
 			"comment": "IDENTIFIER",
 			"name": "variable.glsl",
-			"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b"
+			"match": "\\b([a-zA-Z_]\\w*)\\b"
 		}
-	],
-	"scopeName": "source.glsl"
+	]
 }
