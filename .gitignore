@@ -1,6 +1,7 @@
 /out
 /node_modules
 /dist
+/.vscode-test-web
 *.vsix
 
 .vscode/*
