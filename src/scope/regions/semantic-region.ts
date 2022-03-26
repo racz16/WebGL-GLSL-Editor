@@ -22,5 +22,7 @@ export enum SemanticType {
 }
 
 export enum SemanticModifier {
+    DECLARATION = 'declaration',
+    DEFINITION = 'definition',
     CONST = 'readonly',
 }

@@ -8,7 +8,7 @@ import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { Interval } from '../scope/interval';
 import { ExpressionResult } from './expression-result';
-import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class FunctionProcessor {
 
@@ -69,7 +69,7 @@ export class FunctionProcessor {
         this.addParameters(fd, true);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
-        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION));
+        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DECLARATION]));
         return fd;
     }
 
@@ -86,7 +86,7 @@ export class FunctionProcessor {
         this.addParameters(fd, false);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
-        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION));
+        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DEFINITION]));
         return fd;
     }
 

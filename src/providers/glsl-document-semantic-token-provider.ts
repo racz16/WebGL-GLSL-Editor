@@ -43,6 +43,8 @@ export class GlslSemanticTokensLegend implements SemanticTokensLegend {
         'variable',
     ];
     public readonly tokenModifiers = [
+        'declaration',
+        'definition',
         'readonly',
     ];
 }

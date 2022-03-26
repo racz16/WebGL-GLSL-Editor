@@ -23,6 +23,7 @@ import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 import { SignatureParameterRegion } from '../scope/regions/signature-parameter-region';
 import { SignatureRegion } from '../scope/regions/signature-region';
 import { CompletionRegion } from '../scope/regions/completion-region';
+import { Token } from 'antlr4ts';
 
 export class ExpressionProcessor {
 
@@ -417,6 +418,7 @@ export class ExpressionProcessor {
                 const interval = Helper.getIntervalFromTerminalNode(this.ctx.IDENTIFIER(), this.di);
                 const vu = new VariableUsage(name, this.scope, interval, member);
                 this.scope.variableUsages.push(vu);
+                this.addSemanticToken(member, this.ctx.IDENTIFIER().symbol);
                 member.usages.push(vu);
                 return new ExpressionResult(member.type.declaration, member.type.array, exp.constant);
             } else if (exp.type?.isVector() && this.isSwizzle(name)) {
@@ -429,6 +431,13 @@ export class ExpressionProcessor {
             }
         }
         return null;
+    }
+
+    private addSemanticToken(vd: VariableDeclaration, token: Token): void {
+        if (vd.name) {
+            const sr = new SemanticRegion(token, SemanticType.VARIABLE);
+            this.di.getRegions().semanticRegions.push(sr);
+        }
     }
 
     private isComplementExpression(): boolean {

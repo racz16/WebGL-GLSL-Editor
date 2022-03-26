@@ -5,10 +5,15 @@ import { DocumentInfo } from "../core/document-info";
 import { Scope } from "../scope/scope";
 import { VariableUsage } from "../scope/variable/variable-usage";
 import { SemanticModifier, SemanticRegion, SemanticType } from "../scope/regions/semantic-region";
+import { Token } from "antlr4ts";
+import { VariableDeclaration } from "../scope/variable/variable-declaration";
 
 export class VariableUsageProcessor {
 
+    private di: DocumentInfo;
+
     public getVariableUsage(identifier: TerminalNode, scope: Scope, di: DocumentInfo): VariableUsage {
+        this.di = di;
         const interval = Helper.getIntervalFromTerminalNode(identifier, di);
         const name = identifier.text;
         const vd = VariableDeclarationProcessor.searchVariableDeclaration(name, interval, scope, di);
@@ -16,12 +21,20 @@ export class VariableUsageProcessor {
         if (vd) {
             scope.variableUsages.push(vu);
             vd.usages.push(vu);
-            if (vd.type.qualifiers.some(q => q.name === 'const') && vd.name) {
-                const sr = new SemanticRegion(identifier.symbol, SemanticType.VARIABLE, [SemanticModifier.CONST]);
-                di.getRegions().semanticRegions.push(sr);
-            }
+            this.addSemanticToken(vd, identifier.symbol);
         }
         return vu;
+    }
+
+    private addSemanticToken(vd: VariableDeclaration, token: Token): void {
+        if (vd.name) {
+            const modifiers = [];
+            if (vd.type.qualifiers.some(q => q.name === 'const')) {
+                modifiers.push(SemanticModifier.CONST);
+            }
+            const sr = new SemanticRegion(token, SemanticType.VARIABLE, modifiers);
+            this.di.getRegions().semanticRegions.push(sr);
+        }
     }
 
 }
