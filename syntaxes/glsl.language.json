@@ -57,7 +57,7 @@
 		},
 		{
 			"comment": "FUNCTION CALL",
-			"match": "([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))*)(?=\\()",
+			"match": "([_a-zA-Z]\\w*)((\\s|(\\[[^\\[]*?\\])|(\\/\\*.*?\\*\\/))*)(?=\\()",
 			"captures": {
 				"1": {
 					"name": "entity.name.function.glsl"
