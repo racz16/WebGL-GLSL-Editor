@@ -162,6 +162,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         this.scope = this.createScopeFromFunctionDefinition(this.scope, ctx);
         Helper.addFoldingRegionFromTokens(this.di, ctx.function_header().IDENTIFIER().symbol, ctx.compound_statement().RCB().symbol);
         this.currentFunction = new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
+        this.di.getRegions().scopedCurlyBracePositions.push(ctx.compound_statement().LCB().symbol.startIndex);
         this.visit(ctx.compound_statement());
         this.currentFunction = null;
         this.scope = this.scope.parent;
@@ -196,6 +197,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     private createScopeFromForIteration(currentScope: Scope, ctx: For_iterationContext): Scope {
         const increment = ctx.statement().simple_statement() ? 1 : 0;
+        if (increment === 0) {
+            this.di.getRegions().scopedCurlyBracePositions.push(ctx.statement().compound_statement().LCB().symbol.startIndex);
+        }
         const interval = new Interval(ctx.LRB().symbol.startIndex + 1, ctx.statement().stop.stopIndex + increment, this.di);
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
@@ -294,7 +298,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitCase_group(ctx: Case_groupContext): void {
         Helper.addFoldingRegionFromTokens(this.di, ctx.start, ctx.stop, -1);
         this.di.getRegions().caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
-        this.di.getRegions().caseStatementsRegions.push(new Interval(ctx.statement()[0].start.startIndex, ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1, this.di));
+        if (ctx.statement()[0].simple_statement()) {
+            this.di.getRegions().caseStatementsRegions.push(new Interval(ctx.statement()[0].start.startIndex, ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1, this.di));
+        }
         this.visitChildren(ctx);
     }
 

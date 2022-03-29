@@ -123,7 +123,7 @@ export class TypeDeclarationProcessor {
     }
 
     private createInnerScope(ctx: Type_declarationContext | Interface_block_declarationContext): void {
-        const interval = new Interval(ctx.LCB().symbol.stopIndex, ctx.RCB().symbol.startIndex, this.di);
+        const interval = new Interval(ctx.LCB().symbol.stopIndex + 1, ctx.RCB().symbol.startIndex, this.di);
         const innerScope = new Scope(interval, this.scope);
         this.scope.children.push(innerScope);
         this.scope = innerScope;

@@ -111,22 +111,128 @@
 					"webgl-glsl-editor.strictRename": {
 						"type": "boolean",
 						"default": true,
-						"description": "Prevents invalid renames."
+						"description": "Prevents invalid renames.",
+						"order": 1
 					},
 					"webgl-glsl-editor.alwaysOpenOnlineDoc": {
 						"type": "boolean",
 						"default": false,
-						"description": "Documentation is always opened online in the browser."
+						"description": "Documentation is always opened online in the browser.",
+						"order": 2
 					},
 					"webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
 						"type": "boolean",
 						"default": false,
-						"description": "Offline documentation is always opened in new tab."
+						"description": "Offline documentation is always opened in new tab.",
+						"order": 3
+					},
+					"webgl-glsl-editor.format.placeBracesOnSeparateLine": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places the braces (`{`, `}`) on separate lines.\n\n**Enabled:**\n```glsl\nif(valid)\n{\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
+						"order": 4
+					},
+					"webgl-glsl-editor.format.placeSpaceAroundUnaryOperators": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space between the unary operators (`+`, `-`, `++`, `--`, `!`, `~`) and the operands.\n\n**Enabled:**\n```glsl\nint i = - 1;\n```\n**Disabled:**\n```glsl\nint i = -1;\n```",
+						"order": 5
+					},
+					"webgl-glsl-editor.format.placeSpacesAroundBinaryOperators": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places spaces around the binary operators (`+`, `-`, `*`, `/`, `%`, `<`, `<=`, `==`, `!=`, `>=`, `>`, `<<`, `>>`, `&&`, `||`, `^^`, `&`, `|`, `^`).\n\n**Enabled:**\n```glsl\nint i = index + 1;\n```\n**Disabled:**\n```glsl\nint i = index+1;\n```",
+						"order": 6
+					},
+					"webgl-glsl-editor.format.placeSpacesAroundAssignmentOperators": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places spaces around the assignment operators (`=`, `+=`, `-=`, `*=`, `/=`, `%=`, `<<=`, `>>=`, `&=`, `|=`, `^=`).\n\n**Enabled:**\n```glsl\nint i = 1;\n```\n**Disabled:**\n```glsl\nint i=1;\n```",
+						"order": 7
+					},
+					"webgl-glsl-editor.format.placeSpacesAroundTernaryOperators": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places spaces around the ternary operators (`?`, `:`).\n\n**Enabled:**\n```glsl\nreturn valid ? 1 : -1;\n```\n**Disabled:**\n```glsl\nreturn valid?1:-1;\n```",
+						"order": 8
+					},
+					"webgl-glsl-editor.format.placeSpaceAfterKeywords": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space between keywords (`if`, `for`, `while`, `switch`, `layout`) and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nif (valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
+						"order": 9
+					},
+					"webgl-glsl-editor.format.placeSpaceAfterFunctionNames": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space between function names and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nfloat compute () {\n\treturn compute (1);\n}\n```\n**Disabled:**\n```glsl\nfloat compute() {\n\treturn compute(1);\n}\n```",
+						"order": 10
+					},
+					"webgl-glsl-editor.format.placeSpaceBeforeCommas": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space before commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1 , true);\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
+						"order": 11
+					},
+					"webgl-glsl-editor.format.placeSpaceAfterCommas": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places a space after commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1, true);\n```\n**Disabled:**\n```glsl\ncompute(1,true);\n```",
+						"order": 12
+					},
+					"webgl-glsl-editor.format.placeSpacesAroundDots": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places spaces around dots (`.`).\n\n**Enabled:**\n```glsl\nvec2 uv = position . xy;\n```\n**Disabled:**\n```glsl\nvec2 uv = position.xy;\n```",
+						"order": 13
+					},
+					"webgl-glsl-editor.format.placeSpaceBeforeCaseColons": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space before colons (`:`) in `case`s and `default`s.\n\n**Enabled:**\n```glsl\nswitch(type) {\n\tcase 0 :\n\t\treturn -1;\n\tdefault :\n\t\treturn type;\n}\n```\n**Disabled:**\n```glsl\nswitch(type) {\n\tcase 0:\n\t\treturn -1;\n\tdefault:\n\t\treturn type;\n}\n```",
+						"order": 14
+					},
+					"webgl-glsl-editor.format.placeSpaceBeforeSemicolonsInFor": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space before semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0 ; i < array.length() ; i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```",
+						"order": 15
+					},
+					"webgl-glsl-editor.format.placeSpaceAfterSemicolonsInFor": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places a space after semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0;i < array.length();i++) {\n\tresult += array[i];\n}\n```",
+						"order": 16
+					},
+					"webgl-glsl-editor.format.placeSpacesInsideParentheses": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places spaces inside parentheses (`(`, `)`).\n\n**Enabled:**\n```glsl\ncompute( 1, true );\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
+						"order": 17
+					},
+					"webgl-glsl-editor.format.placeSpacesAroundBraces": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "Places spaces around braces (`{`, `}`).\n\n**Enabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid){\n\treturn 1;\n}\n```",
+						"order": 18
+					},
+					"webgl-glsl-editor.format.placeSpaceBeforeOpeningBrackets": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places a space before opening brackets (`[`).\n\n**Enabled:**\n```glsl\nint [6] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
+						"order": 19
+					},
+					"webgl-glsl-editor.format.placeSpacesInsideBrackets": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "Places spaces inside brackets (`[`, `]`).\n\n**Enabled:**\n```glsl\nint[ 6 ] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
+						"order": 20
 					},
 					"webgl-glsl-editor.codeInjection": {
 						"type": "boolean",
 						"default": false,
-						"description": "Enable/disable code injection."
+						"description": "Enable/disable code injection.",
+						"order": 21
 					},
 					"webgl-glsl-editor.codeInjectionSource": {
 						"type": "array",
@@ -150,7 +256,8 @@
 							"uniform vec4 iDate;",
 							"uniform float iSampleRate;"
 						],
-						"description": "The lines of the injected source code. Only works if Code Injection is enabled."
+						"description": "The lines of the injected source code. Only works if Code Injection is enabled.",
+						"order": 22
 					}
 				}
 			}

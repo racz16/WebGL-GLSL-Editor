@@ -22,6 +22,7 @@ export class DocumentRegions {
     public readonly commentRegions = new Array<Interval>();
     public readonly preprocessorRegions = new Array<PreprocessorRegion>();
     public readonly layoutRegions = new Array<Interval>();
+    public readonly scopedCurlyBracePositions = new Array<number>();
 
     public reset(): void {
         this.completionRegions.length = 0;
@@ -38,5 +39,6 @@ export class DocumentRegions {
         this.commentRegions.length = 0;
         this.preprocessorRegions.length = 0;
         this.layoutRegions.length = 0;
+        this.scopedCurlyBracePositions.length = 0;
     }
 }
