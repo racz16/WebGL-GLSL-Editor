@@ -27,7 +27,7 @@ export class VariableUsageProcessor {
     }
 
     private addSemanticToken(vd: VariableDeclaration, token: Token): void {
-        if (vd.name) {
+        if (vd.name && !vd.builtin) {
             const modifiers = [];
             if (vd.type.qualifiers.some(q => q.name === 'const')) {
                 modifiers.push(SemanticModifier.CONST);
