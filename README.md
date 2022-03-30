@@ -37,13 +37,13 @@ The extension can display a signature helper for functions and constructors (exc
 
 ### Code completion
 
-The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
+The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
 ![code completion](res/png/screenshots/completion.png)
 
 ### Formatting
 
-The extension can format the whole source code and it can format a region of the source code.
+The extension can format the whole source code and it can format a region of the source code. The formatting is customizable in the Settings.
 
 #### Before formatting
 
@@ -153,6 +153,14 @@ You can easily access several online documentations by commands.
 
 ![online documentation](res/png/screenshots/online-documentation.png)
 
+### Other features
+
+* Indentation
+* Folding
+* Brace matching
+* Autoclosing pairs
+* Surrounding pairs
+
 ## Configuration
 
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames.
@@ -160,6 +168,11 @@ You can easily access several online documentations by commands.
 * `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.
 * `webgl-glsl-editor.codeInjection`: Enable/disable code injection.
 * `webgl-glsl-editor.codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
+
+## Notes
+
+* If you use this extension as a web extension, only the syntax highlight will work
+* If you open a GLSL code embedded in HTML code, only the syntax highlight will work
 
 ## Known Issues
 
