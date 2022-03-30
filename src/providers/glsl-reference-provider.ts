@@ -62,16 +62,16 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
         const ret = new Array<Location>();
         if (!element.builtin) {
             this.addLocation(ret, element.nameInterval);
-            for (const usage of element.usages) {
-                this.addLocation(ret, usage.nameInterval);
-            }
+        }
+        for (const usage of element.usages) {
+            this.addLocation(ret, usage.nameInterval);
         }
         return ret;
     }
 
     private processUsage(element: TypeUsage | VariableUsage): Array<Location> {
         const declaration = element.declaration;
-        if (declaration && !declaration.builtin) {
+        if (declaration) {
             return this.processDeclaration(declaration);
         } else {
             return new Array<Location>();
