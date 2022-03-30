@@ -155,6 +155,11 @@
 			}
 		},
 		{
+			"comment": "INTERFACE_BLOCK",
+			"match": "(?<=(uniform(\\s|(\\/\\*.*?\\*\\/))+))([a-zA-Z_]\\w*)(?=((\\s|(\\/\\*.*?\\*\\/))+{))",
+			"name": "entity.name.type.glsl"
+		},
+		{
 			"comment": "IDENTIFIER",
 			"name": "variable.glsl",
 			"match": "\\b([a-zA-Z_]\\w*)\\b"
