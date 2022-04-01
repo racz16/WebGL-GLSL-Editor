@@ -83,4 +83,15 @@ export class TypeDeclaration extends Element {
         return result;
     }
 
+    public toStringConstructorParameters(): string {
+        let ret = Constants.EMPTY;
+        for (let i = 0; i < this.members.length; i++) {
+            ret += this.members[i].toString();
+            if (i !== this.members.length - 1) {
+                ret += ', ';
+            }
+        }
+        return ret;
+    }
+
 }

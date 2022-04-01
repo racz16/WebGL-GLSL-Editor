@@ -170,7 +170,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
 
     private createItemFromDeclaration(fd: FunctionDeclaration): CallHierarchyItem {
         const lineFocusRange = this.di.intervalToRange(fd.nameInterval);
-        return new CallHierarchyItem(SymbolKind.Function, fd.name, null, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(SymbolKind.Function, fd.name, `(${fd.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
     private createItemWithoutDefinition(fc: FunctionCall): CallHierarchyItem {
@@ -182,7 +182,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         } else {
             lineFocusRange = this.di.intervalToRange(fc.nameInterval);
         }
-        return new CallHierarchyItem(kind, fp.name, null, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(kind, fp.name, `(${fp.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
     private createItemFromIncomingCall(incomingCall: FunctionDeclaration): CallHierarchyItem {
@@ -193,12 +193,12 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         } else {
             lineFocusRange = this.di.intervalToRange(incomingCall.nameInterval);
         }
-        return new CallHierarchyItem(kind, incomingCall.name, null, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(kind, incomingCall.name, `(${incomingCall.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
     private createItemFromTypeDeclaration(td: TypeDeclaration): CallHierarchyItem {
         const lineFocusRange = this.di.intervalToRange(td.nameInterval);
-        return new CallHierarchyItem(SymbolKind.Struct, td.name, null, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(SymbolKind.Struct, td.name, `(${td.toStringConstructorParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
 }
