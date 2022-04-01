@@ -22,7 +22,7 @@ import { GlslDocumentFormattingProvider } from './providers/glsl-document-format
 import { GlslTextProvider } from './providers/glsl-text-provider';
 import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
 import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
-import { DebugHighlighter } from './providers/helper/debug-highlighter';
+import { GlslInlayHintsProvider } from './providers/glsl-inlay-hints-provider';
 
 export function activate(context: ExtensionContext): void {
 	GlslEditor.initialize(context);
@@ -128,4 +128,6 @@ export function activate(context: ExtensionContext): void {
 	//formatting
 	context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
 	context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
+	//inlay hints
+	context.subscriptions.push(languages.registerInlayHintsProvider(selector, new GlslInlayHintsProvider()));
 }

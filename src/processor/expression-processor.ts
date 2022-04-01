@@ -278,6 +278,12 @@ export class ExpressionProcessor {
                     this.di.getRegions().colorRegions.push(cr);
                 }
             }
+            const parameterExpressions = this.ctx.function_call()?.function_call_parameter_list()?.expression_list()?.expression();
+            if (parameterExpressions) {
+                for (const parameterExpression of parameterExpressions) {
+                    fc.parametersStartOffset.push(parameterExpression.start.startIndex);
+                }
+            }
             if (fd.returnType.declaration) {
                 if (fd.ctor) {
                     fd.returnType.declaration.ctorCalls.push(fc);
