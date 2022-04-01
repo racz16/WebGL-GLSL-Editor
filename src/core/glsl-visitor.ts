@@ -140,6 +140,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitInterface_block_declaration(ctx: Interface_block_declarationContext): void {
         Helper.addFoldingRegionFromTokens(this.di, ctx.IDENTIFIER()?.symbol ?? ctx.LCB().symbol, ctx.RCB().symbol);
         new VariableDeclarationProcessor().getInterfaceBlockVariableDeclaration(ctx, this.scope, this.di);
+        this.visitList(ctx.qualifier());
     }
 
     //
