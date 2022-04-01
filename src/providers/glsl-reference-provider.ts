@@ -10,7 +10,10 @@ import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslReferenceProvider extends PositionalProviderBase<Array<Location>> implements ReferenceProvider {
 
+    private referenceContext: ReferenceContext;
+
     public provideReferences(document: TextDocument, position: Position, context: ReferenceContext, token: CancellationToken): ProviderResult<Location[]> {
+        this.referenceContext = context;
         return this.processElements(document, position);
     }
 
@@ -60,7 +63,7 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
 
     private processDeclaration(element: TypeDeclaration | VariableDeclaration): Array<Location> {
         const ret = new Array<Location>();
-        if (!element.builtin) {
+        if (!element.builtin && this.referenceContext.includeDeclaration) {
             this.addLocation(ret, element.nameInterval);
         }
         for (const usage of element.usages) {
@@ -74,7 +77,7 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
         if (declaration) {
             return this.processDeclaration(declaration);
         } else {
-            return new Array<Location>();
+            return [];
         }
     }
 
