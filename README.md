@@ -158,6 +158,7 @@ You can easily access several online documentations by commands.
 * Indentation
 * Folding
 * Brace matching
+* Comment toggling
 * Autoclosing pairs
 * Surrounding pairs
 
