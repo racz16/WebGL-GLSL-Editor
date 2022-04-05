@@ -7,6 +7,7 @@ node_modules
 src/**
 .gitignore
 vsc-extension-quickstart.md
+BUILD.md
 **/tsconfig.json
 **/tslint.json
 **/*.map
@@ -14,6 +15,7 @@ vsc-extension-quickstart.md
 syntaxes/.antlr
 syntaxes/*.g4
 res/png/screenshots
+res/gif
 private
 **/*.bat
 **/*.ps1

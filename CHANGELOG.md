@@ -4,12 +4,38 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.0] - 2022.04.05.
+
+### Added
+
+* Inlay hints
+
+### Improved
+
+* Extending the formatting with options
+* Enabling the extension as a web extension (only sytanx highlight)
+* Syntax highlight (interface blocks, array constructors, comments, declaration, definition, readonly)
+* Providing function signatures in the call hierarchy
+* Extending references with builtin types and builtin variables
+* Extending highlight with builtin variables
+* Extending brace matching with parentheses and brackets
+* Go to references, if there is only one usage
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Wrong syntax highlight in embedded code while using other extensions (thanks michaelmcleodnz)
+* Wrong documentation of the cross function
+* Interface block layout qualifier code completion bug
+* Other small fixes
+
 ## [1.2.2] - 2021.08.21.
 
 ### Improved
 
 * Improved code completion in functions and variables
-* Updating packages
+* Updated packages
 
 ### Fixed
 

@@ -49,7 +49,7 @@ The extension can format the whole source code and it can format a region of the
 
 ### Syntax highlight in HTML scripts
 
-The extension can colorize GLSL code in HTML scripts if the script's type is "x-shader/x-vertex" or "x-shader/x-fragment".
+The extension can colorize GLSL code in HTML scripts if the script's type is `x-shader/x-vertex` or `x-shader/x-fragment`.
 
 ![html](res/png/screenshots/html.png)
 
@@ -73,13 +73,19 @@ The extension can provide useful informations or documentation summary if you ho
 
 ### Symbols
 
-The extension can provide outline information and breadcrumbs about the types, interface blocks, variables and functions. You can also easily find types, interface blocks, variables and functions.
+The extension can provide outline information and breadcrumbs about the types, interface blocks, variables and functions. You can also easily find them by typing a `@` into the Command Palette.
 
 ![symbols](res/gif/symbols.gif)
 
+### Inlay hints
+
+The extension can show function and constructor parameters in the source code. You can enable or disable this feature in the Settings.
+
+![inlay hints](res/png/screenshots/inlay-hints.png)
+
 ### Color picker
 
-The extension can display a color picker if you initialize or reassign a vec3 or vec4 variable whihch name contains the word 'color' or 'colour' and the assigned expression is a vec3 or vec4 constructor and it's parameters are number literals.
+The extension can display a color picker if you initialize or reassign a `vec3` or `vec4` variable whihch name contains the word `color` or `colour` and the assigned expression is a `vec3` or `vec4` constructor and it's parameters are number literals.
 
 ![color picker](res/gif/color-picker.gif)
 
@@ -153,16 +159,34 @@ You can easily access several online documentations by commands.
 
 ## Configuration
 
+* `webgl-glsl-editor.inlayHints`: Enables/disables inlay hints.
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames.
 * `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser.
 * `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.
-* `webgl-glsl-editor.codeInjection`: Enable/disable code injection.
+* `webgl-glsl-editor.format.placeBracesOnSeparateLine`: Places the braces on separate lines.
+* `webgl-glsl-editor.format.placeSpaceAroundUnaryOperators`: Places a space between the unary operators and the operands.
+* `webgl-glsl-editor.format.placeSpacesAroundBinaryOperators`: Places spaces around the binary operators.
+* `webgl-glsl-editor.format.placeSpacesAroundAssignmentOperators`: Places spaces around the assignment operators.
+* `webgl-glsl-editor.format.placeSpacesAroundTernaryOperators`: Places spaces around the ternary operators.
+* `webgl-glsl-editor.format.placeSpaceAfterKeywords`: Places a space between keywords and the opening parentheses.
+* `webgl-glsl-editor.format.placeSpaceAfterFunctionNames`: Places a space between function names and the opening parentheses.
+* `webgl-glsl-editor.format.placeSpaceBeforeCommas`: Places a space before commas.
+* `webgl-glsl-editor.format.placeSpaceAfterCommas`: Places a space after commas.
+* `webgl-glsl-editor.format.placeSpacesAroundDots`: Places spaces around dots.
+* `webgl-glsl-editor.format.placeSpaceBeforeCaseColons`: Places a space before colons in `case`s and `default`s.
+* `webgl-glsl-editor.format.placeSpaceBeforeSemicolonsInFor`: Places a space before semicolons in `for`s.
+* `webgl-glsl-editor.format.placeSpaceAfterSemicolonsInFor`: Places a space after semicolons in `for`s.
+* `webgl-glsl-editor.format.placeSpacesInsideParentheses`: Places spaces inside parentheses.
+* `webgl-glsl-editor.format.placeSpacesAroundBraces`: Places spaces around braces.
+* `webgl-glsl-editor.format.placeSpaceBeforeOpeningBrackets`: Places a space before opening brackets.
+* `webgl-glsl-editor.format.placeSpacesInsideBrackets`: Places spaces inside brackets.
+* `webgl-glsl-editor.codeInjection`: Enables/disables code injection.
 * `webgl-glsl-editor.codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
 
 ## Notes
 
 * If you use this extension as a web extension, only the syntax highlight will work
-* If you open a GLSL code embedded in HTML code, only the syntax highlight will work
+* If you open GLSL code embedded in HTML, only the syntax highlight will work
 
 ## Known Issues
 
@@ -174,6 +198,18 @@ You can find the user provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.0
+
+* Inlay hints
+* Available as a web extension
+* Improved formatting
+* Improved syntax highlight
+* Improved call hierarchy
+* Improved references
+* Improved highlight
+* Improved brace matching
+* Other small changes and bugfixes
 
 ### 1.2.2
 
