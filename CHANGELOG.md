@@ -13,7 +13,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 ### Improved
 
 * Extending the formatting with options
-* Enabling the extension as a web extension (only sytanx highlight)
+* Enabling the extension as a web extension (only syntax highlight)
 * Syntax highlight (interface blocks, array constructors, comments, declaration, definition, readonly)
 * Providing function signatures in the call hierarchy
 * Extending references with builtin types and builtin variables
