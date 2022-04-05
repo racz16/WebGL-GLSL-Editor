@@ -15,43 +15,37 @@ This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00
 
 The extension colorizes types, builtin types, variables, builtin variables, functions, keywords, qualifiers, operators, preprocessor directives and comments.
 
-![syntax highlighting](res/png/screenshots/syntax-highlighting.png)
+![syntax highlight](res/png/screenshots/syntax-highlight.png)
 
 ### Diagnostic
 
 The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations (errors and warnings). It also grays out the unused functions, types and variables.
 
-![diagnostic](res/png/screenshots/diagnostic.png)
+![diagnostic](res/gif/diagnostic.gif)
 
 ### Offline documentation
 
 The extension uses [docs.gl](http://docs.gl) to provide the offline documentation for builtin variables and builtin functions.
 
-![offline documentation](res/png/screenshots/documentation.png)
+![offline documentation](res/gif/documentation.gif)
 
 ### Signature help
 
 The extension can display a signature helper for functions and constructors (except matrix constructors).
 
-![signature help](res/png/screenshots/signature-help.png)
+![signature help](res/gif/signature-help.gif)
 
 ### Code completion
 
 The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
-![code completion](res/png/screenshots/completion.png)
+![code completion](res/gif/code-completion.gif)
 
 ### Formatting
 
 The extension can format the whole source code and it can format a region of the source code. The formatting is customizable in the Settings.
 
-#### Before formatting
-
-![before formatting](res/png/screenshots/formatting-before.png)
-
-#### After formatting
-
-![after formatting](res/png/screenshots/formatting-after.png)
+![formatting](res/gif/formatting.gif)
 
 ### Syntax highlight in HTML scripts
 
@@ -63,35 +57,31 @@ The extension can colorize GLSL code in HTML scripts if the script's type is "x-
 
 You can rename types (and constructors), interface blocks, variables and functions.
 
-![rename](res/png/screenshots/rename.png)
+![rename](res/gif/rename.gif)
 
 ### Highlights
 
 The extension can highlight all the occurrences of the selected type, variable function or constructor.
 
-![highlights](res/png/screenshots/highlights.png)
+![highlights](res/gif/highlights.gif)
 
 ### Hover
 
 The extension can provide useful informations or documentation summary if you hover over types, variables, functions or constructors.
 
-![hover](res/png/screenshots/hover.png)
+![hover](res/gif/hover.gif)
 
 ### Symbols
 
-The extension can provide outline information and breadcrumbs about the types, interface blocks, variables and functions.
+The extension can provide outline information and breadcrumbs about the types, interface blocks, variables and functions. You can also easily find types, interface blocks, variables and functions.
 
-![outline and breadcrumbs](res/png/screenshots/outline-and-breadcrumbs.png)
-
-You can easily find types, interface blocks, variables and functions.
-
-![find symbol](res/png/screenshots/find-symbol.png)
+![symbols](res/gif/symbols.gif)
 
 ### Color picker
 
 The extension can display a color picker if you initialize or reassign a vec3 or vec4 variable whihch name contains the word 'color' or 'colour' and the assigned expression is a vec3 or vec4 constructor and it's parameters are number literals.
 
-![color picker](res/png/screenshots/color-picker.png)
+![color picker](res/gif/color-picker.gif)
 
 ### Code injection
 
@@ -103,49 +93,49 @@ The extension can inject code into the GLSL files. You can specify the code in t
 
 The extension can visualize the functions' and constructors' incoming ang outgoing calls as a graph.
 
-![call hierarchy](res/png/screenshots/call-hierarchy.png)
+![call hierarchy](res/gif/call-hierarchy.gif)
 
 ### Go to/Peek declarations
 
 You can find (go to / peek) the declaration of a type, a variable, a function or a constructor.
 
-![declarations](res/png/screenshots/declarations.png)
+![declarations](res/gif/declarations.gif)
 
 ### Go to/Peek definitions
 
 You can find (go to / peek) the definition of a type, a variable, a function or a constructor.
 
-![definitions](res/png/screenshots/definitions.png)
+![definitions](res/gif/definitions.gif)
 
 ### Go to/Peek type definitions
 
 You can find (go to / peek) the type definition of a variable, a function or a constructor.
 
-![type definitions](res/png/screenshots/type-definitions.png)
+![type definitions](res/gif/type-definitions.gif)
 
 ### Go to/Find all/Peek implementations
 
 You can find (go to / find all / peek) the implementation of a function.
 
-![implementations](res/png/screenshots/implementations.png)
+![implementations](res/gif/implementations.gif)
 
 ### Go to/Find all/Peek references
 
 You can find (go to / find all / peek) the references of a type, a variable, a function or a constructor.
 
-![references](res/png/screenshots/references.png)
+![references](res/gif/references.gif)
 
 ### Generating preprocessed GLSL source code
 
 You can generate preprocessed GLSL source code by running a command.
 
-#### Before the preprocessor
+![before the preprocessor](res/gif/generate-preprocessed-glsl.gif)
 
-![before the preprocessor](res/png/screenshots/preprocessor-before.png)
+### Folding
 
-#### After the preprocessor
+You can collapse or expand code blocks.
 
-![after the preprocessor](res/png/screenshots/preprocessor-after.png)
+![folding](res/gif/folding.gif)
 
 ### Commands for online documentation
 
@@ -156,7 +146,6 @@ You can easily access several online documentations by commands.
 ### Other features
 
 * Indentation
-* Folding
 * Brace matching
 * Comment toggling
 * Autoclosing pairs
