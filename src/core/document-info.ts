@@ -61,14 +61,36 @@ export class DocumentInfo {
         return this.visitor;
     }
 
+    public getExtension(size = 1): string {
+        const fileName = this.uri.path.substring(this.uri.path.lastIndexOf('/') + 1);
+        return fileName.split(Constants.DOT).slice(-size).join(Constants.DOT);
+    }
+
+    public getStageName(): string {
+        const ext1 = this.getExtension();
+        const ext2 = this.getExtension(2);
+
+        if (Constants.VERTEX_EXTS.includes(ext1) || Constants.VERTEX_EXTS.includes(ext2)) {
+            return Constants.VERT;
+        }
+
+        if (Constants.FRAGMENT_EXTS.includes(ext1) || Constants.FRAGMENT_EXTS.includes(ext2)) {
+            return Constants.FRAG;
+        }
+
+        return Constants.EMPTY;
+    }
+
     public getShaderStage(): ShaderStage {
         return this.stage;
     }
 
     private setShaderStage(): void {
-        if (this.uri.path.endsWith(Constants.FS) || this.uri.path.endsWith(Constants.FRAG)) {
+        const stageName = this.getStageName();
+
+        if (stageName === Constants.FRAG) {
             this.stage = ShaderStage.FRAGMENT;
-        } else if (this.uri.path.endsWith(Constants.VS) || this.uri.path.endsWith(Constants.VERT)) {
+        } else if (stageName === Constants.VERT) {
             this.stage = ShaderStage.VERTEX;
         } else {
             this.stage = ShaderStage.DEFAULT;

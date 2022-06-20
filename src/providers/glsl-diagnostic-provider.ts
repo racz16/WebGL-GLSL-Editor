@@ -113,8 +113,7 @@ export class GlslDiagnosticProvider {
         this.document = document;
         this.di = GlslEditor.getDocumentInfo(this.document.uri);
         const platformName = this.getPlatformName();
-        const extension = this.getExtension(this.document.uri);
-        const stageName = this.getStageName(extension);
+        const stageName = this.di.getStageName();
         const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
         this.executeGeneration(validatorPath, stageName);
     }
@@ -136,8 +135,7 @@ export class GlslDiagnosticProvider {
 
     private addErrors(): void {
         const platformName = this.getPlatformName();
-        const extension = this.getExtension(this.document.uri);
-        const stageName = this.getStageName(extension);
+        const stageName = this.di.getStageName();
         const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
         this.executeValidation(validatorPath, stageName);
     }
@@ -226,22 +224,4 @@ export class GlslDiagnosticProvider {
             default: return Constants.EMPTY;
         }
     }
-
-    private getExtension(uri: Uri): string {
-        return uri.fsPath.substring(uri.fsPath.lastIndexOf(Constants.DOT) + 1);
-    }
-
-    private getStageName(extension: string): string {
-        switch (extension) {
-            case Constants.VERT:
-            case Constants.VS:
-                return Constants.VERT;
-            case Constants.FRAG:
-            case Constants.FS:
-                return Constants.FRAG;
-            default:
-                return Constants.EMPTY;
-        }
-    }
-
 }
