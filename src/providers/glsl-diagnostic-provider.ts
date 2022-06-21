@@ -12,6 +12,7 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Constants } from '../core/constants';
 import { GlslTextProvider } from './glsl-text-provider';
+import { Helper } from '../processor/helper';
 
 export class GlslDiagnosticProvider {
 
@@ -92,8 +93,8 @@ export class GlslDiagnosticProvider {
     }
 
     private addUnusedHint(element: Element, message: string): void {
-        if (element.nameInterval && !element.nameInterval.isInjected()) {
-            const range = this.di.intervalToRange(element.nameInterval);
+        if (element.nameInterval && !Helper.isInjected(element.nameInterval)) {
+            const range = element.nameInterval;
             const d = new Diagnostic(range, message, DiagnosticSeverity.Hint);
             d.tags = [DiagnosticTag.Unnecessary];
             this.diagnostics.push(d);

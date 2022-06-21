@@ -3,13 +3,13 @@ import { LogicalFunction } from '../scope/function/logical-function';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { PositionalProviderBase } from './helper/positional-provider-base';
-import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeUsage } from '../scope/type/type-usage';
 import { GlslEditor } from '../core/glsl-editor';
 import { Scope } from '../scope/scope';
+import { Helper } from '../processor/helper';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
 
@@ -78,9 +78,9 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         return we;
     }
 
-    private rename(we: WorkspaceEdit, interval: Interval): void {
-        if (interval && !interval.isInjected()) {
-            we.replace(this.document.uri, this.di.intervalToRange(interval), this.newName);
+    private rename(we: WorkspaceEdit, interval: Range): void {
+        if (interval && !Helper.isInjected(interval)) {
+            we.replace(this.document.uri, interval, this.newName);
         }
     }
 
@@ -216,46 +216,46 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Range {
-        if (!vd.declarationInterval.isInjected()) {
+        if (!Helper.isInjected(vd.declarationInterval)) {
             this.vd = vd;
             this.scope = vd.scope;
-            return this.di.intervalToRange(vd.nameInterval);
+            return vd.nameInterval;
         }
         return this.defaultReturn();
     }
 
     protected processVariableUsage(vu: VariableUsage): Range {
-        if (vu.declaration && !vu.declaration.builtin && !vu.declaration.nameInterval.isInjected()) {
+        if (vu.declaration && !vu.declaration.builtin && !Helper.isInjected(vu.declaration.nameInterval)) {
             this.vd = vu.declaration;
             this.scope = vu.scope;
-            return this.di.intervalToRange(vu.nameInterval);
+            return vu.nameInterval;
         }
         return this.defaultReturn();
     }
 
-    protected processTypeDeclaration(td: TypeDeclaration, interval: Interval = null): Range {
-        if (!td.interval.isInjected()) {
+    protected processTypeDeclaration(td: TypeDeclaration, interval: Range = null): Range {
+        if (!Helper.isInjected(td.interval)) {
             this.td = td;
             this.scope = td.scope;
-            return this.di.intervalToRange(interval || td.nameInterval);
+            return (interval || td.nameInterval);
         }
         return this.defaultReturn();
     }
 
     protected processTypeUsage(tu: TypeUsage): Range {
-        if (tu.declaration && !tu.declaration.builtin && !tu.declaration.interval.isInjected()) {
+        if (tu.declaration && !tu.declaration.builtin && !Helper.isInjected(tu.declaration.interval)) {
             this.td = tu.declaration;
             this.scope = tu.scope;
-            return this.di.intervalToRange(tu.nameInterval);
+            return tu.nameInterval;
         }
         return this.defaultReturn();
     }
 
-    private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
-        if (!lf.prototypes.some(fp => fp.interval.isInjected()) && !lf.definitions.some(fd => fd.interval.isInjected())) {
+    private processFunction(lf: LogicalFunction, nameInterval: Range): Range {
+        if (!lf.prototypes.some(fp => Helper.isInjected(fp.interval)) && !lf.definitions.some(fd => Helper.isInjected(fd.interval))) {
             this.lf = lf;
             this.scope = lf.getDeclaration().scope;
-            return this.di.intervalToRange(nameInterval);
+            return nameInterval;
         }
         return this.defaultReturn();
     }

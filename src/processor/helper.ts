@@ -2,7 +2,6 @@ import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { Array_subscriptContext, Compound_statementContext, Identifier_optarrayContext, Identifier_optarray_optassignmentContext, StatementContext } from '../_generated/AntlrGlslParser';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
 import { DocumentInfo } from '../core/document-info';
@@ -10,7 +9,7 @@ import { TypeBase } from '../scope/type/type-base';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
-import { FoldingRangeKind, MarkdownString, Position } from 'vscode';
+import { FoldingRangeKind, MarkdownString, Position, Range } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
@@ -64,7 +63,7 @@ export class Helper {
         return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage, extension);
     }
 
-    public static getIntervalFromStatement(ctx: StatementContext, di: DocumentInfo): Interval {
+    public static getIntervalFromStatement(ctx: StatementContext, di: DocumentInfo): Range {
         if (ctx?.compound_statement()) {
             return this.getIntervalFromCompoundStatement(ctx.compound_statement(), di);
         } else {
@@ -72,24 +71,32 @@ export class Helper {
         }
     }
 
-    public static getIntervalFromCompoundStatement(ctx: Compound_statementContext, di: DocumentInfo): Interval {
-        return ctx ? new Interval(ctx.start.stopIndex + 1, ctx.stop.startIndex, di) : null;
+    public static getIntervalFromCompoundStatement(ctx: Compound_statementContext, di: DocumentInfo): Range {
+        return ctx ? this.getRangeFromTokens(ctx.start, ctx.stop, di) : null;
     }
 
-    public static getIntervalFromParserRule(ctx: ParserRuleContext, di: DocumentInfo): Interval {
-        return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1, di) : null;
+    public static getIntervalFromParserRule(ctx: ParserRuleContext, di: DocumentInfo): Range {
+        return ctx ? this.getRangeFromTokens(ctx.start, ctx.stop, di) : null;
     }
 
-    public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext, di: DocumentInfo): Interval {
-        return new Interval(startRule.start.startIndex, endRule.stop.stopIndex + 1, di);
+    public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext, di: DocumentInfo): Range {
+        return this.getRangeFromTokens(startRule.start, endRule.stop, di);
     }
 
-    public static getIntervalFromTerminalNode(tn: TerminalNode, di: DocumentInfo): Interval {
-        return tn ? new Interval(tn.symbol.startIndex, tn.symbol.stopIndex + 1, di) : null;
+    public static getIntervalFromTerminalNode(tn: TerminalNode, di: DocumentInfo): Range {
+        return tn ? this.getRangeFromTokens(tn.symbol, tn.symbol, di) : null;
     }
 
-    public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode, di: DocumentInfo): Interval {
-        return new Interval(tn.symbol.startIndex, tn2.symbol.stopIndex + 1, di);
+    public static getIntervalFromTerminalNodes(tn: TerminalNode, tn2: TerminalNode, di: DocumentInfo): Range {
+        return this.getRangeFromTokens(tn.symbol, tn2.symbol, di);
+    }
+
+    public static getRangeFromTokens(t1: Token, t2: Token, di: DocumentInfo): Range {
+        return new Range(new Position(t1.line - 1, t1.charPositionInLine), new Position(t2.line - 1, t2.charPositionInLine + t2.text.length));
+    }
+
+    public static isInjected(range: Range): boolean {
+        return range.start.line < 0;
     }
 
     public static addFoldingRegionFromTokens(di: DocumentInfo, t: Token, t2: Token, endOffset = -2): void {
@@ -112,16 +119,16 @@ export class Helper {
         }
     }
 
-    public static isALowerThanB(a: Interval, b: Interval): boolean {
-        return !a || !b || a.stopIndex < b.startIndex;
+    public static isALowerThanB(a: Range, b: Range): boolean {
+        return !a || !b || a.end.isBefore(b.start);
     }
 
-    public static isALowerThanOffset(a: Interval, offset: number): boolean {
-        return a && a.stopIndex < offset;
+    public static isALowerThanOffset(a: Range, offset: Position): boolean {
+        return a && offset && a.end.isBefore(offset);
     }
 
     public static isPositionInScope(scope: Scope, position: Position, di: DocumentInfo): boolean {
-        return scope && (di.intervalToRange(scope.interval)?.contains(position) || scope.isGlobal());
+        return scope && (scope.interval.contains(position) || scope.isGlobal());
     }
 
     public static getTypeName(tb: TypeBase, width: number): string {

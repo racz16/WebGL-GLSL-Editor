@@ -14,14 +14,12 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
     private di: DocumentInfo;
     private position: Position;
-    private offset: number;
     private functions: Array<FunctionDeclaration>;
 
     private initialize(document: TextDocument, position: Position): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
-        this.offset = this.di.positionToOffset(this.position);
         this.functions = new Array<FunctionDeclaration>();
     }
 
@@ -42,7 +40,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
     private getSignatureRegion(): SignatureRegion {
         for (const sr of this.di.getRegions().signatureRegions) {
-            if (!sr.interval.isInjected() && this.di.intervalToRange(sr.interval).contains(this.position)) {
+            if (!Helper.isInjected(sr.interval) && sr.interval?.contains(this.position)) {
                 return sr;
             }
         }
@@ -53,7 +51,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         const fi = this.di.builtin.functionSummaries.get(sr.name);
         for (const lf of lfs.filter(func => func.getDeclaration().name === sr.name)) {
             const fp = lf.getDeclaration();
-            if (Helper.isInCorrectStage(fp.stage, this.di) && this.di.isExtensionAvailable(fi?.extension, this.offset)) {
+            if (Helper.isInCorrectStage(fp.stage, this.di) && this.di.isExtensionAvailable(fi?.extension, this.position)) {
                 const si = new SignatureInformation(fp.toString(), fi?.summary);
                 si.parameters = [];
                 for (const vd of fp.parameters) {
@@ -76,7 +74,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     private computeActiveParameter(sr: SignatureRegion): number {
         for (let i = 0; i < sr.parameters.length; i++) {
             const spr = sr.parameters[i];
-            if (!spr.interval.isInjected() && this.di.intervalToRange(spr.interval).contains(this.position)) {
+            if (!Helper.isInjected(spr.interval) && spr.interval?.contains(this.position)) {
                 return i;
             }
         }

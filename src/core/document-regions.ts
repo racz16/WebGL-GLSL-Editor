@@ -1,11 +1,11 @@
 
 import { ColorRegion } from "../scope/regions/color-region";
-import { Interval } from "../scope/interval";
 import { PreprocessorRegion } from "../scope/regions/preprocessor-region";
 import { FoldingRegion } from "../scope/regions/folding-region";
 import { SignatureRegion } from "../scope/regions/signature-region";
 import { SemanticRegion } from "../scope/regions/semantic-region";
 import { CompletionRegion } from "../scope/regions/completion-region";
+import { Range } from "vscode";
 
 export class DocumentRegions {
     public readonly completionRegions = new Array<CompletionRegion>();
@@ -13,15 +13,15 @@ export class DocumentRegions {
     public readonly semanticRegions = new Array<SemanticRegion>();
     public readonly colorRegions = new Array<ColorRegion>();
     public readonly signatureRegions = new Array<SignatureRegion>();
-    public readonly forHeaderRegions = new Array<Interval>();
-    public readonly typeDeclarationRegions = new Array<Interval>()
-    public readonly unaryExpressionRegions = new Array<Interval>();
-    public readonly caseHeaderRegions = new Array<Interval>();
-    public readonly caseStatementsRegions = new Array<Interval>();
-    public readonly scopelessInterfaceBlockRegions = new Array<Interval>();
-    public readonly commentRegions = new Array<Interval>();
+    public readonly forHeaderRegions = new Array<Range>();
+    public readonly typeDeclarationRegions = new Array<Range>()
+    public readonly unaryExpressionRegions = new Array<Range>();
+    public readonly caseHeaderRegions = new Array<Range>();
+    public readonly caseStatementsRegions = new Array<Range>();
+    public readonly scopelessInterfaceBlockRegions = new Array<Range>();
+    public readonly commentRegions = new Array<Range>();
     public readonly preprocessorRegions = new Array<PreprocessorRegion>();
-    public readonly layoutRegions = new Array<Interval>();
+    public readonly layoutRegions = new Array<Range>();
     public readonly scopedCurlyBracePositions = new Array<number>();
 
     public reset(): void {

@@ -1,5 +1,5 @@
 import { GlslEditor } from '../../core/glsl-editor';
-import { TextDocument, Position, Location } from 'vscode';
+import { TextDocument, Position, Location, Range } from 'vscode';
 import { FunctionDeclaration } from '../../scope/function/function-declaration';
 import { DocumentInfo } from '../../core/document-info';
 import { VariableDeclaration } from '../../scope/variable/variable-declaration';
@@ -7,21 +7,19 @@ import { VariableUsage } from '../../scope/variable/variable-usage';
 import { TypeDeclaration } from '../../scope/type/type-declaration';
 import { TypeUsage } from '../../scope/type/type-usage';
 import { FunctionCall } from '../../scope/function/function-call';
-import { Interval } from '../../scope/interval';
+import { Helper } from '../../processor/helper';
 
 export class PositionalProviderBase<T> {
 
     protected di: DocumentInfo;
     protected document: TextDocument;
     protected position: Position;
-    protected offset: number;
 
     protected initialize(document: TextDocument, position: Position): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
         this.position = position;
-        this.offset = this.di.positionToOffset(this.position);
     }
 
     protected processElements(document: TextDocument, position: Position): T {
@@ -29,28 +27,28 @@ export class PositionalProviderBase<T> {
 
         //function
         const fp = this.di.getFunctionPrototypeAt(position);
-        if (fp && !fp.ctor && this.di.isExtensionAvailable(fp.extension, this.offset)) {
+        if (fp && !fp.ctor && this.di.isExtensionAvailable(fp.extension, this.position)) {
             return this.processFunctionPrototype(fp);
         }
 
         const fd = this.di.getFunctionDefinitionAt(position);
-        if (fd && !fd.ctor && this.di.isExtensionAvailable(fd.extension, this.offset)) {
+        if (fd && !fd.ctor && this.di.isExtensionAvailable(fd.extension, this.position)) {
             return this.processFunctionDefinition(fd);
         }
 
         const fc = this.di.getFunctionCallAt(position);
-        if (fc && (fc.logicalFunction.prototypes.length === 0 || this.di.isExtensionAvailable(fc.logicalFunction.getDeclaration().extension, this.offset))) {
+        if (fc && (fc.logicalFunction.prototypes.length === 0 || this.di.isExtensionAvailable(fc.logicalFunction.getDeclaration().extension, this.position))) {
             return this.processFunctionCall(fc);
         }
 
         //variable
         const vd = this.di.getVariableDeclarationAt(position);
-        if (vd && vd.name && this.di.isExtensionAvailable(vd.extension, this.offset)) {
+        if (vd && vd.name && this.di.isExtensionAvailable(vd.extension, this.position)) {
             return this.processVariableDeclaration(vd);
         }
 
         const vu = this.di.getVariableUsageAt(position);
-        if (vu && vu.name && (!vu.declaration || this.di.isExtensionAvailable(vu.declaration.extension, this.offset))) {
+        if (vu && vu.name && (!vu.declaration || this.di.isExtensionAvailable(vu.declaration.extension, this.position))) {
             return this.processVariableUsage(vu);
         }
 
@@ -100,8 +98,8 @@ export class PositionalProviderBase<T> {
         return null;
     }
 
-    protected addLocation(list: Array<Location>, interval: Interval): void {
-        if (interval && !interval.isInjected()) {
+    protected addLocation(list: Array<Location>, interval: Range): void {
+        if (interval && !Helper.isInjected(interval)) {
             list.push(this.di.intervalToLocation(interval));
         }
     }

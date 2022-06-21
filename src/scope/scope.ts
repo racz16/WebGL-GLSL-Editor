@@ -3,15 +3,15 @@ import { VariableDeclaration } from './variable/variable-declaration';
 import { VariableUsage } from './variable/variable-usage';
 import { TypeDeclaration } from './type/type-declaration';
 import { TypeUsage } from './type/type-usage';
-import { Interval } from './interval';
 import { LogicalFunction } from './function/logical-function';
 import { FunctionDeclaration } from './function/function-declaration';
+import { Range } from 'vscode';
 
 export class Scope {
 
     public readonly parent: Scope;
     public readonly children = new Array<Scope>();
-    public readonly interval: Interval;
+    public readonly interval: Range;
 
     public readonly functions = new Array<LogicalFunction>();
     public readonly functionPrototypes = new Array<FunctionDeclaration>();
@@ -26,7 +26,7 @@ export class Scope {
 
     public readonly elseIfScope: boolean
 
-    public constructor(interval: Interval, parent: Scope, elseIfScope = false) {
+    public constructor(interval: Range, parent: Scope, elseIfScope = false) {
         this.interval = interval;
         this.parent = parent;
         this.elseIfScope = elseIfScope;

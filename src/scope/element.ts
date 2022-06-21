@@ -1,14 +1,14 @@
-import { Interval } from './interval';
+import { Range } from 'vscode';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from './scope';
 
 export abstract class Element {
 
-    public readonly nameInterval: Interval;
+    public readonly nameInterval: Range;
     public readonly name: string;
     public readonly scope: Scope;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope) {
+    public constructor(name: string, nameInterval: Range, scope: Scope) {
         this.name = name;
         this.nameInterval = nameInterval;
         this.scope = scope;

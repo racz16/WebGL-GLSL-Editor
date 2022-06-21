@@ -46,19 +46,17 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
     }
 
     private isInsideTheRegion(fc: FunctionCall): boolean {
-        const start = this.di.offsetToPosition(fc.interval.startIndex);
-        const stop = this.di.offsetToPosition(fc.interval.stopIndex);
-        const functionCallRange = new Range(start, stop);
+        const functionCallRange = fc.interval;
         return !!functionCallRange.intersection(this.range);
     }
 
     private addHint(fc: FunctionCall, declaration: FunctionDeclaration, i: number): void {
-        const startIndex = fc.parametersStartOffset[i];
+        /*const startIndex = fc.parametersStartOffset[i];
         const name = `${declaration.parameters[i].name}:`;
         const position = this.di.offsetToPosition(startIndex - this.di.getInjectionOffset());
         const ih = new InlayHint(position, name, InlayHintKind.Parameter);
         ih.paddingRight = true;
-        this.result.push(ih);
+        this.result.push(ih);*/
     }
 
 }

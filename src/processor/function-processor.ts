@@ -6,9 +6,9 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
-import { Interval } from '../scope/interval';
 import { ExpressionResult } from './expression-result';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Range } from 'vscode';
 
 export class FunctionProcessor {
 
@@ -22,7 +22,7 @@ export class FunctionProcessor {
         this.scope = scope;
     }
 
-    public static searchFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>, scope: Scope, di: DocumentInfo): LogicalFunction {
+    public static searchFunction(name: string, nameInterval: Range, parameters: Array<ExpressionResult>, scope: Scope, di: DocumentInfo): LogicalFunction {
         while (scope) {
             const lf = scope.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters));
             if (lf) {
@@ -35,7 +35,7 @@ export class FunctionProcessor {
         return di.builtin.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
     }
 
-    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): boolean {
+    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Range, parameters: Array<ExpressionResult>): boolean {
         const fd = lf.getDeclaration();
         return fd.name === name && fd.parameters.length === parameters.length &&
             this.areParametersMatch(fd, parameters) &&
@@ -51,7 +51,7 @@ export class FunctionProcessor {
         return true;
     }
 
-    private static anyTypeOrVariable(name: string, nameInterval: Interval, scope: Scope): boolean {
+    private static anyTypeOrVariable(name: string, nameInterval: Range, scope: Scope): boolean {
         return scope.typeDeclarations.some(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
             scope.variableDeclarations.some(fd => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval));
     }

@@ -1,10 +1,10 @@
+import { Range } from "vscode";
 import { Constants } from "../core/constants";
-import { Interval } from "./interval";
 
 export class ArrayUsage {
 
     public readonly arraySize: number;
-    public readonly interval: Interval;
+    public readonly interval: Range;
     public readonly multidimensional: boolean;
 
     public constructor(arraySize = Constants.INVALID, interval = null, multidimensional = false) {

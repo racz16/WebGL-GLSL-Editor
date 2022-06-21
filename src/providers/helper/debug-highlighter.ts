@@ -1,4 +1,4 @@
-import { CancellationToken, DocumentHighlight, DocumentHighlightProvider, Position, ProviderResult, TextDocument } from "vscode";
+import { CancellationToken, DocumentHighlight, DocumentHighlightProvider, Position, ProviderResult, Range, TextDocument } from "vscode";
 import { DocumentInfo } from "../../core/document-info";
 import { GlslEditor } from "../../core/glsl-editor";
 
@@ -24,15 +24,15 @@ export class DebugHighlighter implements DocumentHighlightProvider {
 
     private scopeHighlights(): Array<DocumentHighlight> {
         const scope = this.di.getScopeAt(this.position);
-        return [new DocumentHighlight(this.di.intervalToRange(scope.interval))];
+        return [new DocumentHighlight(scope.interval)];
     }
 
     private regionHighlight(region: string): Array<DocumentHighlight> {
         const result = new Array<DocumentHighlight>();
-        const offset = this.di.positionToOffset(this.position);
+        //const offset = this.di.positionToOffset(this.position);
         for (const interval of this.di[region]) {
-            if (interval.startIndex <= offset && interval.stopIndex >= offset) {
-                result.push(new DocumentHighlight(this.di.intervalToRange(interval)));
+            if ((interval as Range).contains(this.position)) {
+                result.push(new DocumentHighlight(interval));
             }
         }
         return result;

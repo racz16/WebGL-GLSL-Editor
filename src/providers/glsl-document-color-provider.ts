@@ -3,7 +3,7 @@ import { DocumentInfo } from "../core/document-info";
 import { GlslEditor } from "../core/glsl-editor";
 import { ColorRegion } from "../scope/regions/color-region";
 import { Constants } from "../core/constants";
-import { Interval } from "../scope/interval";
+import { Helper } from "../processor/helper";
 
 export class GlslDocumentColorProvider implements DocumentColorProvider {
 
@@ -18,8 +18,8 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         this.initialize(document);
         const results = new Array<ColorInformation>();
         for (const colorRegion of this.di.getRegions().colorRegions) {
-            if (!colorRegion.constructorCall.interval.isInjected()) {
-                const range = this.di.intervalToRange(colorRegion.constructorCall.interval);
+            if (!Helper.isInjected(colorRegion.constructorCall.interval)) {
+                const range = colorRegion.constructorCall.interval;
                 const color = this.computeColorFromParameters(colorRegion);
                 const ci = new ColorInformation(range, color);
                 results.push(ci);
@@ -50,7 +50,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         const label = this.computeColorLabel(color, cr);
         const cps = this.computeColorPresentationString(color, cr);
         const cp = new ColorPresentation(label);
-        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + this.di.getInjectionOffset() + 1, cr.constructorCall.interval.stopIndex + this.di.getInjectionOffset() - 1, this.di));
+        const range = new Range(cr.constructorCall.nameInterval.end, cr.constructorCall.interval.end);
         const te = new TextEdit(range, cps);
         cp.textEdit = te;
         return [cp];
@@ -58,7 +58,7 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
 
     private getColorRegion(range: Range): ColorRegion {
         for (const colorRegion of this.di.getRegions().colorRegions) {
-            if (range.intersection(this.di.intervalToRange(colorRegion.constructorCall.interval))) {
+            if (range.intersection(colorRegion.constructorCall.interval)) {
                 return colorRegion;
             }
         }

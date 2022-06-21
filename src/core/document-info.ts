@@ -5,7 +5,6 @@ import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
 import { Builtin } from '../builtin/builtin';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
@@ -16,7 +15,7 @@ import { ShaderStage } from '../scope/shader-stage';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 import { DocumentRegions } from './document-regions';
-import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
+import { Helper } from '../processor/helper';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -108,7 +107,7 @@ export class DocumentInfo {
 
     public getTokenAt(position: Position): Token {
         for (const token of this.getTokens()) {
-            const range = this.intervalToRange(new Interval(token.startIndex, token.stopIndex + 1, this));
+            const range = Helper.getRangeFromTokens(token, token, this);
             if (range.contains(position)) {
                 return token;
             }
@@ -179,35 +178,14 @@ export class DocumentInfo {
         return this.document.lineCount;
     }
 
-    public intervalToLocation(interval: Interval): Location {
-        const range = this.intervalToRange(interval);
+    public intervalToLocation(interval: Range): Location {
+        const range = interval;
         return new Location(this.document.uri, range);
-    }
-
-    public intervalToRange(interval: Interval): Range {
-        if (!interval) {
-            return null;
-        }
-        const start = this.offsetToPosition(interval.startIndex);
-        const stop = this.offsetToPosition(interval.stopIndex);
-        return new Range(start, stop);
-    }
-
-    public offsetToPosition(offset: number): Position {
-        return this.document.positionAt(offset);
-    }
-
-    public positionToOffset(position: Position): number {
-        return this.document.offsetAt(position);
     }
 
     public lineAndCharacterToRange(line: number, character: number): Range {
         const position = new Position(line - 1, character);
         return new Range(position, position);
-    }
-
-    public getTextInInterval(interval: Interval): string {
-        return this.document.getText(this.intervalToRange(interval));
     }
 
     //
@@ -267,7 +245,7 @@ export class DocumentInfo {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (element.nameInterval && !element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
+                if (element.nameInterval && !Helper.isInjected(element.nameInterval) && element.nameInterval.contains(position)) {
                     return element;
                 }
             }
@@ -278,7 +256,7 @@ export class DocumentInfo {
 
     private getChildScope(scope: Scope, position: Position): Scope {
         for (const childScope of scope.children) {
-            if (this.intervalToRange(childScope.interval)?.contains(position)) {
+            if (childScope.interval.contains(position)) {
                 return childScope;
             }
         }
@@ -313,7 +291,7 @@ export class DocumentInfo {
     private getCaseDepthAt(position: Position): number {
         let depth = 0;
         for (const cr of this.regions.caseStatementsRegions) {
-            if (this.intervalToRange(cr)?.contains(position)) {
+            if (cr.contains(position)) {
                 depth++;
             }
         }
@@ -364,13 +342,13 @@ export class DocumentInfo {
         this.injectionError = injectionError;
     }
 
-    public isExtensionAvailable(extension: string, offset: number): boolean {
+    public isExtensionAvailable(extension: string, offset: Position): boolean {
         if (!extension) {
             return true;
         }
         let available = false;
         for (const pr of this.regions.preprocessorRegions) {
-            if (pr.interval.stopIndex <= offset && (pr.extension === extension || pr.extension === 'all')) {
+            if (pr.interval.end.isBeforeOrEqual(offset) && (pr.extension === extension || pr.extension === 'all')) {
                 if (pr.extensionState === 'disable') {
                     available = false;
                 } else {

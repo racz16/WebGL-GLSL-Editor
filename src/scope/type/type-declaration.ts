@@ -3,15 +3,15 @@ import { TypeCategory } from './type-category';
 import { TypeBase } from './type-base';
 import { VariableDeclaration } from '../variable/variable-declaration';
 import { TypeUsage } from './type-usage';
-import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { Constants } from '../../core/constants';
 import { FunctionCall } from '../function/function-call';
+import { Range } from 'vscode';
 
 export class TypeDeclaration extends Element {
 
     public readonly builtin: boolean;
-    public readonly interval: Interval;
+    public readonly interval: Range;
     public readonly typeBase: TypeBase;
     public readonly typeCategory: TypeCategory;
     public readonly width: number;
@@ -23,7 +23,7 @@ export class TypeDeclaration extends Element {
     public readonly ctorCalls = new Array<FunctionCall>();
     public readonly inline: boolean;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false, inline = false) {
+    public constructor(name: string, nameInterval: Range, scope: Scope, builtIn: boolean, interval: Range, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false, inline = false) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.interval = interval;

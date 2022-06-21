@@ -13,7 +13,6 @@ import { TypeCategory } from '../scope/type/type-category';
 import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeDeclarationProcessor } from './type-declaration-processor';
-import { Interval } from '../scope/interval';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Constants } from '../core/constants';
@@ -24,6 +23,7 @@ import { SignatureParameterRegion } from '../scope/regions/signature-parameter-r
 import { SignatureRegion } from '../scope/regions/signature-region';
 import { CompletionRegion } from '../scope/regions/completion-region';
 import { Token } from 'antlr4ts';
+import { Range } from 'vscode';
 
 export class ExpressionProcessor {
 
@@ -302,7 +302,7 @@ export class ExpressionProcessor {
 
     private addSignatureRegion(name: string, parameters: Array<ExpressionResult>): void {
         const fc = this.ctx.function_call();
-        const paramsInterval = new Interval(fc.LRB().symbol.startIndex + 1, fc.RRB().symbol.stopIndex, this.di);
+        const paramsInterval = Helper.getRangeFromTokens(fc.LRB().symbol, fc.RRB().symbol, this.di);
         const sr = new SignatureRegion(name, paramsInterval);
         for (let i = 0; i < fc.function_call_parameter_list()?.expression_list()?.COMMA().length + 1; i++) {
             const param = parameters.length > i ? parameters[i] : null;
@@ -313,19 +313,19 @@ export class ExpressionProcessor {
         if (!fc.function_call_parameter_list() || !fc.function_call_parameter_list().expression_list()) {
             const start = fc.LRB().symbol.stopIndex;
             const stop = fc.RRB().symbol.startIndex;
-            const interval = new Interval(start, stop, this.di);
+            const interval = Helper.getRangeFromTokens(fc.LRB().symbol, fc.RRB().symbol, this.di);
             const spr = new SignatureParameterRegion(null, null, interval);
             sr.parameters.push(spr);
         }
         this.di.getRegions().signatureRegions.push(sr);
     }
 
-    private computeParameterInterval(index: number): Interval {
+    private computeParameterInterval(index: number): Range {
         const fc = this.ctx.function_call();
         const expList = fc.function_call_parameter_list().expression_list();
-        const start = index === 0 ? fc.LRB().symbol.startIndex : expList.COMMA()[index - 1].symbol.startIndex;
-        const stop = index >= expList.COMMA().length ? fc.RRB().symbol.startIndex : expList.COMMA()[index].symbol.startIndex;
-        return new Interval(start, stop, this.di);
+        const start = index === 0 ? fc.LRB().symbol : expList.COMMA()[index - 1].symbol;
+        const stop = index >= expList.COMMA().length ? fc.RRB().symbol : expList.COMMA()[index].symbol;
+        return Helper.getRangeFromTokens(start, stop, this.di);
     }
 
     private isColorConstructor(fd: FunctionDeclaration, parameters: Array<ExpressionResult>): boolean {
@@ -354,7 +354,7 @@ export class ExpressionProcessor {
         return parameters;
     }
 
-    private getLogicalFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): LogicalFunction {
+    private getLogicalFunction(name: string, nameInterval: Range, parameters: Array<ExpressionResult>): LogicalFunction {
         if (parameters.some(param => !param || !param.type)) {
             return null;
         }
@@ -377,7 +377,7 @@ export class ExpressionProcessor {
         return null;
     }
 
-    private createLogicalFunction(name: string, nameInterval: Interval, td: TypeDeclaration, array: ArrayUsage, parameters: Array<ExpressionResult>): LogicalFunction {
+    private createLogicalFunction(name: string, nameInterval: Range, td: TypeDeclaration, array: ArrayUsage, parameters: Array<ExpressionResult>): LogicalFunction {
         const tu = new TypeUsage(name, nameInterval, nameInterval, null, td, array);
         const fp = new FunctionDeclaration(name, td.nameInterval, null, tu, td.builtin, true, td.interval, null);
         for (let i = 0; i < parameters.length; i++) {
@@ -617,9 +617,9 @@ export class ExpressionProcessor {
         if (exp && exp instanceof ExpressionResult && (exp.array.isArray() || exp.type?.isVector() || exp.type?.typeCategory === TypeCategory.CUSTOM)) {
             const interval = Helper.getIntervalFromParserRule(this.ctx.expression()[0], this.di);
             const tu = new TypeUsage(exp.type.name, interval, null, this.scope, exp.type, exp.array);
-            const dotOffset = this.ctx.DOT().symbol.stopIndex + 1;
-            const endOffset = this.ctx.IDENTIFIER() ? this.ctx.IDENTIFIER().symbol.stopIndex + 1 : dotOffset;
-            const completionInterval = new Interval(dotOffset, endOffset, this.di);
+            const dotOffset = this.ctx.DOT().symbol;
+            const endOffset = this.ctx.IDENTIFIER() ? this.ctx.IDENTIFIER().symbol : dotOffset;
+            const completionInterval = Helper.getRangeFromTokens(dotOffset, endOffset, this.di);
             const cr = new CompletionRegion(tu, completionInterval, this.ctx.IDENTIFIER()?.text || '');
             this.di.getRegions().completionRegions.push(cr);
         }

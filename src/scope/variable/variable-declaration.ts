@@ -1,8 +1,7 @@
 import { Element } from '../element';
 import { TypeUsage } from '../type/type-usage';
 import { VariableUsage } from './variable-usage';
-import { Interval } from '../interval';
-import { MarkdownString } from 'vscode';
+import { MarkdownString, Range } from 'vscode';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
 import { Constants } from '../../core/constants';
@@ -12,14 +11,14 @@ export class VariableDeclaration extends Element {
     public readonly builtin: boolean;
     public readonly type: TypeUsage;
     public readonly usages = new Array<VariableUsage>();
-    public readonly declarationInterval: Interval;
+    public readonly declarationInterval: Range;
     public readonly summary: MarkdownString;
     public readonly stage: ShaderStage;
     public readonly functionPrototypeParameter: boolean;
     public readonly functionDefinitionParameter: boolean;
     public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = '') {
+    public constructor(name: string, nameInterval: Range, scope: Scope, builtIn: boolean, declarationInterval: Range, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = '') {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.type = type;

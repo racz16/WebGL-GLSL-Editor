@@ -4,6 +4,7 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { FunctionCall } from '../scope/function/function-call';
 import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
+import { Helper } from '../processor/helper';
 
 export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location> implements TypeDefinitionProvider {
 
@@ -14,7 +15,7 @@ export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location>
     protected processFunctionCall(fc: FunctionCall): Location {
         const scope = this.di.getScopeAt(this.position);
         const td = TypeDeclarationProcessor.searchTypeDeclaration(fc.name, fc.nameInterval, scope, this.di);
-        if (td && !td.builtin && !td.nameInterval.isInjected()) {
+        if (td && !td.builtin && !Helper.isInjected(td.nameInterval)) {
             return this.di.intervalToLocation(td.nameInterval);
         }
         return null;
@@ -23,7 +24,7 @@ export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location>
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
         const td = vd.type.declaration;
         if (td && !td.builtin) {
-            if (td.nameInterval && !td.nameInterval.isInjected()) {
+            if (td.nameInterval && !Helper.isInjected(td.nameInterval)) {
                 return this.di.intervalToLocation(td.nameInterval);
             } else {
                 return this.di.intervalToLocation(td.interval);

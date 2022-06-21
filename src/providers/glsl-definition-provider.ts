@@ -7,6 +7,7 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { Helper } from '../processor/helper';
 
 export class GlslDefinitionProvider extends PositionalProviderBase<Location | Array<Location>> implements DefinitionProvider {
 
@@ -27,7 +28,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processVariableDeclaration(vd: VariableDeclaration): Location {
-        if (!vd.nameInterval.isInjected()) {
+        if (!Helper.isInjected(vd.nameInterval)) {
             return this.di.intervalToLocation(vd.nameInterval);
         }
         return null;
@@ -38,7 +39,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
     }
 
     protected processTypeDeclaration(td: TypeDeclaration): Location {
-        if (!td.nameInterval.isInjected()) {
+        if (!Helper.isInjected(td.nameInterval)) {
             return this.di.intervalToLocation(td.nameInterval);
         }
         return null;
@@ -60,7 +61,7 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
 
     private processUsage(element: TypeUsage | VariableUsage): Location {
         const declaration = element.declaration;
-        if (declaration && !declaration.builtin && !declaration.nameInterval.isInjected()) {
+        if (declaration && !declaration.builtin && !Helper.isInjected(declaration.nameInterval)) {
             return this.di.intervalToLocation(declaration.nameInterval);
         }
         return null;

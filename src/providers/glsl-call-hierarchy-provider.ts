@@ -119,7 +119,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         if (ic) {
             const foundElement = elements.find(x => x.getLogicalFunction() === ic.logicalFunction);
             if (foundElement) {
-                const overlayRange = this.di.intervalToRange(call.nameInterval);
+                const overlayRange = call.nameInterval;
                 foundElement.getRanges().push(overlayRange);
             } else {
                 const element = this.createIncomingElement(ic, call);
@@ -130,7 +130,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
 
     private createIncomingElement(ic: FunctionDeclaration, call: FunctionCall): HierarchyElement {
         const item = this.createItemFromIncomingCall(ic);
-        const overlayRange = this.di.intervalToRange(call.nameInterval);
+        const overlayRange = call.nameInterval;
         const element = new HierarchyElement(item, ic.logicalFunction);
         element.getRanges().push(overlayRange);
         return element;
@@ -147,7 +147,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
     private addOutgoingElement(elements: Array<HierarchyElement>, call: FunctionCall): void {
         const foundElement = elements.find(x => x.getLogicalFunction() === call.logicalFunction);
         if (foundElement) {
-            const overlayRange = this.di.intervalToRange(call.nameInterval);
+            const overlayRange = call.nameInterval;
             foundElement.getRanges().push(overlayRange);
         } else {
             const element = this.createOutgoingElement(call);
@@ -163,13 +163,13 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
             item = this.createItemWithoutDefinition(call);
         }
         const element = new HierarchyElement(item, call.logicalFunction);
-        const overlayRange = this.di.intervalToRange(call.nameInterval);
+        const overlayRange = call.nameInterval;
         element.getRanges().push(overlayRange);
         return element;
     }
 
     private createItemFromDeclaration(fd: FunctionDeclaration): CallHierarchyItem {
-        const lineFocusRange = this.di.intervalToRange(fd.nameInterval);
+        const lineFocusRange = fd.nameInterval;
         return new CallHierarchyItem(SymbolKind.Function, fd.name, `(${fd.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
@@ -178,9 +178,9 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         const kind = fp.ctor ? SymbolKind.Struct : SymbolKind.Function;
         let lineFocusRange: Range;
         if (fp.ctor && fp.returnType?.declaration?.nameInterval) {
-            lineFocusRange = this.di.intervalToRange(fp.returnType.declaration.nameInterval);
+            lineFocusRange = fp.returnType.declaration.nameInterval;
         } else {
-            lineFocusRange = this.di.intervalToRange(fc.nameInterval);
+            lineFocusRange = fc.nameInterval;
         }
         return new CallHierarchyItem(kind, fp.name, `(${fp.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
@@ -189,15 +189,15 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         const kind = incomingCall.ctor ? SymbolKind.Struct : SymbolKind.Function;
         let lineFocusRange: Range;
         if (incomingCall.ctor && incomingCall.returnType?.declaration?.nameInterval) {
-            lineFocusRange = this.di.intervalToRange(incomingCall.returnType.declaration.nameInterval);
+            lineFocusRange = incomingCall.returnType.declaration.nameInterval;
         } else {
-            lineFocusRange = this.di.intervalToRange(incomingCall.nameInterval);
+            lineFocusRange = incomingCall.nameInterval;
         }
         return new CallHierarchyItem(kind, incomingCall.name, `(${incomingCall.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 
     private createItemFromTypeDeclaration(td: TypeDeclaration): CallHierarchyItem {
-        const lineFocusRange = this.di.intervalToRange(td.nameInterval);
+        const lineFocusRange = td.nameInterval;
         return new CallHierarchyItem(SymbolKind.Struct, td.name, `(${td.toStringConstructorParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
     }
 

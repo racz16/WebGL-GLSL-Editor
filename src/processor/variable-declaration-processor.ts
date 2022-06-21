@@ -1,5 +1,4 @@
 import { Helper } from './helper';
-import { Interval } from '../scope/interval';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
@@ -11,6 +10,7 @@ import { ColorRegion } from '../scope/regions/color-region';
 import { ExpressionResult } from './expression-result';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 import { Token } from 'antlr4ts';
+import { Range } from 'vscode';
 
 export class VariableDeclarationProcessor {
 
@@ -22,7 +22,7 @@ export class VariableDeclarationProcessor {
         this.scope = scope;
     }
 
-    public static searchVariableDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): VariableDeclaration {
+    public static searchVariableDeclaration(name: string, nameInterval: Range, scope: Scope, di: DocumentInfo): VariableDeclaration {
         while (scope) {
             const td = scope.variableDeclarations.find(td => td.name === name && Helper.isALowerThanB(td.nameInterval, nameInterval));
             if (td) {
@@ -35,7 +35,7 @@ export class VariableDeclarationProcessor {
         return di.builtin.variables.get(name) ?? null;
     }
 
-    private static anyTypeOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
+    private static anyTypeOrFunction(name: string, nameInterval: Range, scope: Scope): boolean {
         return scope.typeDeclarations.some(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
             scope.functionPrototypes.some(fp => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
             scope.functionDefinitions.some(fd => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval));

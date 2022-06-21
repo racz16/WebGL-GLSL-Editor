@@ -4,7 +4,6 @@ import { TypeBase } from '../scope/type/type-base';
 import { TypeCategory } from '../scope/type/type-category';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
 import { Type_declarationContext, Interface_block_declarationContext, Variable_declarationContext } from '../_generated/AntlrGlslParser';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
@@ -13,6 +12,7 @@ import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { Constants } from '../core/constants';
 import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Range } from 'vscode';
 
 export class TypeDeclarationProcessor {
 
@@ -26,7 +26,7 @@ export class TypeDeclarationProcessor {
         this.scope = scope;
     }
 
-    public static searchTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): TypeDeclaration {
+    public static searchTypeDeclaration(name: string, nameInterval: Range, scope: Scope, di: DocumentInfo): TypeDeclaration {
         while (scope) {
             const td = scope.typeDeclarations.find(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval));
             if (td) {
@@ -39,7 +39,7 @@ export class TypeDeclarationProcessor {
         return di.builtin.types.get(name) ?? null;
     }
 
-    private static anyVariableOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
+    private static anyVariableOrFunction(name: string, nameInterval: Range, scope: Scope): boolean {
         return scope.variableDeclarations.some(vd => vd.name === name && Helper.isALowerThanB(vd.declarationInterval, nameInterval)) ||
             scope.functionPrototypes.some(fp => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
             scope.functionDefinitions.some(fd => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval));
@@ -52,11 +52,11 @@ export class TypeDeclarationProcessor {
         this.initialize(scope, di);
         const name = ibdc.IDENTIFIER() ? ibdc.IDENTIFIER().text : null;
         const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.IDENTIFIER(), this.di);
-        const interval = new Interval(ibdc.start.startIndex, ibdc.RCB().symbol.stopIndex + 1, this.di);
+        const interval = Helper.getRangeFromTokens(ibdc.start, ibdc.RCB().symbol, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, true);
-        di.getRegions().typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
+        di.getRegions().typeDeclarationRegions.push(Helper.getRangeFromTokens(ibdc.start, ibdc.stop, this.di));
         scope.typeDeclarations.push(td);
         if (name) {
             this.di.getRegions().semanticRegions.push(new SemanticRegion(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
@@ -66,7 +66,7 @@ export class TypeDeclarationProcessor {
             this.addMembers(td, ibdc.variable_declaration());
             this.scope = this.scope.parent;
         } else {
-            this.di.getRegions().scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
+            this.di.getRegions().scopelessInterfaceBlockRegions.push(Helper.getRangeFromTokens(ibdc.LCB().symbol, ibdc.RCB().symbol, this.di));
             for (const vdc of ibdc.variable_declaration()) {
                 const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
                 vds.forEach(vd => td.interfaceMembers.push(vd));
@@ -90,7 +90,7 @@ export class TypeDeclarationProcessor {
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
         const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, false, returnType || parameter);
-        this.di.getRegions().typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
+        this.di.getRegions().typeDeclarationRegions.push(Helper.getRangeFromTokens(tdc.start, tdc.stop, this.di));
         if (parameter) {
             this.di.getRootScope().typeDeclarations.push(td);
         } else {
@@ -123,7 +123,7 @@ export class TypeDeclarationProcessor {
     }
 
     private createInnerScope(ctx: Type_declarationContext | Interface_block_declarationContext): void {
-        const interval = new Interval(ctx.LCB().symbol.stopIndex + 1, ctx.RCB().symbol.startIndex, this.di);
+        const interval = Helper.getRangeFromTokens(ctx.LCB().symbol, ctx.RCB().symbol, this.di);
         const innerScope = new Scope(interval, this.scope);
         this.scope.children.push(innerScope);
         this.scope = innerScope;

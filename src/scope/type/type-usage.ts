@@ -2,21 +2,21 @@ import { Element } from '../element';
 import { TypeDeclaration } from './type-declaration';
 import { Qualifier } from '../qualifier/qualifier';
 import { QualifierUsage } from '../qualifier/qualifier-usage';
-import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { ArrayUsage } from '../array-usage';
 import { Constants } from '../../core/constants';
+import { Range } from 'vscode';
 
 export class TypeUsage extends Element {
 
     public readonly declaration: TypeDeclaration;
     public readonly qualifiers = new Array<QualifierUsage>();
     public readonly implicitQualifiers = new Array<Qualifier>();
-    public readonly interval: Interval;
+    public readonly interval: Range;
     public readonly array: ArrayUsage;
     public readonly inlineStructDeclaration: boolean;
 
-    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, declaration: TypeDeclaration, array: ArrayUsage, inlineStructDeclaration = false) {
+    public constructor(name: string, interval: Range, nameInterval: Range, scope: Scope, declaration: TypeDeclaration, array: ArrayUsage, inlineStructDeclaration = false) {
         super(name, nameInterval, scope);
         this.declaration = declaration;
         this.interval = interval;

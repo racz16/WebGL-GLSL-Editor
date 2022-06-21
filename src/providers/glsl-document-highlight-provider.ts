@@ -8,6 +8,7 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
+import { Helper } from '../processor/helper';
 
 export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<DocumentHighlight>> implements DocumentHighlightProvider {
 
@@ -56,8 +57,8 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
     private processDeclaration(element: VariableDeclaration | TypeDeclaration): Array<DocumentHighlight> {
         const ret = new Array<DocumentHighlight>();
         if (!(element instanceof TypeDeclaration && (element.interfaceBlock || element.builtin))) {
-            if (!element.builtin && !element.nameInterval.isInjected()) {
-                const range = this.di.intervalToRange(element.nameInterval);
+            if (!element.builtin && !Helper.isInjected(element.nameInterval)) {
+                const range = element.nameInterval;
                 ret.push(new DocumentHighlight(range, DocumentHighlightKind.Read));
             }
             this.addHighlight(ret, element.usages, DocumentHighlightKind.Text);
@@ -69,7 +70,7 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
         if (element.declaration) {
             return this.processDeclaration(element.declaration);
         } else if (element.name !== 'void') {
-            const range = this.di.intervalToRange(element.nameInterval);
+            const range = element.nameInterval;
             return new Array<DocumentHighlight>(new DocumentHighlight(range, DocumentHighlightKind.Text));
         } else {
             return null;
@@ -78,8 +79,8 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
 
     private addHighlight(ret: Array<DocumentHighlight>, elements: Array<Element>, dhk: DocumentHighlightKind): void {
         for (const element of elements) {
-            if (element.nameInterval && !element.nameInterval.isInjected()) {
-                const range = this.di.intervalToRange(element.nameInterval);
+            if (element.nameInterval && !Helper.isInjected(element.nameInterval)) {
+                const range = element.nameInterval;
                 ret.push(new DocumentHighlight(range, dhk));
             }
         }

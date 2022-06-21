@@ -1,4 +1,4 @@
-import { DocumentSemanticTokensProvider, TextDocument, CancellationToken, ProviderResult, SemanticTokens, SemanticTokensLegend, SemanticTokensBuilder, Range } from "vscode";
+import { DocumentSemanticTokensProvider, TextDocument, CancellationToken, ProviderResult, SemanticTokens, SemanticTokensLegend, SemanticTokensBuilder, Range, Position } from "vscode";
 import { DocumentInfo } from "../core/document-info";
 import { GlslEditor } from "../core/glsl-editor";
 import { SemanticRegion } from "../scope/regions/semantic-region";
@@ -26,9 +26,7 @@ export class GlslDocumentSemanticTokensProvider implements DocumentSemanticToken
     private addSemanticToken(sr: SemanticRegion): void {
         const realLine = sr.token.line - this.di.getInjectionLineCount();
         if (realLine >= 0) {
-            const p1 = this.di.offsetToPosition(sr.token.startIndex - this.di.getInjectionOffset());
-            const p2 = this.di.offsetToPosition(sr.token.stopIndex - this.di.getInjectionOffset() + 1);
-            const range = new Range(p1, p2);
+            const range = new Range(new Position(sr.token.line - 1, sr.token.charPositionInLine), new Position(sr.token.line - 1, sr.token.charPositionInLine + sr.token.text.length));
             this.result.push(range, sr.type, sr.modifiers);
         }
     }

@@ -5,7 +5,7 @@ import { DocumentInfo } from '../core/document-info';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { Interval } from '../scope/interval';
+import { Helper } from '../processor/helper';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
 
@@ -21,17 +21,17 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     public provideDocumentSymbols(document: TextDocument, token: CancellationToken): ProviderResult<SymbolInformation[] | DocumentSymbol[]> {
         this.initialize(document);
         for (const td of this.di.getRootScope().typeDeclarations) {
-            if (!td.interval.isInjected()) {
+            if (!Helper.isInjected(td.interval)) {
                 this.addStruct(td, null);
             }
         }
         for (const vd of this.di.getRootScope().variableDeclarations) {
-            if (!vd.declarationInterval.isInjected()) {
+            if (!Helper.isInjected(vd.declarationInterval)) {
                 this.addVariable(vd, null, false);
             }
         }
         for (const fd of this.di.getRootScope().functionDefinitions) {
-            if (!fd.interval.isInjected()) {
+            if (!Helper.isInjected(fd.interval)) {
                 this.addFunction(fd);
             }
         }
@@ -39,8 +39,8 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     }
 
     private addFunction(fd: FunctionDeclaration): void {
-        const range = this.di.intervalToRange(fd.interval);
-        const selectionRange = this.di.intervalToRange(fd.nameInterval);
+        const range = fd.interval;
+        const selectionRange = fd.nameInterval;
         const type = fd.returnType.toStringWithoutQualifiers();
         const ds = new DocumentSymbol(fd.name, type, SymbolKind.Function, range, selectionRange);
         this.addLocalElements(ds, fd, fd.functionScope);
@@ -48,7 +48,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     }
 
     private addStruct(td: TypeDeclaration, parent: DocumentSymbol): void {
-        const range = this.di.intervalToRange(td.interval);
+        const range = td.interval;
         const selectionRange = this.getRange(td.nameInterval, td.interval);
         const name = td.toStringName(true);
         const kind = td.interfaceBlock ? SymbolKind.Interface : SymbolKind.Struct;
@@ -64,7 +64,7 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     }
 
     private addVariable(vd: VariableDeclaration, parent: DocumentSymbol, property: boolean): void {
-        const range = this.di.intervalToRange(vd.declarationInterval);
+        const range = vd.declarationInterval;
         const selectionRange = this.getRange(vd.nameInterval, vd.declarationInterval);
         const name = vd.name ?? '<unnamed variable>';
         let info = vd.type.toStringWithoutQualifiers(true);
@@ -97,9 +97,9 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         }
     }
 
-    private getRange(interval: Interval, defaultInterval: Interval): Range {
+    private getRange(interval: Range, defaultInterval: Range): Range {
         const availableInterval = interval ?? defaultInterval;
-        return this.di.intervalToRange(availableInterval);
+        return availableInterval;
     }
 
 }

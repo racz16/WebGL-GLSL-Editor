@@ -1,6 +1,5 @@
 import { Element } from '../element';
 import { LogicalFunction } from './logical-function';
-import { Interval } from '../interval';
 import { TypeUsage } from '../type/type-usage';
 import { VariableDeclaration } from '../variable/variable-declaration';
 import { DocumentInfo } from '../../core/document-info';
@@ -8,11 +7,12 @@ import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
 import { FunctionCall } from './function-call';
 import { Constants } from '../../core/constants';
+import { Range } from 'vscode';
 
 export class FunctionDeclaration extends Element {
 
     public logicalFunction: LogicalFunction;
-    public readonly interval: Interval;
+    public readonly interval: Range;
     public readonly returnType: TypeUsage;
     public readonly parameters = new Array<VariableDeclaration>();
     public readonly builtIn: boolean;
@@ -22,7 +22,7 @@ export class FunctionDeclaration extends Element {
     public readonly outgoingCalls = new Array<FunctionCall>();
     public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT, extension = '') {
+    public constructor(name: string, nameInterval: Range, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Range, functionScope: Scope, stage = ShaderStage.DEFAULT, extension = '') {
         super(name, nameInterval, scope);
         this.interval = interval;
         this.returnType = returnType;

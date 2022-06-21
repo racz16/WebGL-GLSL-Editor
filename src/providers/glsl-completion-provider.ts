@@ -20,7 +20,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private di: DocumentInfo;
     private position: Position;
     private context: CompletionContext;
-    private offset: number;
+    //private offset: number;
     private items: Array<CompletionItem>;
 
     private initialize(document: TextDocument, position: Position, context: CompletionContext): void {
@@ -28,7 +28,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.position = position;
         this.context = context;
-        this.offset = this.di.positionToOffset(this.position);
+        //this.offset = this.di.positionToOffset(this.position);
         this.items = new Array<CompletionItem>();
     }
 
@@ -170,9 +170,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private isInCommentRegion(): boolean {
-        const offset = this.di.positionToOffset(this.position);
         for (const cr of this.di.getRegions().commentRegions) {
-            if (offset > cr.startIndex && offset <= cr.stopIndex) {
+            if (cr.contains(this.position)) {
                 return true;
             }
         }
@@ -180,9 +179,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private getPreprocessorRegion(): PreprocessorRegion {
-        const offset = this.di.positionToOffset(this.position);
         for (const mr of this.di.getRegions().preprocessorRegions) {
-            if (offset > mr.interval.startIndex && offset <= mr.interval.stopIndex) {
+            if (mr.interval.contains(this.position)) {
                 return mr;
             }
         }
@@ -190,9 +188,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private isInLayoutQualifier(): boolean {
-        const offset = this.di.positionToOffset(this.position);
         for (const interval of this.di.getRegions().layoutRegions) {
-            if (offset > interval.startIndex && offset <= interval.stopIndex) {
+            if (interval.contains(this.position)) {
                 return true;
             }
         }
@@ -200,8 +197,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private completeAfterDot(cr: CompletionRegion): void {
-        const offset = this.di.positionToOffset(this.position);
-        const text = cr.text.substring(0, offset - cr.interval.startIndex);
+        const text = cr.text.substring(0, this.position.character - cr.interval.start.character);
         if (cr.type.array.isArray()) {
             if ('length'.startsWith(text)) {
                 const ci = new CompletionItem(this.createLabel('length', '', '()'), CompletionItemKind.Function);
@@ -245,9 +241,8 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private getCompletionExpression(): CompletionRegion {
-        const offset = this.di.positionToOffset(this.position);
         for (const cr of this.di.getRegions().completionRegions) {
-            if (cr.interval.startIndex <= offset && cr.interval.stopIndex >= offset && this.isIdentifier(cr.text)) {
+            if (cr.interval.contains(this.position) && this.isIdentifier(cr.text)) {
                 return cr;
             }
         }
@@ -306,7 +301,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private addLayoutQualifierParameterCompletionItems(): void {
         for (const param of this.di.builtin.layoutParameters) {
-            if (this.di.isExtensionAvailable(param.extension, this.offset)) {
+            if (this.di.isExtensionAvailable(param.extension, this.position)) {
                 const ci = new CompletionItem(param.name, CompletionItemKind.EnumMember);
                 if (param.assignable) {
                     ci.insertText = param.name + ' = ';
@@ -349,7 +344,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private addBuiltinVariableItems(localItems: Array<CompletionItem>): void {
         for (const vd of this.di.builtin.variables.values()) {
             if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name) &&
-                this.di.isExtensionAvailable(vd.extension, this.offset)) {
+                this.di.isExtensionAvailable(vd.extension, this.position)) {
                 const ci = new CompletionItem(this.createLabel(vd.name, vd.type?.name), CompletionItemKind.Variable);
                 ci.documentation = vd.summary;
                 localItems.push(ci);
@@ -363,7 +358,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private addBuiltinFunctionItems(localItems: Array<CompletionItem>): void {
         for (const func of this.di.builtin.functionSummaries.values()) {
             if (this.isAvailableInThisStage(func.stage) && !this.items.some(ci => this.getName(ci) === func.name) &&
-                this.di.isExtensionAvailable(func.extension, this.offset)) {
+                this.di.isExtensionAvailable(func.extension, this.position)) {
                 const ci = this.createBuiltinFunctionCompletionItem(func);
                 localItems.push(ci);
             }
@@ -411,7 +406,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserTypeItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const td of scope.typeDeclarations) {
-            if (Helper.isALowerThanOffset(td.interval, this.offset) && !this.items.some(ci => this.getName(ci) === td.name) && !td.interfaceBlock) {
+            if (Helper.isALowerThanOffset(td.interval, this.position) && !this.items.some(ci => this.getName(ci) === td.name) && !td.interfaceBlock) {
                 const ci = new CompletionItem(td.name, CompletionItemKind.Struct);
                 ci.documentation = new MarkdownString(td.toStringDocumentation());
                 localItems.push(ci);
@@ -424,7 +419,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserVariableItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const vd of scope.variableDeclarations) {
-            if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some(ci => this.getName(ci) === vd.name)) {
+            if (Helper.isALowerThanOffset(vd.declarationInterval, this.position) && !this.items.some(ci => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(this.createLabel(vd.name, vd.type?.toStringWithoutQualifiers()), CompletionItemKind.Variable);
                 ci.documentation = new MarkdownString(vd.toStringDocumentation());
                 localItems.push(ci);
@@ -453,12 +448,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private getFunctionCompletionItem(lf: LogicalFunction): CompletionItem {
         for (const fd of lf.definitions) {
-            if (Helper.isALowerThanOffset(fd.interval, this.offset)) {
+            if (Helper.isALowerThanOffset(fd.interval, this.position)) {
                 return this.createUserFunctionCompletionItem(fd);
             }
         }
         for (const fp of lf.prototypes) {
-            if (Helper.isALowerThanOffset(fp.interval, this.offset)) {
+            if (Helper.isALowerThanOffset(fp.interval, this.position)) {
                 return this.createUserFunctionCompletionItem(fp);
             }
         }
@@ -469,7 +464,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         const hasParameters = f.parameters.length || f.ctor;
         const parameters = hasParameters ? '(...)' : '()';
         const ci = new CompletionItem(this.createLabel(f.name, '', parameters), CompletionItemKind.Function);
-        if(!hasParameters){
+        if (!hasParameters) {
             ci.insertText = f.name + '()';
         }
         return ci;
@@ -479,7 +474,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //general
     //
     private createLabel(label: string, rightText?: string, leftText?: string): CompletionItemLabel {
-        return {label, detail: leftText, description: rightText};
+        return { label, detail: leftText, description: rightText };
     }
 
     private isAvailableInThisStage(stage: ShaderStage): boolean {
