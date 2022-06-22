@@ -3,10 +3,19 @@ import { EOL } from 'os';
 export class Constants {
     public static readonly EXTENSION_NAME = 'webgl-glsl-editor';
     public static readonly GLSL = 'glsl';
+
+    public static readonly VERT_GLSL = 'vert.glsl';
+    public static readonly VS_GLSL = 'vs.glsl';
     public static readonly VERT = 'vert';
     public static readonly VS = 'vs';
+    public static readonly VERTEX_EXTS = [this.VERT_GLSL, this.VS_GLSL, this.VERT, this.VS];
+
+    public static readonly FRAG_GLSL = 'frag.glsl';
+    public static readonly FS_GLSL = 'fs.glsl';
     public static readonly FRAG = 'frag';
     public static readonly FS = 'fs';
+    public static readonly FRAGMENT_EXTS = [this.FRAG_GLSL, this.FS_GLSL, this.FRAG, this.FS];
+
     public static readonly FILE = 'file';
     public static readonly UNTITLED = 'untitled';
     public static readonly PREPROCESSED_GLSL = 'webgl-glsl-editor-preprocessed';
