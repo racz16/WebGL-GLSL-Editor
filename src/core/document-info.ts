@@ -61,7 +61,7 @@ export class DocumentInfo {
         return this.visitor;
     }
 
-    public getExtension(size = 1): string {
+    private getExtension(size = 1): string {
         const fileName = this.uri.path.substring(this.uri.path.lastIndexOf('/') + 1);
         return fileName.split(Constants.DOT).slice(-size).join(Constants.DOT);
     }
