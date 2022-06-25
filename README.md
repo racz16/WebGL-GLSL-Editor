@@ -185,8 +185,8 @@ You can easily access several online documentations by commands.
 
 ## Notes
 
-* If you use this extension as a web extension, only the syntax highlight will work
-* If you open GLSL code embedded in HTML, only the syntax highlight will work
+* If you use this extension as a web extension, only the syntax highlight, limited indentation and the features listed as "Other features" will work
+* If you open GLSL code embedded in HTML, only the syntax highlight and limited indentation will work
 
 ## Known Issues
 
@@ -198,6 +198,11 @@ You can find the user provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.1
+
+* Added diagnostic support for compound file extensions (thanks RAX7)
+* Other small changes
 
 ### 1.3.0
 
@@ -274,7 +279,7 @@ For more information, see the [changelog](CHANGELOG.md).
 
 ## Contributions
 
-Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz) for contributing.
+Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz) and [RAX7](https://github.com/RAX7) for contributing.
 
 ## How to build, run and package the extension
 

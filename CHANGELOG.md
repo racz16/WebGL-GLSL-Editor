@@ -4,6 +4,13 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.1] - 2022.06.25. 
+
+### Improved
+
+* Added diagnostic support for compound file extensions (thanks RAX7)
+* Updated packages
+
 ## [1.3.0] - 2022.04.05.
 
 ### Added
