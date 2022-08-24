@@ -83,16 +83,16 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         const blue = this.roundToTwoDecimals(color.blue);
         if (cr.constructorCall.name === Constants.VEC3) {
             if (red === green && green === blue) {
-                return `${red}`;
+                return `${red}f`;
             } else {
-                return `${red}, ${green}, ${blue}`;
+                return `${red}f, ${green}f, ${blue}f`;
             }
         } else {
             const alpha = this.roundToTwoDecimals(color.alpha);
-            if (red === green && green === blue && blue == alpha) {
-                return `${red}`;
+            if (red === green && green === blue && blue === alpha) {
+                return `${red}f`;
             } else {
-                return `${red}, ${green}, ${blue}, ${alpha}`;
+                return `${red}f, ${green}f, ${blue}f, ${alpha}f`;
             }
         }
     }
