@@ -9,7 +9,6 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslDeclarationProvider extends PositionalProviderBase<Declaration> implements DeclarationProvider {
-
     public provideDeclaration(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Declaration> {
         return this.processElements(document, position);
     }
@@ -42,7 +41,6 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
             return this.di.intervalToLocation(td.nameInterval);
         }
         return null;
-
     }
 
     protected processTypeUsage(tu: TypeUsage): Declaration {
@@ -70,5 +68,4 @@ export class GlslDeclarationProvider extends PositionalProviderBase<Declaration>
         }
         return null;
     }
-
 }

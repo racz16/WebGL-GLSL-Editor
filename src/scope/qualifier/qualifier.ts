@@ -2,7 +2,6 @@ import { QualifierUsage } from './qualifier-usage';
 import { DocumentInfo } from '../../core/document-info';
 
 export class Qualifier {
-
     public readonly name: string;
     public readonly order: number;
     public readonly usages = new Array<QualifierUsage>();
@@ -47,5 +46,4 @@ export class Qualifier {
     public toStringDocumentation(): string {
         return `\t${this.toString()}`;
     }
-
 }

@@ -10,7 +10,6 @@ import { Token } from 'antlr4ts';
 import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class TypeUsageProcessor {
-
     private di: DocumentInfo;
     private scope: Scope;
 
@@ -42,7 +41,7 @@ export class TypeUsageProcessor {
     }
 
     private addImplicitParameterQualifiers(tu: TypeUsage): void {
-        if (!tu.qualifiers.some(qu => qu.isParameterQualifier())) {
+        if (!tu.qualifiers.some((qu) => qu.isParameterQualifier())) {
             tu.implicitQualifiers.push(this.di.builtin.qualifiers.get('in'));
         }
     }
@@ -53,7 +52,9 @@ export class TypeUsageProcessor {
     public getInterfaceBlockType(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): TypeUsage {
         this.di = di;
         this.scope = scope;
-        const array = ibdc.identifier_optarray() ? Helper.getArraySizeFromIdentifierOptarray(ibdc.identifier_optarray(), this.scope, this.di) : null;
+        const array = ibdc.identifier_optarray()
+            ? Helper.getArraySizeFromIdentifierOptarray(ibdc.identifier_optarray(), this.scope, this.di)
+            : null;
         const ibd = new TypeDeclarationProcessor().getInterfaceBlockDeclaration(ibdc, this.scope, this.di);
         const tu = new TypeUsage(ibd.name, ibd.interval, null, this.scope, ibd, array, true);
         this.addQualifiers(tu, ibdc.qualifier());
@@ -140,5 +141,4 @@ export class TypeUsageProcessor {
         }
         return qu;
     }
-
 }

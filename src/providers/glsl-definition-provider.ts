@@ -9,8 +9,11 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslDefinitionProvider extends PositionalProviderBase<Location | Array<Location>> implements DefinitionProvider {
-
-    public provideDefinition(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Location | Location[] | LocationLink[]> {
+    public provideDefinition(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Location | Location[] | LocationLink[]> {
         return this.processElements(document, position);
     }
 
@@ -65,5 +68,4 @@ export class GlslDefinitionProvider extends PositionalProviderBase<Location | Ar
         }
         return null;
     }
-
 }

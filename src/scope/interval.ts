@@ -1,7 +1,6 @@
-import { DocumentInfo } from "../core/document-info";
+import { DocumentInfo } from '../core/document-info';
 
 export class Interval {
-
     private readonly _startIndex: number;
     private readonly _stopIndex: number;
 
@@ -21,5 +20,4 @@ export class Interval {
     public isInjected(): boolean {
         return this.startIndex < 0;
     }
-
 }

@@ -5,8 +5,11 @@ import { FunctionCall } from '../scope/function/function-call';
 import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslImplementationProvider extends PositionalProviderBase<Array<Location>> implements ImplementationProvider {
-
-    public provideImplementation(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Location | Location[] | LocationLink[]> {
+    public provideImplementation(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Location | Location[] | LocationLink[]> {
         return this.processElements(document, position);
     }
 
@@ -31,5 +34,4 @@ export class GlslImplementationProvider extends PositionalProviderBase<Array<Loc
         }
         return ret;
     }
-
 }

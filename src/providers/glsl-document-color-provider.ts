@@ -1,12 +1,21 @@
-import { DocumentColorProvider, TextDocument, CancellationToken, ProviderResult, ColorInformation, Color, Range, ColorPresentation, TextEdit } from "vscode";
-import { DocumentInfo } from "../core/document-info";
-import { GlslEditor } from "../core/glsl-editor";
-import { ColorRegion } from "../scope/regions/color-region";
-import { Constants } from "../core/constants";
-import { Interval } from "../scope/interval";
+import {
+    DocumentColorProvider,
+    TextDocument,
+    CancellationToken,
+    ProviderResult,
+    ColorInformation,
+    Color,
+    Range,
+    ColorPresentation,
+    TextEdit,
+} from 'vscode';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { ColorRegion } from '../scope/regions/color-region';
+import { Constants } from '../core/constants';
+import { Interval } from '../scope/interval';
 
 export class GlslDocumentColorProvider implements DocumentColorProvider {
-
     private di: DocumentInfo;
 
     private initialize(document: TextDocument): void {
@@ -36,7 +45,6 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
             } else {
                 return new Color(params[0], params[0], params[0], params[0]);
             }
-
         } else if (params.length === 3) {
             return new Color(params[0], params[1], params[2], 1);
         } else {
@@ -44,13 +52,23 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         }
     }
 
-    public provideColorPresentations(color: Color, context: { document: TextDocument; range: Range; }, token: CancellationToken): ProviderResult<ColorPresentation[]> {
+    public provideColorPresentations(
+        color: Color,
+        context: { document: TextDocument; range: Range },
+        token: CancellationToken
+    ): ProviderResult<ColorPresentation[]> {
         this.initialize(context.document);
         const cr = this.getColorRegion(context.range);
         const label = this.computeColorLabel(color, cr);
         const cps = this.computeColorPresentationString(color, cr);
         const cp = new ColorPresentation(label);
-        const range = this.di.intervalToRange(new Interval(cr.constructorCall.nameInterval.stopIndex + this.di.getInjectionOffset() + 1, cr.constructorCall.interval.stopIndex + this.di.getInjectionOffset() - 1, this.di));
+        const range = this.di.intervalToRange(
+            new Interval(
+                cr.constructorCall.nameInterval.stopIndex + this.di.getInjectionOffset() + 1,
+                cr.constructorCall.interval.stopIndex + this.di.getInjectionOffset() - 1,
+                this.di
+            )
+        );
         const te = new TextEdit(range, cps);
         cp.textEdit = te;
         return [cp];
@@ -98,7 +116,6 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
     }
 
     private roundToTwoDecimals(num: number): number {
-        return Math.round((num + Number.EPSILON) * 100) / 100
+        return Math.round((num + Number.EPSILON) * 100) / 100;
     }
-
 }

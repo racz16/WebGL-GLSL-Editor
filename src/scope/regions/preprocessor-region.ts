@@ -1,7 +1,7 @@
-import { Interval } from "../interval";
+import { Interval } from '../interval';
 
 export class PreprocessorRegion {
-    public readonly text: string
+    public readonly text: string;
     public readonly interval: Interval;
     public readonly extension: string;
     public readonly extensionState: string;

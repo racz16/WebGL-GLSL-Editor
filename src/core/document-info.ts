@@ -271,25 +271,25 @@ export class DocumentInfo {
     }
 
     //generic
-    private getElementAt(position: Position, type:
-        'variableDeclarations' |
-        'variableUsages' |
-        'typeDeclarations' |
-        'typeUsages' |
-        'functionCalls' |
-        'functionPrototypes' |
-        'functionDefinitions'):
-        VariableDeclaration |
-        VariableUsage |
-        TypeDeclaration |
-        TypeUsage |
-        FunctionCall |
-        FunctionDeclaration {
-
+    private getElementAt(
+        position: Position,
+        type:
+            | 'variableDeclarations'
+            | 'variableUsages'
+            | 'typeDeclarations'
+            | 'typeUsages'
+            | 'functionCalls'
+            | 'functionPrototypes'
+            | 'functionDefinitions'
+    ): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (element.nameInterval && !element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
+                if (
+                    element.nameInterval &&
+                    !element.nameInterval.isInjected() &&
+                    this.intervalToRange(element.nameInterval)?.contains(position)
+                ) {
                     return element;
                 }
             }
@@ -402,5 +402,4 @@ export class DocumentInfo {
         }
         return available;
     }
-
 }

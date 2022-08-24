@@ -1,7 +1,6 @@
-import { ShaderStage } from "./shader-stage";
+import { ShaderStage } from './shader-stage';
 
 export class Keyword {
-
     public readonly name: string;
     public readonly stage: ShaderStage;
 
@@ -13,5 +12,4 @@ export class Keyword {
     public toString(): string {
         return this.name;
     }
-
 }

@@ -8,7 +8,6 @@ import { LogicalFunction } from './function/logical-function';
 import { FunctionDeclaration } from './function/function-declaration';
 
 export class Scope {
-
     public readonly parent: Scope;
     public readonly children = new Array<Scope>();
     public readonly interval: Interval;
@@ -24,7 +23,7 @@ export class Scope {
     public readonly typeDeclarations = new Array<TypeDeclaration>();
     public readonly typeUsages = new Array<TypeUsage>();
 
-    public readonly elseIfScope: boolean
+    public readonly elseIfScope: boolean;
 
     public constructor(interval: Interval, parent: Scope, elseIfScope = false) {
         this.interval = interval;
@@ -35,5 +34,4 @@ export class Scope {
     public isGlobal(): boolean {
         return !this.parent;
     }
-
 }

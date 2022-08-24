@@ -9,10 +9,14 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslReferenceProvider extends PositionalProviderBase<Array<Location>> implements ReferenceProvider {
-
     private referenceContext: ReferenceContext;
 
-    public provideReferences(document: TextDocument, position: Position, context: ReferenceContext, token: CancellationToken): ProviderResult<Location[]> {
+    public provideReferences(
+        document: TextDocument,
+        position: Position,
+        context: ReferenceContext,
+        token: CancellationToken
+    ): ProviderResult<Location[]> {
         this.referenceContext = context;
         return this.processElements(document, position);
     }
@@ -80,5 +84,4 @@ export class GlslReferenceProvider extends PositionalProviderBase<Array<Location
             return [];
         }
     }
-
 }

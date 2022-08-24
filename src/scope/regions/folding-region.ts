@@ -1,4 +1,4 @@
-import { FoldingRangeKind } from "vscode";
+import { FoldingRangeKind } from 'vscode';
 
 export class FoldingRegion {
     public readonly startLine: number;
@@ -10,5 +10,4 @@ export class FoldingRegion {
         this.stopLine = stopLine;
         this.kind = kind;
     }
-
 }

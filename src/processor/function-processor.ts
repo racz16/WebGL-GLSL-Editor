@@ -11,7 +11,6 @@ import { ExpressionResult } from './expression-result';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class FunctionProcessor {
-
     private di: DocumentInfo;
     private scope: Scope;
     private fhc: Function_headerContext;
@@ -22,9 +21,15 @@ export class FunctionProcessor {
         this.scope = scope;
     }
 
-    public static searchFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>, scope: Scope, di: DocumentInfo): LogicalFunction {
+    public static searchFunction(
+        name: string,
+        nameInterval: Interval,
+        parameters: Array<ExpressionResult>,
+        scope: Scope,
+        di: DocumentInfo
+    ): LogicalFunction {
         while (scope) {
-            const lf = scope.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters));
+            const lf = scope.functions.find((lf) => this.areFunctionsMatch(lf, name, nameInterval, parameters));
             if (lf) {
                 return lf;
             } else if (this.anyTypeOrVariable(name, nameInterval, scope)) {
@@ -32,14 +37,22 @@ export class FunctionProcessor {
             }
             scope = scope.parent;
         }
-        return di.builtin.functions.find(lf => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
+        return di.builtin.functions.find((lf) => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
     }
 
-    private static areFunctionsMatch(lf: LogicalFunction, name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): boolean {
+    private static areFunctionsMatch(
+        lf: LogicalFunction,
+        name: string,
+        nameInterval: Interval,
+        parameters: Array<ExpressionResult>
+    ): boolean {
         const fd = lf.getDeclaration();
-        return fd.name === name && fd.parameters.length === parameters.length &&
+        return (
+            fd.name === name &&
+            fd.parameters.length === parameters.length &&
             this.areParametersMatch(fd, parameters) &&
-            Helper.isALowerThanB(fd.interval, nameInterval);
+            Helper.isALowerThanB(fd.interval, nameInterval)
+        );
     }
 
     private static areParametersMatch(fd: FunctionDeclaration, parameters: Array<ExpressionResult>): boolean {
@@ -52,8 +65,10 @@ export class FunctionProcessor {
     }
 
     private static anyTypeOrVariable(name: string, nameInterval: Interval, scope: Scope): boolean {
-        return scope.typeDeclarations.some(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
-            scope.variableDeclarations.some(fd => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval));
+        return (
+            scope.typeDeclarations.some((td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
+            scope.variableDeclarations.some((fd) => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval))
+        );
     }
 
     //
@@ -69,7 +84,9 @@ export class FunctionProcessor {
         this.addParameters(fd, true);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
-        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DECLARATION]));
+        this.di
+            .getRegions()
+            .semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DECLARATION]));
         return fd;
     }
 
@@ -86,7 +103,9 @@ export class FunctionProcessor {
         this.addParameters(fd, false);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
-        this.di.getRegions().semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DEFINITION]));
+        this.di
+            .getRegions()
+            .semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DEFINITION]));
         return fd;
     }
 
@@ -94,7 +113,7 @@ export class FunctionProcessor {
     //general
     //
     private getLogicalFunction(fd: FunctionDeclaration): LogicalFunction {
-        let lf = this.di.getRootScope().functions.find(lf => lf.connects(fd));
+        let lf = this.di.getRootScope().functions.find((lf) => lf.connects(fd));
         if (!lf) {
             lf = new LogicalFunction();
             this.di.getRootScope().functions.push(lf);
@@ -112,5 +131,4 @@ export class FunctionProcessor {
             }
         }
     }
-
 }

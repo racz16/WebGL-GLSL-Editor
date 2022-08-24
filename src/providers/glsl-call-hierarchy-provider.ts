@@ -1,22 +1,39 @@
-import { CallHierarchyProvider, TextDocument, Position, CancellationToken, ProviderResult, CallHierarchyItem, CallHierarchyIncomingCall, CallHierarchyOutgoingCall, SymbolKind, Range } from "vscode";
-import { PositionalProviderBase } from "./helper/positional-provider-base";
-import { FunctionDeclaration } from "../scope/function/function-declaration";
-import { FunctionCall } from "../scope/function/function-call";
-import { LogicalFunction } from "../scope/function/logical-function";
-import { TypeDeclaration } from "../scope/type/type-declaration";
-import { HierarchyElement } from "./helper/hierarchy-element";
-import { HierarcySearchStage } from "./helper/hierarchy-search-stage";
+import {
+    CallHierarchyProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    ProviderResult,
+    CallHierarchyItem,
+    CallHierarchyIncomingCall,
+    CallHierarchyOutgoingCall,
+    SymbolKind,
+    Range,
+} from 'vscode';
+import { PositionalProviderBase } from './helper/positional-provider-base';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { FunctionCall } from '../scope/function/function-call';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { HierarchyElement } from './helper/hierarchy-element';
+import { HierarcySearchStage } from './helper/hierarchy-search-stage';
 
 export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<HierarchyElement>> implements CallHierarchyProvider {
-
     private stage: HierarcySearchStage;
 
-    public prepareCallHierarchy(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Array<CallHierarchyItem>> {
+    public prepareCallHierarchy(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Array<CallHierarchyItem>> {
         this.stage = HierarcySearchStage.PREPARE;
-        return this.processElements(document, position)?.map(x => x.getItem());
+        return this.processElements(document, position)?.map((x) => x.getItem());
     }
 
-    public provideCallHierarchyIncomingCalls(item: CallHierarchyItem, token: CancellationToken): ProviderResult<CallHierarchyIncomingCall[]> {
+    public provideCallHierarchyIncomingCalls(
+        item: CallHierarchyItem,
+        token: CancellationToken
+    ): ProviderResult<CallHierarchyIncomingCall[]> {
         this.stage = HierarcySearchStage.INCOMING;
         const elements = this.processElements(this.document, item.selectionRange.start);
         const results = new Array<CallHierarchyIncomingCall>();
@@ -27,7 +44,10 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         return results;
     }
 
-    public provideCallHierarchyOutgoingCalls(item: CallHierarchyItem, token: CancellationToken): ProviderResult<CallHierarchyOutgoingCall[]> {
+    public provideCallHierarchyOutgoingCalls(
+        item: CallHierarchyItem,
+        token: CancellationToken
+    ): ProviderResult<CallHierarchyOutgoingCall[]> {
         this.stage = HierarcySearchStage.OUTGOING;
         const elements = this.processElements(this.document, item.selectionRange.start);
         const results = new Array<CallHierarchyOutgoingCall>();
@@ -117,7 +137,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
     private addIncomingElement(elements: Array<HierarchyElement>, call: FunctionCall): void {
         const ic = call.incomingCall;
         if (ic) {
-            const foundElement = elements.find(x => x.getLogicalFunction() === ic.logicalFunction);
+            const foundElement = elements.find((x) => x.getLogicalFunction() === ic.logicalFunction);
             if (foundElement) {
                 const overlayRange = this.di.intervalToRange(call.nameInterval);
                 foundElement.getRanges().push(overlayRange);
@@ -145,7 +165,7 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
     }
 
     private addOutgoingElement(elements: Array<HierarchyElement>, call: FunctionCall): void {
-        const foundElement = elements.find(x => x.getLogicalFunction() === call.logicalFunction);
+        const foundElement = elements.find((x) => x.getLogicalFunction() === call.logicalFunction);
         if (foundElement) {
             const overlayRange = this.di.intervalToRange(call.nameInterval);
             foundElement.getRanges().push(overlayRange);
@@ -170,7 +190,14 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
 
     private createItemFromDeclaration(fd: FunctionDeclaration): CallHierarchyItem {
         const lineFocusRange = this.di.intervalToRange(fd.nameInterval);
-        return new CallHierarchyItem(SymbolKind.Function, fd.name, `(${fd.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(
+            SymbolKind.Function,
+            fd.name,
+            `(${fd.toStringParameters()})`,
+            this.document.uri,
+            lineFocusRange,
+            lineFocusRange
+        );
     }
 
     private createItemWithoutDefinition(fc: FunctionCall): CallHierarchyItem {
@@ -193,12 +220,25 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         } else {
             lineFocusRange = this.di.intervalToRange(incomingCall.nameInterval);
         }
-        return new CallHierarchyItem(kind, incomingCall.name, `(${incomingCall.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(
+            kind,
+            incomingCall.name,
+            `(${incomingCall.toStringParameters()})`,
+            this.document.uri,
+            lineFocusRange,
+            lineFocusRange
+        );
     }
 
     private createItemFromTypeDeclaration(td: TypeDeclaration): CallHierarchyItem {
         const lineFocusRange = this.di.intervalToRange(td.nameInterval);
-        return new CallHierarchyItem(SymbolKind.Struct, td.name, `(${td.toStringConstructorParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(
+            SymbolKind.Struct,
+            td.name,
+            `(${td.toStringConstructorParameters()})`,
+            this.document.uri,
+            lineFocusRange,
+            lineFocusRange
+        );
     }
-
 }

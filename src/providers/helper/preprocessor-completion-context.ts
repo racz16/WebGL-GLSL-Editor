@@ -1,5 +1,4 @@
 export class PreprocessorCompletionContext {
-
     public readonly nextWordIndex: number;
     public readonly words: Array<string>;
 
@@ -7,5 +6,4 @@ export class PreprocessorCompletionContext {
         this.nextWordIndex = nextWordIndex;
         this.words = words;
     }
-
 }

@@ -6,8 +6,11 @@ import { FunctionCall } from '../scope/function/function-call';
 import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
 
 export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location> implements TypeDefinitionProvider {
-
-    public provideTypeDefinition(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Location | Location[] | LocationLink[]> {
+    public provideTypeDefinition(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Location | Location[] | LocationLink[]> {
         return this.processElements(document, position);
     }
 
@@ -36,5 +39,4 @@ export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location>
         const vd = vu.declaration;
         return vd ? this.processVariableDeclaration(vd) : null;
     }
-
 }

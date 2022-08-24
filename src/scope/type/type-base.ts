@@ -3,5 +3,5 @@ export enum TypeBase {
     INT,
     UINT,
     FLOAT,
-    NONE
+    NONE,
 }

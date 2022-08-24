@@ -2,7 +2,6 @@ import { FunctionDeclaration } from './function-declaration';
 import { FunctionCall } from './function-call';
 
 export class LogicalFunction {
-
     public readonly prototypes = new Array<FunctionDeclaration>();
     public readonly calls = new Array<FunctionCall>();
     public readonly definitions = new Array<FunctionDeclaration>();
@@ -24,5 +23,4 @@ export class LogicalFunction {
     public hasDeclaration(): boolean {
         return this.prototypes.length !== 0 || this.definitions.length !== 0;
     }
-
 }

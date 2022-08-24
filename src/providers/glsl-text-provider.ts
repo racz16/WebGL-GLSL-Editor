@@ -1,8 +1,7 @@
-import { TextDocumentContentProvider, Uri, CancellationToken, ProviderResult, window, EventEmitter } from "vscode";
-import { GlslEditor } from "../core/glsl-editor";
+import { TextDocumentContentProvider, Uri, CancellationToken, ProviderResult, window, EventEmitter } from 'vscode';
+import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslTextProvider implements TextDocumentContentProvider {
-
     public static onDidChangeEmitter = new EventEmitter<Uri>();
     public onDidChange = GlslTextProvider.onDidChangeEmitter.event;
 
@@ -11,9 +10,8 @@ export class GlslTextProvider implements TextDocumentContentProvider {
         if (text) {
             return text;
         } else {
-            window.showErrorMessage('Something went wrong. Most likely the code doesn\'t compile.');
+            window.showErrorMessage("Something went wrong. Most likely the code doesn't compile.");
             return null;
         }
     }
-
 }

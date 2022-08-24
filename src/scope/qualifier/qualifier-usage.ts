@@ -4,7 +4,6 @@ import { Interval } from '../interval';
 import { Scope } from '../scope';
 
 export class QualifierUsage extends Element {
-
     public readonly qualifier: Qualifier;
 
     public constructor(name: string, nameInterval: Interval, scope: Scope, qualifier: Qualifier) {
@@ -23,5 +22,4 @@ export class QualifierUsage extends Element {
     public isPrecisionQualifier(): boolean {
         return this.qualifier && this.qualifier.isPrecisionQualifier();
     }
-
 }

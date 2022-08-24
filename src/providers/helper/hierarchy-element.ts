@@ -1,8 +1,7 @@
-import { CallHierarchyItem, Range, CallHierarchyIncomingCall, CallHierarchyOutgoingCall } from "vscode";
-import { LogicalFunction } from "../../scope/function/logical-function";
+import { CallHierarchyItem, Range, CallHierarchyIncomingCall, CallHierarchyOutgoingCall } from 'vscode';
+import { LogicalFunction } from '../../scope/function/logical-function';
 
 export class HierarchyElement {
-
     private item: CallHierarchyItem;
     private logicalFunction: LogicalFunction;
     private ranges = new Array<Range>();
@@ -31,5 +30,4 @@ export class HierarchyElement {
     public toOutgoingCall(): CallHierarchyOutgoingCall {
         return new CallHierarchyOutgoingCall(this.item, this.ranges);
     }
-
 }

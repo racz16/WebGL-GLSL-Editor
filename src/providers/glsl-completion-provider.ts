@@ -1,4 +1,17 @@
-import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, ProviderResult, CompletionItem, CompletionList, CompletionItemKind, MarkdownString, CompletionTriggerKind, CompletionItemLabel } from 'vscode';
+import {
+    CompletionItemProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    CompletionContext,
+    ProviderResult,
+    CompletionItem,
+    CompletionList,
+    CompletionItemKind,
+    MarkdownString,
+    CompletionTriggerKind,
+    CompletionItemLabel,
+} from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -16,7 +29,6 @@ import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionInfo } from '../scope/function/function-info';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
-
     private di: DocumentInfo;
     private position: Position;
     private context: CompletionContext;
@@ -32,7 +44,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         this.items = new Array<CompletionItem>();
     }
 
-    public provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): ProviderResult<CompletionItem[] | CompletionList> {
+    public provideCompletionItems(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken,
+        context: CompletionContext
+    ): ProviderResult<CompletionItem[] | CompletionList> {
         this.initialize(document, position, context);
         if (!this.isCompletionTriggeredByFloatingPoint() && !this.isInCommentRegion()) {
             this.addCompletionItems();
@@ -67,7 +84,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         if (mcc.nextWordIndex === 0) {
             this.addPreprocessorDirectives();
         } else {
-            const pd = this.di.builtin.preprocessor.find(pd => pd[0][0] === mcc.words[1]);
+            const pd = this.di.builtin.preprocessor.find((pd) => pd[0][0] === mcc.words[1]);
             this.addPreprocessorArguments(mcc, pd);
             this.addPreprocessorSelectionArguments(pd);
         }
@@ -105,15 +122,25 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         const ci = new CompletionItem(arg, CompletionItemKind.Value);
         if (pd[0][0] === 'extension' && mcc.nextWordIndex === 1) {
             ci.insertText = `${arg} : `;
-        } else if (pd[0][0] === 'extension' && mcc.nextWordIndex === 2 && (mcc.words.length === 3 || (mcc.words.length === 4 && mcc.words[3] !== ':'))) {
+        } else if (
+            pd[0][0] === 'extension' &&
+            mcc.nextWordIndex === 2 &&
+            (mcc.words.length === 3 || (mcc.words.length === 4 && mcc.words[3] !== ':'))
+        ) {
             ci.insertText = `: ${arg}`;
         }
         this.items.push(ci);
     }
 
     private isArgumentValid(mcc: PreprocessorCompletionContext, argument: string): boolean {
-        return !(mcc.words[1] === 'extension' && mcc.nextWordIndex === 2 && mcc.words[2] === 'all' && (argument === 'require' || argument === 'enable')) &&
-            !(mcc.words[1] === 'version' && mcc.words[2] === '100');
+        return (
+            !(
+                mcc.words[1] === 'extension' &&
+                mcc.nextWordIndex === 2 &&
+                mcc.words[2] === 'all' &&
+                (argument === 'require' || argument === 'enable')
+            ) && !(mcc.words[1] === 'version' && mcc.words[2] === '100')
+        );
     }
 
     private addMacros(): void {
@@ -150,7 +177,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             words[words.length - 1] += char;
         }
         if (char === '#' || char === ':') {
-            return true
+            return true;
         } else {
             return false;
         }
@@ -166,7 +193,10 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private isCompletionTriggeredByFloatingPoint(): boolean {
-        return this.context.triggerKind === CompletionTriggerKind.TriggerCharacter && this.di.getTokenAt(this.position).type === AntlrGlslLexer.FLOAT_LITERAL;
+        return (
+            this.context.triggerKind === CompletionTriggerKind.TriggerCharacter &&
+            this.di.getTokenAt(this.position).type === AntlrGlslLexer.FLOAT_LITERAL
+        );
     }
 
     private isInCommentRegion(): boolean {
@@ -221,13 +251,22 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         }
     }
 
-    private addSwizzles(td: TypeDeclaration, swizzleCharacters: Array<string>, swizzleCharactersPriority: number, startsWith: string, swizzle = ''): void {
+    private addSwizzles(
+        td: TypeDeclaration,
+        swizzleCharacters: Array<string>,
+        swizzleCharactersPriority: number,
+        startsWith: string,
+        swizzle = ''
+    ): void {
         if (swizzle.length < 4) {
             for (let i = 0; i < td.width; i++) {
                 const char = swizzleCharacters[i];
                 const newSwizzle = swizzle + char;
                 if (newSwizzle.startsWith(startsWith)) {
-                    const ci = new CompletionItem(this.createLabel(newSwizzle, Helper.getTypeName(td.typeBase, newSwizzle.length)), CompletionItemKind.Property);
+                    const ci = new CompletionItem(
+                        this.createLabel(newSwizzle, Helper.getTypeName(td.typeBase, newSwizzle.length)),
+                        CompletionItemKind.Property
+                    );
                     ci.sortText = this.getSwizzleSortText(swizzleCharacters, swizzleCharactersPriority, newSwizzle);
                     this.items.push(ci);
                 }
@@ -256,9 +295,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private isIdentifier(text: string): boolean {
         for (const char of text) {
-            const lowerCase = (char >= 'a' && char <= 'z');
-            const upperCase = (char >= 'A' && char <= 'Z');
-            const digit = (char >= '0' && char <= '9');
+            const lowerCase = char >= 'a' && char <= 'z';
+            const upperCase = char >= 'A' && char <= 'Z';
+            const digit = char >= '0' && char <= '9';
             const underScore = char === '_';
             if (!lowerCase && !upperCase && !digit && !underScore) {
                 return false;
@@ -333,7 +372,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addBuiltinTypeItems(localItems: Array<CompletionItem>): void {
         for (const [name, td] of this.di.builtin.types) {
-            if (!this.items.some(ci => this.getName(ci) === name)) {
+            if (!this.items.some((ci) => this.getName(ci) === name)) {
                 const ci = new CompletionItem(name, CompletionItemKind.Class);
                 if (td.typeCategory === TypeCategory.CUSTOM) {
                     ci.documentation = new MarkdownString(td.toStringDocumentation());
@@ -348,8 +387,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addBuiltinVariableItems(localItems: Array<CompletionItem>): void {
         for (const vd of this.di.builtin.variables.values()) {
-            if (this.isAvailableInThisStage(vd.stage) && !this.items.some(ci => this.getName(ci) === vd.name) &&
-                this.di.isExtensionAvailable(vd.extension, this.offset)) {
+            if (
+                this.isAvailableInThisStage(vd.stage) &&
+                !this.items.some((ci) => this.getName(ci) === vd.name) &&
+                this.di.isExtensionAvailable(vd.extension, this.offset)
+            ) {
                 const ci = new CompletionItem(this.createLabel(vd.name, vd.type?.name), CompletionItemKind.Variable);
                 ci.documentation = vd.summary;
                 localItems.push(ci);
@@ -362,8 +404,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addBuiltinFunctionItems(localItems: Array<CompletionItem>): void {
         for (const func of this.di.builtin.functionSummaries.values()) {
-            if (this.isAvailableInThisStage(func.stage) && !this.items.some(ci => this.getName(ci) === func.name) &&
-                this.di.isExtensionAvailable(func.extension, this.offset)) {
+            if (
+                this.isAvailableInThisStage(func.stage) &&
+                !this.items.some((ci) => this.getName(ci) === func.name) &&
+                this.di.isExtensionAvailable(func.extension, this.offset)
+            ) {
                 const ci = this.createBuiltinFunctionCompletionItem(func);
                 localItems.push(ci);
             }
@@ -411,7 +456,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserTypeItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const td of scope.typeDeclarations) {
-            if (Helper.isALowerThanOffset(td.interval, this.offset) && !this.items.some(ci => this.getName(ci) === td.name) && !td.interfaceBlock) {
+            if (
+                Helper.isALowerThanOffset(td.interval, this.offset) &&
+                !this.items.some((ci) => this.getName(ci) === td.name) &&
+                !td.interfaceBlock
+            ) {
                 const ci = new CompletionItem(td.name, CompletionItemKind.Struct);
                 ci.documentation = new MarkdownString(td.toStringDocumentation());
                 localItems.push(ci);
@@ -424,7 +473,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserVariableItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const vd of scope.variableDeclarations) {
-            if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some(ci => this.getName(ci) === vd.name)) {
+            if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some((ci) => this.getName(ci) === vd.name)) {
                 const ci = new CompletionItem(this.createLabel(vd.name, vd.type?.toStringWithoutQualifiers()), CompletionItemKind.Variable);
                 ci.documentation = new MarkdownString(vd.toStringDocumentation());
                 localItems.push(ci);
@@ -447,8 +496,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private isAdded(list: Array<CompletionItem>, lf: LogicalFunction): boolean {
-        return list.some(ci => this.getName(ci) === lf.getDeclaration().name &&
-            (this.items === list || ci.kind === CompletionItemKind.Function || ci.kind === CompletionItemKind.Constructor));
+        return list.some(
+            (ci) =>
+                this.getName(ci) === lf.getDeclaration().name &&
+                (this.items === list || ci.kind === CompletionItemKind.Function || ci.kind === CompletionItemKind.Constructor)
+        );
     }
 
     private getFunctionCompletionItem(lf: LogicalFunction): CompletionItem {
@@ -469,7 +521,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         const hasParameters = f.parameters.length || f.ctor;
         const parameters = hasParameters ? '(...)' : '()';
         const ci = new CompletionItem(this.createLabel(f.name, '', parameters), CompletionItemKind.Function);
-        if(!hasParameters){
+        if (!hasParameters) {
             ci.insertText = f.name + '()';
         }
         return ci;
@@ -479,7 +531,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //general
     //
     private createLabel(label: string, rightText?: string, leftText?: string): CompletionItemLabel {
-        return {label, detail: leftText, description: rightText};
+        return { label, detail: leftText, description: rightText };
     }
 
     private isAvailableInThisStage(stage: ShaderStage): boolean {
@@ -489,5 +541,4 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     private getName(ci: CompletionItem): string {
         return ci.filterText ?? ci.label.toString();
     }
-
 }

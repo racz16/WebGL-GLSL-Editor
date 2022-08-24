@@ -1,11 +1,10 @@
-
-import { ColorRegion } from "../scope/regions/color-region";
-import { Interval } from "../scope/interval";
-import { PreprocessorRegion } from "../scope/regions/preprocessor-region";
-import { FoldingRegion } from "../scope/regions/folding-region";
-import { SignatureRegion } from "../scope/regions/signature-region";
-import { SemanticRegion } from "../scope/regions/semantic-region";
-import { CompletionRegion } from "../scope/regions/completion-region";
+import { ColorRegion } from '../scope/regions/color-region';
+import { Interval } from '../scope/interval';
+import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
+import { FoldingRegion } from '../scope/regions/folding-region';
+import { SignatureRegion } from '../scope/regions/signature-region';
+import { SemanticRegion } from '../scope/regions/semantic-region';
+import { CompletionRegion } from '../scope/regions/completion-region';
 
 export class DocumentRegions {
     public readonly completionRegions = new Array<CompletionRegion>();
@@ -14,7 +13,7 @@ export class DocumentRegions {
     public readonly colorRegions = new Array<ColorRegion>();
     public readonly signatureRegions = new Array<SignatureRegion>();
     public readonly forHeaderRegions = new Array<Interval>();
-    public readonly typeDeclarationRegions = new Array<Interval>()
+    public readonly typeDeclarationRegions = new Array<Interval>();
     public readonly unaryExpressionRegions = new Array<Interval>();
     public readonly caseHeaderRegions = new Array<Interval>();
     public readonly caseStatementsRegions = new Array<Interval>();

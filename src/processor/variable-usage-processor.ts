@@ -1,15 +1,14 @@
-import { Helper } from "./helper";
-import { VariableDeclarationProcessor } from "./variable-declaration-processor";
-import { TerminalNode } from "antlr4ts/tree/TerminalNode";
-import { DocumentInfo } from "../core/document-info";
-import { Scope } from "../scope/scope";
-import { VariableUsage } from "../scope/variable/variable-usage";
-import { SemanticModifier, SemanticRegion, SemanticType } from "../scope/regions/semantic-region";
-import { Token } from "antlr4ts";
-import { VariableDeclaration } from "../scope/variable/variable-declaration";
+import { Helper } from './helper';
+import { VariableDeclarationProcessor } from './variable-declaration-processor';
+import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
+import { DocumentInfo } from '../core/document-info';
+import { Scope } from '../scope/scope';
+import { VariableUsage } from '../scope/variable/variable-usage';
+import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Token } from 'antlr4ts';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
 
 export class VariableUsageProcessor {
-
     private di: DocumentInfo;
 
     public getVariableUsage(identifier: TerminalNode, scope: Scope, di: DocumentInfo): VariableUsage {
@@ -29,12 +28,11 @@ export class VariableUsageProcessor {
     private addSemanticToken(vd: VariableDeclaration, token: Token): void {
         if (vd.name && !vd.builtin) {
             const modifiers = [];
-            if (vd.type.qualifiers.some(q => q.name === 'const')) {
+            if (vd.type.qualifiers.some((q) => q.name === 'const')) {
                 modifiers.push(SemanticModifier.CONST);
             }
             const sr = new SemanticRegion(token, SemanticType.VARIABLE, modifiers);
             this.di.getRegions().semanticRegions.push(sr);
         }
     }
-
 }

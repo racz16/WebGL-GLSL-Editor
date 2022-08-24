@@ -26,7 +26,6 @@ import { CompletionRegion } from '../scope/regions/completion-region';
 import { Token } from 'antlr4ts';
 
 export class ExpressionProcessor {
-
     private ctx: ExpressionContext;
     private scope: Scope;
     private di: DocumentInfo;
@@ -98,12 +97,30 @@ export class ExpressionProcessor {
             return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), true);
         } else {
             if (this.ctx.literal().number_literal().FLOAT_LITERAL()) {
-                return new ExpressionResult(this.di.builtin.types.get(Constants.FLOAT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                return new ExpressionResult(
+                    this.di.builtin.types.get(Constants.FLOAT),
+                    new ArrayUsage(),
+                    true,
+                    this.computeNumber(this.ctx.literal().text),
+                    true
+                );
             } else {
                 if (this.ctx.literal().text.toLowerCase().endsWith('u')) {
-                    return new ExpressionResult(this.di.builtin.types.get(Constants.UINT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                    return new ExpressionResult(
+                        this.di.builtin.types.get(Constants.UINT),
+                        new ArrayUsage(),
+                        true,
+                        this.computeNumber(this.ctx.literal().text),
+                        true
+                    );
                 } else {
-                    return new ExpressionResult(this.di.builtin.types.get(Constants.INT), new ArrayUsage(), true, this.computeNumber(this.ctx.literal().text), true);
+                    return new ExpressionResult(
+                        this.di.builtin.types.get(Constants.INT),
+                        new ArrayUsage(),
+                        true,
+                        this.computeNumber(this.ctx.literal().text),
+                        true
+                    );
                 }
             }
         }
@@ -111,7 +128,7 @@ export class ExpressionProcessor {
 
     private computeNumber(num: string): number {
         if (num.toLowerCase().endsWith('f') || num.toLowerCase().endsWith('u')) {
-            return +(num.substring(0, num.length - 1));
+            return +num.substring(0, num.length - 1);
         } else {
             return +num;
         }
@@ -125,7 +142,14 @@ export class ExpressionProcessor {
         const vu = new VariableUsageProcessor().getVariableUsage(this.ctx.IDENTIFIER(), this.scope, this.di);
         if (vu.declaration) {
             const constant = vu.declaration.type.containsQualifier(this.di.builtin.qualifiers.get('const'));
-            return new ExpressionResult(vu.declaration.type.declaration, vu.declaration.type.array, constant, null, false, vu.declaration.isColorVariable());
+            return new ExpressionResult(
+                vu.declaration.type.declaration,
+                vu.declaration.type.array,
+                constant,
+                null,
+                false,
+                vu.declaration.isColorVariable()
+            );
         }
         return null;
     }
@@ -145,11 +169,19 @@ export class ExpressionProcessor {
     private processModuloExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
-            left.type && right.type &&
-            !left.array.isArray() && !right.array.isArray() && left.type.typeBase === right.type.typeBase &&
+        if (
+            left &&
+            right &&
+            left instanceof ExpressionResult &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
+            !left.array.isArray() &&
+            !right.array.isArray() &&
+            left.type.typeBase === right.type.typeBase &&
             (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT) &&
-            (left.type.isScalar() || right.type.isScalar() || left.type.width === right.type.width)) {
+            (left.type.isScalar() || right.type.isScalar() || left.type.width === right.type.width)
+        ) {
             if (left.type.isVector()) {
                 return new ExpressionResult(left.type, left.array, left.constant && right.constant);
             } else {
@@ -160,18 +192,28 @@ export class ExpressionProcessor {
     }
 
     private isArithmeticBinaryExpression(): boolean {
-        return this.ctx.expression().length === 2 && (!!this.ctx.OP_ADD() || !!this.ctx.OP_SUB() || !!this.ctx.OP_DIV() || !!this.ctx.OP_MUL());
+        return (
+            this.ctx.expression().length === 2 && (!!this.ctx.OP_ADD() || !!this.ctx.OP_SUB() || !!this.ctx.OP_DIV() || !!this.ctx.OP_MUL())
+        );
     }
 
     private processArithmeticBinaryExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
-            left.type && right.type &&
+        if (
+            left &&
+            right &&
+            left instanceof ExpressionResult &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
             (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT || left.type.typeBase === TypeBase.FLOAT) &&
             (right.type.typeBase === TypeBase.INT || right.type.typeBase === TypeBase.UINT || right.type.typeBase === TypeBase.FLOAT) &&
-            ((left.type.typeBase === TypeBase.FLOAT && right.type.typeBase === TypeBase.FLOAT) || left.type.typeBase === right.type.typeBase) &&
-            !left.array.isArray() && !right.array.isArray()) {
+            ((left.type.typeBase === TypeBase.FLOAT && right.type.typeBase === TypeBase.FLOAT) ||
+                left.type.typeBase === right.type.typeBase) &&
+            !left.array.isArray() &&
+            !right.array.isArray()
+        ) {
             if (left.type.isScalar() && right.type.isScalar()) {
                 return left;
             } else if (left.type.isScalar() && !right.type.isScalar()) {
@@ -180,10 +222,18 @@ export class ExpressionProcessor {
                 return left;
             } else if (left.type.isVector() && right.type.isVector() && left.type.width === right.type.width) {
                 return left;
-            } else if (!this.ctx.OP_MUL() && left.type.isMatrix() && right.type.isMatrix() &&
-                left.type.width === right.type.width && left.type.height === right.type.height) {
+            } else if (
+                !this.ctx.OP_MUL() &&
+                left.type.isMatrix() &&
+                right.type.isMatrix() &&
+                left.type.width === right.type.width &&
+                left.type.height === right.type.height
+            ) {
                 return left;
-            } else if (this.ctx.OP_MUL() && ((left.type.isMatrix() && !right.type.isScalar()) || (!left.type.isScalar() && right.type.isMatrix()))) {
+            } else if (
+                this.ctx.OP_MUL() &&
+                ((left.type.isMatrix() && !right.type.isScalar()) || (!left.type.isScalar() && right.type.isMatrix()))
+            ) {
                 const leftSize = left.type.width;
                 const rightSize = right.type.isMatrix() ? right.type.height : right.type.width;
                 if (leftSize === rightSize) {
@@ -197,7 +247,6 @@ export class ExpressionProcessor {
                         const td = this.di.builtin.types.get(`mat${right.type.width}x${left.type.height}`);
                         return new ExpressionResult(td, new ArrayUsage(), left.constant && right.constant);
                     }
-
                 }
             }
         }
@@ -205,14 +254,21 @@ export class ExpressionProcessor {
     }
 
     private isArithmeticUnaryExpression(): boolean {
-        return this.ctx.expression().length === 1 && (!!this.ctx.OP_INC() || !!this.ctx.OP_DEC() || !!this.ctx.OP_SUB() || !!this.ctx.OP_ADD());
+        return (
+            this.ctx.expression().length === 1 && (!!this.ctx.OP_INC() || !!this.ctx.OP_DEC() || !!this.ctx.OP_SUB() || !!this.ctx.OP_ADD())
+        );
     }
 
     private processArithmeticUnaryExpression(): ExpressionResult {
         this.di.getRegions().unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
-        if (exp && exp instanceof ExpressionResult && !exp.array.isArray() && exp.type &&
-            (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT || exp.type.typeBase === TypeBase.FLOAT)) {
+        if (
+            exp &&
+            exp instanceof ExpressionResult &&
+            !exp.array.isArray() &&
+            exp.type &&
+            (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT || exp.type.typeBase === TypeBase.FLOAT)
+        ) {
             return exp;
         }
         return null;
@@ -272,8 +328,12 @@ export class ExpressionProcessor {
             this.scope.functionCalls.push(fc);
             for (let i = 0; i < parameters.length; i++) {
                 const param = parameters[i];
-                if (param && param.constructorCall &&
-                    (lf.prototypes.some(fp => fp.parameters[i].isColorVariable()) || lf.definitions.some(fd => fd.parameters[i].isColorVariable()))) {
+                if (
+                    param &&
+                    param.constructorCall &&
+                    (lf.prototypes.some((fp) => fp.parameters[i].isColorVariable()) ||
+                        lf.definitions.some((fd) => fd.parameters[i].isColorVariable()))
+                ) {
                     const cr = new ColorRegion(param.constructorCall, param.constructorParameters);
                     this.di.getRegions().colorRegions.push(cr);
                 }
@@ -288,11 +348,25 @@ export class ExpressionProcessor {
                 if (fd.ctor) {
                     fd.returnType.declaration.ctorCalls.push(fc);
                 }
-                const constant = fd.builtIn && name !== 'dFdx' && name !== 'dFdy' && name !== 'fwidth' && parameters.every(param => param && param.constant);
+                const constant =
+                    fd.builtIn &&
+                    name !== 'dFdx' &&
+                    name !== 'dFdy' &&
+                    name !== 'fwidth' &&
+                    parameters.every((param) => param && param.constant);
                 const colorConstructor = this.isColorConstructor(fd, parameters);
                 const constructorCall = colorConstructor ? fc : null;
-                const parameterValues = colorConstructor ? parameters.map(p => p.value) : null;
-                return new ExpressionResult(fd.returnType.declaration, fd.returnType.array, constant, null, false, false, constructorCall, parameterValues);
+                const parameterValues = colorConstructor ? parameters.map((p) => p.value) : null;
+                return new ExpressionResult(
+                    fd.returnType.declaration,
+                    fd.returnType.array,
+                    constant,
+                    null,
+                    false,
+                    false,
+                    constructorCall,
+                    parameterValues
+                );
             } else {
                 return null;
             }
@@ -329,7 +403,7 @@ export class ExpressionProcessor {
     }
 
     private isColorConstructor(fd: FunctionDeclaration, parameters: Array<ExpressionResult>): boolean {
-        const constructorAndAllParametersNumber = fd.ctor && parameters.every(p => p && p.numberLiteral);
+        const constructorAndAllParametersNumber = fd.ctor && parameters.every((p) => p && p.numberLiteral);
         const vec3 = fd.name === Constants.VEC3 && (parameters.length === 1 || parameters.length === 3);
         const vec4 = fd.name === Constants.VEC4 && (parameters.length === 1 || parameters.length === 4);
         return constructorAndAllParametersNumber && (vec3 || vec4);
@@ -355,7 +429,7 @@ export class ExpressionProcessor {
     }
 
     private getLogicalFunction(name: string, nameInterval: Interval, parameters: Array<ExpressionResult>): LogicalFunction {
-        if (parameters.some(param => !param || !param.type)) {
+        if (parameters.some((param) => !param || !param.type)) {
             return null;
         }
         const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
@@ -365,7 +439,7 @@ export class ExpressionProcessor {
         const array = Helper.getArraySizeFromArraySubscript(this.ctx.function_call().array_subscript(), this.scope, this.di);
         if (array.isArray()) {
             const td = TypeDeclarationProcessor.searchTypeDeclaration(name, nameInterval, this.scope, this.di);
-            if (td && parameters.every(param => param && param.type === td) && parameters.length) {
+            if (td && parameters.every((param) => param && param.type === td) && parameters.length) {
                 return this.createLogicalFunction(name, nameInterval, td, array.specifyArraySize(parameters.length), parameters);
             }
         } else {
@@ -377,7 +451,13 @@ export class ExpressionProcessor {
         return null;
     }
 
-    private createLogicalFunction(name: string, nameInterval: Interval, td: TypeDeclaration, array: ArrayUsage, parameters: Array<ExpressionResult>): LogicalFunction {
+    private createLogicalFunction(
+        name: string,
+        nameInterval: Interval,
+        td: TypeDeclaration,
+        array: ArrayUsage,
+        parameters: Array<ExpressionResult>
+    ): LogicalFunction {
         const tu = new TypeUsage(name, nameInterval, nameInterval, null, td, array);
         const fp = new FunctionDeclaration(name, td.nameInterval, null, tu, td.builtin, true, td.interval, null);
         for (let i = 0; i < parameters.length; i++) {
@@ -419,7 +499,7 @@ export class ExpressionProcessor {
         this.processCompletionRegion(exp);
         if (exp && exp instanceof ExpressionResult && !exp.array.isArray()) {
             const name = this.ctx.IDENTIFIER().text;
-            const member = exp.type?.members.find(vd => vd.name === name);
+            const member = exp.type?.members.find((vd) => vd.name === name);
             if (member) {
                 const interval = Helper.getIntervalFromTerminalNode(this.ctx.IDENTIFIER(), this.di);
                 const vu = new VariableUsage(name, this.scope, interval, member);
@@ -453,26 +533,36 @@ export class ExpressionProcessor {
     private processComplementExpression(): ExpressionResult {
         this.di.getRegions().unaryExpressionRegions.push(Helper.getIntervalFromParserRule(this.ctx, this.di));
         const exp = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
-        if (exp && exp instanceof ExpressionResult && exp.type &&
-            (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT)) {
+        if (
+            exp &&
+            exp instanceof ExpressionResult &&
+            exp.type &&
+            (exp.type.typeBase === TypeBase.INT || exp.type.typeBase === TypeBase.UINT)
+        ) {
             return exp;
         }
         return null;
     }
 
     private isBitExpression(): boolean {
-        return !!this.ctx.OP_BIT_AND() ||
-            !!this.ctx.OP_BIT_OR() ||
-            !!this.ctx.OP_BIT_XOR();
+        return !!this.ctx.OP_BIT_AND() || !!this.ctx.OP_BIT_OR() || !!this.ctx.OP_BIT_XOR();
     }
 
     private processBitExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && left instanceof ExpressionResult && right && right instanceof ExpressionResult &&
-            left.type && right.type &&
-            left.type.typeBase === right.type.typeBase && !left.array.isArray() && !right.array.isArray() &&
-            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT)) {
+        if (
+            left &&
+            left instanceof ExpressionResult &&
+            right &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
+            left.type.typeBase === right.type.typeBase &&
+            !left.array.isArray() &&
+            !right.array.isArray() &&
+            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT)
+        ) {
             if (left.type.isVector() && right.type.isVector()) {
                 if (left.type.width === right.type.width) {
                     return new ExpressionResult(left.type, new ArrayUsage(), left.constant && right.constant);
@@ -486,17 +576,24 @@ export class ExpressionProcessor {
     }
 
     private isLogicalBinaryExpression(): boolean {
-        return !!this.ctx.OP_LOGICAL_AND() ||
-            !!this.ctx.OP_LOGICAL_OR() ||
-            !!this.ctx.OP_LOGICAL_XOR();
+        return !!this.ctx.OP_LOGICAL_AND() || !!this.ctx.OP_LOGICAL_OR() || !!this.ctx.OP_LOGICAL_XOR();
     }
 
     private processLogicalBinaryExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
-            left.type && right.type &&
-            left.type.name === Constants.BOOL && left.type.name === right.type.name && !left.array.isArray() && !right.array.isArray()) {
+        if (
+            left &&
+            right &&
+            left instanceof ExpressionResult &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
+            left.type.name === Constants.BOOL &&
+            left.type.name === right.type.name &&
+            !left.array.isArray() &&
+            !right.array.isArray()
+        ) {
             return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), left.constant && right.constant);
         }
         return null;
@@ -522,10 +619,19 @@ export class ExpressionProcessor {
     private processRelationalExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
-            left.type && right.type &&
-            left.type.name === right.type.name && !left.array.isArray() && !right.array.isArray() && left.type.isScalar() &&
-            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT || left.type.typeBase === TypeBase.FLOAT)) {
+        if (
+            left &&
+            right &&
+            left instanceof ExpressionResult &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
+            left.type.name === right.type.name &&
+            !left.array.isArray() &&
+            !right.array.isArray() &&
+            left.type.isScalar() &&
+            (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT || left.type.typeBase === TypeBase.FLOAT)
+        ) {
             return new ExpressionResult(this.di.builtin.types.get(Constants.BOOL), new ArrayUsage(), left.constant && right.constant);
         }
         return null;
@@ -551,12 +657,20 @@ export class ExpressionProcessor {
     private processShiftExpression(): ExpressionResult {
         const left = new ExpressionProcessor().processExpression(this.ctx.expression()[0], this.scope, this.di);
         const right = new ExpressionProcessor().processExpression(this.ctx.expression()[1], this.scope, this.di);
-        if (left && right && left instanceof ExpressionResult && right instanceof ExpressionResult &&
-            left.type && right.type &&
-            !left.array.isArray() && !right.array.isArray() &&
+        if (
+            left &&
+            right &&
+            left instanceof ExpressionResult &&
+            right instanceof ExpressionResult &&
+            left.type &&
+            right.type &&
+            !left.array.isArray() &&
+            !right.array.isArray() &&
             (left.type.typeBase === TypeBase.INT || left.type.typeBase === TypeBase.UINT) &&
             (right.type.typeBase === TypeBase.INT || right.type.typeBase === TypeBase.UINT) &&
-            ((left.type.isScalar() && right.type.isScalar()) || (left.type.isVector() && (right.type.isScalar() || left.type.width === right.type.width)))) {
+            ((left.type.isScalar() && right.type.isScalar()) ||
+                (left.type.isVector() && (right.type.isScalar() || left.type.width === right.type.width)))
+        ) {
             return new ExpressionResult(left.type, new ArrayUsage(), left.constant && right.constant);
         }
         return null;
@@ -614,7 +728,11 @@ export class ExpressionProcessor {
     }
 
     private processCompletionRegion(exp: ExpressionResult | Array<ExpressionResult>): void {
-        if (exp && exp instanceof ExpressionResult && (exp.array.isArray() || exp.type?.isVector() || exp.type?.typeCategory === TypeCategory.CUSTOM)) {
+        if (
+            exp &&
+            exp instanceof ExpressionResult &&
+            (exp.array.isArray() || exp.type?.isVector() || exp.type?.typeCategory === TypeCategory.CUSTOM)
+        ) {
             const interval = Helper.getIntervalFromParserRule(this.ctx.expression()[0], this.di);
             const tu = new TypeUsage(exp.type.name, interval, null, this.scope, exp.type, exp.array);
             const dotOffset = this.ctx.DOT().symbol.stopIndex + 1;
@@ -638,7 +756,11 @@ export class ExpressionProcessor {
         if (str.length < 1 || str.length > 4) {
             return false;
         }
-        return this.allCharactersFromSet(str, Constants.rgba) || this.allCharactersFromSet(str, Constants.xyzw) || this.allCharactersFromSet(str, Constants.stpq);
+        return (
+            this.allCharactersFromSet(str, Constants.rgba) ||
+            this.allCharactersFromSet(str, Constants.xyzw) ||
+            this.allCharactersFromSet(str, Constants.stpq)
+        );
     }
 
     private allCharactersFromSet(str: string, set: Array<string>): boolean {
@@ -649,5 +771,4 @@ export class ExpressionProcessor {
         }
         return true;
     }
-
 }

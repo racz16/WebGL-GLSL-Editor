@@ -10,7 +10,6 @@ import { FunctionCall } from './function-call';
 import { Constants } from '../../core/constants';
 
 export class FunctionDeclaration extends Element {
-
     public logicalFunction: LogicalFunction;
     public readonly interval: Interval;
     public readonly returnType: TypeUsage;
@@ -22,7 +21,18 @@ export class FunctionDeclaration extends Element {
     public readonly outgoingCalls = new Array<FunctionCall>();
     public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, returnType: TypeUsage, builtIn: boolean, ctor: boolean, interval: Interval, functionScope: Scope, stage = ShaderStage.DEFAULT, extension = '') {
+    public constructor(
+        name: string,
+        nameInterval: Interval,
+        scope: Scope,
+        returnType: TypeUsage,
+        builtIn: boolean,
+        ctor: boolean,
+        interval: Interval,
+        functionScope: Scope,
+        stage = ShaderStage.DEFAULT,
+        extension = ''
+    ) {
         super(name, nameInterval, scope);
         this.interval = interval;
         this.returnType = returnType;
@@ -44,9 +54,12 @@ export class FunctionDeclaration extends Element {
         for (let i = 0; i < this.parameters.length; i++) {
             const vd = this.parameters[i];
             const vd2 = fd.parameters[i];
-            if (!vd.type.declaration || !vd2.type.declaration ||
+            if (
+                !vd.type.declaration ||
+                !vd2.type.declaration ||
                 vd.type.declaration !== vd2.type.declaration ||
-                !vd.type.areArrayDimensionsMatch(vd2.type)) {
+                !vd.type.areArrayDimensionsMatch(vd2.type)
+            ) {
                 return false;
             }
         }
@@ -58,9 +71,11 @@ export class FunctionDeclaration extends Element {
             const fd = element;
             const prototypes = this.logicalFunction.prototypes;
             const definitions = this.logicalFunction.definitions;
-            return element !== this &&
+            return (
+                element !== this &&
                 ((definitions.includes(fd) && definitions.includes(this)) ||
-                    (di.isGlsl100es() && prototypes.includes(fd) && prototypes.includes(this)));
+                    (di.isGlsl100es() && prototypes.includes(fd) && prototypes.includes(this)))
+            );
         }
         return super.isDuplicateOf(element, di);
     }
@@ -105,5 +120,4 @@ export class FunctionDeclaration extends Element {
     public toStringDocumentation(): string {
         return `\t${this.toString()};`;
     }
-
 }

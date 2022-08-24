@@ -12,7 +12,6 @@ import { GlslEditor } from '../core/glsl-editor';
 import { Scope } from '../scope/scope';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
-
     private lf: LogicalFunction;
     private vd: VariableDeclaration;
     private td: TypeDeclaration;
@@ -24,7 +23,12 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         this.newName = newName;
     }
 
-    public provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): ProviderResult<WorkspaceEdit> {
+    public provideRenameEdits(
+        document: TextDocument,
+        position: Position,
+        newName: string,
+        token: CancellationToken
+    ): ProviderResult<WorkspaceEdit> {
         this.initializeRename(document, position, newName);
         this.validateGeneral();
         if (this.lf) {
@@ -105,10 +109,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private validateDefinedStructOrVariable(): void {
-        if (this.scope.variableDeclarations.find(vd => vd.name === this.newName)) {
+        if (this.scope.variableDeclarations.find((vd) => vd.name === this.newName)) {
             throw new Error(`Variable '${this.newName}' is already definied`);
         }
-        if (this.scope.typeDeclarations.find(td => td.name === this.newName)) {
+        if (this.scope.typeDeclarations.find((td) => td.name === this.newName)) {
             throw new Error(`Struct '${this.newName}' is already definied`);
         }
     }
@@ -134,10 +138,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (!GlslEditor.CONFIGURATIONS.getStrictRename()) {
             return;
         }
-        if (this.scope.isGlobal() && this.di.getRootScope().functionPrototypes.find(fp => fp.name === this.newName)) {
+        if (this.scope.isGlobal() && this.di.getRootScope().functionPrototypes.find((fp) => fp.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
-        if (this.scope.isGlobal() && this.di.getRootScope().functionDefinitions.find(fd => fd.name === this.newName)) {
+        if (this.scope.isGlobal() && this.di.getRootScope().functionDefinitions.find((fd) => fd.name === this.newName)) {
             throw new Error(`Function '${this.newName}' is already definied`);
         }
         if (this.scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
@@ -188,7 +192,11 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     //
     //prepare
     //
-    public prepareRename(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Range | { range: Range, placeholder: string }> {
+    public prepareRename(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Range | { range: Range; placeholder: string }> {
         this.lf = null;
         this.vd = null;
         this.td = null;
@@ -252,7 +260,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
-        if (!lf.prototypes.some(fp => fp.interval.isInjected()) && !lf.definitions.some(fd => fd.interval.isInjected())) {
+        if (!lf.prototypes.some((fp) => fp.interval.isInjected()) && !lf.definitions.some((fd) => fd.interval.isInjected())) {
             this.lf = lf;
             this.scope = lf.getDeclaration().scope;
             return this.di.intervalToRange(nameInterval);
@@ -263,5 +271,4 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     protected defaultReturn(): Range {
         throw new Error(`Can't rename this token`);
     }
-
 }

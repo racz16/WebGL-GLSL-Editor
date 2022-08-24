@@ -29,10 +29,15 @@ import { variables } from './info/variables';
 import { functions } from './info/functions';
 import { functionSummaries } from './info/function-summaries';
 import { importantFunctions } from './info/important-functions';
-import { customTypes, floatingPointOpaqueTypes, signedIntegerOpaqueTypes, transparentTypes, unsignedIntegerOpaqueTypes } from './info/types';
+import {
+    customTypes,
+    floatingPointOpaqueTypes,
+    signedIntegerOpaqueTypes,
+    transparentTypes,
+    unsignedIntegerOpaqueTypes,
+} from './info/types';
 
 export class Builtin {
-
     private static builtin_100: Builtin;
     private static builtin_300: Builtin;
 
@@ -52,7 +57,7 @@ export class Builtin {
     public readonly genericTypes = new Map<string, Array<string>>();
     public readonly macros = new Array<string>();
 
-    private constructor() { }
+    private constructor() {}
 
     public setValues(version: '100' | '300'): void {
         this.version = version;
@@ -147,11 +152,16 @@ export class Builtin {
 
     private stringToTypeBase(str: string): TypeBase {
         switch (str) {
-            case Constants.BOOL: return TypeBase.BOOL;
-            case Constants.INT: return TypeBase.INT;
-            case Constants.UINT: return TypeBase.UINT;
-            case Constants.FLOAT: return TypeBase.FLOAT;
-            default: return TypeBase.NONE;
+            case Constants.BOOL:
+                return TypeBase.BOOL;
+            case Constants.INT:
+                return TypeBase.INT;
+            case Constants.UINT:
+                return TypeBase.UINT;
+            case Constants.FLOAT:
+                return TypeBase.FLOAT;
+            default:
+                return TypeBase.NONE;
         }
     }
 
@@ -242,7 +252,9 @@ export class Builtin {
             if (!variable.notDocumented) {
                 mds.appendText(Constants.NEW_LINE);
                 const parameter = encodeURIComponent(JSON.stringify(variable.name));
-                mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+                mds.appendMarkdown(
+                    `[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`
+                );
                 mds.isTrusted = true;
             }
         } else if (variable.min) {
@@ -337,9 +349,12 @@ export class Builtin {
     //
     private getStage(stage: string): ShaderStage {
         switch (stage) {
-            case 'vertex': return ShaderStage.VERTEX;
-            case 'fragment': return ShaderStage.FRAGMENT;
-            default: return ShaderStage.DEFAULT;
+            case 'vertex':
+                return ShaderStage.VERTEX;
+            case 'fragment':
+                return ShaderStage.FRAGMENT;
+            default:
+                return ShaderStage.DEFAULT;
         }
     }
 
@@ -372,15 +387,41 @@ export class Builtin {
                 const td = bi.types.get(type.name);
                 bi.types.set(name, td);
             } else {
-                const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.interval, type.width, type.height, type.typeBase, type.typeCategory);
+                const td = new TypeDeclaration(
+                    type.name,
+                    type.nameInterval,
+                    null,
+                    type.builtin,
+                    type.interval,
+                    type.width,
+                    type.height,
+                    type.typeBase,
+                    type.typeCategory
+                );
                 for (const member of type.members) {
                     const td2 = bi.types.get(member.type.name);
-                    const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
+                    const tu = new TypeUsage(
+                        member.type.name,
+                        member.type.interval,
+                        member.type.nameInterval,
+                        null,
+                        td2,
+                        member.type.array
+                    );
                     for (const qu of member.type.qualifiers) {
                         const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                         tu.qualifiers.push(qu2);
                     }
-                    const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false, false);
+                    const vd = new VariableDeclaration(
+                        member.name,
+                        member.nameInterval,
+                        null,
+                        member.builtin,
+                        member.declarationInterval,
+                        tu,
+                        false,
+                        false
+                    );
                     td.members.push(vd);
                 }
                 bi.types.set(type.name, td);
@@ -396,7 +437,19 @@ export class Builtin {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, false, variable.summary, variable.stage, variable.extension);
+            const vd = new VariableDeclaration(
+                variable.name,
+                variable.nameInterval,
+                null,
+                variable.builtin,
+                variable.declarationInterval,
+                tu,
+                false,
+                false,
+                variable.summary,
+                variable.stage,
+                variable.extension
+            );
             bi.variables.set(variable.name, vd);
         }
         for (const olf of this.functions) {
@@ -408,7 +461,18 @@ export class Builtin {
                 const qu = new QualifierUsage(qualifier.name, null, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, null, ofp.stage, ofp.extension);
+            const fp = new FunctionDeclaration(
+                ofp.name,
+                ofp.nameInterval,
+                null,
+                tu,
+                ofp.builtIn,
+                ofp.ctor,
+                ofp.interval,
+                null,
+                ofp.stage,
+                ofp.extension
+            );
             for (const parameter of ofp.parameters) {
                 const td = bi.types.get(parameter.type.name);
                 const tu = new TypeUsage(parameter.type.name, null, null, null, td, parameter.type.array);
@@ -468,5 +532,4 @@ export class Builtin {
         }
         return this.builtin_300.clone();
     }
-
 }

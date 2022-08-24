@@ -1,4 +1,14 @@
-import { DocumentFormattingEditProvider, TextDocument, FormattingOptions, CancellationToken, ProviderResult, TextEdit, Range, Position, DocumentRangeFormattingEditProvider } from 'vscode';
+import {
+    DocumentFormattingEditProvider,
+    TextDocument,
+    FormattingOptions,
+    CancellationToken,
+    ProviderResult,
+    TextEdit,
+    Range,
+    Position,
+    DocumentRangeFormattingEditProvider,
+} from 'vscode';
 import { DocumentInfo } from '../core/document-info';
 import { Token } from 'antlr4ts';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
@@ -7,10 +17,9 @@ import { Constants } from '../core/constants';
 import { FormattingContext } from './helper/formatting-context';
 
 export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider, DocumentRangeFormattingEditProvider {
-
     private di: DocumentInfo;
     private options: FormattingOptions;
-    private range: Range
+    private range: Range;
     private tokens: Array<Token>;
     private ctx: FormattingContext;
     private results: Array<TextEdit>;
@@ -25,14 +34,23 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         this.results = new Array<TextEdit>();
     }
 
-    public provideDocumentFormattingEdits(document: TextDocument, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
+    public provideDocumentFormattingEdits(
+        document: TextDocument,
+        options: FormattingOptions,
+        token: CancellationToken
+    ): ProviderResult<TextEdit[]> {
         this.initialize(document, options, null);
         return this.format();
     }
 
-    public provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): ProviderResult<TextEdit[]> {
+    public provideDocumentRangeFormattingEdits(
+        document: TextDocument,
+        range: Range,
+        options: FormattingOptions,
+        token: CancellationToken
+    ): ProviderResult<TextEdit[]> {
         this.initialize(document, options, range);
-        return this.format()
+        return this.format();
     }
 
     private format(): Array<TextEdit> {
@@ -67,15 +85,15 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isT3(type: number): boolean {
-        return type === AntlrGlslLexer.NEW_LINE ||
-            type === AntlrGlslLexer.TAB ||
-            type === AntlrGlslLexer.SPACE;
+        return type === AntlrGlslLexer.NEW_LINE || type === AntlrGlslLexer.TAB || type === AntlrGlslLexer.SPACE;
     }
 
     private isT2(type: number): boolean {
-        return type === AntlrGlslLexer.SINGLE_LINE_COMMENT ||
+        return (
+            type === AntlrGlslLexer.SINGLE_LINE_COMMENT ||
             type === AntlrGlslLexer.MULTI_LINE_COMMENT ||
-            type === AntlrGlslLexer.PREPROCESSOR;
+            type === AntlrGlslLexer.PREPROCESSOR
+        );
     }
 
     private processT3(ct: Token): void {
@@ -180,11 +198,21 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         if (this.ctx.lastt1TokenIndex === Constants.INVALID || this.ctx.inlineStruct) {
             return false;
         }
-        return ((t1.type === AntlrGlslLexer.LCB || t1.type === AntlrGlslLexer.SEMICOLON) && !this.ctx.forHeader) ||
-            (t1.type === AntlrGlslLexer.RCB && !this.ctx.forHeader && t2.type !== AntlrGlslLexer.SEMICOLON && (!this.ctx.typeDeclaration || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()) && ((t2.type !== AntlrGlslLexer.KW_ELSE && t2.type !== AntlrGlslLexer.KW_WHILE) || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine())) ||
+        return (
+            ((t1.type === AntlrGlslLexer.LCB || t1.type === AntlrGlslLexer.SEMICOLON) && !this.ctx.forHeader) ||
+            (t1.type === AntlrGlslLexer.RCB &&
+                !this.ctx.forHeader &&
+                t2.type !== AntlrGlslLexer.SEMICOLON &&
+                (!this.ctx.typeDeclaration || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()) &&
+                ((t2.type !== AntlrGlslLexer.KW_ELSE && t2.type !== AntlrGlslLexer.KW_WHILE) ||
+                    GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine())) ||
             (t2.type === AntlrGlslLexer.LCB && GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()) ||
-            (this.isScopeStarter(t2) && t1.type !== AntlrGlslLexer.LRB && t2.type !== AntlrGlslLexer.LRB && (t1.type !== AntlrGlslLexer.KW_ELSE || t2.type !== AntlrGlslLexer.KW_IF)) ||
-            (this.ctx.caseStatementsStart && (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()));
+            (this.isScopeStarter(t2) &&
+                t1.type !== AntlrGlslLexer.LRB &&
+                t2.type !== AntlrGlslLexer.LRB &&
+                (t1.type !== AntlrGlslLexer.KW_ELSE || t2.type !== AntlrGlslLexer.KW_IF)) ||
+            (this.ctx.caseStatementsStart && (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()))
+        );
     }
 
     private isScopeStarter(t: Token): boolean {
@@ -225,24 +253,60 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
 
     private isNothingRequired(t2: Token): boolean {
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
-        return (this.ctx.unaryExpression && !GlslEditor.CONFIGURATIONS.getSpaceAroundUnaryOperators()) ||
+        return (
+            (this.ctx.unaryExpression && !GlslEditor.CONFIGURATIONS.getSpaceAroundUnaryOperators()) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() && !this.ctx.unaryExpression && this.isBinaryOperator(t1.type)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() && !this.ctx.unaryExpression && this.isBinaryOperator(t2.type) && (t2.type !== AntlrGlslLexer.OP_SUB || !(t1.type === AntlrGlslLexer.KW_RETURN || t1.type === AntlrGlslLexer.KW_CASE || t1.type === AntlrGlslLexer.LSB || t1.type === AntlrGlslLexer.LRB || this.isOperator(t1.type)))) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesAroundTernaryOperators() && !this.ctx.caseHeader && (t1.type === AntlrGlslLexer.QUESTION || t2.type === AntlrGlslLexer.QUESTION || t1.type === AntlrGlslLexer.COLON || t2.type === AntlrGlslLexer.COLON)) ||
-            (t2.type === AntlrGlslLexer.SEMICOLON && (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() || !this.ctx.forHeader || this.ctx.inlineStruct)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() &&
+                !this.ctx.unaryExpression &&
+                this.isBinaryOperator(t2.type) &&
+                (t2.type !== AntlrGlslLexer.OP_SUB ||
+                    !(
+                        t1.type === AntlrGlslLexer.KW_RETURN ||
+                        t1.type === AntlrGlslLexer.KW_CASE ||
+                        t1.type === AntlrGlslLexer.LSB ||
+                        t1.type === AntlrGlslLexer.LRB ||
+                        this.isOperator(t1.type)
+                    ))) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesAroundTernaryOperators() &&
+                !this.ctx.caseHeader &&
+                (t1.type === AntlrGlslLexer.QUESTION ||
+                    t2.type === AntlrGlslLexer.QUESTION ||
+                    t1.type === AntlrGlslLexer.COLON ||
+                    t2.type === AntlrGlslLexer.COLON)) ||
+            (t2.type === AntlrGlslLexer.SEMICOLON &&
+                (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() || !this.ctx.forHeader || this.ctx.inlineStruct)) ||
             (t2.type === AntlrGlslLexer.COMMA && !GlslEditor.CONFIGURATIONS.getSpaceBeforeCommas()) ||
             (t1.type === AntlrGlslLexer.COMMA && !GlslEditor.CONFIGURATIONS.getSpaceAfterCommas()) ||
             ((t1.type === AntlrGlslLexer.DOT || t2.type === AntlrGlslLexer.DOT) && !GlslEditor.CONFIGURATIONS.getSpacesAroundDots()) ||
-            (!GlslEditor.CONFIGURATIONS.getSpaceAfterKeywords() && t2.type === AntlrGlslLexer.LRB && (t1.type === AntlrGlslLexer.KW_IF || t1.type === AntlrGlslLexer.KW_FOR || t1.type === AntlrGlslLexer.KW_WHILE || t1.type === AntlrGlslLexer.KW_SWITCH || t1.type === AntlrGlslLexer.Q_LAYOUT)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesInsideParentheses() && (t1.type === AntlrGlslLexer.LRB || t2.type === AntlrGlslLexer.RRB)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpaceAfterKeywords() &&
+                t2.type === AntlrGlslLexer.LRB &&
+                (t1.type === AntlrGlslLexer.KW_IF ||
+                    t1.type === AntlrGlslLexer.KW_FOR ||
+                    t1.type === AntlrGlslLexer.KW_WHILE ||
+                    t1.type === AntlrGlslLexer.KW_SWITCH ||
+                    t1.type === AntlrGlslLexer.Q_LAYOUT)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesInsideParentheses() &&
+                (t1.type === AntlrGlslLexer.LRB || t2.type === AntlrGlslLexer.RRB)) ||
             (!GlslEditor.CONFIGURATIONS.getSpaceBeforeCaseColons() && this.ctx.caseHeader && t2.type === AntlrGlslLexer.COLON) ||
-            (!GlslEditor.CONFIGURATIONS.getSpaceAfterFunctionNames() && t2.type === AntlrGlslLexer.LRB && (t1.type === AntlrGlslLexer.IDENTIFIER || t1.type === AntlrGlslLexer.TYPE || t1.type === AntlrGlslLexer.RSB)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBraces() && !GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine() && (t1.type === AntlrGlslLexer.RCB || t2.type === AntlrGlslLexer.LCB)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() && this.ctx.forHeader && !this.ctx.inlineStruct && t2.type === AntlrGlslLexer.SEMICOLON) ||
-            (!GlslEditor.CONFIGURATIONS.getSpaceAfterSemicolonsInFor() && this.ctx.forHeader && !this.ctx.inlineStruct && t1.type === AntlrGlslLexer.SEMICOLON) ||
+            (!GlslEditor.CONFIGURATIONS.getSpaceAfterFunctionNames() &&
+                t2.type === AntlrGlslLexer.LRB &&
+                (t1.type === AntlrGlslLexer.IDENTIFIER || t1.type === AntlrGlslLexer.TYPE || t1.type === AntlrGlslLexer.RSB)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBraces() &&
+                !GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine() &&
+                (t1.type === AntlrGlslLexer.RCB || t2.type === AntlrGlslLexer.LCB)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() &&
+                this.ctx.forHeader &&
+                !this.ctx.inlineStruct &&
+                t2.type === AntlrGlslLexer.SEMICOLON) ||
+            (!GlslEditor.CONFIGURATIONS.getSpaceAfterSemicolonsInFor() &&
+                this.ctx.forHeader &&
+                !this.ctx.inlineStruct &&
+                t1.type === AntlrGlslLexer.SEMICOLON) ||
             (!GlslEditor.CONFIGURATIONS.getSpaceBeforeOpeningBrackets() && t2.type === AntlrGlslLexer.LSB) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesInsideBrackets() && (t1.type === AntlrGlslLexer.LSB || t2.type === AntlrGlslLexer.RSB)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesAroundAssignmentOperators() && (this.isAssignmentOperator(t1.type) || this.isAssignmentOperator(t2.type)));
+            (!GlslEditor.CONFIGURATIONS.getSpacesAroundAssignmentOperators() &&
+                (this.isAssignmentOperator(t1.type) || this.isAssignmentOperator(t2.type)))
+        );
     }
 
     private addNothingTextEdit(t2: Token): void {
@@ -269,7 +333,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isBinaryOperator(type: number): boolean {
-        return type === AntlrGlslLexer.OP_MUL ||
+        return (
+            type === AntlrGlslLexer.OP_MUL ||
             type === AntlrGlslLexer.OP_ADD ||
             type === AntlrGlslLexer.OP_SUB ||
             type === AntlrGlslLexer.OP_DIV ||
@@ -282,7 +347,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             type === AntlrGlslLexer.OP_BIT_XOR ||
             type === AntlrGlslLexer.OP_LOGICAL_AND ||
             type === AntlrGlslLexer.OP_LOGICAL_OR ||
-            type === AntlrGlslLexer.OP_LOGICAL_XOR;
+            type === AntlrGlslLexer.OP_LOGICAL_XOR
+        );
     }
 
     private isTernaryOperator(type: number): boolean {
@@ -294,10 +360,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isOperator(type: number): boolean {
-        return this.isUnaryOperator(type) ||
-            this.isBinaryOperator(type) ||
-            this.isAssignmentOperator(type) ||
-            this.isTernaryOperator(type);
+        return this.isUnaryOperator(type) || this.isBinaryOperator(type) || this.isAssignmentOperator(type) || this.isTernaryOperator(type);
     }
 
     private addOperatorSplitTextEdit(t2: Token): void {
@@ -439,12 +502,14 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isUnaryOperator(type: number): boolean {
-        return type === AntlrGlslLexer.OP_SUB ||
+        return (
+            type === AntlrGlslLexer.OP_SUB ||
             type === AntlrGlslLexer.OP_ADD ||
             type === AntlrGlslLexer.OP_INC ||
             type === AntlrGlslLexer.OP_DEC ||
             type === AntlrGlslLexer.OP_BIT_UNARY ||
-            type === AntlrGlslLexer.OP_LOGICAL_UNARY;
+            type === AntlrGlslLexer.OP_LOGICAL_UNARY
+        );
     }
 
     private refreshCaseState(t1: Token, t2: Token): void {
@@ -503,8 +568,10 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             const p1 = this.di.offsetToPosition(t1.stopIndex - this.di.getInjectionOffset() + 1);
             const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
             const p3 = this.di.offsetToPosition(t1.startIndex - this.di.getInjectionOffset());
-            return (this.range.start.isBefore(p1) && this.range.end.isAfter(p2)) ||
-                (this.isT3(t2.type) && this.range.start.isBefore(p1) && this.range.end.isAfter(p3));
+            return (
+                (this.range.start.isBefore(p1) && this.range.end.isAfter(p2)) ||
+                (this.isT3(t2.type) && this.range.start.isBefore(p1) && this.range.end.isAfter(p3))
+            );
         } else {
             const t2 = this.tokens[this.ctx.currentTokenIndex];
             const p1 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
@@ -512,5 +579,4 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             return this.range.start.isBefore(p2) && this.range.end.isAfter(p1);
         }
     }
-
 }

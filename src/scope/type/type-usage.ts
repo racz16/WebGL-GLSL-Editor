@@ -8,7 +8,6 @@ import { ArrayUsage } from '../array-usage';
 import { Constants } from '../../core/constants';
 
 export class TypeUsage extends Element {
-
     public readonly declaration: TypeDeclaration;
     public readonly qualifiers = new Array<QualifierUsage>();
     public readonly implicitQualifiers = new Array<Qualifier>();
@@ -16,7 +15,15 @@ export class TypeUsage extends Element {
     public readonly array: ArrayUsage;
     public readonly inlineStructDeclaration: boolean;
 
-    public constructor(name: string, interval: Interval, nameInterval: Interval, scope: Scope, declaration: TypeDeclaration, array: ArrayUsage, inlineStructDeclaration = false) {
+    public constructor(
+        name: string,
+        interval: Interval,
+        nameInterval: Interval,
+        scope: Scope,
+        declaration: TypeDeclaration,
+        array: ArrayUsage,
+        inlineStructDeclaration = false
+    ) {
         super(name, nameInterval, scope);
         this.declaration = declaration;
         this.interval = interval;
@@ -41,7 +48,11 @@ export class TypeUsage extends Element {
 
     private qualifiersEqualsExceptPrecisionWithHalf(tu: TypeUsage): boolean {
         for (const qu of this.qualifiers) {
-            if (!qu.qualifier.isPrecisionQualifier() && !tu.containsQualifier(qu.qualifier) && !tu.implicitQualifiers.includes(qu.qualifier)) {
+            if (
+                !qu.qualifier.isPrecisionQualifier() &&
+                !tu.containsQualifier(qu.qualifier) &&
+                !tu.implicitQualifiers.includes(qu.qualifier)
+            ) {
                 return false;
             }
         }
@@ -84,5 +95,4 @@ export class TypeUsage extends Element {
     public toStringWithoutQualifiers(toOutline = false): string {
         return this.toStringName(toOutline) + this.array.toString();
     }
-
 }

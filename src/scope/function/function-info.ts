@@ -1,8 +1,7 @@
-import { MarkdownString } from "vscode";
-import { ShaderStage } from "../shader-stage";
+import { MarkdownString } from 'vscode';
+import { ShaderStage } from '../shader-stage';
 
 export class FunctionInfo {
-
     public readonly name: string;
     public readonly summary: MarkdownString;
     public readonly stage: ShaderStage;
@@ -17,5 +16,4 @@ export class FunctionInfo {
         this.ctor = ctor;
         this.extension = extension;
     }
-
 }

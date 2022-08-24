@@ -1,5 +1,5 @@
-import { Interval } from "../interval";
-import { TypeUsage } from "../type/type-usage";
+import { Interval } from '../interval';
+import { TypeUsage } from '../type/type-usage';
 
 export class CompletionRegion {
     public readonly type: TypeUsage;

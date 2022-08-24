@@ -15,7 +15,6 @@ import { Constants } from '../core/constants';
 import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class TypeDeclarationProcessor {
-
     private di: DocumentInfo;
     private scope: Scope;
 
@@ -28,7 +27,7 @@ export class TypeDeclarationProcessor {
 
     public static searchTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): TypeDeclaration {
         while (scope) {
-            const td = scope.typeDeclarations.find(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval));
+            const td = scope.typeDeclarations.find((td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval));
             if (td) {
                 return td;
             } else if (this.anyVariableOrFunction(name, nameInterval, scope)) {
@@ -40,9 +39,11 @@ export class TypeDeclarationProcessor {
     }
 
     private static anyVariableOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
-        return scope.variableDeclarations.some(vd => vd.name === name && Helper.isALowerThanB(vd.declarationInterval, nameInterval)) ||
-            scope.functionPrototypes.some(fp => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
-            scope.functionDefinitions.some(fd => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval));
+        return (
+            scope.variableDeclarations.some((vd) => vd.name === name && Helper.isALowerThanB(vd.declarationInterval, nameInterval)) ||
+            scope.functionPrototypes.some((fp) => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
+            scope.functionDefinitions.some((fd) => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval))
+        );
     }
 
     //
@@ -55,7 +56,18 @@ export class TypeDeclarationProcessor {
         const interval = new Interval(ibdc.start.startIndex, ibdc.RCB().symbol.stopIndex + 1, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
-        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, true);
+        const td = new TypeDeclaration(
+            name,
+            nameInterval,
+            scope,
+            false,
+            interval,
+            Constants.INVALID,
+            Constants.INVALID,
+            typeBase,
+            typeCategory,
+            true
+        );
         di.getRegions().typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
         scope.typeDeclarations.push(td);
         if (name) {
@@ -66,10 +78,12 @@ export class TypeDeclarationProcessor {
             this.addMembers(td, ibdc.variable_declaration());
             this.scope = this.scope.parent;
         } else {
-            this.di.getRegions().scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
+            this.di
+                .getRegions()
+                .scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
             for (const vdc of ibdc.variable_declaration()) {
                 const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
-                vds.forEach(vd => td.interfaceMembers.push(vd));
+                vds.forEach((vd) => td.interfaceMembers.push(vd));
             }
         }
         return td;
@@ -78,7 +92,14 @@ export class TypeDeclarationProcessor {
     //
     //type declaration
     //
-    public getTypeDeclaration(tdc: Type_declarationContext, scope: Scope, documentInfo: DocumentInfo, index: number, parameter: boolean, returnType: boolean): TypeDeclaration {
+    public getTypeDeclaration(
+        tdc: Type_declarationContext,
+        scope: Scope,
+        documentInfo: DocumentInfo,
+        index: number,
+        parameter: boolean,
+        returnType: boolean
+    ): TypeDeclaration {
         this.initialize(scope, documentInfo);
         Helper.addFoldingRegionFromTokens(this.di, tdc.KW_STRUCT().symbol, tdc.RCB().symbol);
         if (index !== 0) {
@@ -89,7 +110,19 @@ export class TypeDeclarationProcessor {
         const interval = Helper.getIntervalFromParserRule(tdc, this.di);
         const typeBase = TypeBase.NONE;
         const typeCategory = TypeCategory.CUSTOM;
-        const td = new TypeDeclaration(name, nameInterval, scope, false, interval, Constants.INVALID, Constants.INVALID, typeBase, typeCategory, false, returnType || parameter);
+        const td = new TypeDeclaration(
+            name,
+            nameInterval,
+            scope,
+            false,
+            interval,
+            Constants.INVALID,
+            Constants.INVALID,
+            typeBase,
+            typeCategory,
+            false,
+            returnType || parameter
+        );
         this.di.getRegions().typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
         if (parameter) {
             this.di.getRootScope().typeDeclarations.push(td);
@@ -132,8 +165,7 @@ export class TypeDeclarationProcessor {
     private addMembers(td: TypeDeclaration, vdcs: Array<Variable_declarationContext>): void {
         for (const vdc of vdcs) {
             const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
-            vds.forEach(vd => td.members.push(vd));
+            vds.forEach((vd) => td.members.push(vd));
         }
     }
-
 }
