@@ -1,4 +1,4 @@
-import { CancellationToken, CodeLens, CodeLensProvider, Event, Position, ProviderResult, Range, TextDocument } from 'vscode';
+import { CancellationToken, CodeLens, CodeLensProvider, ProviderResult, TextDocument } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslInjectionErrorProvider implements CodeLensProvider {

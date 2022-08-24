@@ -16,7 +16,6 @@ import { ShaderStage } from '../scope/shader-stage';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 import { DocumentRegions } from './document-regions';
-import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;

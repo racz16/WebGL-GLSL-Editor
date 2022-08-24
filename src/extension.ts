@@ -1,4 +1,4 @@
-import { ExtensionContext, languages, commands, workspace, window } from 'vscode';
+import { ExtensionContext, languages, workspace, window } from 'vscode';
 import { GlslEditor } from './core/glsl-editor';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { Constants } from './core/constants';
