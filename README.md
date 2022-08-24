@@ -79,7 +79,7 @@ The extension can provide outline information and breadcrumbs about the types, i
 
 ### Inlay hints
 
-The extension can show function and constructor parameters in the source code. You can enable or disable this feature in the Settings.
+The extension can show function and constructor parameters in the source code.
 
 ![inlay hints](res/png/screenshots/inlay-hints.png)
 
@@ -159,7 +159,6 @@ You can easily access several online documentations by commands.
 
 ## Configuration
 
-* `webgl-glsl-editor.inlayHints`: Enables/disables inlay hints.
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames.
 * `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser.
 * `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.

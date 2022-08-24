@@ -19,9 +19,6 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
     }
 
     public provideInlayHints(document: TextDocument, range: Range, token: CancellationToken): ProviderResult<InlayHint[]> {
-        if (!GlslEditor.CONFIGURATIONS.getInlayHints()) {
-            return null;
-        }
         this.initialize(document, range);
         this.addHintsFromScope(this.di.getRootScope());
         return this.result;
