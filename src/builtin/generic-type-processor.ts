@@ -1,4 +1,5 @@
-import { IFunction, IParameter } from "./interfaces/functions";
+import { IFunction, IParameter } from './interfaces';
+
 
 export class GenericTypeProcessor {
 

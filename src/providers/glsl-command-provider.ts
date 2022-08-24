@@ -1,12 +1,9 @@
-import * as path from 'path';
 import { ViewColumn, window, Uri, env, WebviewPanel, Disposable } from 'vscode';
-import { Documentation } from '../builtin/documentation';
 import { Constants } from '../core/constants';
 import { GlslEditor } from '../core/glsl-editor';
-import { GlslDiagnosticProvider } from './glsl-diagnostic-provider';
+import { HostDependent } from '../host-dependent';
 
 export class GlslCommandProvider {
-
     public static readonly OPEN_DOCS_GL = 'opendocsgl';
     public static readonly OPEN_GL_ES_2 = 'opengles2';
     public static readonly OPEN_GL_ES_3 = 'opengles3';
@@ -30,7 +27,7 @@ export class GlslCommandProvider {
     }
 
     public static openDoc(name: string): void {
-        if (GlslEditor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
+        if (HostDependent.webExtension || GlslEditor.CONFIGURATIONS.getAlwaysOpenOnlineDoc()) {
             env.openExternal(Uri.parse(`http://docs.gl/el3/${name}`));
         } else {
             this.openOfflineDoc(name);
@@ -39,10 +36,12 @@ export class GlslCommandProvider {
 
     public static openPreprocessedGlsl(): void {
         const doc = window.activeTextEditor.document;
-        if (doc?.languageId === Constants.GLSL) {
-            new GlslDiagnosticProvider().displayPreprocessedCode(doc);
-        } else {
+        if (doc?.languageId !== Constants.GLSL) {
             window.showWarningMessage('The active file have to be a GLSL file.');
+        } else if (HostDependent.webExtension) {
+            window.showWarningMessage("The web extension can't generate preprocessed GLSL source code. Try it with the desktop version.");
+        } else {
+            HostDependent.displayPreprocessedCode(doc);
         }
     }
 
@@ -51,19 +50,17 @@ export class GlslCommandProvider {
             this.panel = this.createPanel(name);
         }
         this.panel.title = name;
-        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js', 'mml-chtml.js'));
+        const filePath = Uri.file(`${GlslEditor.getContext().extensionPath}/res/js/mml-chtml.js`);
         const specialFilePath = this.panel.webview.asWebviewUri(filePath);
-        this.panel.webview.html = Documentation.getDocumentation(name, specialFilePath);
+        this.panel.webview.html = HostDependent.getDocumentation(name, specialFilePath);
     }
 
     private static createPanel(name: string): WebviewPanel {
-        const panel = window.createWebviewPanel('documentation', name, ViewColumn.Beside,
-            {
-                enableScripts: true,
-                enableCommandUris: true,
-                localResourceRoots: [Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'js'))]
-            }
-        );
+        const panel = window.createWebviewPanel('documentation', name, ViewColumn.Beside, {
+            enableScripts: true,
+            enableCommandUris: true,
+            localResourceRoots: [Uri.file(`${GlslEditor.getContext().extensionPath}/res/js`)],
+        });
 
         this.panelEventHandler?.dispose();
         this.isPanelUsable = true;
@@ -73,5 +70,4 @@ export class GlslCommandProvider {
 
         return panel;
     }
-
 }

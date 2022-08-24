@@ -101,7 +101,7 @@
 			{
 				"command": "webgl-glsl-editor.generatepreprocessed",
 				"title": "Generate preprocessed GLSL source code",
-				"enablement": "editorLangId == glsl && !editorReadonly"
+				"enablement": "!isWeb && editorLangId == glsl && !editorReadonly"
 			}
 		],
 		"configuration": [
@@ -123,13 +123,13 @@
 					"webgl-glsl-editor.alwaysOpenOnlineDoc": {
 						"type": "boolean",
 						"default": false,
-						"description": "Documentation is always opened online in the browser.",
+						"description": "Documentation is always opened online in the browser. This configuration nnly works with the desktop version.",
 						"order": 3
 					},
 					"webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
 						"type": "boolean",
 						"default": false,
-						"description": "Offline documentation is always opened in new tab.",
+						"description": "Offline documentation is always opened in new tab. This configuration nnly works with the desktop version.",
 						"order": 4
 					},
 					"webgl-glsl-editor.format.placeBracesOnSeparateLine": {
@@ -276,7 +276,19 @@
 		"compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
 		"compile-antlr-linux": "./compile-antlr.sh",
 		"lint": "npx eslint -c .eslintrc.js --ext .ts --ignore-pattern src/_generated src",
-		"run-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
+		"run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
+		"package-web": "vsce package --target web --ignoreFile web.vscodeignore",
+		"package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",
+		"package-win32-ia32": "vsce package --target win32-ia32 --ignoreFile windows.vscodeignore",
+		"package-win32-arm64": "vsce package --target win32-arm64 --ignoreFile windows.vscodeignore",
+		"package-darwin-x64": "vsce package --target darwin-x64 --ignoreFile mac.vscodeignore",
+		"package-darwin-arm64": "vsce package --target darwin-arm64 --ignoreFile mac.vscodeignore",
+		"package-linux-x64": "vsce package --target linux-x64 --ignoreFile linux.vscodeignore",
+		"package-linux-arm64": "vsce package --target linux-arm64 --ignoreFile linux.vscodeignore",
+		"package-linux-armhf": "vsce package --target linux-armhf --ignoreFile linux.vscodeignore",
+		"package-alpine-x64": "vsce package --target alpine-x64 --ignoreFile linux.vscodeignore",
+		"package-alpine-arm64": "vsce package --target alpine-arm64 --ignoreFile linux.vscodeignore",
+		"package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.4",
@@ -287,12 +299,15 @@
 		"@typescript-eslint/eslint-plugin": "^3.10.1",
 		"@typescript-eslint/parser": "^3.10.1",
 		"@vscode/test-web": "^0.0.22",
+		"assert": "^2.0.0",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^6.15.0",
 		"glob": "^7.1.7",
 		"mocha": "^9.2.2",
+		"process": "^0.11.10",
 		"ts-loader": "^8.3.0",
 		"typescript": "^4.3.5",
+		"vsce": "^2.10.2",
 		"vscode-test": "^1.6.1",
 		"webpack": "^5.51.1",
 		"webpack-cli": "^4.8.0"

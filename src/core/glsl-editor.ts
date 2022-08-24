@@ -1,12 +1,10 @@
-import * as fs from 'fs';
 import { Uri, TextDocument, ExtensionContext, DiagnosticCollection, languages } from 'vscode';
 import { DocumentInfo } from './document-info';
 import { Configurations } from './configurations';
-import { GlslDiagnosticProvider } from '../providers/glsl-diagnostic-provider';
 import { Constants } from './constants';
+import { HostDependent } from '../host-dependent';
 
 export class GlslEditor {
-
     public static readonly CONFIGURATIONS = new Configurations();
 
     private static readonly documentInfos = new Map<string, DocumentInfo>();
@@ -19,10 +17,6 @@ export class GlslEditor {
 
     public static getContext(): ExtensionContext {
         return this.context;
-    }
-
-    public static loadJson<T>(name: string): T {
-        return JSON.parse(fs.readFileSync(`${this.context.extensionPath}/res/json/${name}.json`, 'utf8'));
     }
 
     public static processElements(document: TextDocument): void {
@@ -44,7 +38,7 @@ export class GlslEditor {
         for (const di of this.documentInfos.values()) {
             di.invalidate();
             if (!di.getDocument().isClosed) {
-                new GlslDiagnosticProvider().textChanged(di.getDocument());
+                HostDependent.textChanged(di.getDocument());
             }
         }
     }
@@ -52,5 +46,4 @@ export class GlslEditor {
     public static getDiagnosticCollection(): DiagnosticCollection {
         return this.collection;
     }
-
 }

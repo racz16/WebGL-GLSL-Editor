@@ -1,0 +1,26 @@
+.github
+.vscode/**
+.vscode-test/**
+.vscode-test-web/**
+out/test/**
+out
+node_modules
+src/**
+.gitignore
+BUILD.md
+**/tsconfig.json
+**/*.map
+**/*.ts
+syntaxes/.antlr
+syntaxes/*.g4
+res/png/screenshots
+res/gif
+private
+**/*.ps1
+**/*.sh
+webpack.config.js
+*.vscodeignore
+
+# linux specific ignore
+res/bin/glslangValidatorWindows.exe
+res/bin/glslangValidatorMac

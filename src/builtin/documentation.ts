@@ -1,19 +1,16 @@
-import * as path from 'path';
 import * as fs from 'fs';
 import { Uri } from 'vscode';
-import { IRedirections } from './interfaces/redirections';
 import { GlslEditor } from '../core/glsl-editor';
+import { documentationRedirections } from './info/documentation-redirections';
 
 export class Documentation {
-
     private static readonly documentations = new Map<string, string>();
     private static readonly redirections = new Map<string, string>();
     private static initialized = false;
 
     private static initialize(): void {
         if (!this.initialized) {
-            const redirections = GlslEditor.loadJson<IRedirections>('documentation_redirections');
-            for (const redirection of redirections.redirections) {
+            for (const redirection of documentationRedirections) {
                 this.redirections.set(redirection.from, redirection.to);
             }
             this.initialized = true;
@@ -32,7 +29,7 @@ export class Documentation {
     }
 
     private static getDocumentationFromFile(name: string, redirectedName: string, uri: Uri): string {
-        const filePath = Uri.file(path.join(GlslEditor.getContext().extensionPath, 'res', 'xhtml', `${redirectedName}.xhtml`));
+        const filePath = Uri.file(`${GlslEditor.getContext().extensionPath}/res/xhtml/${redirectedName}.xhtml`);
         if (!fs.existsSync(filePath.fsPath)) {
             return `${name} — documentation is not available`;
         }
@@ -63,5 +60,4 @@ export class Documentation {
                 </html>
                 `;
     }
-
 }
