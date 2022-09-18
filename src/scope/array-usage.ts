@@ -1,8 +1,7 @@
-import { Constants } from "../core/constants";
-import { Interval } from "./interval";
+import { Constants } from '../core/constants';
+import { Interval } from './interval';
 
 export class ArrayUsage {
-
     public readonly arraySize: number;
     public readonly interval: Interval;
     public readonly multidimensional: boolean;
@@ -50,5 +49,4 @@ export class ArrayUsage {
             return `[${this.arraySize}]`;
         }
     }
-
 }

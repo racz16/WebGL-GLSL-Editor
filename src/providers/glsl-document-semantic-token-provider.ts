@@ -1,10 +1,18 @@
-import { DocumentSemanticTokensProvider, TextDocument, CancellationToken, ProviderResult, SemanticTokens, SemanticTokensLegend, SemanticTokensBuilder, Range } from "vscode";
-import { DocumentInfo } from "../core/document-info";
-import { GlslEditor } from "../core/glsl-editor";
-import { SemanticRegion } from "../scope/regions/semantic-region";
+import {
+    DocumentSemanticTokensProvider,
+    TextDocument,
+    CancellationToken,
+    ProviderResult,
+    SemanticTokens,
+    SemanticTokensLegend,
+    SemanticTokensBuilder,
+    Range,
+} from 'vscode';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { SemanticRegion } from '../scope/regions/semantic-region';
 
 export class GlslDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
-
     private di: DocumentInfo;
     private result: SemanticTokensBuilder;
 
@@ -32,19 +40,14 @@ export class GlslDocumentSemanticTokensProvider implements DocumentSemanticToken
             this.result.push(range, sr.type, sr.modifiers);
         }
     }
-
 }
 
 export class GlslSemanticTokensLegend implements SemanticTokensLegend {
     public readonly tokenTypes = [
-        'type',     //user type
-        'struct',   //builtin type
+        'type', //user type
+        'struct', //builtin type
         'function',
         'variable',
     ];
-    public readonly tokenModifiers = [
-        'declaration',
-        'definition',
-        'readonly',
-    ];
+    public readonly tokenModifiers = ['declaration', 'definition', 'readonly'];
 }

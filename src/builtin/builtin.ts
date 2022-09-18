@@ -1,6 +1,3 @@
-import { ITypes, IOpaqueType, ICustomType, ITypeMember, IGenericTypes } from './interfaces/types';
-import { IKeywords } from './interfaces/keywords';
-import { IQualifiers, ILayoutParameters } from './interfaces/qualifiers';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -9,10 +6,7 @@ import { Qualifier } from '../scope/qualifier/qualifier';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeBase } from '../scope/type/type-base';
 import { TypeUsage } from '../scope/type/type-usage';
-import { IVariables, IVariable } from './interfaces/variables';
 import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
-import { IReservedWords } from './interfaces/reserved-words';
-import { IFunctions, IParameter, IFunctionSummaries, IFunctionSummary, IImportantFunctions, IFunction } from './interfaces/functions';
 import { MarkdownString } from 'vscode';
 import { ShaderStage } from '../scope/shader-stage';
 import { GlslCommandProvider } from '../providers/glsl-command-provider';
@@ -23,16 +17,31 @@ import { ArrayUsage } from '../scope/array-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { ConstructorProcessor } from './constructor-processor';
 import { Helper } from '../processor/helper';
-import { GlslEditor } from '../core/glsl-editor';
-import { IPreprocessor } from './interfaces/preprocessor';
 import { LayoutParameter } from '../scope/qualifier/layout-parameter';
+import { reservedWords } from './info/reserved';
+import { keywords } from './info/keywords';
+import { qualifiers } from './info/qualifiers';
+import { preprocessorDirectives, preprocessorMacros } from './info/preprocessor';
+import { layoutParameters } from './info/layout-parameters';
+import { ICustomType, IFunction, IFunctionSummary, IOpaqueType, IParameter, ITransparentType, ITypeMember, IVariable } from './interfaces';
+import { genericTypes } from './info/generic_types';
+import { variables } from './info/variables';
+import { functions } from './info/functions';
+import { functionSummaries } from './info/function-summaries';
+import { importantFunctions } from './info/important-functions';
+import {
+    customTypes,
+    floatingPointOpaqueTypes,
+    signedIntegerOpaqueTypes,
+    transparentTypes,
+    unsignedIntegerOpaqueTypes,
+} from './info/types';
 
 export class Builtin {
-
     private static builtin_100: Builtin;
     private static builtin_300: Builtin;
 
-    private postfix: '100' | '300';
+    private version: '100' | '300';
 
     public readonly functions = new Array<LogicalFunction>();
     public readonly functionSummaries = new Map<string, FunctionInfo>();
@@ -48,10 +57,10 @@ export class Builtin {
     public readonly genericTypes = new Map<string, Array<string>>();
     public readonly macros = new Array<string>();
 
-    private constructor() { }
+    private constructor() {}
 
-    public setValues(postfix: '100' | '300'): void {
-        this.postfix = postfix;
+    public setValues(version: '100' | '300'): void {
+        this.version = version;
         this.loadReservedWords();
         this.loadKeywords();
         this.loadQualifiers();
@@ -66,16 +75,11 @@ export class Builtin {
         this.loadImportantFunctions();
     }
 
-    private getVersionedName(name: string): string {
-        return `${name}_${this.postfix}`;
-    }
-
     //
     //reserved
     //
     private loadReservedWords(): void {
-        const reservedWords = GlslEditor.loadJson<IReservedWords>(this.getVersionedName('reserved'));
-        for (const reserved of reservedWords.reservedWords) {
+        for (const reserved of reservedWords.get(this.version)) {
             this.reservedWords.push(reserved);
         }
     }
@@ -84,8 +88,7 @@ export class Builtin {
     //keywords
     //
     private loadKeywords(): void {
-        const keywords = GlslEditor.loadJson<IKeywords>(this.getVersionedName('keywords'));
-        for (const keyword of keywords.keywords) {
+        for (const keyword of keywords.get(this.version)) {
             const stage = this.getStage(keyword.stage);
             this.keywords.push(new Keyword(keyword.name, stage));
         }
@@ -95,8 +98,7 @@ export class Builtin {
     //qualifiers
     //
     private loadQualifiers(): void {
-        const qualifiers = GlslEditor.loadJson<IQualifiers>(this.getVersionedName('qualifiers'));
-        for (const qualifier of qualifiers.qualifiers) {
+        for (const qualifier of qualifiers.get(this.version)) {
             this.qualifiers.set(qualifier.name, new Qualifier(qualifier.name, qualifier.order));
         }
     }
@@ -105,11 +107,10 @@ export class Builtin {
     //preprocessor
     //
     private loadPreprocessor(): void {
-        const preprocessor = GlslEditor.loadJson<IPreprocessor>('preprocessor');
-        for (const preprocessorDirective of preprocessor.directives) {
+        for (const preprocessorDirective of preprocessorDirectives) {
             this.preprocessor.push(preprocessorDirective);
         }
-        for (const macro of preprocessor.macros) {
+        for (const macro of preprocessorMacros) {
             this.macros.push(macro);
         }
     }
@@ -118,9 +119,8 @@ export class Builtin {
     //layout parameters
     //
     private loadLayoutParameters(): void {
-        if (this.postfix !== '100') {
-            const layoutParameters = GlslEditor.loadJson<ILayoutParameters>('layout_parameters');
-            for (const param of layoutParameters.layoutParameters) {
+        if (this.version !== '100') {
+            for (const param of layoutParameters) {
                 this.layoutParameters.push(new LayoutParameter(param.name, param.assignable, param.extension));
             }
         }
@@ -130,16 +130,15 @@ export class Builtin {
     //types
     //
     private loadTypes(): void {
-        const types = GlslEditor.loadJson<ITypes>(this.getVersionedName('types'));
-        this.loadTransparentTypes(types);
-        this.loadOpaqueTypes(types.floatingPointOpaque, TypeCategory.FLOATING_POINT_OPAQUE, TypeBase.FLOAT);
-        this.loadOpaqueTypes(types.signedIntegerOpaque, TypeCategory.SIGNED_INTEGER_OPAQUE, TypeBase.INT);
-        this.loadOpaqueTypes(types.unsignedIntegerOpaque, TypeCategory.UNSIGNED_INTEGER_OPAQUE, TypeBase.UINT);
-        this.loadCustomTypes(types);
+        this.loadTransparentTypes(transparentTypes.get(this.version));
+        this.loadOpaqueTypes(floatingPointOpaqueTypes.get(this.version), TypeCategory.FLOATING_POINT_OPAQUE, TypeBase.FLOAT);
+        this.loadOpaqueTypes(signedIntegerOpaqueTypes.get(this.version), TypeCategory.SIGNED_INTEGER_OPAQUE, TypeBase.INT);
+        this.loadOpaqueTypes(unsignedIntegerOpaqueTypes.get(this.version), TypeCategory.UNSIGNED_INTEGER_OPAQUE, TypeBase.UINT);
+        this.loadCustomTypes(customTypes.get(this.version));
     }
 
-    private loadTransparentTypes(types: ITypes): void {
-        for (const type of types.transparent) {
+    private loadTransparentTypes(types: Array<ITransparentType>): void {
+        for (const type of types) {
             let td: TypeDeclaration;
             if (type.alias) {
                 td = this.types.get(type.alias);
@@ -153,11 +152,16 @@ export class Builtin {
 
     private stringToTypeBase(str: string): TypeBase {
         switch (str) {
-            case Constants.BOOL: return TypeBase.BOOL;
-            case Constants.INT: return TypeBase.INT;
-            case Constants.UINT: return TypeBase.UINT;
-            case Constants.FLOAT: return TypeBase.FLOAT;
-            default: return TypeBase.NONE;
+            case Constants.BOOL:
+                return TypeBase.BOOL;
+            case Constants.INT:
+                return TypeBase.INT;
+            case Constants.UINT:
+                return TypeBase.UINT;
+            case Constants.FLOAT:
+                return TypeBase.FLOAT;
+            default:
+                return TypeBase.NONE;
         }
     }
 
@@ -168,8 +172,8 @@ export class Builtin {
         }
     }
 
-    private loadCustomTypes(types: ITypes): void {
-        for (const type of types.custom) {
+    private loadCustomTypes(types: Array<ICustomType>): void {
+        for (const type of types) {
             const td = Helper.createTypeDeclaration(type.name, Constants.INVALID, Constants.INVALID, TypeBase.NONE, TypeCategory.CUSTOM);
             this.addMembers(td, type);
             this.types.set(type.name, td);
@@ -198,8 +202,7 @@ export class Builtin {
     //generic types
     //
     private loadGenericTypes(): void {
-        const genTypes = GlslEditor.loadJson<IGenericTypes>(this.getVersionedName('generic_types'));
-        for (const genType of genTypes.types) {
+        for (const genType of genericTypes.get(this.version)) {
             const generic = genType.generic;
             const reals = new Array<string>();
             for (const real of genType.real) {
@@ -228,8 +231,7 @@ export class Builtin {
     //variables
     //
     private loadVariables(): void {
-        const variables = GlslEditor.loadJson<IVariables>(this.getVersionedName('variables'));
-        for (const variable of variables.variables) {
+        for (const variable of variables.get(this.version)) {
             const array = variable.array === undefined ? Constants.INVALID : variable.array;
             const td = this.types.get(variable.type);
             const tu = Helper.createTypeUsage(variable.type, td, new ArrayUsage(array));
@@ -250,7 +252,9 @@ export class Builtin {
             if (!variable.notDocumented) {
                 mds.appendText(Constants.NEW_LINE);
                 const parameter = encodeURIComponent(JSON.stringify(variable.name));
-                mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+                mds.appendMarkdown(
+                    `[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`
+                );
                 mds.isTrusted = true;
             }
         } else if (variable.min) {
@@ -273,8 +277,7 @@ export class Builtin {
     //functions
     //
     private loadFunctions(): void {
-        const functions = GlslEditor.loadJson<IFunctions>(this.getVersionedName('functions'));
-        for (const genericFunc of functions.functions) {
+        for (const genericFunc of functions.get(this.version)) {
             for (const realFunc of GenericTypeProcessor.getFunctions(genericFunc, this.genericTypes)) {
                 const td = this.types.get(realFunc.returnType);
                 const tu = Helper.createTypeUsage(realFunc.returnType, td, new ArrayUsage());
@@ -311,8 +314,7 @@ export class Builtin {
     }
 
     private loadFunctionSummaries(): void {
-        const functions = GlslEditor.loadJson<IFunctionSummaries>(this.getVersionedName('function_summaries'));
-        for (const func of functions.functions) {
+        for (const func of functionSummaries.get(this.version)) {
             const summary = this.createFunctionSummary(func);
             const stage = this.getStage(func.stage);
             const fi = new FunctionInfo(func.name, summary, stage, false, func.extension);
@@ -337,8 +339,7 @@ export class Builtin {
     }
 
     private loadImportantFunctions(): void {
-        const functions = GlslEditor.loadJson<IImportantFunctions>('important_functions');
-        for (const func of functions.importantFunctions) {
+        for (const func of importantFunctions) {
             this.importantFunctions.push(func);
         }
     }
@@ -348,9 +349,12 @@ export class Builtin {
     //
     private getStage(stage: string): ShaderStage {
         switch (stage) {
-            case 'vertex': return ShaderStage.VERTEX;
-            case 'fragment': return ShaderStage.FRAGMENT;
-            default: return ShaderStage.DEFAULT;
+            case 'vertex':
+                return ShaderStage.VERTEX;
+            case 'fragment':
+                return ShaderStage.FRAGMENT;
+            default:
+                return ShaderStage.DEFAULT;
         }
     }
 
@@ -383,15 +387,41 @@ export class Builtin {
                 const td = bi.types.get(type.name);
                 bi.types.set(name, td);
             } else {
-                const td = new TypeDeclaration(type.name, type.nameInterval, null, type.builtin, type.interval, type.width, type.height, type.typeBase, type.typeCategory);
+                const td = new TypeDeclaration(
+                    type.name,
+                    type.nameInterval,
+                    null,
+                    type.builtin,
+                    type.interval,
+                    type.width,
+                    type.height,
+                    type.typeBase,
+                    type.typeCategory
+                );
                 for (const member of type.members) {
                     const td2 = bi.types.get(member.type.name);
-                    const tu = new TypeUsage(member.type.name, member.type.interval, member.type.nameInterval, null, td2, member.type.array);
+                    const tu = new TypeUsage(
+                        member.type.name,
+                        member.type.interval,
+                        member.type.nameInterval,
+                        null,
+                        td2,
+                        member.type.array
+                    );
                     for (const qu of member.type.qualifiers) {
                         const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                         tu.qualifiers.push(qu2);
                     }
-                    const vd = new VariableDeclaration(member.name, member.nameInterval, null, member.builtin, member.declarationInterval, tu, false, false);
+                    const vd = new VariableDeclaration(
+                        member.name,
+                        member.nameInterval,
+                        null,
+                        member.builtin,
+                        member.declarationInterval,
+                        tu,
+                        false,
+                        false
+                    );
                     td.members.push(vd);
                 }
                 bi.types.set(type.name, td);
@@ -407,7 +437,19 @@ export class Builtin {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);
             }
-            const vd = new VariableDeclaration(variable.name, variable.nameInterval, null, variable.builtin, variable.declarationInterval, tu, false, false, variable.summary, variable.stage, variable.extension);
+            const vd = new VariableDeclaration(
+                variable.name,
+                variable.nameInterval,
+                null,
+                variable.builtin,
+                variable.declarationInterval,
+                tu,
+                false,
+                false,
+                variable.summary,
+                variable.stage,
+                variable.extension
+            );
             bi.variables.set(variable.name, vd);
         }
         for (const olf of this.functions) {
@@ -419,7 +461,18 @@ export class Builtin {
                 const qu = new QualifierUsage(qualifier.name, null, null, q);
                 tu.qualifiers.push(qu);
             }
-            const fp = new FunctionDeclaration(ofp.name, ofp.nameInterval, null, tu, ofp.builtIn, ofp.ctor, ofp.interval, null, ofp.stage, ofp.extension);
+            const fp = new FunctionDeclaration(
+                ofp.name,
+                ofp.nameInterval,
+                null,
+                tu,
+                ofp.builtIn,
+                ofp.ctor,
+                ofp.interval,
+                null,
+                ofp.stage,
+                ofp.extension
+            );
             for (const parameter of ofp.parameters) {
                 const td = bi.types.get(parameter.type.name);
                 const tu = new TypeUsage(parameter.type.name, null, null, null, td, parameter.type.array);
@@ -479,5 +532,4 @@ export class Builtin {
         }
         return this.builtin_300.clone();
     }
-
 }

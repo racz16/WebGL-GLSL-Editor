@@ -1,4 +1,4 @@
-import { Constants } from "../../core/constants";
+import { Constants } from '../../core/constants';
 
 export class FormattingContext {
     lastt1TokenIndex = Constants.INVALID;

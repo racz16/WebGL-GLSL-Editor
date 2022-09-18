@@ -1,12 +1,11 @@
-import { CancellationToken, InlayHint, InlayHintKind, InlayHintsProvider, ProviderResult, Range, TextDocument } from "vscode";
-import { DocumentInfo } from "../core/document-info";
-import { GlslEditor } from "../core/glsl-editor";
-import { FunctionCall } from "../scope/function/function-call";
-import { FunctionDeclaration } from "../scope/function/function-declaration";
-import { Scope } from "../scope/scope";
+import { CancellationToken, InlayHint, InlayHintKind, InlayHintsProvider, ProviderResult, Range, TextDocument } from 'vscode';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { FunctionCall } from '../scope/function/function-call';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { Scope } from '../scope/scope';
 
 export class GlslInlayHintsProvider implements InlayHintsProvider {
-
     private di: DocumentInfo;
     private range: Range;
     private result: Array<InlayHint>;
@@ -19,9 +18,6 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
     }
 
     public provideInlayHints(document: TextDocument, range: Range, token: CancellationToken): ProviderResult<InlayHint[]> {
-        if (!GlslEditor.CONFIGURATIONS.getInlayHints()) {
-            return null;
-        }
         this.initialize(document, range);
         this.addHintsFromScope(this.di.getRootScope());
         return this.result;
@@ -60,5 +56,4 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
         ih.paddingRight = true;
         this.result.push(ih);
     }
-
 }

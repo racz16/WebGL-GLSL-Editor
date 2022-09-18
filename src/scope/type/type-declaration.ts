@@ -9,7 +9,6 @@ import { Constants } from '../../core/constants';
 import { FunctionCall } from '../function/function-call';
 
 export class TypeDeclaration extends Element {
-
     public readonly builtin: boolean;
     public readonly interval: Interval;
     public readonly typeBase: TypeBase;
@@ -23,7 +22,19 @@ export class TypeDeclaration extends Element {
     public readonly ctorCalls = new Array<FunctionCall>();
     public readonly inline: boolean;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, interval: Interval, width: number, height: number, typeBase: TypeBase, typeCategory = TypeCategory.CUSTOM, interfaceBlock = false, inline = false) {
+    public constructor(
+        name: string,
+        nameInterval: Interval,
+        scope: Scope,
+        builtIn: boolean,
+        interval: Interval,
+        width: number,
+        height: number,
+        typeBase: TypeBase,
+        typeCategory = TypeCategory.CUSTOM,
+        interfaceBlock = false,
+        inline = false
+    ) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.interval = interval;
@@ -48,9 +59,11 @@ export class TypeDeclaration extends Element {
     }
 
     public isOpaque(): boolean {
-        return this.typeCategory === TypeCategory.FLOATING_POINT_OPAQUE ||
+        return (
+            this.typeCategory === TypeCategory.FLOATING_POINT_OPAQUE ||
             this.typeCategory === TypeCategory.SIGNED_INTEGER_OPAQUE ||
-            this.typeCategory === TypeCategory.UNSIGNED_INTEGER_OPAQUE;
+            this.typeCategory === TypeCategory.UNSIGNED_INTEGER_OPAQUE
+        );
     }
 
     public toStringName(toOutline = false): string {
@@ -93,5 +106,4 @@ export class TypeDeclaration extends Element {
         }
         return ret;
     }
-
 }

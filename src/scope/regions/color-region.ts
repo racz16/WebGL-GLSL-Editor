@@ -1,7 +1,6 @@
-import { FunctionCall } from "../function/function-call";
+import { FunctionCall } from '../function/function-call';
 
 export class ColorRegion {
-
     public readonly constructorCall: FunctionCall;
     public readonly parameters: Array<number>;
 
@@ -9,5 +8,4 @@ export class ColorRegion {
         this.constructorCall = constructorCall;
         this.parameters = parameters;
     }
-
 }

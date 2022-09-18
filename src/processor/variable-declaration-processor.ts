@@ -4,7 +4,11 @@ import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeUsageProcessor } from './type-usage-processor';
-import { Single_variable_declarationContext, Variable_declarationContext, Interface_block_declarationContext } from '../_generated/AntlrGlslParser';
+import {
+    Single_variable_declarationContext,
+    Variable_declarationContext,
+    Interface_block_declarationContext,
+} from '../_generated/AntlrGlslParser';
 import { ArrayUsage } from '../scope/array-usage';
 import { ExpressionProcessor } from './expression-processor';
 import { ColorRegion } from '../scope/regions/color-region';
@@ -13,7 +17,6 @@ import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions
 import { Token } from 'antlr4ts';
 
 export class VariableDeclarationProcessor {
-
     private di: DocumentInfo;
     private scope: Scope;
 
@@ -24,7 +27,7 @@ export class VariableDeclarationProcessor {
 
     public static searchVariableDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): VariableDeclaration {
         while (scope) {
-            const td = scope.variableDeclarations.find(td => td.name === name && Helper.isALowerThanB(td.nameInterval, nameInterval));
+            const td = scope.variableDeclarations.find((td) => td.name === name && Helper.isALowerThanB(td.nameInterval, nameInterval));
             if (td) {
                 return td;
             } else if (this.anyTypeOrFunction(name, nameInterval, scope)) {
@@ -36,15 +39,22 @@ export class VariableDeclarationProcessor {
     }
 
     private static anyTypeOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
-        return scope.typeDeclarations.some(td => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
-            scope.functionPrototypes.some(fp => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
-            scope.functionDefinitions.some(fd => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval));
+        return (
+            scope.typeDeclarations.some((td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
+            scope.functionPrototypes.some((fp) => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
+            scope.functionDefinitions.some((fd) => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval))
+        );
     }
 
     //
     //function parameter
     //
-    public getParameterDeclaration(svdc: Single_variable_declarationContext, prototype: boolean, scope: Scope, di: DocumentInfo): VariableDeclaration {
+    public getParameterDeclaration(
+        svdc: Single_variable_declarationContext,
+        prototype: boolean,
+        scope: Scope,
+        di: DocumentInfo
+    ): VariableDeclaration {
         this.initialize(scope, di);
         const ioc = svdc.identifier_optarray_optassignment() ? svdc.identifier_optarray_optassignment().identifier_optarray() : null;
         const name = ioc ? ioc.IDENTIFIER().text : null;
@@ -64,7 +74,7 @@ export class VariableDeclarationProcessor {
     private addSemanticToken(vd: VariableDeclaration, token: Token): void {
         if (vd.name) {
             const modifiers = [SemanticModifier.DECLARATION];
-            if (vd.type.qualifiers.some(q => q.name === 'const')) {
+            if (vd.type.qualifiers.some((q) => q.name === 'const')) {
                 modifiers.push(SemanticModifier.CONST);
             }
             const sr = new SemanticRegion(token, SemanticType.VARIABLE, modifiers);
@@ -75,7 +85,11 @@ export class VariableDeclarationProcessor {
     //
     //interface block
     //
-    public getInterfaceBlockVariableDeclaration(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): VariableDeclaration {
+    public getInterfaceBlockVariableDeclaration(
+        ibdc: Interface_block_declarationContext,
+        scope: Scope,
+        di: DocumentInfo
+    ): VariableDeclaration {
         this.initialize(scope, di);
         const variable = !!ibdc.identifier_optarray();
         const tu = new TypeUsageProcessor().getInterfaceBlockType(ibdc, scope, di);
@@ -120,7 +134,7 @@ export class VariableDeclarationProcessor {
             }
         } else {
             const tu = new TypeUsageProcessor().getMemberType(vdc.type_usage(), new ArrayUsage(), this.scope, this.di, 0);
-            if (!tu.qualifiers.some(q => q.name.startsWith('layout'))) {
+            if (!tu.qualifiers.some((q) => q.name.startsWith('layout'))) {
                 const name = null;
                 const nameInterval = null;
                 const declarationInterval = Helper.getIntervalFromParserRule(vdc, this.di);
@@ -138,5 +152,4 @@ export class VariableDeclarationProcessor {
             this.di.getRegions().colorRegions.push(cr);
         }
     }
-
 }

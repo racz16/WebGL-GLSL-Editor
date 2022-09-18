@@ -1,10 +1,8 @@
-import { workspace, ConfigurationChangeEvent } from "vscode";
-import { Constants } from "./constants";
-import { GlslEditor } from "./glsl-editor";
+import { workspace, ConfigurationChangeEvent } from 'vscode';
+import { Constants } from './constants';
+import { GlslEditor } from './glsl-editor';
 
 export class Configurations {
-
-    private static readonly INLAY_HINTS = 'inlayHints';
     private static readonly STRICT_RENAME = 'strictRename';
     private static readonly ALWAYS_OPEN_ONLINE_DOC = 'alwaysOpenOnlineDoc';
     private static readonly ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB = 'alwaysOpenOfflineDocInNewTab';
@@ -28,7 +26,6 @@ export class Configurations {
     private static readonly SPACE_BEFORE_OPENING_BRACKETS = 'format.placeSpaceBeforeOpeningBrackets';
     private static readonly SPACES_INSIDE_BRACKETS = 'format.placeSpacesInsideBrackets';
 
-    private inlayHints: boolean;
     private strictRename: boolean;
     private alwaysOpenOnlineDoc: boolean;
     private alwaysOpenOfflineDocInNewTab: boolean;
@@ -54,7 +51,6 @@ export class Configurations {
 
     public constructor() {
         const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
-        this.inlayHints = config.get(Configurations.INLAY_HINTS);
         this.strictRename = config.get(Configurations.STRICT_RENAME);
         this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
         this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
@@ -80,9 +76,7 @@ export class Configurations {
 
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
-            if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INLAY_HINTS}`)) {
-                this.inlayHints = config.get(`${Configurations.INLAY_HINTS}`);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
+            if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
                 this.strictRename = config.get(Configurations.STRICT_RENAME);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_ONLINE_DOC}`)) {
                 this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
@@ -130,10 +124,6 @@ export class Configurations {
                 this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
             }
         });
-    }
-
-    public getInlayHints(): boolean {
-        return this.inlayHints;
     }
 
     public getStrictRename(): boolean {
@@ -223,5 +213,4 @@ export class Configurations {
     public getSpacesInsideBrackets(): boolean {
         return this.spacesInsideBrackets;
     }
-
 }

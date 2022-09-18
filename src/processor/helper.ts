@@ -1,5 +1,11 @@
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
-import { Array_subscriptContext, Compound_statementContext, Identifier_optarrayContext, Identifier_optarray_optassignmentContext, StatementContext } from '../_generated/AntlrGlslParser';
+import {
+    Array_subscriptContext,
+    Compound_statementContext,
+    Identifier_optarrayContext,
+    Identifier_optarray_optassignmentContext,
+    StatementContext,
+} from '../_generated/AntlrGlslParser';
 import { ParserRuleContext, Token } from 'antlr4ts';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
@@ -19,7 +25,6 @@ import { Constants } from '../core/constants';
 import { FoldingRegion } from '../scope/regions/folding-region';
 
 export class Helper {
-
     public static getArraySizeFromArraySubscript(ascs: Array<Array_subscriptContext>, scope: Scope, di: DocumentInfo): ArrayUsage {
         if (!ascs.length) {
             return new ArrayUsage();
@@ -41,14 +46,24 @@ export class Helper {
         return this.getArraySizeFromArraySubscript(ioc.array_subscript(), scope, di);
     }
 
-    public static getArraySizeFromIdentifierOptarrayOptassignment(iooc: Identifier_optarray_optassignmentContext, scope: Scope, di: DocumentInfo): ArrayUsage {
+    public static getArraySizeFromIdentifierOptarrayOptassignment(
+        iooc: Identifier_optarray_optassignmentContext,
+        scope: Scope,
+        di: DocumentInfo
+    ): ArrayUsage {
         if (!iooc) {
             return new ArrayUsage();
         }
         return this.getArraySizeFromIdentifierOptarray(iooc.identifier_optarray(), scope, di);
     }
 
-    public static createTypeDeclaration(name: string, width: number, height: number, typeBase: TypeBase, typeCategory: TypeCategory): TypeDeclaration {
+    public static createTypeDeclaration(
+        name: string,
+        width: number,
+        height: number,
+        typeBase: TypeBase,
+        typeCategory: TypeCategory
+    ): TypeDeclaration {
         return new TypeDeclaration(name, null, null, true, null, width, height, typeBase, typeCategory);
     }
 
@@ -56,11 +71,25 @@ export class Helper {
         return new TypeUsage(name, null, null, null, td, array, false);
     }
 
-    public static createVariableDeclaration(name: string, tu: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = ''): VariableDeclaration {
+    public static createVariableDeclaration(
+        name: string,
+        tu: TypeUsage,
+        fpp: boolean,
+        fdp: boolean,
+        summary?: MarkdownString,
+        stage = ShaderStage.DEFAULT,
+        extension = ''
+    ): VariableDeclaration {
         return new VariableDeclaration(name, null, null, true, null, tu, fpp, fdp, summary, stage, extension);
     }
 
-    public static createFunctionDeclaration(name: string, tu: TypeUsage, ctor: boolean, stage = ShaderStage.DEFAULT, extension = ''): FunctionDeclaration {
+    public static createFunctionDeclaration(
+        name: string,
+        tu: TypeUsage,
+        ctor: boolean,
+        stage = ShaderStage.DEFAULT,
+        extension = ''
+    ): FunctionDeclaration {
         return new FunctionDeclaration(name, null, null, tu, true, ctor, null, null, stage, extension);
     }
 
@@ -138,26 +167,35 @@ export class Helper {
 
     public static getScalarTypeName(bt: TypeBase): string {
         switch (bt) {
-            case TypeBase.BOOL: return Constants.BOOL;
-            case TypeBase.FLOAT: return Constants.FLOAT;
-            case TypeBase.INT: return Constants.INT;
-            case TypeBase.UINT: return Constants.UINT;
-            default: return null;
+            case TypeBase.BOOL:
+                return Constants.BOOL;
+            case TypeBase.FLOAT:
+                return Constants.FLOAT;
+            case TypeBase.INT:
+                return Constants.INT;
+            case TypeBase.UINT:
+                return Constants.UINT;
+            default:
+                return null;
         }
     }
 
     public static typeBaseToPrefix(tb: TypeBase): string {
         switch (tb) {
-            case TypeBase.BOOL: return 'b';
-            case TypeBase.FLOAT: return Constants.EMPTY;
-            case TypeBase.INT: return 'i';
-            case TypeBase.UINT: return 'u';
-            default: return null;
+            case TypeBase.BOOL:
+                return 'b';
+            case TypeBase.FLOAT:
+                return Constants.EMPTY;
+            case TypeBase.INT:
+                return 'i';
+            case TypeBase.UINT:
+                return 'u';
+            default:
+                return null;
         }
     }
 
     public static isInCorrectStage(stage: ShaderStage, di: DocumentInfo): boolean {
         return stage === ShaderStage.DEFAULT || stage === di.getShaderStage();
     }
-
 }

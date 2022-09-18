@@ -10,7 +10,6 @@ import { FunctionCall } from '../../scope/function/function-call';
 import { Interval } from '../../scope/interval';
 
 export class PositionalProviderBase<T> {
-
     protected di: DocumentInfo;
     protected document: TextDocument;
     protected position: Position;
@@ -39,7 +38,11 @@ export class PositionalProviderBase<T> {
         }
 
         const fc = this.di.getFunctionCallAt(position);
-        if (fc && (fc.logicalFunction.prototypes.length === 0 || this.di.isExtensionAvailable(fc.logicalFunction.getDeclaration().extension, this.offset))) {
+        if (
+            fc &&
+            (fc.logicalFunction.prototypes.length === 0 ||
+                this.di.isExtensionAvailable(fc.logicalFunction.getDeclaration().extension, this.offset))
+        ) {
             return this.processFunctionCall(fc);
         }
 
@@ -105,5 +108,4 @@ export class PositionalProviderBase<T> {
             list.push(this.di.intervalToLocation(interval));
         }
     }
-
 }

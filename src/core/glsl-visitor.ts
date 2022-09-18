@@ -1,7 +1,25 @@
 import { GlslEditor } from './glsl-editor';
 import { Uri } from 'vscode';
 import { DocumentInfo } from './document-info';
-import { StartContext, Function_definitionContext, Function_prototypeContext, ExpressionContext, Compound_statementContext, Variable_declarationContext, Type_declarationContext, For_iterationContext, While_iterationContext, Do_while_iterationContext, Selection_statementContext, Case_groupContext, Invariant_declarationContext, Switch_statementContext, Interface_block_declarationContext, AntlrGlslParser, Layout_qualifierContext } from '../_generated/AntlrGlslParser';
+import {
+    StartContext,
+    Function_definitionContext,
+    Function_prototypeContext,
+    ExpressionContext,
+    Compound_statementContext,
+    Variable_declarationContext,
+    Type_declarationContext,
+    For_iterationContext,
+    While_iterationContext,
+    Do_while_iterationContext,
+    Selection_statementContext,
+    Case_groupContext,
+    Invariant_declarationContext,
+    Switch_statementContext,
+    Interface_block_declarationContext,
+    AntlrGlslParser,
+    Layout_qualifierContext,
+} from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
 import { Helper } from '../processor/helper';
 import { Scope } from '../scope/scope';
@@ -19,7 +37,6 @@ import { RuleNode } from 'antlr4ts/tree/RuleNode';
 import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
-
     private uri: Uri;
     private di: DocumentInfo;
     private scope: Scope;
@@ -170,7 +187,11 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     }
 
     private createScopeFromFunctionDefinition(currentScope: Scope, ctx: Function_definitionContext): Scope {
-        const interval = new Interval(ctx.function_header().LRB().symbol.startIndex + 1, ctx.compound_statement().RCB().symbol.stopIndex, this.di);
+        const interval = new Interval(
+            ctx.function_header().LRB().symbol.startIndex + 1,
+            ctx.compound_statement().RCB().symbol.stopIndex,
+            this.di
+        );
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
         return newScope;
@@ -222,7 +243,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         if (ctx.statement().compound_statement()) {
             Helper.addFoldingRegionFromTokens(this.di, ctx.KW_DO().symbol, ctx.statement().stop);
         }
-        this.visit(ctx.statement())
+        this.visit(ctx.statement());
         this.scope = this.scope.parent;
         this.visit(ctx.expression());
     }
@@ -298,9 +319,19 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitCase_group(ctx: Case_groupContext): void {
         Helper.addFoldingRegionFromTokens(this.di, ctx.start, ctx.stop, -1);
-        this.di.getRegions().caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
+        this.di
+            .getRegions()
+            .caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
         if (ctx.statement()[0].simple_statement()) {
-            this.di.getRegions().caseStatementsRegions.push(new Interval(ctx.statement()[0].start.startIndex, ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1, this.di));
+            this.di
+                .getRegions()
+                .caseStatementsRegions.push(
+                    new Interval(
+                        ctx.statement()[0].start.startIndex,
+                        ctx.statement()[ctx.statement().length - 1].stop.stopIndex + 1,
+                        this.di
+                    )
+                );
         }
         this.visitChildren(ctx);
     }
@@ -321,12 +352,14 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     private isScoped(ctx: Compound_statementContext): boolean {
         const pp = ctx.parent.parent;
-        return ctx.parent.ruleIndex !== AntlrGlslParser.RULE_function_definition &&
+        return (
+            ctx.parent.ruleIndex !== AntlrGlslParser.RULE_function_definition &&
             pp.ruleIndex !== AntlrGlslParser.RULE_selection_statement &&
             pp.ruleIndex !== AntlrGlslParser.RULE_for_iteration &&
             pp.ruleIndex !== AntlrGlslParser.RULE_while_iteration &&
             pp.ruleIndex !== AntlrGlslParser.RULE_do_while_iteration &&
-            pp.ruleIndex !== AntlrGlslParser.RULE_switch_statement;
+            pp.ruleIndex !== AntlrGlslParser.RULE_switch_statement
+        );
     }
 
     private createScope(currentScope: Scope, ctx: Compound_statementContext): Scope {
@@ -346,8 +379,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         }
     }
 
-    protected defaultResult(): void { }
-
+    protected defaultResult(): void {}
 }
 
 class CommentContext {

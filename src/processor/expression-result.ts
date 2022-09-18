@@ -1,6 +1,6 @@
-import { TypeDeclaration } from "../scope/type/type-declaration";
-import { ArrayUsage } from "../scope/array-usage";
-import { FunctionCall } from "../scope/function/function-call";
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { ArrayUsage } from '../scope/array-usage';
+import { FunctionCall } from '../scope/function/function-call';
 
 export class ExpressionResult {
     public readonly type: TypeDeclaration;
@@ -12,7 +12,16 @@ export class ExpressionResult {
     public readonly constructorCall: FunctionCall;
     public readonly constructorParameters: Array<number>;
 
-    public constructor(type: TypeDeclaration, array = new ArrayUsage(), constant = false, value: number = null, floatLiteral = false, colorVariable = false, constructorCall: FunctionCall = null, constructorParameters = new Array<number>()) {
+    public constructor(
+        type: TypeDeclaration,
+        array = new ArrayUsage(),
+        constant = false,
+        value: number = null,
+        floatLiteral = false,
+        colorVariable = false,
+        constructorCall: FunctionCall = null,
+        constructorParameters = new Array<number>()
+    ) {
         this.type = type;
         this.array = array;
         this.constant = constant;
@@ -22,5 +31,4 @@ export class ExpressionResult {
         this.constructorCall = constructorCall;
         this.constructorParameters = constructorParameters;
     }
-
 }

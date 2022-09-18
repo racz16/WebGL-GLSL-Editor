@@ -1,15 +1,14 @@
 .github
 .vscode/**
 .vscode-test/**
+.vscode-test-web/**
 out/test/**
 out
 node_modules
 src/**
 .gitignore
-vsc-extension-quickstart.md
 BUILD.md
 **/tsconfig.json
-**/tslint.json
 **/*.map
 **/*.ts
 syntaxes/.antlr
@@ -17,7 +16,11 @@ syntaxes/*.g4
 res/png/screenshots
 res/gif
 private
-**/*.bat
 **/*.ps1
 **/*.sh
 webpack.config.js
+*.vscodeignore
+
+# mac specific ignore
+res/bin/glslangValidatorLinux
+res/bin/glslangValidatorWindows.exe

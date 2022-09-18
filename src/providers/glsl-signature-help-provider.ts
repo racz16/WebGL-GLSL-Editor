@@ -1,17 +1,26 @@
-import { SignatureHelpProvider, TextDocument, Position, CancellationToken, SignatureHelpContext, ProviderResult, SignatureHelp, SignatureInformation, ParameterInformation } from "vscode";
-import { GlslEditor } from "../core/glsl-editor";
-import { DocumentInfo } from "../core/document-info";
-import { FunctionDeclaration } from "../scope/function/function-declaration";
-import { TypeUsage } from "../scope/type/type-usage";
-import { LogicalFunction } from "../scope/function/logical-function";
-import { Scope } from "../scope/scope";
-import { Constants } from "../core/constants";
-import { SignatureParameterRegion } from "../scope/regions/signature-parameter-region";
-import { SignatureRegion } from "../scope/regions/signature-region";
-import { Helper } from "../processor/helper";
+import {
+    SignatureHelpProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    SignatureHelpContext,
+    ProviderResult,
+    SignatureHelp,
+    SignatureInformation,
+    ParameterInformation,
+} from 'vscode';
+import { GlslEditor } from '../core/glsl-editor';
+import { DocumentInfo } from '../core/document-info';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { Scope } from '../scope/scope';
+import { Constants } from '../core/constants';
+import { SignatureParameterRegion } from '../scope/regions/signature-parameter-region';
+import { SignatureRegion } from '../scope/regions/signature-region';
+import { Helper } from '../processor/helper';
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
-
     private di: DocumentInfo;
     private position: Position;
     private offset: number;
@@ -25,7 +34,12 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         this.functions = new Array<FunctionDeclaration>();
     }
 
-    public provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken, context: SignatureHelpContext): ProviderResult<SignatureHelp> {
+    public provideSignatureHelp(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken,
+        context: SignatureHelpContext
+    ): ProviderResult<SignatureHelp> {
         this.initialize(document, position);
         const sr = this.getSignatureRegion();
         if (!sr) {
@@ -51,7 +65,7 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
 
     private addSignatures(lfs: Array<LogicalFunction>, sh: SignatureHelp, sr: SignatureRegion): void {
         const fi = this.di.builtin.functionSummaries.get(sr.name);
-        for (const lf of lfs.filter(func => func.getDeclaration().name === sr.name)) {
+        for (const lf of lfs.filter((func) => func.getDeclaration().name === sr.name)) {
             const fp = lf.getDeclaration();
             if (Helper.isInCorrectStage(fp.stage, this.di) && this.di.isExtensionAvailable(fi?.extension, this.offset)) {
                 const si = new SignatureInformation(fp.toString(), fi?.summary);
@@ -84,12 +98,12 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     }
 
     private computeActiveSignature(sr: SignatureRegion): number {
-        const index = this.functions.findIndex(fp => this.isFunctionCompatible(fp, sr));
+        const index = this.functions.findIndex((fp) => this.isFunctionCompatible(fp, sr));
         return index === Constants.INVALID ? 0 : index;
     }
 
     private isFunctionCompatible(fp: FunctionDeclaration, sr: SignatureRegion): boolean {
-        if (sr.parameters.some(param => !param) || sr.parameters.length > fp.parameters.length) {
+        if (sr.parameters.some((param) => !param) || sr.parameters.length > fp.parameters.length) {
             return false;
         }
         const length = sr.parameters[sr.parameters.length - 1].typeDeclaration == null ? sr.parameters.length - 1 : sr.parameters.length;
@@ -104,9 +118,15 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     }
 
     private isExpressionNotCompatible(spr: SignatureParameterRegion, tu: TypeUsage): boolean {
-        return !spr.typeDeclaration || !spr.array || !tu || !tu.declaration || !tu.array ||
+        return (
+            !spr.typeDeclaration ||
+            !spr.array ||
+            !tu ||
+            !tu.declaration ||
+            !tu.array ||
             spr.typeDeclaration !== tu.declaration ||
-            spr.array.arraySize !== tu.array.arraySize || spr.array.multidimensional !== tu.array.multidimensional;
+            spr.array.arraySize !== tu.array.arraySize ||
+            spr.array.multidimensional !== tu.array.multidimensional
+        );
     }
-
 }

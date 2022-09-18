@@ -16,7 +16,6 @@ import { ShaderStage } from '../scope/shader-stage';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 import { DocumentRegions } from './document-regions';
-import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
 
 export class DocumentInfo {
     private readonly uri: Uri;
@@ -271,25 +270,25 @@ export class DocumentInfo {
     }
 
     //generic
-    private getElementAt(position: Position, type:
-        'variableDeclarations' |
-        'variableUsages' |
-        'typeDeclarations' |
-        'typeUsages' |
-        'functionCalls' |
-        'functionPrototypes' |
-        'functionDefinitions'):
-        VariableDeclaration |
-        VariableUsage |
-        TypeDeclaration |
-        TypeUsage |
-        FunctionCall |
-        FunctionDeclaration {
-
+    private getElementAt(
+        position: Position,
+        type:
+            | 'variableDeclarations'
+            | 'variableUsages'
+            | 'typeDeclarations'
+            | 'typeUsages'
+            | 'functionCalls'
+            | 'functionPrototypes'
+            | 'functionDefinitions'
+    ): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
         let scope: Scope = this.rootScope;
         while (scope) {
             for (const element of scope[type]) {
-                if (element.nameInterval && !element.nameInterval.isInjected() && this.intervalToRange(element.nameInterval)?.contains(position)) {
+                if (
+                    element.nameInterval &&
+                    !element.nameInterval.isInjected() &&
+                    this.intervalToRange(element.nameInterval)?.contains(position)
+                ) {
                     return element;
                 }
             }
@@ -402,5 +401,4 @@ export class DocumentInfo {
         }
         return available;
     }
-
 }

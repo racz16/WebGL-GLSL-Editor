@@ -1,4 +1,12 @@
-import { DocumentHighlightProvider, TextDocument, Position, CancellationToken, ProviderResult, DocumentHighlight, DocumentHighlightKind } from 'vscode';
+import {
+    DocumentHighlightProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    ProviderResult,
+    DocumentHighlight,
+    DocumentHighlightKind,
+} from 'vscode';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { Element } from '../scope/element';
 import { PositionalProviderBase } from './helper/positional-provider-base';
@@ -10,8 +18,11 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 
 export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<DocumentHighlight>> implements DocumentHighlightProvider {
-
-    public provideDocumentHighlights(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<DocumentHighlight[]> {
+    public provideDocumentHighlights(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<DocumentHighlight[]> {
         return this.processElements(document, position);
     }
 
@@ -84,5 +95,4 @@ export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<
             }
         }
     }
-
 }

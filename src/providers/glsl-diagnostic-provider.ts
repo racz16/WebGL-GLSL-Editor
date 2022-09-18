@@ -1,7 +1,7 @@
 import { exec, ChildProcess } from 'child_process';
 import { Stream } from 'stream';
 import { platform } from 'os';
-import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag, window } from "vscode";
+import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag, window } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { DocumentInfo } from '../core/document-info';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -14,7 +14,6 @@ import { Constants } from '../core/constants';
 import { GlslTextProvider } from './glsl-text-provider';
 
 export class GlslDiagnosticProvider {
-
     private static newestLintIds = new Map<Uri, number>();
 
     private di: DocumentInfo;
@@ -67,7 +66,7 @@ export class GlslDiagnosticProvider {
         if (!td.interfaceBlock || td.members.length) {
             return false;
         }
-        return td.interfaceMembers.some(td => td.usages.length);
+        return td.interfaceMembers.some((td) => td.usages.length);
     }
 
     private addVariableHints(scope: Scope): void {
@@ -218,10 +217,14 @@ export class GlslDiagnosticProvider {
 
     private getPlatformName(): string {
         switch (platform()) {
-            case "win32": return 'Windows';
-            case "linux": return 'Linux';
-            case "darwin": return 'Mac';
-            default: return Constants.EMPTY;
+            case 'win32':
+                return 'Windows';
+            case 'linux':
+                return 'Linux';
+            case 'darwin':
+                return 'Mac';
+            default:
+                return Constants.EMPTY;
         }
     }
 }

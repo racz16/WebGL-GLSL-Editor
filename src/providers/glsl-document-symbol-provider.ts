@@ -1,4 +1,13 @@
-import { DocumentSymbolProvider, TextDocument, CancellationToken, ProviderResult, SymbolInformation, DocumentSymbol, SymbolKind, Range } from 'vscode';
+import {
+    DocumentSymbolProvider,
+    TextDocument,
+    CancellationToken,
+    ProviderResult,
+    SymbolInformation,
+    DocumentSymbol,
+    SymbolKind,
+    Range,
+} from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { Scope } from '../scope/scope';
 import { DocumentInfo } from '../core/document-info';
@@ -8,7 +17,6 @@ import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { Interval } from '../scope/interval';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
-
     private di: DocumentInfo;
     private result: Array<DocumentSymbol>;
 
@@ -18,7 +26,10 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         this.result = new Array<DocumentSymbol>();
     }
 
-    public provideDocumentSymbols(document: TextDocument, token: CancellationToken): ProviderResult<SymbolInformation[] | DocumentSymbol[]> {
+    public provideDocumentSymbols(
+        document: TextDocument,
+        token: CancellationToken
+    ): ProviderResult<SymbolInformation[] | DocumentSymbol[]> {
         this.initialize(document);
         for (const td of this.di.getRootScope().typeDeclarations) {
             if (!td.interval.isInjected()) {
@@ -101,5 +112,4 @@ export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
         const availableInterval = interval ?? defaultInterval;
         return this.di.intervalToRange(availableInterval);
     }
-
 }

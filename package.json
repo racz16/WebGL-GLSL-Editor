@@ -1,303 +1,312 @@
 {
-	"name": "webgl-glsl-editor",
-	"displayName": "WebGL GLSL Editor",
-	"icon": "res/png/icon.png",
-	"description": "Language support for WebGL GLSL shaders.",
-	"author": "Rácz Zalán",
-	"publisher": "raczzalan",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/racz16/WebGL-GLSL-Editor"
-	},
-	"bugs": {
-		"email": "racz1666@gmail.com",
-		"url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
-	},
-	"license": "SEE LICENSE IN LICENSE.txt",
-	"keywords": [
-		"GLSL",
-		"shader",
-		"WebGL",
-		"OpenGL",
-		"ES",
-		"OpenGL Shading Language",
-		"linters",
-		"HTML"
-	],
-	"galleryBanner": {
-		"color": "#990000",
-		"theme": "dark"
-	},
-	"version": "1.3.1",
-	"engines": {
-		"vscode": "^1.65.0"
-	},
-	"categories": [
-		"Programming Languages",
-		"Linters",
-		"Snippets",
-		"Formatters"
-	],
-	"activationEvents": [
-		"onLanguage:glsl",
-		"onCommand:webgl-glsl-editor.opendocsgl",
-		"onCommand:webgl-glsl-editor.opengles2",
-		"onCommand:webgl-glsl-editor.opengles3",
-		"onCommand:webgl-glsl-editor.generatepreprocessed"
-	],
-	"main": "./dist/extension.js",
-	"browser": "./dist/web-extension.js",
-	"contributes": {
-		"languages": [
-			{
-				"id": "glsl",
-				"aliases": [
-					"GLSL",
-					"glsl"
-				],
-				"extensions": [
-					".glsl",
-					".vert",
-					".vs",
-					".frag",
-					".fs"
-				],
-				"configuration": "./language-configuration.json"
-			}
-		],
-		"grammars": [
-			{
-				"language": "glsl",
-				"scopeName": "source.glsl",
-				"path": "./syntaxes/glsl.language.json"
-			},
-			{
-				"scopeName": "source.injected.glsl",
-				"path": "./syntaxes/glsl-injected.language.json",
-				"injectTo": [
-					"text.html"
-				]
-			}
-		],
-		"snippets": [
-			{
-				"language": "glsl",
-				"path": "./snippets.json"
-			}
-		],
-		"commands": [
-			{
-				"command": "webgl-glsl-editor.opendocsgl",
-				"title": "Open docs.gl"
-			},
-			{
-				"command": "webgl-glsl-editor.opengles2",
-				"title": "Open official OpenGL ES 2.0 documentation"
-			},
-			{
-				"command": "webgl-glsl-editor.opengles3",
-				"title": "Open official OpenGL ES 3.0 documentation"
-			},
-			{
-				"command": "webgl-glsl-editor.generatepreprocessed",
-				"title": "Generate preprocessed GLSL source code",
-				"enablement": "editorLangId == glsl && !editorReadonly"
-			}
-		],
-		"configuration": [
-			{
-				"title": "WebGL GLSL Editor",
-				"properties": {
-					"webgl-glsl-editor.inlayHints": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Enables/disables inlay hints.\n```glsl\ncompute(/*type:*/LIGHT_TYPE_SPOT , /*shadows:*/true);\n``````",
-						"order": 1
-					},
-					"webgl-glsl-editor.strictRename": {
-						"type": "boolean",
-						"default": true,
-						"description": "Prevents invalid renames.",
-						"order": 2
-					},
-					"webgl-glsl-editor.alwaysOpenOnlineDoc": {
-						"type": "boolean",
-						"default": false,
-						"description": "Documentation is always opened online in the browser.",
-						"order": 3
-					},
-					"webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
-						"type": "boolean",
-						"default": false,
-						"description": "Offline documentation is always opened in new tab.",
-						"order": 4
-					},
-					"webgl-glsl-editor.format.placeBracesOnSeparateLine": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places the braces (`{`, `}`) on separate lines.\n\n**Enabled:**\n```glsl\nif(valid)\n{\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
-						"order": 5
-					},
-					"webgl-glsl-editor.format.placeSpaceAroundUnaryOperators": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space between the unary operators (`+`, `-`, `++`, `--`, `!`, `~`) and the operands.\n\n**Enabled:**\n```glsl\nint i = - 1;\n```\n**Disabled:**\n```glsl\nint i = -1;\n```",
-						"order": 6
-					},
-					"webgl-glsl-editor.format.placeSpacesAroundBinaryOperators": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places spaces around the binary operators (`+`, `-`, `*`, `/`, `%`, `<`, `<=`, `==`, `!=`, `>=`, `>`, `<<`, `>>`, `&&`, `||`, `^^`, `&`, `|`, `^`).\n\n**Enabled:**\n```glsl\nint i = index + 1;\n```\n**Disabled:**\n```glsl\nint i = index+1;\n```",
-						"order": 7
-					},
-					"webgl-glsl-editor.format.placeSpacesAroundAssignmentOperators": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places spaces around the assignment operators (`=`, `+=`, `-=`, `*=`, `/=`, `%=`, `<<=`, `>>=`, `&=`, `|=`, `^=`).\n\n**Enabled:**\n```glsl\nint i = 1;\n```\n**Disabled:**\n```glsl\nint i=1;\n```",
-						"order": 8
-					},
-					"webgl-glsl-editor.format.placeSpacesAroundTernaryOperators": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places spaces around the ternary operators (`?`, `:`).\n\n**Enabled:**\n```glsl\nreturn valid ? 1 : -1;\n```\n**Disabled:**\n```glsl\nreturn valid?1:-1;\n```",
-						"order": 9
-					},
-					"webgl-glsl-editor.format.placeSpaceAfterKeywords": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space between keywords (`if`, `for`, `while`, `switch`, `layout`) and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nif (valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
-						"order": 10
-					},
-					"webgl-glsl-editor.format.placeSpaceAfterFunctionNames": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space between function names and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nfloat compute () {\n\treturn compute (1);\n}\n```\n**Disabled:**\n```glsl\nfloat compute() {\n\treturn compute(1);\n}\n```",
-						"order": 11
-					},
-					"webgl-glsl-editor.format.placeSpaceBeforeCommas": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space before commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1 , true);\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
-						"order": 12
-					},
-					"webgl-glsl-editor.format.placeSpaceAfterCommas": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places a space after commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1, true);\n```\n**Disabled:**\n```glsl\ncompute(1,true);\n```",
-						"order": 13
-					},
-					"webgl-glsl-editor.format.placeSpacesAroundDots": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places spaces around dots (`.`).\n\n**Enabled:**\n```glsl\nvec2 uv = position . xy;\n```\n**Disabled:**\n```glsl\nvec2 uv = position.xy;\n```",
-						"order": 14
-					},
-					"webgl-glsl-editor.format.placeSpaceBeforeCaseColons": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space before colons (`:`) in `case`s and `default`s.\n\n**Enabled:**\n```glsl\nswitch(type) {\n\tcase 0 :\n\t\treturn -1;\n\tdefault :\n\t\treturn type;\n}\n```\n**Disabled:**\n```glsl\nswitch(type) {\n\tcase 0:\n\t\treturn -1;\n\tdefault:\n\t\treturn type;\n}\n```",
-						"order": 15
-					},
-					"webgl-glsl-editor.format.placeSpaceBeforeSemicolonsInFor": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space before semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0 ; i < array.length() ; i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```",
-						"order": 16
-					},
-					"webgl-glsl-editor.format.placeSpaceAfterSemicolonsInFor": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places a space after semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0;i < array.length();i++) {\n\tresult += array[i];\n}\n```",
-						"order": 17
-					},
-					"webgl-glsl-editor.format.placeSpacesInsideParentheses": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places spaces inside parentheses (`(`, `)`).\n\n**Enabled:**\n```glsl\ncompute( 1, true );\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
-						"order": 18
-					},
-					"webgl-glsl-editor.format.placeSpacesAroundBraces": {
-						"type": "boolean",
-						"default": true,
-						"markdownDescription": "Places spaces around braces (`{`, `}`).\n\n**Enabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid){\n\treturn 1;\n}\n```",
-						"order": 19
-					},
-					"webgl-glsl-editor.format.placeSpaceBeforeOpeningBrackets": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places a space before opening brackets (`[`).\n\n**Enabled:**\n```glsl\nint [6] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
-						"order": 20
-					},
-					"webgl-glsl-editor.format.placeSpacesInsideBrackets": {
-						"type": "boolean",
-						"default": false,
-						"markdownDescription": "Places spaces inside brackets (`[`, `]`).\n\n**Enabled:**\n```glsl\nint[ 6 ] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
-						"order": 21
-					},
-					"webgl-glsl-editor.codeInjection": {
-						"type": "boolean",
-						"default": false,
-						"description": "Enables/disables code injection.",
-						"order": 22
-					},
-					"webgl-glsl-editor.codeInjectionSource": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						},
-						"default": [
-							"#version 300 es",
-							"precision highp float;",
-							"uniform vec3 iResolution;",
-							"uniform float iTime;",
-							"uniform float iTimeDelta;",
-							"uniform int iFrame;",
-							"uniform float iChannelTime[4];",
-							"uniform vec3 iChannelResolution[4];",
-							"uniform vec4 iMouse;",
-							"uniform sampler2D iChannel0;",
-							"uniform sampler2D iChannel1;",
-							"uniform sampler2D iChannel2;",
-							"uniform sampler2D iChannel3;",
-							"uniform vec4 iDate;",
-							"uniform float iSampleRate;"
-						],
-						"description": "The lines of the injected source code. Only works if Code Injection is enabled.",
-						"order": 23
-					}
-				}
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "webpack --mode production",
-		"webpack": "webpack --mode development",
-		"webpack-dev": "webpack --mode development --watch",
-		"compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
-		"compile-antlr-linux": "./compile-antlr.sh",
-		"lint": "npx eslint -c .eslintrc.js --ext .ts --ignore-pattern src/_generated src",
-		"run-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.4",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.20.19",
-		"@types/vscode": "1.65.0",
-		"@types/webpack-env": "^1.16.3",
-		"@typescript-eslint/eslint-plugin": "^3.10.1",
-		"@typescript-eslint/parser": "^3.10.1",
-		"@vscode/test-web": "^0.0.22",
-		"eslint": "^7.32.0",
-		"eslint-config-prettier": "^6.15.0",
-		"glob": "^7.1.7",
-		"mocha": "^9.2.2",
-		"ts-loader": "^8.3.0",
-		"typescript": "^4.3.5",
-		"vscode-test": "^1.6.1",
-		"webpack": "^5.51.1",
-		"webpack-cli": "^4.8.0"
-	},
-	"dependencies": {
-		"antlr4ts": "^0.5.0-alpha.4"
-	}
+    "name": "webgl-glsl-editor",
+    "displayName": "WebGL GLSL Editor",
+    "icon": "res/png/icon.png",
+    "description": "Language support for WebGL GLSL shaders.",
+    "author": "Rácz Zalán",
+    "publisher": "raczzalan",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/racz16/WebGL-GLSL-Editor"
+    },
+    "bugs": {
+        "email": "racz1666@gmail.com",
+        "url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
+    },
+    "license": "SEE LICENSE IN LICENSE.txt",
+    "keywords": [
+        "GLSL",
+        "shader",
+        "WebGL",
+        "OpenGL",
+        "ES",
+        "OpenGL Shading Language",
+        "linters",
+        "HTML"
+    ],
+    "galleryBanner": {
+        "color": "#990000",
+        "theme": "dark"
+    },
+    "version": "1.3.1",
+    "engines": {
+        "vscode": "^1.65.0"
+    },
+    "categories": [
+        "Programming Languages",
+        "Linters",
+        "Snippets",
+        "Formatters"
+    ],
+    "activationEvents": [
+        "onLanguage:glsl",
+        "onCommand:webgl-glsl-editor.opendocsgl",
+        "onCommand:webgl-glsl-editor.opengles2",
+        "onCommand:webgl-glsl-editor.opengles3",
+        "onCommand:webgl-glsl-editor.generatepreprocessed"
+    ],
+    "main": "./dist/extension.js",
+    "browser": "./dist/web-extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "glsl",
+                "aliases": [
+                    "GLSL",
+                    "glsl"
+                ],
+                "extensions": [
+                    ".glsl",
+                    ".vert",
+                    ".vs",
+                    ".frag",
+                    ".fs"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "glsl",
+                "scopeName": "source.glsl",
+                "path": "./syntaxes/glsl.language.json"
+            },
+            {
+                "scopeName": "source.injected.glsl",
+                "path": "./syntaxes/glsl-injected.language.json",
+                "injectTo": [
+                    "text.html"
+                ]
+            }
+        ],
+        "snippets": [
+            {
+                "language": "glsl",
+                "path": "./snippets.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "webgl-glsl-editor.opendocsgl",
+                "title": "Open docs.gl"
+            },
+            {
+                "command": "webgl-glsl-editor.opengles2",
+                "title": "Open official OpenGL ES 2.0 documentation"
+            },
+            {
+                "command": "webgl-glsl-editor.opengles3",
+                "title": "Open official OpenGL ES 3.0 documentation"
+            },
+            {
+                "command": "webgl-glsl-editor.generatepreprocessed",
+                "title": "Generate preprocessed GLSL source code",
+                "enablement": "!isWeb && editorLangId == glsl && !editorReadonly"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "WebGL GLSL Editor",
+                "properties": {
+                    "webgl-glsl-editor.strictRename": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Prevents invalid renames.",
+                        "order": 1
+                    },
+                    "webgl-glsl-editor.alwaysOpenOnlineDoc": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Documentation is always opened online in the browser. This configuration nnly works with the desktop version.",
+                        "order": 2
+                    },
+                    "webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Offline documentation is always opened in new tab. This configuration nnly works with the desktop version.",
+                        "order": 3
+                    },
+                    "webgl-glsl-editor.format.placeBracesOnSeparateLine": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places the braces (`{`, `}`) on separate lines.\n\n**Enabled:**\n```glsl\nif(valid)\n{\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
+                        "order": 4
+                    },
+                    "webgl-glsl-editor.format.placeSpaceAroundUnaryOperators": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space between the unary operators (`+`, `-`, `++`, `--`, `!`, `~`) and the operands.\n\n**Enabled:**\n```glsl\nint i = - 1;\n```\n**Disabled:**\n```glsl\nint i = -1;\n```",
+                        "order": 5
+                    },
+                    "webgl-glsl-editor.format.placeSpacesAroundBinaryOperators": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places spaces around the binary operators (`+`, `-`, `*`, `/`, `%`, `<`, `<=`, `==`, `!=`, `>=`, `>`, `<<`, `>>`, `&&`, `||`, `^^`, `&`, `|`, `^`).\n\n**Enabled:**\n```glsl\nint i = index + 1;\n```\n**Disabled:**\n```glsl\nint i = index+1;\n```",
+                        "order": 6
+                    },
+                    "webgl-glsl-editor.format.placeSpacesAroundAssignmentOperators": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places spaces around the assignment operators (`=`, `+=`, `-=`, `*=`, `/=`, `%=`, `<<=`, `>>=`, `&=`, `|=`, `^=`).\n\n**Enabled:**\n```glsl\nint i = 1;\n```\n**Disabled:**\n```glsl\nint i=1;\n```",
+                        "order": 7
+                    },
+                    "webgl-glsl-editor.format.placeSpacesAroundTernaryOperators": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places spaces around the ternary operators (`?`, `:`).\n\n**Enabled:**\n```glsl\nreturn valid ? 1 : -1;\n```\n**Disabled:**\n```glsl\nreturn valid?1:-1;\n```",
+                        "order": 8
+                    },
+                    "webgl-glsl-editor.format.placeSpaceAfterKeywords": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space between keywords (`if`, `for`, `while`, `switch`, `layout`) and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nif (valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```",
+                        "order": 9
+                    },
+                    "webgl-glsl-editor.format.placeSpaceAfterFunctionNames": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space between function names and the opening parentheses (`(`).\n\n**Enabled:**\n```glsl\nfloat compute () {\n\treturn compute (1);\n}\n```\n**Disabled:**\n```glsl\nfloat compute() {\n\treturn compute(1);\n}\n```",
+                        "order": 10
+                    },
+                    "webgl-glsl-editor.format.placeSpaceBeforeCommas": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space before commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1 , true);\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
+                        "order": 11
+                    },
+                    "webgl-glsl-editor.format.placeSpaceAfterCommas": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places a space after commas (`,`).\n\n**Enabled:**\n```glsl\ncompute(1, true);\n```\n**Disabled:**\n```glsl\ncompute(1,true);\n```",
+                        "order": 12
+                    },
+                    "webgl-glsl-editor.format.placeSpacesAroundDots": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places spaces around dots (`.`).\n\n**Enabled:**\n```glsl\nvec2 uv = position . xy;\n```\n**Disabled:**\n```glsl\nvec2 uv = position.xy;\n```",
+                        "order": 13
+                    },
+                    "webgl-glsl-editor.format.placeSpaceBeforeCaseColons": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space before colons (`:`) in `case`s and `default`s.\n\n**Enabled:**\n```glsl\nswitch(type) {\n\tcase 0 :\n\t\treturn -1;\n\tdefault :\n\t\treturn type;\n}\n```\n**Disabled:**\n```glsl\nswitch(type) {\n\tcase 0:\n\t\treturn -1;\n\tdefault:\n\t\treturn type;\n}\n```",
+                        "order": 14
+                    },
+                    "webgl-glsl-editor.format.placeSpaceBeforeSemicolonsInFor": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space before semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0 ; i < array.length() ; i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```",
+                        "order": 15
+                    },
+                    "webgl-glsl-editor.format.placeSpaceAfterSemicolonsInFor": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places a space after semicolons (`;`) in `for`s.\n\n**Enabled:**\n```glsl\nfor(int i = 0; i < array.length(); i++) {\n\tresult += array[i];\n}\n```\n**Disabled:**\n```glsl\nfor(int i = 0;i < array.length();i++) {\n\tresult += array[i];\n}\n```",
+                        "order": 16
+                    },
+                    "webgl-glsl-editor.format.placeSpacesInsideParentheses": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places spaces inside parentheses (`(`, `)`).\n\n**Enabled:**\n```glsl\ncompute( 1, true );\n```\n**Disabled:**\n```glsl\ncompute(1, true);\n```",
+                        "order": 17
+                    },
+                    "webgl-glsl-editor.format.placeSpacesAroundBraces": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "Places spaces around braces (`{`, `}`).\n\n**Enabled:**\n```glsl\nif(valid) {\n\treturn 1;\n}\n```\n**Disabled:**\n```glsl\nif(valid){\n\treturn 1;\n}\n```",
+                        "order": 18
+                    },
+                    "webgl-glsl-editor.format.placeSpaceBeforeOpeningBrackets": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places a space before opening brackets (`[`).\n\n**Enabled:**\n```glsl\nint [6] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
+                        "order": 19
+                    },
+                    "webgl-glsl-editor.format.placeSpacesInsideBrackets": {
+                        "type": "boolean",
+                        "default": false,
+                        "markdownDescription": "Places spaces inside brackets (`[`, `]`).\n\n**Enabled:**\n```glsl\nint[ 6 ] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
+                        "order": 20
+                    },
+                    "webgl-glsl-editor.codeInjection": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Enables/disables code injection.",
+                        "order": 21
+                    },
+                    "webgl-glsl-editor.codeInjectionSource": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [
+                            "#version 300 es",
+                            "precision highp float;",
+                            "uniform vec3 iResolution;",
+                            "uniform float iTime;",
+                            "uniform float iTimeDelta;",
+                            "uniform int iFrame;",
+                            "uniform float iChannelTime[4];",
+                            "uniform vec3 iChannelResolution[4];",
+                            "uniform vec4 iMouse;",
+                            "uniform sampler2D iChannel0;",
+                            "uniform sampler2D iChannel1;",
+                            "uniform sampler2D iChannel2;",
+                            "uniform sampler2D iChannel3;",
+                            "uniform vec4 iDate;",
+                            "uniform float iSampleRate;"
+                        ],
+                        "description": "The lines of the injected source code. Only works if Code Injection is enabled.",
+                        "order": 22
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "webpack --mode production",
+        "webpack": "webpack --mode development",
+        "webpack-dev": "webpack --mode development --watch",
+        "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
+        "compile-antlr-linux": "./compile-antlr.sh",
+        "lint": "npx eslint -c .eslintrc.js --ext .ts --ignore-pattern src/_generated src",
+        "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
+        "package-web": "vsce package --target web --ignoreFile web.vscodeignore",
+        "package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",
+        "package-win32-ia32": "vsce package --target win32-ia32 --ignoreFile windows.vscodeignore",
+        "package-win32-arm64": "vsce package --target win32-arm64 --ignoreFile windows.vscodeignore",
+        "package-darwin-x64": "vsce package --target darwin-x64 --ignoreFile mac.vscodeignore",
+        "package-darwin-arm64": "vsce package --target darwin-arm64 --ignoreFile mac.vscodeignore",
+        "package-linux-x64": "vsce package --target linux-x64 --ignoreFile linux.vscodeignore",
+        "package-linux-arm64": "vsce package --target linux-arm64 --ignoreFile linux.vscodeignore",
+        "package-linux-armhf": "vsce package --target linux-armhf --ignoreFile linux.vscodeignore",
+        "package-alpine-x64": "vsce package --target alpine-x64 --ignoreFile linux.vscodeignore",
+        "package-alpine-arm64": "vsce package --target alpine-arm64 --ignoreFile linux.vscodeignore",
+        "package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.4",
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.20.19",
+        "@types/vscode": "1.65.0",
+        "@types/webpack-env": "^1.16.3",
+        "@typescript-eslint/eslint-plugin": "^3.10.1",
+        "@typescript-eslint/parser": "^3.10.1",
+        "@vscode/test-web": "^0.0.22",
+        "assert": "^2.0.0",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^6.15.0",
+        "glob": "^7.1.7",
+        "mocha": "^9.2.2",
+        "process": "^0.11.10",
+        "ts-loader": "^8.3.0",
+        "typescript": "^4.3.5",
+        "vsce": "^2.10.2",
+        "vscode-test": "^1.6.1",
+        "webpack": "^5.51.1",
+        "webpack-cli": "^4.8.0"
+    },
+    "dependencies": {
+        "antlr4ts": "^0.5.0-alpha.4"
+    }
 }

@@ -8,7 +8,6 @@ import { ShaderStage } from '../shader-stage';
 import { Constants } from '../../core/constants';
 
 export class VariableDeclaration extends Element {
-
     public readonly builtin: boolean;
     public readonly type: TypeUsage;
     public readonly usages = new Array<VariableUsage>();
@@ -19,7 +18,19 @@ export class VariableDeclaration extends Element {
     public readonly functionDefinitionParameter: boolean;
     public readonly extension: string;
 
-    public constructor(name: string, nameInterval: Interval, scope: Scope, builtIn: boolean, declarationInterval: Interval, type: TypeUsage, fpp: boolean, fdp: boolean, summary?: MarkdownString, stage = ShaderStage.DEFAULT, extension = '') {
+    public constructor(
+        name: string,
+        nameInterval: Interval,
+        scope: Scope,
+        builtIn: boolean,
+        declarationInterval: Interval,
+        type: TypeUsage,
+        fpp: boolean,
+        fdp: boolean,
+        summary?: MarkdownString,
+        stage = ShaderStage.DEFAULT,
+        extension = ''
+    ) {
         super(name, nameInterval, scope);
         this.builtin = builtIn;
         this.type = type;
@@ -32,8 +43,10 @@ export class VariableDeclaration extends Element {
     }
 
     public isColorVariable(): boolean {
-        return (this.type?.declaration?.name === Constants.VEC3 || this.type?.declaration?.name === Constants.VEC4) &&
-            (this.name?.toLowerCase().includes(Constants.COLOR) || this.name?.toLowerCase().includes(Constants.COLOUR));
+        return (
+            (this.type?.declaration?.name === Constants.VEC3 || this.type?.declaration?.name === Constants.VEC4) &&
+            (this.name?.toLowerCase().includes(Constants.COLOR) || this.name?.toLowerCase().includes(Constants.COLOUR))
+        );
     }
 
     public toString(): string {
@@ -44,5 +57,4 @@ export class VariableDeclaration extends Element {
     public toStringDocumentation(): string {
         return `\t${this.toString()};`;
     }
-
 }

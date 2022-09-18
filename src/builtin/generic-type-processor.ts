@@ -1,7 +1,6 @@
-import { IFunction, IParameter } from "./interfaces/functions";
+import { IFunction, IParameter } from './interfaces';
 
 export class GenericTypeProcessor {
-
     private static func: IFunction;
     private static genTypes: Map<string, Array<string>>;
 
@@ -45,7 +44,7 @@ export class GenericTypeProcessor {
             const p: IParameter = {
                 name: param.name,
                 qualifiers: param.qualifiers,
-                type: this.getType(param.type, i)
+                type: this.getType(param.type, i),
             };
             func.parameters.push(p);
         }
@@ -99,14 +98,18 @@ export class GenericTypeProcessor {
 
     private static getVariantCount(gtg: GenericTypeGroup): number {
         switch (gtg) {
-            case GenericTypeGroup.GEN_TYPE: return this.genTypes.get('genType').length;
-            case GenericTypeGroup.X_VEC: return this.genTypes.get('vec').length;
-            case GenericTypeGroup.G_SAMPLER: return this.genTypes.get('gsampler2D').length;
-            case GenericTypeGroup.MAT: return this.genTypes.get('mat').length;
-            default: throw new Error();
+            case GenericTypeGroup.GEN_TYPE:
+                return this.genTypes.get('genType').length;
+            case GenericTypeGroup.X_VEC:
+                return this.genTypes.get('vec').length;
+            case GenericTypeGroup.G_SAMPLER:
+                return this.genTypes.get('gsampler2D').length;
+            case GenericTypeGroup.MAT:
+                return this.genTypes.get('mat').length;
+            default:
+                throw new Error();
         }
     }
-
 }
 
 export enum GenericTypeGroup {
@@ -114,5 +117,5 @@ export enum GenericTypeGroup {
     X_VEC,
     G_SAMPLER,
     MAT,
-    NONE
+    NONE,
 }

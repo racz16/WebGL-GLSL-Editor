@@ -1,7 +1,6 @@
-import { Token } from "antlr4ts";
+import { Token } from 'antlr4ts';
 
 export class SemanticRegion {
-
     public readonly token: Token;
     public readonly type: SemanticType;
     public readonly modifiers: Array<SemanticModifier>;
@@ -11,7 +10,6 @@ export class SemanticRegion {
         this.type = type;
         this.modifiers = modifiers;
     }
-
 }
 
 export enum SemanticType {

@@ -8,7 +8,6 @@ import { Constants } from '../core/constants';
 import { Helper } from '../processor/helper';
 
 export class GlslHoverProvider extends PositionalProviderBase<Hover> implements HoverProvider {
-
     public provideHover(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Hover> {
         return this.processElements(document, position);
     }
@@ -47,5 +46,4 @@ export class GlslHoverProvider extends PositionalProviderBase<Hover> implements 
         }
         return null;
     }
-
 }

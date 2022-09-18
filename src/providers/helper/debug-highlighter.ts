@@ -1,9 +1,8 @@
-import { CancellationToken, DocumentHighlight, DocumentHighlightProvider, Position, ProviderResult, TextDocument } from "vscode";
-import { DocumentInfo } from "../../core/document-info";
-import { GlslEditor } from "../../core/glsl-editor";
+import { CancellationToken, DocumentHighlight, DocumentHighlightProvider, Position, ProviderResult, TextDocument } from 'vscode';
+import { DocumentInfo } from '../../core/document-info';
+import { GlslEditor } from '../../core/glsl-editor';
 
 export class DebugHighlighter implements DocumentHighlightProvider {
-
     protected di: DocumentInfo;
     protected document: TextDocument;
     protected position: Position;
@@ -15,7 +14,11 @@ export class DebugHighlighter implements DocumentHighlightProvider {
         this.position = position;
     }
 
-    public provideDocumentHighlights(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<DocumentHighlight[]> {
+    public provideDocumentHighlights(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<DocumentHighlight[]> {
         this.initialize(document, position);
         //return this.scopeHighlights();
         //return this.regionHighlight('scopelessInterfaceBlockRegions');
@@ -37,5 +40,4 @@ export class DebugHighlighter implements DocumentHighlightProvider {
         }
         return result;
     }
-
 }
