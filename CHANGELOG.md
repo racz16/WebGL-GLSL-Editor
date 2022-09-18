@@ -4,6 +4,24 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.3] - 2022.09.18.
+
+### Improved
+
+* Enabled almost all desktop features to the web extension (exceptions are: diagnostics, preprocessed code generation, offline documentation)
+* Reduced package size
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Removing the configuration to enable or disable Inlay Hints (VS Code already has builtin configuration for this)
+* Other small fixes
+
+## [1.3.2]
+
+* I made a mistake when I published, don't use this version!
+
 ## [1.3.1] - 2022.06.25. 
 
 ### Improved

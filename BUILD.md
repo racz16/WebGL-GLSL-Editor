@@ -35,13 +35,15 @@
 
 ### Package the extension (optional)
 
-12. Install the VSCE CLI
+12. Package the extension
 
-        npm install -g vsce
+    If you want to create all 11 platform-specific packages (will open 11 terminals)
 
-13. Package the extension
+        npm run package
 
-        vsce package
+    If you only want to create the Windows-specific package
+
+        npm run package-win32-x64
 
 ## Linux
 
@@ -90,10 +92,12 @@
 
 ### Package the extension (optional)
 
-12. Install the VSCE CLI
+12. Package the extension
 
-        sudo npm install -g vsce
+    If you want to create all 11 platform-specific packages (will open 11 terminals)
 
-13. Package the extension
+        npm run package
 
-        vsce package
+    If you only want to create the Linux-specific package
+
+        npm run package-linux-x64

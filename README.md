@@ -19,13 +19,13 @@ The extension colorizes types, builtin types, variables, builtin variables, func
 
 ### Diagnostic
 
-The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations (errors and warnings). It also grays out the unused functions, types and variables.
+The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations (errors and warnings). It also grays out the unused functions, types and variables. Only available in the desktop version.
 
 ![diagnostic](res/gif/diagnostic.gif)
 
 ### Offline documentation
 
-The extension uses [docs.gl](http://docs.gl) to provide the offline documentation for builtin variables and builtin functions.
+The extension uses [docs.gl](http://docs.gl) to provide the offline documentation for builtin variables and builtin functions. Only available in the desktop version.
 
 ![offline documentation](res/gif/documentation.gif)
 
@@ -133,7 +133,7 @@ You can find (go to / find all / peek) the references of a type, a variable, a f
 
 ### Generating preprocessed GLSL source code
 
-You can generate preprocessed GLSL source code by running a command.
+You can generate preprocessed GLSL source code by running a command. Only available in the desktop version.
 
 ![before the preprocessor](res/gif/generate-preprocessed-glsl.gif)
 
@@ -184,7 +184,6 @@ You can easily access several online documentations by commands.
 
 ## Notes
 
-* If you use this extension as a web extension, only the syntax highlight, limited indentation and the features listed as "Other features" will work
 * If you open GLSL code embedded in HTML, only the syntax highlight and limited indentation will work
 
 ## Known Issues
@@ -197,6 +196,15 @@ You can find the user provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.3
+
+* Enabled almost all desktop features to the web extension
+* Other small changes and bugfixes
+
+### 1.3.2
+
+* I made a mistake when I published, don't use this version!
 
 ### 1.3.1
 
