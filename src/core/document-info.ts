@@ -1,5 +1,5 @@
 import { Uri, TextDocument, Position, Location, Range } from 'vscode';
-import { CharStreams, CommonTokenStream, Token } from 'antlr4ts';
+import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
 import { GlslVisitor } from './glsl-visitor';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
@@ -156,7 +156,9 @@ export class DocumentInfo {
     }
 
     private createLexer(): AntlrGlslLexer {
-        const charStream = CharStreams.fromString(this.getText());
+        //The ANTLRInputStream class is deprecated, however as far as I know this is the only way the TypeScript version of ANTLR accepts UTF-16 strings.
+        //The CharStreams.fromString method only accepts UTF-8 and other methods of the CharStreams class are not implemented in TypeScript.
+        const charStream = new ANTLRInputStream(this.getText());
         const lexer = new AntlrGlslLexer(charStream);
         this.tokens = lexer.getAllTokens();
         lexer.reset();
