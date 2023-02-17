@@ -7,35 +7,31 @@
 3. Download and install git (<https://git-scm.com/downloads>)
 4. Download and install the JRE (<https://java.com/en/download>)
 5. Open PowerShell
-6. Install the Antlr CLI
-
-        npm install -g antlr4ts-cli
-
-7. Clone the repository
+6. Clone the repository
 
         git clone https://github.com/racz16/WebGL-GLSL-Editor.git
 
-8. Go inside the repository's root folder
+7. Go inside the repository's root folder
 
         cd WebGL-GLSL-Editor
 
-9. Install dependencies
+8. Install dependencies
 
         npm install
 
-10. Generate code
+9. Generate code
 
         npm run compile-antlr-windows
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
-11. Run the extension
+10. Run the extension
 
     Open the repository's root folder in Visual Studio Code and press F5.
 
 ### Package the extension (optional)
 
-12. Package the extension
+11. Package the extension
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
@@ -64,35 +60,31 @@
 
         sudo apt install default-jre
 
-6. Install the Antlr CLI
-
-        sudo npm install -g antlr4ts-cli
-
-7. Clone the repository
+6. Clone the repository
 
         git clone https://github.com/racz16/WebGL-GLSL-Editor.git
 
-8. Go inside the repository's root folder
+7. Go inside the repository's root folder
 
         cd WebGL-GLSL-Editor
 
-9. Install dependencies
+8. Install dependencies
 
         npm install
 
-10. Generate code
+9. Generate code
 
         npm run compile-antlr-linux
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
-11. Run the extension
+10. Run the extension
 
     Open the repository's root folder in Visual Studio Code and press F5.
 
 ### Package the extension (optional)
 
-12. Package the extension
+11. Package the extension
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
