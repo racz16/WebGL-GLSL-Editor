@@ -101,21 +101,30 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
         const blue = this.roundToTwoDecimals(color.blue);
         if (cr.constructorCall.name === Constants.VEC3) {
             if (red === green && green === blue) {
-                return `${red}f`;
+                return this.formatNumbers(red);
             } else {
-                return `${red}f, ${green}f, ${blue}f`;
+                return this.formatNumbers(red, green, blue);
             }
         } else {
             const alpha = this.roundToTwoDecimals(color.alpha);
             if (red === green && green === blue && blue === alpha) {
-                return `${red}f`;
+                return this.formatNumbers(red);
             } else {
-                return `${red}f, ${green}f, ${blue}f, ${alpha}f`;
+                return this.formatNumbers(red, green, blue, alpha);
             }
         }
     }
 
     private roundToTwoDecimals(num: number): number {
         return Math.round((num + Number.EPSILON) * 100) / 100;
+    }
+
+    private formatNumbers(...values: Array<number>): string {
+        return values.map((value) => this.formatNumber(value)).join(', ');
+    }
+
+    private formatNumber(value: number): string {
+        const postfix = Number.isInteger(value) ? '.0f' : 'f';
+        return `${value}${postfix}`;
     }
 }
