@@ -1,11 +1,11 @@
 # WebGL GLSL Editor
 
-[![VS Code Marketplace version](https://vsmarketplacebadge.apphb.com/version-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace installs](https://vsmarketplacebadge.apphb.com/installs/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace downloads](https://vsmarketplacebadge.apphb.com/downloads/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace rating](https://vsmarketplacebadge.apphb.com/rating-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![VS Code Marketplace version](https://vsmarketplacebadges.dev/version-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![VS Code Marketplace installs](https://vsmarketplacebadges.dev/installs/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![VS Code Marketplace downloads](https://vsmarketplacebadges.dev/downloads/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![VS Code Marketplace rating](https://vsmarketplacebadges.dev/rating-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f48ff23e8b247358919a0af05e88304)](https://www.codacy.com/gh/racz16/WebGL-GLSL-Editor/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=racz16/WebGL-GLSL-Editor&amp;utm_campaign=Badge_Grade)
-[![build and package](https://img.shields.io/github/workflow/status/racz16/WebGL-GLSL-Editor/build%20and%20package.svg?logo=github)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
+[![build and package](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml/badge.svg)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
 
 This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports all the WebGL compatible GLSL extensions too. It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.
 
