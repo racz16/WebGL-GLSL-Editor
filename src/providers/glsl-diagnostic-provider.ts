@@ -27,6 +27,10 @@ export class GlslDiagnosticProvider {
     }
 
     public textChanged(document: TextDocument): void {
+        if (!GlslEditor.CONFIGURATIONS.getDiagnostics()) {
+            GlslEditor.getDiagnosticCollection().clear();
+            return;
+        }
         this.initialize(document);
         this.addHints();
         this.addErrors();

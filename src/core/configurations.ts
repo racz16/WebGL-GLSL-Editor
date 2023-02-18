@@ -3,6 +3,7 @@ import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 
 export class Configurations {
+    private static readonly DIAGNOSTICS = 'diagnostics';
     private static readonly STRICT_RENAME = 'strictRename';
     private static readonly ALWAYS_OPEN_ONLINE_DOC = 'alwaysOpenOnlineDoc';
     private static readonly ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB = 'alwaysOpenOfflineDocInNewTab';
@@ -26,6 +27,7 @@ export class Configurations {
     private static readonly SPACE_BEFORE_OPENING_BRACKETS = 'format.placeSpaceBeforeOpeningBrackets';
     private static readonly SPACES_INSIDE_BRACKETS = 'format.placeSpacesInsideBrackets';
 
+    private diagnostics: boolean;
     private strictRename: boolean;
     private alwaysOpenOnlineDoc: boolean;
     private alwaysOpenOfflineDocInNewTab: boolean;
@@ -51,6 +53,7 @@ export class Configurations {
 
     public constructor() {
         const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
+        this.diagnostics = config.get(Configurations.DIAGNOSTICS);
         this.strictRename = config.get(Configurations.STRICT_RENAME);
         this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
         this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
@@ -76,7 +79,10 @@ export class Configurations {
 
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
-            if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
+            if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.DIAGNOSTICS}`)) {
+                this.diagnostics = config.get(Configurations.DIAGNOSTICS);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.STRICT_RENAME}`)) {
                 this.strictRename = config.get(Configurations.STRICT_RENAME);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_ONLINE_DOC}`)) {
                 this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
@@ -124,6 +130,10 @@ export class Configurations {
                 this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
             }
         });
+    }
+
+    public getDiagnostics(): boolean {
+        return this.diagnostics;
     }
 
     public getStrictRename(): boolean {

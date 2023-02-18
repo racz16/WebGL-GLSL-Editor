@@ -159,6 +159,7 @@ You can easily access several online documentations by commands.
 
 ## Configuration
 
+* `webgl-glsl-editor.diagnostics`: Enables/disables displaying errors, warnings and hints.
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames.
 * `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser.
 * `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.
