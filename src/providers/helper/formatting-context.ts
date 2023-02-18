@@ -19,4 +19,5 @@ export class FormattingContext {
     caseStatementsStart: boolean;
     scopelessInterfaceBlock: boolean;
     inlineStruct: boolean;
+    functionParameters: boolean;
 }

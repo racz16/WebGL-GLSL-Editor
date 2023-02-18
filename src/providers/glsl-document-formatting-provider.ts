@@ -185,7 +185,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         if (this.isNewLineRequiredAfterT2(ct)) {
             this.addRequiredNewLineBeforeT1TextEdit(ct);
         } else if (this.isNewLineCountMoreThanZeroAfterT2()) {
-            this.addCommentedOperatorSplitTextEdit(ct);
+            this.addCommentedOperatorSplitOrMultilineFunctionParametersTextEdit(ct);
         }
     }
 
@@ -199,6 +199,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             return false;
         }
         return (
+            (this.ctx.functionParameters &&
+                (t1.type === AntlrGlslLexer.COMMA || t1.type === AntlrGlslLexer.LRB || t2.type === AntlrGlslLexer.RRB)) ||
             ((t1.type === AntlrGlslLexer.LCB || t1.type === AntlrGlslLexer.SEMICOLON) && !this.ctx.forHeader) ||
             (t1.type === AntlrGlslLexer.RCB &&
                 !this.ctx.forHeader &&
@@ -230,9 +232,14 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         return this.ctx.t2NewLineCount > 0;
     }
 
-    private addCommentedOperatorSplitTextEdit(t2: Token): void {
+    private addCommentedOperatorSplitOrMultilineFunctionParametersTextEdit(t2: Token): void {
         const t1 = this.tokens[this.ctx.lastNewLineIndex];
-        const depthIncrement = this.isOperatorSplitRequired() ? 1 : 0;
+        let depthIncrement = 0;
+        if (this.isOperatorSplitRequired()) {
+            depthIncrement = 1;
+        } else if (this.ctx.functionParameters && t2.type === AntlrGlslLexer.RRB) {
+            depthIncrement = -1;
+        }
         const result = this.getNewLineAndIndentation(t2, 1, depthIncrement);
         const p1 = this.di.offsetToPosition(t1.startIndex - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
@@ -318,7 +325,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
 
     private addNewLineTextEdit(t2: Token): void {
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
-        const result = this.getNewLineAndIndentation(t2, this.ctx.t2NewLineCount);
+        const depthIncrement = this.ctx.functionParameters && t2.type === AntlrGlslLexer.RRB ? -1 : 0;
+        const result = this.getNewLineAndIndentation(t2, this.ctx.t2NewLineCount, depthIncrement);
         const p1 = this.di.offsetToPosition(t1.stopIndex + 1 - this.di.getInjectionOffset());
         const p2 = this.di.offsetToPosition(t2.startIndex - this.di.getInjectionOffset());
         this.addTextEdit(new TextEdit(new Range(p1, p2), result));
@@ -456,6 +464,20 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         this.refreshUnaryExpressionState(t1, t2);
         this.refreshCaseState(t1, t2);
         this.refreshInlineStruct(t1);
+        this.refreshFunctionParametersState(position);
+    }
+
+    private refreshFunctionParametersState(position: number): void {
+        for (const interval of this.di.getRegions().functionParametersRegions) {
+            if (interval.startIndex <= position && interval.stopIndex >= position) {
+                this.ctx.forHeader = true;
+                if (interval.startIndex <= position && interval.stopIndex >= position) {
+                    this.ctx.functionParameters = true;
+                    break;
+                }
+                break;
+            }
+        }
     }
 
     private resetState(): void {
@@ -466,6 +488,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         this.ctx.caseHeader = false;
         this.ctx.caseStatementsStart = false;
         this.ctx.inlineStruct = false;
+        this.ctx.functionParameters = false;
     }
 
     private refreshForState(t1: Token, position: number): void {

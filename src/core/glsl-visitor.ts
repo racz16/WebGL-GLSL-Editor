@@ -19,6 +19,7 @@ import {
     Interface_block_declarationContext,
     AntlrGlslParser,
     Layout_qualifierContext,
+    Function_headerContext,
 } from '../_generated/AntlrGlslParser';
 import { FunctionProcessor } from '../processor/function-processor';
 import { Helper } from '../processor/helper';
@@ -166,6 +167,7 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     public visitFunction_prototype(ctx: Function_prototypeContext): void {
         this.scope = this.createScopeFromFunctionPrototype(this.scope, ctx);
         new FunctionProcessor().getFunctionPrototype(ctx, this.scope, this.di);
+        this.addFunctionParametersListRegion(ctx.function_header());
         this.scope = this.scope.parent;
     }
 
@@ -182,8 +184,18 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         this.currentFunction = new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
         this.di.getRegions().scopedCurlyBracePositions.push(ctx.compound_statement().LCB().symbol.startIndex);
         this.visit(ctx.compound_statement());
+        this.addFunctionParametersListRegion(ctx.function_header());
         this.currentFunction = null;
         this.scope = this.scope.parent;
+    }
+
+    private addFunctionParametersListRegion(ctx: Function_headerContext): void {
+        const t1 = ctx.LRB().symbol;
+        const t2 = ctx.RRB().symbol;
+        if (t1.line !== t2.line && ctx.function_parameter_list()) {
+            const interval = new Interval(t1.startIndex, t2.stopIndex, this.di);
+            this.di.getRegions().functionParametersRegions.push(interval);
+        }
     }
 
     private createScopeFromFunctionDefinition(currentScope: Scope, ctx: Function_definitionContext): Scope {
