@@ -4,6 +4,21 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.4] - 2023.02.25.
+
+### Improved
+
+* Adding a configuration to be able to disable diagnostics
+* Adding the possibility of multiline function parameter lists to the formatter
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Fixing a bug when the color picker removed the .0 from floats and caused complier errors
+* Fixing a character encoding problem which caused different problems, including disappearing characters after formatting files
+* Other small fixes
+
 ## [1.3.3] - 2022.09.18.
 
 ### Improved

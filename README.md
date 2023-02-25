@@ -198,6 +198,12 @@ You can find the user provided issues on [GitHub](https://github.com/racz16/WebG
 
 For more information, see the [changelog](CHANGELOG.md).
 
+### 1.3.4
+
+* Adding a configuration to be able to disable diagnostics
+* Adding the possibility of multiline function parameter lists to the formatter
+* Other small changes and bugfixes
+
 ### 1.3.3
 
 * Enabled almost all desktop features to the web extension
