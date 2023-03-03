@@ -24,7 +24,7 @@ export class GlslDiagnosticProvider {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
-        this.markValidatorAsExecutable();
+        this.markMacValidatorAsExecutableIfNeeded();
     }
 
     public textChanged(document: TextDocument): void {
@@ -237,7 +237,9 @@ export class GlslDiagnosticProvider {
         return `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
     }
 
-    private markValidatorAsExecutable() {
+    private markMacValidatorAsExecutableIfNeeded() {
+        if(platform() !== 'darwin') return;
+
         const validatorPath = this.getValidatorPath();
         
         try {
