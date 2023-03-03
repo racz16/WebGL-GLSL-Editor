@@ -1,4 +1,4 @@
-import { exec, ChildProcess } from 'child_process';
+import { exec, execSync, ChildProcess } from 'child_process';
 import { Stream } from 'stream';
 import { platform } from 'os';
 import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag, window } from 'vscode';
@@ -24,6 +24,7 @@ export class GlslDiagnosticProvider {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
+        this.markValidatorAsExecutable();
     }
 
     public textChanged(document: TextDocument): void {
@@ -115,9 +116,8 @@ export class GlslDiagnosticProvider {
     public displayPreprocessedCode(document: TextDocument): void {
         this.document = document;
         this.di = GlslEditor.getDocumentInfo(this.document.uri);
-        const platformName = this.getPlatformName();
         const stageName = this.di.getStageName();
-        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
+        const validatorPath = this.getValidatorPath();
         this.executeGeneration(validatorPath, stageName);
     }
 
@@ -137,9 +137,8 @@ export class GlslDiagnosticProvider {
     }
 
     private addErrors(): void {
-        const platformName = this.getPlatformName();
         const stageName = this.di.getStageName();
-        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
+        const validatorPath = this.getValidatorPath();
         this.executeValidation(validatorPath, stageName);
     }
 
@@ -231,4 +230,21 @@ export class GlslDiagnosticProvider {
                 return Constants.EMPTY;
         }
     }
+
+    private getValidatorPath(): string {
+        const platformName = this.getPlatformName();
+
+        return `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
+    }
+
+    private markValidatorAsExecutable() {
+        const validatorPath = this.getValidatorPath();
+        
+        try {
+            execSync(`chmod +x ${validatorPath}`);
+        } catch(error) {
+            console.error(`exec error using 'chmod' to mark validator executable: ${error}`);
+        }
+    }
+
 }
