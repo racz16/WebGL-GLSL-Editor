@@ -293,7 +293,7 @@ For more information, see the [changelog](CHANGELOG.md).
 
 ## Contributions
 
-Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz) and [RAX7](https://github.com/RAX7) for contributing.
+Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7) and [Matt Curtis](https://github.com/matt-curtis) for contributing.
 
 ## How to build, run and package the extension
 
