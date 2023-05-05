@@ -7,7 +7,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f48ff23e8b247358919a0af05e88304)](https://www.codacy.com/gh/racz16/WebGL-GLSL-Editor/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=racz16/WebGL-GLSL-Editor&amp;utm_campaign=Badge_Grade)
 [![build and package](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml/badge.svg)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
 
-This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports all the WebGL compatible GLSL extensions too. It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.
+This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports all the WebGL-compatible GLSL extensions too. It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.
 
 ## Features
 
@@ -19,7 +19,7 @@ The extension colorizes types, builtin types, variables, builtin variables, func
 
 ### Diagnostic
 
-The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic informations (errors and warnings). It also grays out the unused functions, types and variables. Only available in the desktop version.
+The extension uses [glslang](https://github.com/KhronosGroup/glslang), the Khronos Group's reference GLSL compiler to provide diagnostic information (errors and warnings). It also grays out the unused functions, types and variables. Only available in the desktop version.
 
 ![diagnostic](res/gif/diagnostic.gif)
 
@@ -37,13 +37,13 @@ The extension can display a signature helper for functions and constructors (exc
 
 ### Code completion
 
-The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, accoarding to the current scope and shader stage. Member variables and vector swizzles are also supported.
+The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, according to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
 ![code completion](res/gif/code-completion.gif)
 
 ### Formatting
 
-The extension can format the whole source code and it can format a region of the source code. The formatting is customizable in the Settings.
+The extension can format the whole source code and it can format a region of the source code. The formatting is customizable in Settings.
 
 ![formatting](res/gif/formatting.gif)
 
@@ -67,7 +67,7 @@ The extension can highlight all the occurrences of the selected type, variable f
 
 ### Hover
 
-The extension can provide useful informations or documentation summary if you hover over types, variables, functions or constructors.
+The extension can provide useful information or documentation summary if you hover over types, variables, functions or constructors.
 
 ![hover](res/gif/hover.gif)
 
@@ -85,19 +85,19 @@ The extension can show function and constructor parameters in the source code.
 
 ### Color picker
 
-The extension can display a color picker if you initialize or reassign a `vec3` or `vec4` variable whihch name contains the word `color` or `colour` and the assigned expression is a `vec3` or `vec4` constructor and it's parameters are number literals.
+The extension can display a color picker if you initialize or reassign a `vec3` or `vec4` variable whose name contains the word `color` or `colour` and the assigned expression is a `vec3` or `vec4` constructor and its parameters are number literals.
 
 ![color picker](res/gif/color-picker.gif)
 
 ### Code injection
 
-The extension can inject code into the GLSL files. You can specify the code in the Settings.
+The extension can inject code into the GLSL files. You can specify the code in Settings.
 
 ![code injection](res/png/screenshots/code-injection.png)
 
 ### Show/Peek call hierarchy
 
-The extension can visualize the functions' and constructors' incoming ang outgoing calls as a graph.
+The extension can visualize the functions' and constructors' incoming and outgoing calls as a graph.
 
 ![call hierarchy](res/gif/call-hierarchy.gif)
 
@@ -162,7 +162,7 @@ You can easily access several online documentations by commands.
 * `webgl-glsl-editor.diagnostics`: Enables/disables displaying errors, warnings and hints.
 * `webgl-glsl-editor.strictRename`: Prevents invalid renames.
 * `webgl-glsl-editor.alwaysOpenOnlineDoc`: Documentation is always opened online in the browser.
-* `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in new tab.
+* `webgl-glsl-editor.alwaysOpenOfflineDocInNewTab`: Offline documentation is always opened in a new tab.
 * `webgl-glsl-editor.format.placeBracesOnSeparateLine`: Places the braces on separate lines.
 * `webgl-glsl-editor.format.placeSpaceAroundUnaryOperators`: Places a space between the unary operators and the operands.
 * `webgl-glsl-editor.format.placeSpacesAroundBinaryOperators`: Places spaces around the binary operators.
@@ -192,7 +192,7 @@ You can easily access several online documentations by commands.
 * Preprocessor directives may cause problems
 * Incorrect GLSL code (like an if statement without parentheses) may cause problems
 
-You can find the user provided issues on [GitHub](https://github.com/racz16/WebGL-GLSL-Editor/issues). Feel free to add new issues, but please provide some sort of informations to I can reproduce the problem.
+You can find the user-provided issues on [GitHub](https://github.com/racz16/WebGL-GLSL-Editor/issues). Feel free to add new issues, but please provide some sort of information to I can reproduce the problem.
 
 ## Release Notes
 
@@ -211,7 +211,7 @@ For more information, see the [changelog](CHANGELOG.md).
 
 ### 1.3.2
 
-* I made a mistake when I published, don't use this version!
+* I made a mistake when I published it, don't use this version!
 
 ### 1.3.1
 
@@ -248,7 +248,7 @@ For more information, see the [changelog](CHANGELOG.md).
 ### 1.2.0
 
 * Formatting
-* Syntax highlight in HTML scritps
+* Syntax highlight in HTML scripts
 * Code injection
 * Improved folding
 * Other small changes and bugfixes

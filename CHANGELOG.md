@@ -15,15 +15,15 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 ### Fixed
 
-* Fixing a bug when the color picker removed the .0 from floats and caused complier errors
-* Fixing a character encoding problem which caused different problems, including disappearing characters after formatting files
+* Fixing a bug when the color picker removed the .0 from floats and caused compiler errors
+* Fixing a character encoding problem that caused different problems, including disappearing characters after formatting files
 * Other small fixes
 
 ## [1.3.3] - 2022.09.18.
 
 ### Improved
 
-* Enabled almost all desktop features to the web extension (exceptions are: diagnostics, preprocessed code generation, offline documentation)
+* Enabled almost all desktop features to the web extension (exceptions are: diagnostics, preprocessed code generation, and offline documentation)
 * Reduced package size
 * Updated packages
 * Other small updates
@@ -35,7 +35,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 ## [1.3.2]
 
-* I made a mistake when I published, don't use this version!
+* I made a mistake when I published it, don't use this version!
 
 ## [1.3.1] - 2022.06.25. 
 
@@ -54,7 +54,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 * Extending the formatting with options
 * Enabling the extension as a web extension (only syntax highlight)
-* Syntax highlight (interface blocks, array constructors, comments, declaration, definition, readonly)
+* Syntax highlight (interface blocks, array constructors, comments, declaration, definition, read-only)
 * Providing function signatures in the call hierarchy
 * Extending references with builtin types and builtin variables
 * Extending highlight with builtin variables
@@ -104,9 +104,9 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 * Diagnostic problems in Linux
 * Code completion in comments
-* Inconsistent go to definition behaviour
-* Inconsistent find references behaviour
-* Displaying signature and hover information even if the variable or the function not exist
+* Inconsistent go to definition behavior
+* Inconsistent find references behavior
+* Displaying signature and hover information even if the variable or the function doesn't exist
 * Problem with renaming constructors
 * Truncated diagnostic messages
 * Other small fixes
@@ -116,7 +116,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 ### Added
 
 * Formatting
-* Syntax highlight in HTML scritps
+* Syntax highlight in HTML scripts
 * Code injection
 
 ### Removed
@@ -132,10 +132,10 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 ### Fixed
 
 * Wrong documentation of the acos and the round functions
-* Trying to use the type of variables with unknown type
-* Local variables don't hide other vairables properly
-* Variable marked as unused, if it's declaration contains type declaration or interface block
-* The extension can't start properly if the first opened file contains build error
+* Trying to use the type of variables with an unknown type
+* Local variables don't hide other variables properly
+* Variable marked as unused if its declaration contains type declaration or interface block
+* The extension can't start properly if the first opened file contains a build error
 * Different files' diagnostic results interfere with each other
 * Trying to use the name of unnamed type declarations or variable declarations
 * Types declared in function header scoped locally and marked as unused
@@ -152,7 +152,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 ### Improved
 
-* Diagnostic (can show more than one errors)
+* Diagnostic (can show more than one error)
 * Updated packages
 * Other small updates
 
@@ -196,7 +196,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 ### Fixed
 
-* Function definition related features are working again
+* Function definition-related features are working again
 * Floating point numbers no longer trigger code completion
 
 ## [1.0.0] - 2020.02.19.

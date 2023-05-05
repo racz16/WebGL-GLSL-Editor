@@ -49,7 +49,7 @@ export const variables = new Map<string, Array<IVariable>>([
             },
             {
                 summary:
-                    "The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array's length is gl_MaxDrawBuffers.",
+                    'The variable gl_FragData is an array. Writing to gl_FragData[n] specifies the fragment data that will be used by the subsequent fixed functionality pipeline for data n. The array\'s length is gl_MaxDrawBuffers.',
                 notDocumented: true,
                 type: 'vec4',
                 name: 'gl_FragData',

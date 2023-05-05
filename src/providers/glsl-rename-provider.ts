@@ -96,7 +96,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
             return;
         }
         if (this.newName.length > 1024) {
-            throw new Error(`The length of identifier '${this.newName}' is greater than 1024`);
+            throw new Error(`The length of the identifier '${this.newName}' is greater than 1024`);
         }
         if (this.newName.startsWith('gl_')) {
             throw new Error(`Identifier '${this.newName}' starts with 'gl_'`);
@@ -110,10 +110,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     private validateDefinedStructOrVariable(): void {
         if (this.scope.variableDeclarations.find((vd) => vd.name === this.newName)) {
-            throw new Error(`Variable '${this.newName}' is already definied`);
+            throw new Error(`Variable '${this.newName}' is already defined`);
         }
         if (this.scope.typeDeclarations.find((td) => td.name === this.newName)) {
-            throw new Error(`Struct '${this.newName}' is already definied`);
+            throw new Error(`Struct '${this.newName}' is already defined`);
         }
     }
 
@@ -139,13 +139,13 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
             return;
         }
         if (this.scope.isGlobal() && this.di.getRootScope().functionPrototypes.find((fp) => fp.name === this.newName)) {
-            throw new Error(`Function '${this.newName}' is already definied`);
+            throw new Error(`The function '${this.newName}' is already defined`);
         }
         if (this.scope.isGlobal() && this.di.getRootScope().functionDefinitions.find((fd) => fd.name === this.newName)) {
-            throw new Error(`Function '${this.newName}' is already definied`);
+            throw new Error(`The function '${this.newName}' is already defined`);
         }
         if (this.scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
-            throw new Error(`Function '${this.newName}' is already definied`);
+            throw new Error(`The function '${this.newName}' is already defined`);
         }
     }
 
@@ -163,7 +163,7 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         for (const lf of this.di.builtin.functions) {
             const fd2 = lf.getDeclaration();
             if (this.newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
-                throw new Error(`Overriding built-in function '${this.newName}' is illegal`);
+                throw new Error(`Overriding the builtin function '${this.newName}' is illegal`);
             }
         }
     }
@@ -171,19 +171,19 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     private validateFunctionWithOtherFunction(fd: FunctionDeclaration, fd2: FunctionDeclaration): void {
         if (this.newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
             if (this.lf.definitions.length && fd2.logicalFunction.definitions.length) {
-                throw new Error(`Function '${this.newName}' is already definied`);
+                throw new Error(`The function '${this.newName}' is already defined`);
             }
             if (this.di.isGlsl100es() && this.lf.prototypes.length && fd2.logicalFunction.prototypes.length) {
-                throw new Error(`Function '${this.newName}' is already declared`);
+                throw new Error(`The function '${this.newName}' is already declared`);
             }
             if (fd.returnType.declaration !== fd2.returnType.declaration) {
-                throw new Error(`Function '${this.newName}' has a different return type`);
+                throw new Error(`The function '${this.newName}' has a different return type`);
             }
             for (let i = 0; i < fd.parameters.length; i++) {
                 const p = fd.parameters[i];
                 const p2 = fd2.parameters[i];
                 if (!p.type.qualifiersEqualsExceptPrecisionWith(p2.type)) {
-                    throw new Error(`Function '${this.newName}' has different qualifiers`);
+                    throw new Error(`The function '${this.newName}' has different qualifiers`);
                 }
             }
         }

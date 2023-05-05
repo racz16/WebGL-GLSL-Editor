@@ -10,7 +10,7 @@ export class GlslTextProvider implements TextDocumentContentProvider {
         if (text) {
             return text;
         } else {
-            window.showErrorMessage("Something went wrong. Most likely the code doesn't compile.");
+            window.showErrorMessage('Something went wrong. Most likely the code doesn\'t compile.');
             return null;
         }
     }

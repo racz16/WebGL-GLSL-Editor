@@ -129,7 +129,7 @@
                     "webgl-glsl-editor.alwaysOpenOfflineDocInNewTab": {
                         "type": "boolean",
                         "default": false,
-                        "description": "Offline documentation is always opened in new tab. This configuration only works with the desktop version.",
+                        "description": "Offline documentation is always opened in a new tab. This configuration only works with the desktop version.",
                         "order": 4
                     },
                     "webgl-glsl-editor.format.placeBracesOnSeparateLine": {
