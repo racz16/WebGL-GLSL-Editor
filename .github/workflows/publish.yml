@@ -25,4 +25,6 @@ jobs:
             - run: npm run package-linux-armhf
             - run: npm run package-alpine-x64
             - run: npm run package-alpine-arm64
-            - run: echo $(find . -type f -name "*.vsix" | paste -sd " ")
+            - run: npx vsce publish --packagePath $(find . -type f -name "*.vsix" | paste -sd " ")
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}
