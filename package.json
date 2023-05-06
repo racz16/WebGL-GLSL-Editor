@@ -72,10 +72,24 @@
                 "path": "./syntaxes/glsl.language.json"
             },
             {
-                "scopeName": "source.injected.glsl",
-                "path": "./syntaxes/glsl-injected.language.json",
+                "scopeName": "source.html.injected.glsl",
+                "path": "./syntaxes/html-injected-glsl.language.json",
                 "injectTo": [
                     "text.html"
+                ]
+            },
+            {
+                "scopeName": "source.js.injected.glsl",
+                "path": "./syntaxes/js-injected-glsl.language.json",
+                "injectTo": [
+                    "source.js"
+                ]
+            },
+            {
+                "scopeName": "source.ts.injected.glsl",
+                "path": "./syntaxes/ts-injected-glsl.language.json",
+                "injectTo": [
+                    "source.ts"
                 ]
             }
         ],

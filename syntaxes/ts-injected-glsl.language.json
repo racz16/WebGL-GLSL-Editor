@@ -1,0 +1,27 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "GLSL",
+    "scopeName": "source.ts.injected.glsl",
+    "injectionSelector": "L:source.ts",
+    "patterns": [
+        {
+            "begin": "(?<=\\/\\*\\s*glsl\\s*\\*\\/\\s*)(`)",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.template.begin.ts string.template.ts"
+                }
+            },
+            "end": "`",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.template.end.ts string.template.ts"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "source.glsl"
+                }
+            ]
+        }
+    ]
+}
