@@ -1,0 +1,13 @@
+name: publish
+on:
+    push:
+        branches:
+            - master
+jobs:
+    build-and-package:
+        uses: ./.github/workflows/build-and-package.yml
+    publish:
+        runs-on: ubuntu-latest
+        needs: build-and-package
+        steps:
+            - run: echo $(find . -iname *.vsix)
