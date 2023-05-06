@@ -12,38 +12,27 @@ jobs:
             matrix:
                 include:
                     - os: windows-latest
-                      target: win32-x64
-                      ignoreFile: windows.vscodeignore
+                      command: package-win32-x64
                     - os: windows-latest
-                      target: win32-ia32
-                      ignoreFile: windows.vscodeignore
+                      command: package-win32-ia32
                     - os: windows-latest
-                      target: win32-arm64
-                      ignoreFile: windows.vscodeignore
+                      command: package-win32-arm64
                     - os: ubuntu-latest
-                      target: linux-x64
-                      ignoreFile: linux.vscodeignore
+                      command: package-linux-x64
                     - os: ubuntu-latest
-                      target: linux-arm64
-                      ignoreFile: linux.vscodeignore
+                      command: package-linux-arm64
                     - os: ubuntu-latest
-                      target: linux-armhf
-                      ignoreFile: linux.vscodeignore
+                      command: package-linux-armhf
                     - os: ubuntu-latest
-                      target: alpine-x64
-                      ignoreFile: linux.vscodeignore
+                      command: package-alpine-x64
                     - os: ubuntu-latest
-                      target: alpine-arm64
-                      ignoreFile: linux.vscodeignore
+                      command: package-alpine-arm64
                     - os: macos-latest
-                      target: darwin-x64
-                      ignoreFile: mac.vscodeignore
+                      command: package-darwin-x64
                     - os: macos-latest
-                      target: darwin-arm64
-                      ignoreFile: mac.vscodeignore
+                      command: package-darwin-arm64
                     - os: ubuntu-latest
-                      target: web
-                      ignoreFile: web.vscodeignore
+                      command: package-web
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v3
@@ -53,4 +42,4 @@ jobs:
               working-directory: ./syntaxes
             - run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
               working-directory: ./syntaxes
-            - run: npx vsce package --target ${{ matrix.target }} --ignoreFile ${{ matrix.ignoreFile }}
+            - run: npm run ${{ matrix.command }}

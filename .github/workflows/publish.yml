@@ -16,5 +16,13 @@ jobs:
               working-directory: ./syntaxes
             - run: npm run package-web
             - run: npm run package-win32-x64
-            - run: $(find . -iname *.vsix)
-            - run: echo $(find . -iname *.vsix)
+            - run: npm run package-win32-ia32
+            - run: npm run package-win32-arm64
+            - run: npm run package-darwin-x64
+            - run: npm run package-darwin-arm64
+            - run: npm run package-linux-x64
+            - run: npm run package-linux-arm64
+            - run: npm run package-linux-armhf
+            - run: npm run package-alpine-x64
+            - run: npm run package-alpine-arm64
+            - run: echo $(find . -type f -name "*.vsix" | paste -sd " ")
