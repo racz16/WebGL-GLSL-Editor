@@ -1,4 +1,4 @@
-name: build and package
+name: build
 on:
     push:
         branches:
@@ -6,34 +6,44 @@ on:
     pull_request:
         branches:
             - master
-    workflow_call:
 jobs:
-    build-and-package:
+    build:
         strategy:
             matrix:
                 include:
                     - os: windows-latest
                       target: win32-x64
+                      ignoreFile: windows.vscodeignore
                     - os: windows-latest
                       target: win32-ia32
+                      ignoreFile: windows.vscodeignore
                     - os: windows-latest
                       target: win32-arm64
+                      ignoreFile: windows.vscodeignore
                     - os: ubuntu-latest
                       target: linux-x64
+                      ignoreFile: linux.vscodeignore
                     - os: ubuntu-latest
                       target: linux-arm64
+                      ignoreFile: linux.vscodeignore
                     - os: ubuntu-latest
                       target: linux-armhf
+                      ignoreFile: linux.vscodeignore
                     - os: ubuntu-latest
                       target: alpine-x64
+                      ignoreFile: linux.vscodeignore
                     - os: ubuntu-latest
                       target: alpine-arm64
+                      ignoreFile: linux.vscodeignore
                     - os: macos-latest
                       target: darwin-x64
+                      ignoreFile: mac.vscodeignore
                     - os: macos-latest
                       target: darwin-arm64
+                      ignoreFile: mac.vscodeignore
                     - os: ubuntu-latest
                       target: web
+                      ignoreFile: web.vscodeignore
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v3
@@ -43,8 +53,4 @@ jobs:
               working-directory: ./syntaxes
             - run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
               working-directory: ./syntaxes
-            - run: npx vsce package --target ${{ matrix.target }}
-            - uses: actions/upload-artifact@v2
-              with:
-                  name: ${{ matrix.target }}
-                  path: '*.vsix'
+            - run: npx vsce package --target ${{ matrix.target }} --ignoreFile ${{ matrix.ignoreFile }}
