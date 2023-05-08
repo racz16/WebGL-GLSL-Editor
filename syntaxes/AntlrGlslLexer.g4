@@ -181,6 +181,7 @@ PREPROCESSOR : '#' (('/'? ~[\r\n*/]) | '*')* ('/' ~[\r\n*/])? -> channel(HIDDEN)
 NEW_LINE : ('\r\n' | '\r' | '\n') -> channel(HIDDEN);
 SPACE : ' ' -> channel(HIDDEN);
 TAB : '\t' -> channel(HIDDEN);
+LINE_CONTINUATION : '\\' -> channel(HIDDEN);
 
 //comments
 MULTI_LINE_COMMENT : '/*' .*? '*/' -> channel(HIDDEN);

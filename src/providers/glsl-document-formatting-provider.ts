@@ -92,7 +92,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         return (
             type === AntlrGlslLexer.SINGLE_LINE_COMMENT ||
             type === AntlrGlslLexer.MULTI_LINE_COMMENT ||
-            type === AntlrGlslLexer.PREPROCESSOR
+            type === AntlrGlslLexer.PREPROCESSOR ||
+            type === AntlrGlslLexer.LINE_CONTINUATION
         );
     }
 
