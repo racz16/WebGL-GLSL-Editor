@@ -47,11 +47,15 @@ The extension can format the whole source code and it can format a region of the
 
 ![formatting](res/gif/formatting.gif)
 
-### Syntax highlight in HTML scripts
+### Syntax highlight in HTML scripts and in JavaScript/TypeScript template strings
 
 The extension can colorize GLSL code in HTML scripts if the script's type is `x-shader/x-vertex` or `x-shader/x-fragment`.
 
-![html](res/png/screenshots/html.png)
+![embedded code in HTML](res/png/screenshots/html.png)
+
+The extension can colorize GLSL code in JavaScript/TypeScript strings if there is a `/*glsl*/` comment before it.
+
+![embedded code in JavaScript](res/png/screenshots/js.png)
 
 ### Rename
 
@@ -197,6 +201,11 @@ You can find the user-provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.5
+
+* Extending the syntax highlight to work in JavaScript and TypeScript strings
+* Other small changes and bugfixes
 
 ### 1.3.4
 

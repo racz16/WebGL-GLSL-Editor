@@ -4,6 +4,20 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.5] - 2023.05.09.
+
+### Improved
+
+* Extending the syntax highlight to work in JavaScript and TypeScript strings
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Fixed the diagnostics on MacOS (thanks Matt Curtis)
+* Fixed the formatter, so it no longer removes the line continuation character
+* Other small fixes
+
 ## [1.3.4] - 2023.02.25.
 
 ### Improved
