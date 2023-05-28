@@ -51,6 +51,21 @@
 			"match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
 		},
 		{
+			"comment": "INTERFACE_BLOCK",
+			"match": "(uniform)(\\s|(\\/\\*.*?\\*\\/))+([a-zA-Z_]\\w*)(?=(\\s|(\\/\\*.*?\\*\\/))*{)",
+			"captures": {
+				"1": {
+					"name": "storage.modifier.glsl"
+				},
+				"3": {
+					"name": "comment.block.glsl"
+				},
+				"4": {
+					"name": "entity.name.type.glsl"
+				}
+			}
+		},
+		{
 			"comment": "QUALIFIER",
 			"name": "storage.modifier.glsl",
 			"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
@@ -153,11 +168,6 @@
 					]
 				}
 			}
-		},
-		{
-			"comment": "INTERFACE_BLOCK",
-			"match": "(?<=(uniform(\\s|(\\/\\*.*?\\*\\/))+))([a-zA-Z_]\\w*)(?=((\\s|(\\/\\*.*?\\*\\/))+{))",
-			"name": "entity.name.type.glsl"
 		},
 		{
 			"comment": "IDENTIFIER",

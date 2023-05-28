@@ -5,9 +5,18 @@
     "injectionSelector": "L:source.ts",
     "patterns": [
         {
-            "begin": "(?<=\\/\\*\\s*glsl\\s*\\*\\/\\s*)(`)",
+            "begin": "((\\/\\*)\\s*glsl\\s*(\\*\\/))\\s*(`)",
             "beginCaptures": {
-                "0": {
+                "1": {
+                    "name": "comment.block.ts"
+                },
+                "2": {
+                    "name": "punctuation.definition.comment.ts"
+                },
+                "3": {
+                    "name": "punctuation.definition.comment.ts"
+                },
+                "4": {
                     "name": "punctuation.definition.string.template.begin.ts string.template.ts"
                 }
             },
