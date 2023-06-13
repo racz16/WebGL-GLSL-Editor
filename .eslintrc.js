@@ -1,23 +1,13 @@
+/**@type {import('eslint').Linter.Config} */
+// eslint-disable-next-line no-undef
 module.exports = {
-    "env": {
-        "es6": true,
-        "node": true
+    root: true,
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint'],
+    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+    rules: {
+        semi: ['error', 'always'],
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
     },
-    "extends": [
-        "prettier",
-        "prettier/@typescript-eslint",
-        'eslint:recommended',
-        'plugin:@typescript-eslint/recommended',
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "@typescript-eslint/no-empty-function": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-    }
 };

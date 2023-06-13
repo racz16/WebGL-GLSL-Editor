@@ -289,7 +289,7 @@
         "webpack-dev": "webpack --mode development --watch",
         "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
         "compile-antlr-linux": "./compile-antlr.sh",
-        "lint": "npx eslint -c .eslintrc.js --ext .ts --ignore-pattern src/_generated src",
+        "lint": "eslint ./src --ext .ts --ignore-pattern src/_generated",
         "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
         "package-web": "vsce package --target web --ignoreFile web.vscodeignore",
         "package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",

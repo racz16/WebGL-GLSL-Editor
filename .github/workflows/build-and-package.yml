@@ -42,4 +42,5 @@ jobs:
               working-directory: ./syntaxes
             - run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
               working-directory: ./syntaxes
+            - run: npm run lint
             - run: npm run ${{ matrix.command }}
