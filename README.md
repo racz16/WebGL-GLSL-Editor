@@ -1,9 +1,9 @@
 # WebGL GLSL Editor
 
-[![VS Code Marketplace version](https://vsmarketplacebadges.dev/version-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace installs](https://vsmarketplacebadges.dev/installs/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace downloads](https://vsmarketplacebadges.dev/downloads/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![VS Code Marketplace rating](https://vsmarketplacebadges.dev/rating-short/raczzalan.webgl-glsl-editor.svg)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/raczzalan.webgl-glsl-editor?color=44cc11)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+[![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f48ff23e8b247358919a0af05e88304)](https://www.codacy.com/gh/racz16/WebGL-GLSL-Editor/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=racz16/WebGL-GLSL-Editor&amp;utm_campaign=Badge_Grade)
 [![build and package](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml/badge.svg)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
 
