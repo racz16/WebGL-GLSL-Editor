@@ -248,11 +248,17 @@
                         "markdownDescription": "Places spaces inside brackets (`[`, `]`).\n\n**Enabled:**\n```glsl\nint[ 6 ] indices;\n```\n**Disabled:**\n```glsl\nint[6] indices;\n```",
                         "order": 21
                     },
+                    "webgl-glsl-editor.format.favorFloatingSuffix": {
+                        "type": "boolean",
+                        "default": true,
+                        "markdownDescription": "The formatter and the color picker favors the floating suffix (`f`) when applicable.\n\n**Enabled**\n```glsl\nfloat value = 1.0f;\n```\n**Disabled:**\n```glsl\nfloat value = 1.0;\n```",
+                        "order": 22
+                    },
                     "webgl-glsl-editor.codeInjection": {
                         "type": "boolean",
                         "default": false,
                         "description": "Enables/disables code injection.",
-                        "order": 22
+                        "order": 23
                     },
                     "webgl-glsl-editor.codeInjectionSource": {
                         "type": "array",
@@ -277,7 +283,7 @@
                             "uniform float iSampleRate;"
                         ],
                         "description": "The lines of the injected source code. Only works if Code Injection is enabled.",
-                        "order": 23
+                        "order": 24
                     }
                 }
             }

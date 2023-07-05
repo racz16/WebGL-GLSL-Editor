@@ -166,7 +166,21 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             this.refreshState(ct);
             this.processT1T1(ct);
         }
+        if(ct.type === AntlrGlslLexer.FLOAT_LITERAL) {
+            this.formatFloatLiteral(ct);
+        }
         this.afterProcessT1();
+    }
+
+    private formatFloatLiteral(ct: Token): void {
+        const favorSuffix = GlslEditor.CONFIGURATIONS.getFavorFloatingSuffix();
+        const p = this.di.offsetToPosition(ct.stopIndex + 1 - this.di.getInjectionOffset());
+        if(ct.text.toLowerCase().endsWith('f') && (this.di.getVersion() === 100 || !favorSuffix)) {
+            const p1 = this.di.offsetToPosition(ct.stopIndex - this.di.getInjectionOffset());
+            this.addTextEdit(new TextEdit(new Range(p1, p), ''));
+        } else if(!ct.text.toLowerCase().endsWith('f') && this.di.getVersion() === 300 && favorSuffix) {
+            this.addTextEdit(new TextEdit(new Range(p, p), 'f'));
+        }
     }
 
     private isTheFirstNotT3Token(): boolean {

@@ -26,6 +26,7 @@ export class Configurations {
     private static readonly SPACES_AROUND_BRACES = 'format.placeSpacesAroundBraces';
     private static readonly SPACE_BEFORE_OPENING_BRACKETS = 'format.placeSpaceBeforeOpeningBrackets';
     private static readonly SPACES_INSIDE_BRACKETS = 'format.placeSpacesInsideBrackets';
+    private static readonly FAVOR_FLOATING_SUFFIX = 'format.favorFloatingSuffix';
 
     private diagnostics: boolean;
     private strictRename: boolean;
@@ -50,6 +51,7 @@ export class Configurations {
     private spacesAroundBraces: boolean;
     private spaceBeforeOpeningBrackets: boolean;
     private spacesInsideBrackets: boolean;
+    private favorFloatingSuffix: boolean;
 
     public constructor() {
         const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
@@ -76,6 +78,7 @@ export class Configurations {
         this.spacesAroundBraces = config.get(Configurations.SPACES_AROUND_BRACES);
         this.spaceBeforeOpeningBrackets = config.get(Configurations.SPACE_BEFORE_OPENING_BRACKETS);
         this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
+        this.favorFloatingSuffix = config.get(Configurations.FAVOR_FLOATING_SUFFIX);
 
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
@@ -128,6 +131,8 @@ export class Configurations {
                 this.spaceBeforeOpeningBrackets = config.get(Configurations.SPACE_BEFORE_OPENING_BRACKETS);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_INSIDE_BRACKETS}`)) {
                 this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.FAVOR_FLOATING_SUFFIX}`)) {
+                this.favorFloatingSuffix = config.get(Configurations.FAVOR_FLOATING_SUFFIX);
             }
         });
     }
@@ -222,5 +227,9 @@ export class Configurations {
 
     public getSpacesInsideBrackets(): boolean {
         return this.spacesInsideBrackets;
+    }
+
+    public getFavorFloatingSuffix(): boolean {
+        return this.favorFloatingSuffix;
     }
 }
