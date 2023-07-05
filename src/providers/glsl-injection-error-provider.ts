@@ -7,7 +7,12 @@ export class GlslInjectionErrorProvider implements CodeLensProvider {
         const di = GlslEditor.getDocumentInfo(document.uri);
         if (di.hasInjectionError()) {
             const range = document.lineAt(0).range;
-            const cl = new CodeLens(range, { title: 'The injected code contains errors.', command: null, arguments: null, tooltip: '' });
+            const cl = new CodeLens(range, {
+                title: 'The injected code contains errors.',
+                command: null,
+                arguments: null,
+                tooltip: '',
+            });
             return [cl];
         } else {
             return [];

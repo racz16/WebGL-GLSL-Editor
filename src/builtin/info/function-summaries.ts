@@ -558,7 +558,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -576,7 +577,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -594,7 +596,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -612,7 +615,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -630,7 +634,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -648,7 +653,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'coord',
@@ -1370,7 +1376,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
             },
             {
                 name: 'packHalf2x16',
-                summary: 'Convert two 32-bit floating-point quantities to 16-bit quantities and pack them into a single 32-bit integer.',
+                summary:
+                    'Convert two 32-bit floating-point quantities to 16-bit quantities and pack them into a single 32-bit integer.',
                 parameters: [
                     {
                         name: 'v',
@@ -1663,7 +1670,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1671,7 +1679,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                     },
                     {
                         name: 'lod',
-                        summary: 'If present, specifies the level-of-detail within the texture from which the texel will be fetched.',
+                        summary:
+                            'If present, specifies the level-of-detail within the texture from which the texel will be fetched.',
                     },
                 ],
             },
@@ -1681,7 +1690,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1689,7 +1699,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                     },
                     {
                         name: 'lod',
-                        summary: 'If present, specifies the level-of-detail within the texture from which the texel will be fetched.',
+                        summary:
+                            'If present, specifies the level-of-detail within the texture from which the texel will be fetched.',
                     },
                     {
                         name: 'offset',
@@ -1703,7 +1714,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1721,7 +1733,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1743,7 +1756,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1769,7 +1783,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1787,7 +1802,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1809,7 +1825,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1831,7 +1848,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1849,7 +1867,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1871,7 +1890,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1887,7 +1907,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                     },
                     {
                         name: 'offset',
-                        summary: 'Specifies the offsets, in texels at which the texture will be sampled relative to the projection of P.',
+                        summary:
+                            'Specifies the offsets, in texels at which the texture will be sampled relative to the projection of P.',
                     },
                 ],
             },
@@ -1897,7 +1918,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1915,7 +1937,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',
@@ -1937,7 +1960,8 @@ export const functionSummaries = new Map<string, Array<IFunctionSummary>>([
                 parameters: [
                     {
                         name: 'sampler',
-                        summary: 'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
+                        summary:
+                            'Specifies the sampler to which the texture from which texels will be retrieved is bound.',
                     },
                     {
                         name: 'P',

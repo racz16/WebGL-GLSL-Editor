@@ -1,4 +1,12 @@
-import { ReferenceProvider, TextDocument, Position, ReferenceContext, CancellationToken, ProviderResult, Location } from 'vscode';
+import {
+    ReferenceProvider,
+    TextDocument,
+    Position,
+    ReferenceContext,
+    CancellationToken,
+    ProviderResult,
+    Location,
+} from 'vscode';
 import { PositionalProviderBase } from './helper/positional-provider-base';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';

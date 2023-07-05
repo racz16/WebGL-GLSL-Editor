@@ -1,0 +1,15 @@
+{
+    "default": true,
+    "line-length": false,
+    "commands-show-output": false,
+    "heading-style": { "style": "atx" },
+    "ul-style": { "style": "asterisk" },
+    "ul-indent": { "indent": 4 },
+    "no-trailing-spaces": { "br_spaces": 0, "strict": true },
+    "no-duplicate-heading": { "siblings_only": true },
+    "ol-prefix": { "style": "ordered" },
+    "code-block-style": { "style": "fenced" },
+    "code-fence-style": { "style": "backtick" },
+    "emphasis-style": { "style": "asterisk" },
+    "strong-style": { "style": "underscore" }
+}

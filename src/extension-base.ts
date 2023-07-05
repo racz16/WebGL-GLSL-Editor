@@ -8,7 +8,10 @@ import { GlslDefinitionProvider } from './providers/glsl-definition-provider';
 import { GlslDocumentColorProvider } from './providers/glsl-document-color-provider';
 import { GlslDocumentFormattingProvider } from './providers/glsl-document-formatting-provider';
 import { GlslDocumentHighlightProvider } from './providers/glsl-document-highlight-provider';
-import { GlslDocumentSemanticTokensProvider, GlslSemanticTokensLegend } from './providers/glsl-document-semantic-token-provider';
+import {
+    GlslDocumentSemanticTokensProvider,
+    GlslSemanticTokensLegend,
+} from './providers/glsl-document-semantic-token-provider';
 import { GlslDocumentSymbolProvider } from './providers/glsl-document-symbol-provider';
 import { GlslFoldingProvider } from './providers/glsl-folding-provider';
 import { GlslHoverProvider } from './providers/glsl-hover-provider';
@@ -69,15 +72,23 @@ export function addSharedCommands(context: ExtensionContext): void {
 export function addSharedFeatures(context: ExtensionContext): void {
     //syntax highlighting
     context.subscriptions.push(
-        languages.registerDocumentSemanticTokensProvider(selector, new GlslDocumentSemanticTokensProvider(), new GlslSemanticTokensLegend())
+        languages.registerDocumentSemanticTokensProvider(
+            selector,
+            new GlslDocumentSemanticTokensProvider(),
+            new GlslSemanticTokensLegend()
+        )
     );
     //hover
     context.subscriptions.push(languages.registerHoverProvider(selector, new GlslHoverProvider()));
     //highlight
-    context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider()));
+    context.subscriptions.push(
+        languages.registerDocumentHighlightProvider(selector, new GlslDocumentHighlightProvider())
+    );
     //context.subscriptions.push(languages.registerDocumentHighlightProvider(selector, new DebugHighlighter()));
     //completion
-    context.subscriptions.push(languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), Constants.DOT));
+    context.subscriptions.push(
+        languages.registerCompletionItemProvider(selector, new GlslCompletionProvider(), Constants.DOT)
+    );
     //symbols
     context.subscriptions.push(languages.registerDocumentSymbolProvider(selector, new GlslDocumentSymbolProvider()));
     //declaration
@@ -98,13 +109,22 @@ export function addSharedFeatures(context: ExtensionContext): void {
     context.subscriptions.push(languages.registerColorProvider(selector, new GlslDocumentColorProvider()));
     //function signature help
     context.subscriptions.push(
-        languages.registerSignatureHelpProvider(selector, new GlslSignatureHelpProvider(), Constants.LRB, Constants.COMMA)
+        languages.registerSignatureHelpProvider(
+            selector,
+            new GlslSignatureHelpProvider(),
+            Constants.LRB,
+            Constants.COMMA
+        )
     );
     //folding
     context.subscriptions.push(languages.registerFoldingRangeProvider(selector, new GlslFoldingProvider()));
     //formatting
-    context.subscriptions.push(languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
-    context.subscriptions.push(languages.registerDocumentRangeFormattingEditProvider(selector, new GlslDocumentFormattingProvider()));
+    context.subscriptions.push(
+        languages.registerDocumentFormattingEditProvider(selector, new GlslDocumentFormattingProvider())
+    );
+    context.subscriptions.push(
+        languages.registerDocumentRangeFormattingEditProvider(selector, new GlslDocumentFormattingProvider())
+    );
     //inlay hints
     context.subscriptions.push(languages.registerInlayHintsProvider(selector, new GlslInlayHintsProvider()));
 }

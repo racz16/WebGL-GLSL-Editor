@@ -1,178 +1,178 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "GLSL",
-	"scopeName": "source.glsl",
-	"patterns": [
-		{
-			"comment": "BLOCK COMMENT",
-			"name": "comment.block.glsl",
-			"begin": "\\/\\*",
-			"end": "\\*\\/"
-		},
-		{
-			"comment": "SINGLE LINE COMMENT",
-			"name": "comment.line.double-slash.glsl",
-			"begin": "//",
-			"end": "$"
-		},
-		{
-			"comment": "PREPROCESSOR",
-			"name": "meta.preprocessor.glsl",
-			"match": "#.*?($|(?=(\\/\\/|\\/\\*)))"
-		},
-		{
-			"comment": "BOOL LITERAL",
-			"name": "constant.language.glsl",
-			"match": "\\b(true|false)\\b"
-		},
-		{
-			"comment": "NUMBER LITERAL",
-			"patterns": [
-				{
-					"comment": "FLOATING POINT NUMBER",
-					"name": "constant.numeric.glsl",
-					"match": "(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?"
-				},
-				{
-					"comment": "FIXED POINT NUMBER",
-					"name": "constant.numeric.glsl",
-					"match": "([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?"
-				}
-			]
-		},
-		{
-			"comment": "OPERATOR",
-			"name": "keyword.operator.glsl",
-			"match": "[.+\\-*/%<>^|&~=!:,?\\[\\]]"
-		},
-		{
-			"comment": "KEYWORD",
-			"name": "keyword.control.glsl",
-			"match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
-		},
-		{
-			"comment": "INTERFACE_BLOCK",
-			"match": "(uniform)(\\s|(\\/\\*.*?\\*\\/))+([a-zA-Z_]\\w*)(?=(\\s|(\\/\\*.*?\\*\\/))*{)",
-			"captures": {
-				"1": {
-					"name": "storage.modifier.glsl"
-				},
-				"3": {
-					"name": "comment.block.glsl"
-				},
-				"4": {
-					"name": "entity.name.type.glsl"
-				}
-			}
-		},
-		{
-			"comment": "QUALIFIER",
-			"name": "storage.modifier.glsl",
-			"match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
-		},
-		{
-			"comment": "FUNCTION CALL",
-			"match": "([_a-zA-Z]\\w*)((\\s|(\\[[^\\[]*?\\])|(\\/\\*.*?\\*\\/))*)(?=\\()",
-			"captures": {
-				"1": {
-					"name": "entity.name.function.glsl"
-				},
-				"2": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			}
-		},
-		{
-			"comment": "BUILTIN TYPE USAGE",
-			"patterns": [
-				{
-					"comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
-					"name": "storage.type.glsl",
-					"match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
-				},
-				{
-					"comment": "BUILTIN STRUCT TYPE",
-					"name": "storage.type.glsl",
-					"match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
-				}
-			]
-		},
-		{
-			"comment": "STRUCT",
-			"match": "(struct)(\\s|(\/\\*.*?\\*\/))*([_a-zA-Z]\\w*)?",
-			"captures": {
-				"1": {
-					"name": "storage.type.glsl"
-				},
-				"3": {
-					"name": "comment.block.glsl"
-				},
-				"4": {
-					"patterns": [
-						{
-							"comment": "BUILTIN STRUCT TYPE",
-							"name": "storage.type.glsl",
-							"match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
-						},
-						{
-							"comment": "USER STRUCT TYPE",
-							"name": "entity.name.type.glsl",
-							"match": "[_a-zA-Z]\\w*"
-						}
-					]
-				}
-			}
-		},
-		{
-			"comment": "FUNCTION DECLARATION",
-			"match": "(([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+))?([_a-zA-Z]\\w*)((\\s|(\\/\\*.*?\\*\\/))*)(?=\\()",
-			"captures": {
-				"2": {
-					"name": "entity.name.type.glsl"
-				},
-				"3": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				},
-				"7": {
-					"name": "entity.name.function.glsl"
-				},
-				"8": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			}
-		},
-		{
-			"comment": "USER TYPE",
-			"match": "([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+[_a-zA-Z]\\w*)",
-			"captures": {
-				"1": {
-					"name": "entity.name.type.glsl"
-				},
-				"2": {
-					"patterns": [
-						{
-							"include": "$self"
-						}
-					]
-				}
-			}
-		},
-		{
-			"comment": "IDENTIFIER",
-			"name": "variable.glsl",
-			"match": "\\b([a-zA-Z_]\\w*)\\b"
-		}
-	]
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "GLSL",
+    "scopeName": "source.glsl",
+    "patterns": [
+        {
+            "comment": "BLOCK COMMENT",
+            "name": "comment.block.glsl",
+            "begin": "\\/\\*",
+            "end": "\\*\\/"
+        },
+        {
+            "comment": "SINGLE LINE COMMENT",
+            "name": "comment.line.double-slash.glsl",
+            "begin": "//",
+            "end": "$"
+        },
+        {
+            "comment": "PREPROCESSOR",
+            "name": "meta.preprocessor.glsl",
+            "match": "#.*?($|(?=(\\/\\/|\\/\\*)))"
+        },
+        {
+            "comment": "BOOL LITERAL",
+            "name": "constant.language.glsl",
+            "match": "\\b(true|false)\\b"
+        },
+        {
+            "comment": "NUMBER LITERAL",
+            "patterns": [
+                {
+                    "comment": "FLOATING POINT NUMBER",
+                    "name": "constant.numeric.glsl",
+                    "match": "(((\\d+\\.\\d+)|(\\d+\\.)|(\\.\\d+))([eE][+-]?\\d+)?|\\d+([eE][+-]?\\d+))[fF]?"
+                },
+                {
+                    "comment": "FIXED POINT NUMBER",
+                    "name": "constant.numeric.glsl",
+                    "match": "([1-9]\\d*|0[0-7]*|0[xX](\\d|[a-fA-F])+)[uU]?"
+                }
+            ]
+        },
+        {
+            "comment": "OPERATOR",
+            "name": "keyword.operator.glsl",
+            "match": "[.+\\-*/%<>^|&~=!:,?\\[\\]]"
+        },
+        {
+            "comment": "KEYWORD",
+            "name": "keyword.control.glsl",
+            "match": "\\b(discard|return|break|continue|do|for|while|switch|case|default|if|else)\\b"
+        },
+        {
+            "comment": "INTERFACE_BLOCK",
+            "match": "(uniform)(\\s|(\\/\\*.*?\\*\\/))+([a-zA-Z_]\\w*)(?=(\\s|(\\/\\*.*?\\*\\/))*{)",
+            "captures": {
+                "1": {
+                    "name": "storage.modifier.glsl"
+                },
+                "3": {
+                    "name": "comment.block.glsl"
+                },
+                "4": {
+                    "name": "entity.name.type.glsl"
+                }
+            }
+        },
+        {
+            "comment": "QUALIFIER",
+            "name": "storage.modifier.glsl",
+            "match": "\\b(attribute|varying|const|uniform|layout|centroid|flat|smooth|in|out|inout|invariant|lowp|mediump|highp|precision)\\b"
+        },
+        {
+            "comment": "FUNCTION CALL",
+            "match": "([_a-zA-Z]\\w*)((\\s|(\\[[^\\[]*?\\])|(\\/\\*.*?\\*\\/))*)(?=\\()",
+            "captures": {
+                "1": {
+                    "name": "entity.name.function.glsl"
+                },
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "$self"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "BUILTIN TYPE USAGE",
+            "patterns": [
+                {
+                    "comment": "BUILTIN TRANSPARENT OR OPAQUE TYPE",
+                    "name": "storage.type.glsl",
+                    "match": "\\b(void|float|int|bool|mat2|mat3|mat4|mat2x2|mat2x3|mat2x4|mat3x2|mat3x3|mat3x4|mat4x2|mat4x3|mat4x4|vec2|vec3|vec4|ivec2|ivec3|ivec4|bvec2|bvec3|bvec4|uint|uvec2|uvec3|uvec4|sampler2D|sampler3D|samplerCube|sampler2DShadow|samplerCubeShadow|sampler2DArray|sampler2DArrayShadow|isampler2D|isampler3D|isamplerCube|isampler2DArray|usampler2D|usampler3D|usamplerCube|usampler2DArray)\\b"
+                },
+                {
+                    "comment": "BUILTIN STRUCT TYPE",
+                    "name": "storage.type.glsl",
+                    "match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
+                }
+            ]
+        },
+        {
+            "comment": "STRUCT",
+            "match": "(struct)(\\s|(/\\*.*?\\*/))*([_a-zA-Z]\\w*)?",
+            "captures": {
+                "1": {
+                    "name": "storage.type.glsl"
+                },
+                "3": {
+                    "name": "comment.block.glsl"
+                },
+                "4": {
+                    "patterns": [
+                        {
+                            "comment": "BUILTIN STRUCT TYPE",
+                            "name": "storage.type.glsl",
+                            "match": "\\b(gl_[a-zA-Z_]\\w*)\\b"
+                        },
+                        {
+                            "comment": "USER STRUCT TYPE",
+                            "name": "entity.name.type.glsl",
+                            "match": "[_a-zA-Z]\\w*"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "FUNCTION DECLARATION",
+            "match": "(([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+))?([_a-zA-Z]\\w*)((\\s|(\\/\\*.*?\\*\\/))*)(?=\\()",
+            "captures": {
+                "2": {
+                    "name": "entity.name.type.glsl"
+                },
+                "3": {
+                    "patterns": [
+                        {
+                            "include": "$self"
+                        }
+                    ]
+                },
+                "7": {
+                    "name": "entity.name.function.glsl"
+                },
+                "8": {
+                    "patterns": [
+                        {
+                            "include": "$self"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "USER TYPE",
+            "match": "([_a-zA-Z]\\w*)((\\s|(\\[.*?\\])|(\\/\\*.*?\\*\\/))+[_a-zA-Z]\\w*)",
+            "captures": {
+                "1": {
+                    "name": "entity.name.type.glsl"
+                },
+                "2": {
+                    "patterns": [
+                        {
+                            "include": "$self"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "IDENTIFIER",
+            "name": "variable.glsl",
+            "match": "\\b([a-zA-Z_]\\w*)\\b"
+        }
+    ]
 }

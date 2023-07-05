@@ -125,10 +125,10 @@ export class GlslDocumentColorProvider implements DocumentColorProvider {
 
     private formatNumber(value: number): string {
         let postfix = '';
-        if(Number.isInteger(value)) {
+        if (Number.isInteger(value)) {
             postfix += '.0';
         }
-        if(this.di.getVersion() === 300 && GlslEditor.CONFIGURATIONS.getFavorFloatingSuffix()) {
+        if (this.di.getVersion() === 300 && GlslEditor.CONFIGURATIONS.getFavorFloatingSuffix()) {
             postfix += 'f';
         }
         return `${value}${postfix}`;

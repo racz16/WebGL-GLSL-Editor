@@ -35,12 +35,23 @@ jobs:
                       command: package-web
         runs-on: ${{ matrix.os }}
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-            - run: npm install
-            - run: npx antlr4ts -o "../src/_generated" "AntlrGlslLexer.g4"
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Install NodeJS
+              uses: actions/setup-node@v3
+            - name: Install dependencies
+              run: npm ci
+            - name: Generate Antlr lexer
+              run: npx antlr4ts -o "../src/_generated" "AntlrGlslLexer.g4"
               working-directory: ./syntaxes
-            - run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
+            - name: Generate Antlr parser
+              run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
               working-directory: ./syntaxes
-            - run: npm run lint
-            - run: npm run ${{ matrix.command }}
+            - name: ESLint
+              run: npm run eslint
+            - name: Markdownlint
+              run: npm run markdownlint
+            - name: Prettier lint
+              run: npm run prettier-lint
+            - name: Package
+              run: npm run ${{ matrix.command }}

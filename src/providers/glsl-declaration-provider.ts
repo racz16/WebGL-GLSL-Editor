@@ -1,4 +1,12 @@
-import { TextDocument, Position, CancellationToken, ProviderResult, Declaration, Location, DeclarationProvider } from 'vscode';
+import {
+    TextDocument,
+    Position,
+    CancellationToken,
+    ProviderResult,
+    Declaration,
+    Location,
+    DeclarationProvider,
+} from 'vscode';
 import { PositionalProviderBase } from './helper/positional-provider-base';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
@@ -9,7 +17,11 @@ import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 
 export class GlslDeclarationProvider extends PositionalProviderBase<Declaration> implements DeclarationProvider {
-    public provideDeclaration(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<Declaration> {
+    public provideDeclaration(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): ProviderResult<Declaration> {
         return this.processElements(document, position);
     }
 

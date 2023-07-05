@@ -1,4 +1,11 @@
-import { CancellationToken, DocumentHighlight, DocumentHighlightProvider, Position, ProviderResult, TextDocument } from 'vscode';
+import {
+    CancellationToken,
+    DocumentHighlight,
+    DocumentHighlightProvider,
+    Position,
+    ProviderResult,
+    TextDocument,
+} from 'vscode';
 import { DocumentInfo } from '../../core/document-info';
 import { GlslEditor } from '../../core/glsl-editor';
 

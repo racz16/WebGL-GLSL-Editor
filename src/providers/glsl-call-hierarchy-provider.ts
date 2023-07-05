@@ -18,7 +18,10 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { HierarchyElement } from './helper/hierarchy-element';
 import { HierarcySearchStage } from './helper/hierarchy-search-stage';
 
-export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<HierarchyElement>> implements CallHierarchyProvider {
+export class GlslCallHierarchyProvider
+    extends PositionalProviderBase<Array<HierarchyElement>>
+    implements CallHierarchyProvider
+{
     private stage: HierarcySearchStage;
 
     public prepareCallHierarchy(
@@ -209,7 +212,14 @@ export class GlslCallHierarchyProvider extends PositionalProviderBase<Array<Hier
         } else {
             lineFocusRange = this.di.intervalToRange(fc.nameInterval);
         }
-        return new CallHierarchyItem(kind, fp.name, `(${fp.toStringParameters()})`, this.document.uri, lineFocusRange, lineFocusRange);
+        return new CallHierarchyItem(
+            kind,
+            fp.name,
+            `(${fp.toStringParameters()})`,
+            this.document.uri,
+            lineFocusRange,
+            lineFocusRange
+        );
     }
 
     private createItemFromIncomingCall(incomingCall: FunctionDeclaration): CallHierarchyItem {

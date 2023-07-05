@@ -5,7 +5,11 @@ import { TypeCategory } from '../scope/type/type-category';
 import { DocumentInfo } from '../core/document-info';
 import { Scope } from '../scope/scope';
 import { Interval } from '../scope/interval';
-import { Type_declarationContext, Interface_block_declarationContext, Variable_declarationContext } from '../_generated/AntlrGlslParser';
+import {
+    Type_declarationContext,
+    Interface_block_declarationContext,
+    Variable_declarationContext,
+} from '../_generated/AntlrGlslParser';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
@@ -25,9 +29,16 @@ export class TypeDeclarationProcessor {
         this.scope = scope;
     }
 
-    public static searchTypeDeclaration(name: string, nameInterval: Interval, scope: Scope, di: DocumentInfo): TypeDeclaration {
+    public static searchTypeDeclaration(
+        name: string,
+        nameInterval: Interval,
+        scope: Scope,
+        di: DocumentInfo
+    ): TypeDeclaration {
         while (scope) {
-            const td = scope.typeDeclarations.find((td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval));
+            const td = scope.typeDeclarations.find(
+                (td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)
+            );
             if (td) {
                 return td;
             } else if (this.anyVariableOrFunction(name, nameInterval, scope)) {
@@ -40,8 +51,12 @@ export class TypeDeclarationProcessor {
 
     private static anyVariableOrFunction(name: string, nameInterval: Interval, scope: Scope): boolean {
         return (
-            scope.variableDeclarations.some((vd) => vd.name === name && Helper.isALowerThanB(vd.declarationInterval, nameInterval)) ||
-            scope.functionPrototypes.some((fp) => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)) ||
+            scope.variableDeclarations.some(
+                (vd) => vd.name === name && Helper.isALowerThanB(vd.declarationInterval, nameInterval)
+            ) ||
+            scope.functionPrototypes.some(
+                (fp) => fp.name === name && Helper.isALowerThanB(fp.interval, nameInterval)
+            ) ||
             scope.functionDefinitions.some((fd) => fd.name === name && Helper.isALowerThanB(fd.interval, nameInterval))
         );
     }
@@ -49,7 +64,11 @@ export class TypeDeclarationProcessor {
     //
     //interface block
     //
-    public getInterfaceBlockDeclaration(ibdc: Interface_block_declarationContext, scope: Scope, di: DocumentInfo): TypeDeclaration {
+    public getInterfaceBlockDeclaration(
+        ibdc: Interface_block_declarationContext,
+        scope: Scope,
+        di: DocumentInfo
+    ): TypeDeclaration {
         this.initialize(scope, di);
         const name = ibdc.IDENTIFIER() ? ibdc.IDENTIFIER().text : null;
         const nameInterval = Helper.getIntervalFromTerminalNode(ibdc.IDENTIFIER(), this.di);
@@ -71,7 +90,9 @@ export class TypeDeclarationProcessor {
         di.getRegions().typeDeclarationRegions.push(new Interval(ibdc.start.startIndex, ibdc.stop.stopIndex, di));
         scope.typeDeclarations.push(td);
         if (name) {
-            this.di.getRegions().semanticRegions.push(new SemanticRegion(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
+            this.di
+                .getRegions()
+                .semanticRegions.push(new SemanticRegion(ibdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (ibdc.identifier_optarray()) {
             this.createInnerScope(ibdc);
@@ -80,7 +101,9 @@ export class TypeDeclarationProcessor {
         } else {
             this.di
                 .getRegions()
-                .scopelessInterfaceBlockRegions.push(new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di));
+                .scopelessInterfaceBlockRegions.push(
+                    new Interval(ibdc.LCB().symbol.stopIndex + 1, ibdc.RCB().symbol.startIndex, this.di)
+                );
             for (const vdc of ibdc.variable_declaration()) {
                 const vds = new VariableDeclarationProcessor().getDeclarations(vdc, this.scope, this.di);
                 vds.forEach((vd) => td.interfaceMembers.push(vd));
@@ -123,7 +146,9 @@ export class TypeDeclarationProcessor {
             false,
             returnType || parameter
         );
-        this.di.getRegions().typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
+        this.di
+            .getRegions()
+            .typeDeclarationRegions.push(new Interval(tdc.start.startIndex, tdc.stop.stopIndex, this.di));
         if (parameter) {
             this.di.getRootScope().typeDeclarations.push(td);
         } else {
@@ -134,7 +159,9 @@ export class TypeDeclarationProcessor {
         this.scope = this.scope.parent;
         if (name) {
             this.createConstructor(td);
-            this.di.getRegions().semanticRegions.push(new SemanticRegion(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
+            this.di
+                .getRegions()
+                .semanticRegions.push(new SemanticRegion(tdc.IDENTIFIER().symbol, SemanticType.USER_TYPE));
         }
         if (index === 0) {
             this.td = td;

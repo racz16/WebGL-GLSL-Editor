@@ -1,6 +1,10 @@
 import { Helper } from './helper';
 import { DocumentInfo } from '../core/document-info';
-import { Function_prototypeContext, Function_definitionContext, Function_headerContext } from '../_generated/AntlrGlslParser';
+import {
+    Function_prototypeContext,
+    Function_definitionContext,
+    Function_headerContext,
+} from '../_generated/AntlrGlslParser';
 import { Scope } from '../scope/scope';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -67,7 +71,9 @@ export class FunctionProcessor {
     private static anyTypeOrVariable(name: string, nameInterval: Interval, scope: Scope): boolean {
         return (
             scope.typeDeclarations.some((td) => td.name === name && Helper.isALowerThanB(td.interval, nameInterval)) ||
-            scope.variableDeclarations.some((fd) => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval))
+            scope.variableDeclarations.some(
+                (fd) => fd.name === name && Helper.isALowerThanB(fd.nameInterval, nameInterval)
+            )
         );
     }
 
@@ -80,13 +86,24 @@ export class FunctionProcessor {
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER(), this.di);
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
+        const fd = new FunctionDeclaration(
+            name,
+            nameInterval,
+            this.scope.parent,
+            returnType,
+            false,
+            false,
+            interval,
+            this.scope
+        );
         this.addParameters(fd, true);
         this.getLogicalFunction(fd).prototypes.push(fd);
         this.di.getRootScope().functionPrototypes.push(fd);
         this.di
             .getRegions()
-            .semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DECLARATION]));
+            .semanticRegions.push(
+                new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DECLARATION])
+            );
         return fd;
     }
 
@@ -99,13 +116,24 @@ export class FunctionProcessor {
         const nameInterval = Helper.getIntervalFromTerminalNode(this.fhc.IDENTIFIER(), this.di);
         const returnType = new TypeUsageProcessor().getReturnType(this.fhc.type_usage(), this.scope.parent, di);
         const name = this.fhc.IDENTIFIER().text;
-        const fd = new FunctionDeclaration(name, nameInterval, this.scope.parent, returnType, false, false, interval, this.scope);
+        const fd = new FunctionDeclaration(
+            name,
+            nameInterval,
+            this.scope.parent,
+            returnType,
+            false,
+            false,
+            interval,
+            this.scope
+        );
         this.addParameters(fd, false);
         this.getLogicalFunction(fd).definitions.push(fd);
         this.di.getRootScope().functionDefinitions.push(fd);
         this.di
             .getRegions()
-            .semanticRegions.push(new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DEFINITION]));
+            .semanticRegions.push(
+                new SemanticRegion(this.fhc.IDENTIFIER().symbol, SemanticType.FUNCTION, [SemanticModifier.DEFINITION])
+            );
         return fd;
     }
 
@@ -126,7 +154,12 @@ export class FunctionProcessor {
         const fplc = this.fhc.function_parameter_list();
         if (fplc && fplc.single_variable_declaration()) {
             for (const svdc of fplc.single_variable_declaration()) {
-                const vd = new VariableDeclarationProcessor().getParameterDeclaration(svdc, prototype, this.scope, this.di);
+                const vd = new VariableDeclarationProcessor().getParameterDeclaration(
+                    svdc,
+                    prototype,
+                    this.scope,
+                    this.di
+                );
                 fd.parameters.push(vd);
             }
         }

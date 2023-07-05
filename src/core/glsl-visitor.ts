@@ -91,7 +91,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
                 extension = values[0].trim();
                 extensionState = values[1].trim();
             }
-            this.di.getRegions().preprocessorRegions.push(new PreprocessorRegion(token.text, interval, extension, extensionState));
+            this.di
+                .getRegions()
+                .preprocessorRegions.push(new PreprocessorRegion(token.text, interval, extension, extensionState));
         }
     }
 
@@ -117,7 +119,11 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
             Helper.addFoldingRegionFromComment(this.di, token, endToken);
             this.di.getRegions().commentRegions.push(new Interval(token.startIndex, token.stopIndex + 1, this.di));
         }
-        if (token.type !== AntlrGlslLexer.NEW_LINE && token.type !== AntlrGlslLexer.TAB && token.type !== AntlrGlslLexer.SPACE) {
+        if (
+            token.type !== AntlrGlslLexer.NEW_LINE &&
+            token.type !== AntlrGlslLexer.TAB &&
+            token.type !== AntlrGlslLexer.SPACE
+        ) {
             this.addSingleLineCommentFoldingRegionIfExists(ctx);
             ctx.firstComment = null;
             ctx.lastComment = null;
@@ -172,7 +178,11 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     }
 
     private createScopeFromFunctionPrototype(currentScope: Scope, ctx: Function_prototypeContext): Scope {
-        const interval = new Interval(ctx.function_header().LRB().symbol.startIndex, ctx.SEMICOLON().symbol.stopIndex + 1, this.di);
+        const interval = new Interval(
+            ctx.function_header().LRB().symbol.startIndex,
+            ctx.SEMICOLON().symbol.stopIndex + 1,
+            this.di
+        );
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
         return newScope;
@@ -180,7 +190,11 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
 
     public visitFunction_definition(ctx: Function_definitionContext): void {
         this.scope = this.createScopeFromFunctionDefinition(this.scope, ctx);
-        Helper.addFoldingRegionFromTokens(this.di, ctx.function_header().IDENTIFIER().symbol, ctx.compound_statement().RCB().symbol);
+        Helper.addFoldingRegionFromTokens(
+            this.di,
+            ctx.function_header().IDENTIFIER().symbol,
+            ctx.compound_statement().RCB().symbol
+        );
         this.currentFunction = new FunctionProcessor().getFunctionDefinition(ctx, this.scope, this.di);
         this.di.getRegions().scopedCurlyBracePositions.push(ctx.compound_statement().LCB().symbol.startIndex);
         this.visit(ctx.compound_statement());
@@ -221,7 +235,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     //
     public visitFor_iteration(ctx: For_iterationContext): void {
         this.scope = this.createScopeFromForIteration(this.scope, ctx);
-        this.di.getRegions().forHeaderRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
+        this.di
+            .getRegions()
+            .forHeaderRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
         if (ctx.statement().compound_statement()) {
             Helper.addFoldingRegionFromTokens(this.di, ctx.KW_FOR().symbol, ctx.stop);
         }
@@ -232,9 +248,15 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     private createScopeFromForIteration(currentScope: Scope, ctx: For_iterationContext): Scope {
         const increment = ctx.statement().simple_statement() ? 1 : 0;
         if (increment === 0) {
-            this.di.getRegions().scopedCurlyBracePositions.push(ctx.statement().compound_statement().LCB().symbol.startIndex);
+            this.di
+                .getRegions()
+                .scopedCurlyBracePositions.push(ctx.statement().compound_statement().LCB().symbol.startIndex);
         }
-        const interval = new Interval(ctx.LRB().symbol.startIndex + 1, ctx.statement().stop.stopIndex + increment, this.di);
+        const interval = new Interval(
+            ctx.LRB().symbol.startIndex + 1,
+            ctx.statement().stop.stopIndex + increment,
+            this.di
+        );
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
         return newScope;
@@ -260,7 +282,10 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         this.visit(ctx.expression());
     }
 
-    private createScopeFromWhileIteration(currentScope: Scope, ctx: While_iterationContext | Do_while_iterationContext): Scope {
+    private createScopeFromWhileIteration(
+        currentScope: Scope,
+        ctx: While_iterationContext | Do_while_iterationContext
+    ): Scope {
         const interval = Helper.getIntervalFromStatement(ctx.statement(), this.di);
         const newScope = new Scope(interval, currentScope);
         currentScope.children.push(newScope);
@@ -333,7 +358,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
         Helper.addFoldingRegionFromTokens(this.di, ctx.start, ctx.stop, -1);
         this.di
             .getRegions()
-            .caseHeaderRegions.push(new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di));
+            .caseHeaderRegions.push(
+                new Interval(ctx.case_label().start.startIndex, ctx.case_label().stop.stopIndex + 1, this.di)
+            );
         if (ctx.statement()[0].simple_statement()) {
             this.di
                 .getRegions()
@@ -382,7 +409,9 @@ export class GlslVisitor extends AbstractParseTreeVisitor<void> implements Antlr
     }
 
     public visitLayout_qualifier(ctx: Layout_qualifierContext): void {
-        this.di.getRegions().layoutRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
+        this.di
+            .getRegions()
+            .layoutRegions.push(new Interval(ctx.LRB().symbol.startIndex, ctx.RRB().symbol.stopIndex, this.di));
     }
 
     protected visitList(rules: Array<RuleNode>): void {

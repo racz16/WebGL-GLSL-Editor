@@ -89,7 +89,11 @@ export class Configurations {
                 this.strictRename = config.get(Configurations.STRICT_RENAME);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_ONLINE_DOC}`)) {
                 this.alwaysOpenOnlineDoc = config.get(Configurations.ALWAYS_OPEN_ONLINE_DOC);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB}`)) {
+            } else if (
+                e.affectsConfiguration(
+                    `${Constants.EXTENSION_NAME}.${Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB}`
+                )
+            ) {
                 this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.CODE_INJECTION}`)) {
                 this.codeInjection = config.get(Configurations.CODE_INJECTION);
@@ -97,19 +101,33 @@ export class Configurations {
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.CODE_INJECTION_SOURCE}`)) {
                 this.codeInjectionSource = config.get(Configurations.CODE_INJECTION_SOURCE);
                 GlslEditor.invalidateDocuments();
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.BRACES_ON_SEPARATE_LINE}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.BRACES_ON_SEPARATE_LINE}`)
+            ) {
                 this.bracesOnSeparateLine = config.get(Configurations.BRACES_ON_SEPARATE_LINE);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AROUND_UNARY_OPERATORS}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AROUND_UNARY_OPERATORS}`)
+            ) {
                 this.spaceAroundUnaryOperators = config.get(Configurations.SPACE_AROUND_UNARY_OPERATORS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_BINARY_OPERATOS}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_BINARY_OPERATOS}`)
+            ) {
                 this.spacesAroundBinaryOperators = config.get(Configurations.SPACES_AROUND_BINARY_OPERATOS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_ASSIGNMENT_OPERATORS}`)) {
+            } else if (
+                e.affectsConfiguration(
+                    `${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_ASSIGNMENT_OPERATORS}`
+                )
+            ) {
                 this.spacesAroundAssignmentOperators = config.get(Configurations.SPACES_AROUND_ASSIGNMENT_OPERATORS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_TERNARY_OPERATORS}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_TERNARY_OPERATORS}`)
+            ) {
                 this.spacesAroundTernaryOperators = config.get(Configurations.SPACES_AROUND_TERNARY_OPERATORS);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AFTER_KEYWORDS}`)) {
                 this.spaceAfterKeywords = config.get(Configurations.SPACE_AFTER_KEYWORDS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AFTER_FUNCTION_NAMES}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AFTER_FUNCTION_NAMES}`)
+            ) {
                 this.spaceAfterFunctionNames = config.get(Configurations.SPACE_AFTER_FUNCTION_NAMES);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_COMMAS}`)) {
                 this.spaceBeforeCommas = config.get(Configurations.SPACE_BEFORE_COMMAS);
@@ -117,17 +135,27 @@ export class Configurations {
                 this.spaceAfterCommas = config.get(Configurations.SPACE_AFTER_COMMAS);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_DOTS}`)) {
                 this.spacesAroundDots = config.get(Configurations.SPACES_AROUND_DOTS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_CASE_COLONS}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_CASE_COLONS}`)
+            ) {
                 this.spaceBeforeCaseColons = config.get(Configurations.SPACE_BEFORE_CASE_COLONS);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_SEMICOLONS_IN_FOR}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_SEMICOLONS_IN_FOR}`)
+            ) {
                 this.spaceBeforeSemicolonsInFor = config.get(Configurations.SPACE_BEFORE_SEMICOLONS_IN_FOR);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AFTER_SEMICOLONS_IN_FOR}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_AFTER_SEMICOLONS_IN_FOR}`)
+            ) {
                 this.spaceAfterSemicolonsInFor = config.get(Configurations.SPACE_AFTER_SEMICOLONS_IN_FOR);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_INSIDE_PARENTHESES}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_INSIDE_PARENTHESES}`)
+            ) {
                 this.spacesInsideParentheses = config.get(Configurations.SPACES_INSIDE_PARENTHESES);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_AROUND_BRACES}`)) {
                 this.spacesAroundBraces = config.get(Configurations.SPACES_AROUND_BRACES);
-            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_OPENING_BRACKETS}`)) {
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACE_BEFORE_OPENING_BRACKETS}`)
+            ) {
                 this.spaceBeforeOpeningBrackets = config.get(Configurations.SPACE_BEFORE_OPENING_BRACKETS);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.SPACES_INSIDE_BRACKETS}`)) {
                 this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);

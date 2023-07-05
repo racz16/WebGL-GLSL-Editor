@@ -245,7 +245,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         } else {
             for (const member of cr.type.declaration.members) {
                 if (member.name.startsWith(text)) {
-                    this.items.push(new CompletionItem(this.createLabel(member.name, member.type?.name), CompletionItemKind.Property));
+                    this.items.push(
+                        new CompletionItem(
+                            this.createLabel(member.name, member.type?.name),
+                            CompletionItemKind.Property
+                        )
+                    );
                 }
             }
         }
@@ -275,7 +280,11 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         }
     }
 
-    private getSwizzleSortText(swizzleCharacters: Array<string>, swizzleCharactersPriority: number, swizzle: string): string {
+    private getSwizzleSortText(
+        swizzleCharacters: Array<string>,
+        swizzleCharactersPriority: number,
+        swizzle: string
+    ): string {
         let sortText = `${swizzle.length}${swizzleCharactersPriority}`;
         for (const char of swizzle) {
             sortText += swizzleCharacters.indexOf(char);
@@ -473,8 +482,14 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     //
     private addUserVariableItems(scope: Scope, localItems: Array<CompletionItem>): void {
         for (const vd of scope.variableDeclarations) {
-            if (Helper.isALowerThanOffset(vd.declarationInterval, this.offset) && !this.items.some((ci) => this.getName(ci) === vd.name)) {
-                const ci = new CompletionItem(this.createLabel(vd.name, vd.type?.toStringWithoutQualifiers()), CompletionItemKind.Variable);
+            if (
+                Helper.isALowerThanOffset(vd.declarationInterval, this.offset) &&
+                !this.items.some((ci) => this.getName(ci) === vd.name)
+            ) {
+                const ci = new CompletionItem(
+                    this.createLabel(vd.name, vd.type?.toStringWithoutQualifiers()),
+                    CompletionItemKind.Variable
+                );
                 ci.documentation = new MarkdownString(vd.toStringDocumentation());
                 localItems.push(ci);
             }
@@ -499,7 +514,9 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         return list.some(
             (ci) =>
                 this.getName(ci) === lf.getDeclaration().name &&
-                (this.items === list || ci.kind === CompletionItemKind.Function || ci.kind === CompletionItemKind.Constructor)
+                (this.items === list ||
+                    ci.kind === CompletionItemKind.Function ||
+                    ci.kind === CompletionItemKind.Constructor)
         );
     }
 

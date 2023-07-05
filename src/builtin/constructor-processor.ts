@@ -88,7 +88,9 @@ export class ConstructorProcessor {
     }
 
     private static canBeParameter([name, td]: [string, TypeDeclaration]): boolean {
-        return td.typeCategory === TypeCategory.TRANSPARENT && name !== 'mat2x2' && name !== 'mat3x3' && name !== 'mat4x4';
+        return (
+            td.typeCategory === TypeCategory.TRANSPARENT && name !== 'mat2x2' && name !== 'mat3x3' && name !== 'mat4x4'
+        );
     }
 
     private static getParametersSize(parameters: Array<TypeDeclaration>): number {

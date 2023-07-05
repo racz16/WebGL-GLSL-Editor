@@ -23,7 +23,16 @@ import { keywords } from './info/keywords';
 import { qualifiers } from './info/qualifiers';
 import { preprocessorDirectives, preprocessorMacros } from './info/preprocessor';
 import { layoutParameters } from './info/layout-parameters';
-import { ICustomType, IFunction, IFunctionSummary, IOpaqueType, IParameter, ITransparentType, ITypeMember, IVariable } from './interfaces';
+import {
+    ICustomType,
+    IFunction,
+    IFunctionSummary,
+    IOpaqueType,
+    IParameter,
+    ITransparentType,
+    ITypeMember,
+    IVariable,
+} from './interfaces';
 import { genericTypes } from './info/generic_types';
 import { variables } from './info/variables';
 import { functions } from './info/functions';
@@ -131,9 +140,21 @@ export class Builtin {
     //
     private loadTypes(): void {
         this.loadTransparentTypes(transparentTypes.get(this.version));
-        this.loadOpaqueTypes(floatingPointOpaqueTypes.get(this.version), TypeCategory.FLOATING_POINT_OPAQUE, TypeBase.FLOAT);
-        this.loadOpaqueTypes(signedIntegerOpaqueTypes.get(this.version), TypeCategory.SIGNED_INTEGER_OPAQUE, TypeBase.INT);
-        this.loadOpaqueTypes(unsignedIntegerOpaqueTypes.get(this.version), TypeCategory.UNSIGNED_INTEGER_OPAQUE, TypeBase.UINT);
+        this.loadOpaqueTypes(
+            floatingPointOpaqueTypes.get(this.version),
+            TypeCategory.FLOATING_POINT_OPAQUE,
+            TypeBase.FLOAT
+        );
+        this.loadOpaqueTypes(
+            signedIntegerOpaqueTypes.get(this.version),
+            TypeCategory.SIGNED_INTEGER_OPAQUE,
+            TypeBase.INT
+        );
+        this.loadOpaqueTypes(
+            unsignedIntegerOpaqueTypes.get(this.version),
+            TypeCategory.UNSIGNED_INTEGER_OPAQUE,
+            TypeBase.UINT
+        );
         this.loadCustomTypes(customTypes.get(this.version));
     }
 
@@ -167,14 +188,26 @@ export class Builtin {
 
     private loadOpaqueTypes(opaqueTypes: Array<IOpaqueType>, typeCategory: TypeCategory, typeBase: TypeBase): void {
         for (const type of opaqueTypes) {
-            const td = Helper.createTypeDeclaration(type.name, Constants.INVALID, Constants.INVALID, typeBase, typeCategory);
+            const td = Helper.createTypeDeclaration(
+                type.name,
+                Constants.INVALID,
+                Constants.INVALID,
+                typeBase,
+                typeCategory
+            );
             this.types.set(type.name, td);
         }
     }
 
     private loadCustomTypes(types: Array<ICustomType>): void {
         for (const type of types) {
-            const td = Helper.createTypeDeclaration(type.name, Constants.INVALID, Constants.INVALID, TypeBase.NONE, TypeCategory.CUSTOM);
+            const td = Helper.createTypeDeclaration(
+                type.name,
+                Constants.INVALID,
+                Constants.INVALID,
+                TypeBase.NONE,
+                TypeCategory.CUSTOM
+            );
             this.addMembers(td, type);
             this.types.set(type.name, td);
         }
@@ -238,7 +271,15 @@ export class Builtin {
             this.addVariableQualifiers(tu, variable);
             const summary = this.createVariableSummary(variable, tu);
             const stage = this.getStage(variable.stage);
-            const vd = Helper.createVariableDeclaration(variable.name, tu, false, false, summary, stage, variable.extension);
+            const vd = Helper.createVariableDeclaration(
+                variable.name,
+                tu,
+                false,
+                false,
+                summary,
+                stage,
+                variable.extension
+            );
             this.variables.set(variable.name, vd);
         }
     }
@@ -333,7 +374,9 @@ export class Builtin {
         mds.appendText(func.summary);
         mds.appendText(Constants.NEW_LINE);
         const parameter = encodeURIComponent(JSON.stringify(func.name));
-        mds.appendMarkdown(`[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`);
+        mds.appendMarkdown(
+            `[Open documentation](command:${Constants.EXTENSION_NAME}.${GlslCommandProvider.OPEN_DOC}?${parameter})`
+        );
         mds.isTrusted = true;
         return mds;
     }
@@ -432,7 +475,14 @@ export class Builtin {
         }
         for (const variable of this.variables.values()) {
             const td = bi.types.get(variable.type.name);
-            const tu = new TypeUsage(variable.type.name, variable.type.interval, variable.type.nameInterval, null, td, variable.type.array);
+            const tu = new TypeUsage(
+                variable.type.name,
+                variable.type.interval,
+                variable.type.nameInterval,
+                null,
+                td,
+                variable.type.array
+            );
             for (const qu of variable.type.qualifiers) {
                 const qu2 = new QualifierUsage(qu.name, qu.nameInterval, null, qu.qualifier);
                 tu.qualifiers.push(qu2);

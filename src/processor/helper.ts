@@ -25,7 +25,11 @@ import { Constants } from '../core/constants';
 import { FoldingRegion } from '../scope/regions/folding-region';
 
 export class Helper {
-    public static getArraySizeFromArraySubscript(ascs: Array<Array_subscriptContext>, scope: Scope, di: DocumentInfo): ArrayUsage {
+    public static getArraySizeFromArraySubscript(
+        ascs: Array<Array_subscriptContext>,
+        scope: Scope,
+        di: DocumentInfo
+    ): ArrayUsage {
         if (!ascs.length) {
             return new ArrayUsage();
         }
@@ -39,7 +43,11 @@ export class Helper {
         return new ArrayUsage(arraySize, this.getIntervalFromTerminalNodes(tn, tn2, di), ascs.length > 1);
     }
 
-    public static getArraySizeFromIdentifierOptarray(ioc: Identifier_optarrayContext, scope: Scope, di: DocumentInfo): ArrayUsage {
+    public static getArraySizeFromIdentifierOptarray(
+        ioc: Identifier_optarrayContext,
+        scope: Scope,
+        di: DocumentInfo
+    ): ArrayUsage {
         if (!ioc) {
             return new ArrayUsage();
         }
@@ -109,7 +117,11 @@ export class Helper {
         return ctx ? new Interval(ctx.start.startIndex, ctx.stop.stopIndex + 1, di) : null;
     }
 
-    public static getIntervalFromParserRules(startRule: ParserRuleContext, endRule: ParserRuleContext, di: DocumentInfo): Interval {
+    public static getIntervalFromParserRules(
+        startRule: ParserRuleContext,
+        endRule: ParserRuleContext,
+        di: DocumentInfo
+    ): Interval {
         return new Interval(startRule.start.startIndex, endRule.stop.stopIndex + 1, di);
     }
 
@@ -133,7 +145,12 @@ export class Helper {
         }
     }
 
-    private static addFoldingRegion(di: DocumentInfo, startLine: number, stopLine: number, kind?: FoldingRangeKind): void {
+    private static addFoldingRegion(
+        di: DocumentInfo,
+        startLine: number,
+        stopLine: number,
+        kind?: FoldingRangeKind
+    ): void {
         const realStartLine = startLine - di.getInjectionLineCount();
         const realStopLine = stopLine - di.getInjectionLineCount();
         if (realStartLine >= 0) {

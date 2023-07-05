@@ -1,17 +1,17 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "GLSL",
-	"scopeName": "source.html.injected.glsl",
-	"injectionSelector": "R:text.html",
-	"patterns": [
-		{
-			"begin": "(?<=<script.*?type=\"x-shader\/x-(vertex|fragment)\".*?>)",
-			"end": "(?=</script>)",
-			"patterns": [
-				{
-					"include": "source.glsl"
-				}
-			]
-		}
-	]
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "GLSL",
+    "scopeName": "source.html.injected.glsl",
+    "injectionSelector": "R:text.html",
+    "patterns": [
+        {
+            "begin": "(?<=<script.*?type=\"x-shader/x-(vertex|fragment)\".*?>)",
+            "end": "(?=</script>)",
+            "patterns": [
+                {
+                    "include": "source.glsl"
+                }
+            ]
+        }
+    ]
 }

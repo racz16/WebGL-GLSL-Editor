@@ -36,7 +36,11 @@ export class TypeUsage extends Element {
     }
 
     public areArrayDimensionsMatch(tu: TypeUsage): boolean {
-        return tu && this.array.arraySize === tu.array.arraySize && this.array.multidimensional === tu.array.multidimensional;
+        return (
+            tu &&
+            this.array.arraySize === tu.array.arraySize &&
+            this.array.multidimensional === tu.array.multidimensional
+        );
     }
 
     public qualifiersEqualsExceptPrecisionWith(tu: TypeUsage): boolean {

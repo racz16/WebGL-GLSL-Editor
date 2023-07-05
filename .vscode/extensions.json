@@ -1,8 +1,10 @@
 {
-	// See http://go.microsoft.com/fwlink/?LinkId=827846
-	// for the documentation about the extensions.json format
-	"recommendations": [
-		"dbaeumer.vscode-eslint",
-		"mike-lischke.vscode-antlr4"
-	]
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "mike-lischke.vscode-antlr4",
+        "editorconfig.editorconfig",
+        "github.vscode-github-actions",
+        "davidanson.vscode-markdownlint",
+        "esbenp.prettier-vscode"
+    ]
 }

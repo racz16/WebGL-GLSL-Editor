@@ -1,4 +1,12 @@
-import { CancellationToken, InlayHint, InlayHintKind, InlayHintsProvider, ProviderResult, Range, TextDocument } from 'vscode';
+import {
+    CancellationToken,
+    InlayHint,
+    InlayHintKind,
+    InlayHintsProvider,
+    ProviderResult,
+    Range,
+    TextDocument,
+} from 'vscode';
 import { DocumentInfo } from '../core/document-info';
 import { GlslEditor } from '../core/glsl-editor';
 import { FunctionCall } from '../scope/function/function-call';
@@ -17,7 +25,11 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
         this.result = new Array<InlayHint>();
     }
 
-    public provideInlayHints(document: TextDocument, range: Range, token: CancellationToken): ProviderResult<InlayHint[]> {
+    public provideInlayHints(
+        document: TextDocument,
+        range: Range,
+        token: CancellationToken
+    ): ProviderResult<InlayHint[]> {
         this.initialize(document, range);
         this.addHintsFromScope(this.di.getRootScope());
         return this.result;

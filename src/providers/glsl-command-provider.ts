@@ -39,7 +39,9 @@ export class GlslCommandProvider {
         if (doc?.languageId !== Constants.GLSL) {
             window.showWarningMessage('The active file has to be a GLSL file.');
         } else if (HostDependent.webExtension) {
-            window.showWarningMessage('The web extension can\'t generate preprocessed GLSL source code. Try it with the desktop version.');
+            window.showWarningMessage(
+                "The web extension can't generate preprocessed GLSL source code. Try it with the desktop version."
+            );
         } else {
             HostDependent.displayPreprocessedCode(doc);
         }

@@ -4,7 +4,7 @@
 [![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
 [![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/raczzalan.webgl-glsl-editor)](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f48ff23e8b247358919a0af05e88304)](https://www.codacy.com/gh/racz16/WebGL-GLSL-Editor/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=racz16/WebGL-GLSL-Editor&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4f48ff23e8b247358919a0af05e88304)](https://www.codacy.com/gh/racz16/WebGL-GLSL-Editor/dashboard?utm_source=github.com&utm_medium=referral&utm_content=racz16/WebGL-GLSL-Editor&utm_campaign=Badge_Grade)
 [![build and package](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml/badge.svg)](https://github.com/racz16/WebGL-GLSL-Editor/actions/workflows/build-and-package.yml)
 
 This extension adds language support for GLSL ES 100 (WebGL 1 and OpenGL ES 1.00) and GLSL ES 300 (WebGL 2 and OpenGL ES 3.00). It supports all the WebGL-compatible GLSL extensions too. It supports most of the well-known VS Code language features like syntax highlight, IntelliSense and more, see the details below.

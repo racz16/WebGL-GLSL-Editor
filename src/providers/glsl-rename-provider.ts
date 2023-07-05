@@ -1,4 +1,12 @@
-import { RenameProvider, TextDocument, Position, CancellationToken, ProviderResult, WorkspaceEdit, Range } from 'vscode';
+import {
+    RenameProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    ProviderResult,
+    WorkspaceEdit,
+    Range,
+} from 'vscode';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { TypeDeclaration } from '../scope/type/type-declaration';
@@ -141,7 +149,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         if (this.scope.isGlobal() && this.di.getRootScope().functionPrototypes.find((fp) => fp.name === this.newName)) {
             throw new Error(`The function '${this.newName}' is already defined`);
         }
-        if (this.scope.isGlobal() && this.di.getRootScope().functionDefinitions.find((fd) => fd.name === this.newName)) {
+        if (
+            this.scope.isGlobal() &&
+            this.di.getRootScope().functionDefinitions.find((fd) => fd.name === this.newName)
+        ) {
             throw new Error(`The function '${this.newName}' is already defined`);
         }
         if (this.scope.isGlobal() && this.di.builtin.functionSummaries.has(this.newName)) {
@@ -162,14 +173,22 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
         }
         for (const lf of this.di.builtin.functions) {
             const fd2 = lf.getDeclaration();
-            if (this.newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
+            if (
+                this.newName === fd2.name &&
+                fd.parameters.length === fd2.parameters.length &&
+                fd.areParametersConnectableWith(fd2)
+            ) {
                 throw new Error(`Overriding the builtin function '${this.newName}' is illegal`);
             }
         }
     }
 
     private validateFunctionWithOtherFunction(fd: FunctionDeclaration, fd2: FunctionDeclaration): void {
-        if (this.newName === fd2.name && fd.parameters.length === fd2.parameters.length && fd.areParametersConnectableWith(fd2)) {
+        if (
+            this.newName === fd2.name &&
+            fd.parameters.length === fd2.parameters.length &&
+            fd.areParametersConnectableWith(fd2)
+        ) {
             if (this.lf.definitions.length && fd2.logicalFunction.definitions.length) {
                 throw new Error(`The function '${this.newName}' is already defined`);
             }
@@ -260,7 +279,10 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
     }
 
     private processFunction(lf: LogicalFunction, nameInterval: Interval): Range {
-        if (!lf.prototypes.some((fp) => fp.interval.isInjected()) && !lf.definitions.some((fd) => fd.interval.isInjected())) {
+        if (
+            !lf.prototypes.some((fp) => fp.interval.isInjected()) &&
+            !lf.definitions.some((fd) => fd.interval.isInjected())
+        ) {
             this.lf = lf;
             this.scope = lf.getDeclaration().scope;
             return this.di.intervalToRange(nameInterval);

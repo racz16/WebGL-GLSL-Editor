@@ -16,7 +16,9 @@ import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
 import { FormattingContext } from './helper/formatting-context';
 
-export class GlslDocumentFormattingProvider implements DocumentFormattingEditProvider, DocumentRangeFormattingEditProvider {
+export class GlslDocumentFormattingProvider
+    implements DocumentFormattingEditProvider, DocumentRangeFormattingEditProvider
+{
     private di: DocumentInfo;
     private options: FormattingOptions;
     private range: Range;
@@ -141,7 +143,11 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isT1BeforePreprocessorWithoutNewLine(ct: Token): boolean {
-        return !this.ctx.t1NewLine && ct.type === AntlrGlslLexer.PREPROCESSOR && this.ctx.lastt1TokenIndex !== Constants.INVALID;
+        return (
+            !this.ctx.t1NewLine &&
+            ct.type === AntlrGlslLexer.PREPROCESSOR &&
+            this.ctx.lastt1TokenIndex !== Constants.INVALID
+        );
     }
 
     private addNewLineBeforePreprocessorTextEdit(ct: Token): void {
@@ -166,7 +172,7 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
             this.refreshState(ct);
             this.processT1T1(ct);
         }
-        if(ct.type === AntlrGlslLexer.FLOAT_LITERAL) {
+        if (ct.type === AntlrGlslLexer.FLOAT_LITERAL) {
             this.formatFloatLiteral(ct);
         }
         this.afterProcessT1();
@@ -175,10 +181,10 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     private formatFloatLiteral(ct: Token): void {
         const favorSuffix = GlslEditor.CONFIGURATIONS.getFavorFloatingSuffix();
         const p = this.di.offsetToPosition(ct.stopIndex + 1 - this.di.getInjectionOffset());
-        if(ct.text.toLowerCase().endsWith('f') && (this.di.getVersion() === 100 || !favorSuffix)) {
+        if (ct.text.toLowerCase().endsWith('f') && (this.di.getVersion() === 100 || !favorSuffix)) {
             const p1 = this.di.offsetToPosition(ct.stopIndex - this.di.getInjectionOffset());
             this.addTextEdit(new TextEdit(new Range(p1, p), ''));
-        } else if(!ct.text.toLowerCase().endsWith('f') && this.di.getVersion() === 300 && favorSuffix) {
+        } else if (!ct.text.toLowerCase().endsWith('f') && this.di.getVersion() === 300 && favorSuffix) {
             this.addTextEdit(new TextEdit(new Range(p, p), 'f'));
         }
     }
@@ -215,7 +221,9 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         }
         return (
             (this.ctx.functionParameters &&
-                (t1.type === AntlrGlslLexer.COMMA || t1.type === AntlrGlslLexer.LRB || t2.type === AntlrGlslLexer.RRB)) ||
+                (t1.type === AntlrGlslLexer.COMMA ||
+                    t1.type === AntlrGlslLexer.LRB ||
+                    t2.type === AntlrGlslLexer.RRB)) ||
             ((t1.type === AntlrGlslLexer.LCB || t1.type === AntlrGlslLexer.SEMICOLON) && !this.ctx.forHeader) ||
             (t1.type === AntlrGlslLexer.RCB &&
                 !this.ctx.forHeader &&
@@ -228,12 +236,15 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
                 t1.type !== AntlrGlslLexer.LRB &&
                 t2.type !== AntlrGlslLexer.LRB &&
                 (t1.type !== AntlrGlslLexer.KW_ELSE || t2.type !== AntlrGlslLexer.KW_IF)) ||
-            (this.ctx.caseStatementsStart && (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()))
+            (this.ctx.caseStatementsStart &&
+                (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()))
         );
     }
 
     private isScopeStarter(t: Token): boolean {
-        const scope = this.di.getScopeAt(new Position(t.line - this.di.getInjectionLineCount() - 1, t.charPositionInLine));
+        const scope = this.di.getScopeAt(
+            new Position(t.line - this.di.getInjectionLineCount() - 1, t.charPositionInLine)
+        );
         return scope.interval && scope.interval.startIndex === t.startIndex - this.di.getInjectionOffset();
     }
 
@@ -277,7 +288,9 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
         const t1 = this.tokens[this.ctx.lastt2TokenIndex];
         return (
             (this.ctx.unaryExpression && !GlslEditor.CONFIGURATIONS.getSpaceAroundUnaryOperators()) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() && !this.ctx.unaryExpression && this.isBinaryOperator(t1.type)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() &&
+                !this.ctx.unaryExpression &&
+                this.isBinaryOperator(t1.type)) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesAroundBinaryOperators() &&
                 !this.ctx.unaryExpression &&
                 this.isBinaryOperator(t2.type) &&
@@ -296,10 +309,13 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
                     t1.type === AntlrGlslLexer.COLON ||
                     t2.type === AntlrGlslLexer.COLON)) ||
             (t2.type === AntlrGlslLexer.SEMICOLON &&
-                (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() || !this.ctx.forHeader || this.ctx.inlineStruct)) ||
+                (!GlslEditor.CONFIGURATIONS.getSpaceBeforeSemicolonsInFor() ||
+                    !this.ctx.forHeader ||
+                    this.ctx.inlineStruct)) ||
             (t2.type === AntlrGlslLexer.COMMA && !GlslEditor.CONFIGURATIONS.getSpaceBeforeCommas()) ||
             (t1.type === AntlrGlslLexer.COMMA && !GlslEditor.CONFIGURATIONS.getSpaceAfterCommas()) ||
-            ((t1.type === AntlrGlslLexer.DOT || t2.type === AntlrGlslLexer.DOT) && !GlslEditor.CONFIGURATIONS.getSpacesAroundDots()) ||
+            ((t1.type === AntlrGlslLexer.DOT || t2.type === AntlrGlslLexer.DOT) &&
+                !GlslEditor.CONFIGURATIONS.getSpacesAroundDots()) ||
             (!GlslEditor.CONFIGURATIONS.getSpaceAfterKeywords() &&
                 t2.type === AntlrGlslLexer.LRB &&
                 (t1.type === AntlrGlslLexer.KW_IF ||
@@ -309,10 +325,14 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
                     t1.type === AntlrGlslLexer.Q_LAYOUT)) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesInsideParentheses() &&
                 (t1.type === AntlrGlslLexer.LRB || t2.type === AntlrGlslLexer.RRB)) ||
-            (!GlslEditor.CONFIGURATIONS.getSpaceBeforeCaseColons() && this.ctx.caseHeader && t2.type === AntlrGlslLexer.COLON) ||
+            (!GlslEditor.CONFIGURATIONS.getSpaceBeforeCaseColons() &&
+                this.ctx.caseHeader &&
+                t2.type === AntlrGlslLexer.COLON) ||
             (!GlslEditor.CONFIGURATIONS.getSpaceAfterFunctionNames() &&
                 t2.type === AntlrGlslLexer.LRB &&
-                (t1.type === AntlrGlslLexer.IDENTIFIER || t1.type === AntlrGlslLexer.TYPE || t1.type === AntlrGlslLexer.RSB)) ||
+                (t1.type === AntlrGlslLexer.IDENTIFIER ||
+                    t1.type === AntlrGlslLexer.TYPE ||
+                    t1.type === AntlrGlslLexer.RSB)) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesAroundBraces() &&
                 !GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine() &&
                 (t1.type === AntlrGlslLexer.RCB || t2.type === AntlrGlslLexer.LCB)) ||
@@ -325,7 +345,8 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
                 !this.ctx.inlineStruct &&
                 t1.type === AntlrGlslLexer.SEMICOLON) ||
             (!GlslEditor.CONFIGURATIONS.getSpaceBeforeOpeningBrackets() && t2.type === AntlrGlslLexer.LSB) ||
-            (!GlslEditor.CONFIGURATIONS.getSpacesInsideBrackets() && (t1.type === AntlrGlslLexer.LSB || t2.type === AntlrGlslLexer.RSB)) ||
+            (!GlslEditor.CONFIGURATIONS.getSpacesInsideBrackets() &&
+                (t1.type === AntlrGlslLexer.LSB || t2.type === AntlrGlslLexer.RSB)) ||
             (!GlslEditor.CONFIGURATIONS.getSpacesAroundAssignmentOperators() &&
                 (this.isAssignmentOperator(t1.type) || this.isAssignmentOperator(t2.type)))
         );
@@ -383,7 +404,12 @@ export class GlslDocumentFormattingProvider implements DocumentFormattingEditPro
     }
 
     private isOperator(type: number): boolean {
-        return this.isUnaryOperator(type) || this.isBinaryOperator(type) || this.isAssignmentOperator(type) || this.isTernaryOperator(type);
+        return (
+            this.isUnaryOperator(type) ||
+            this.isBinaryOperator(type) ||
+            this.isAssignmentOperator(type) ||
+            this.isTernaryOperator(type)
+        );
     }
 
     private addOperatorSplitTextEdit(t2: Token): void {

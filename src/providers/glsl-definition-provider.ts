@@ -1,4 +1,12 @@
-import { DefinitionProvider, TextDocument, Position, CancellationToken, ProviderResult, Location, LocationLink } from 'vscode';
+import {
+    DefinitionProvider,
+    TextDocument,
+    Position,
+    CancellationToken,
+    ProviderResult,
+    Location,
+    LocationLink,
+} from 'vscode';
 import { PositionalProviderBase } from './helper/positional-provider-base';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
@@ -8,7 +16,10 @@ import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 import { LogicalFunction } from '../scope/function/logical-function';
 
-export class GlslDefinitionProvider extends PositionalProviderBase<Location | Array<Location>> implements DefinitionProvider {
+export class GlslDefinitionProvider
+    extends PositionalProviderBase<Location | Array<Location>>
+    implements DefinitionProvider
+{
     public provideDefinition(
         document: TextDocument,
         position: Position,

@@ -23,7 +23,10 @@ export class GlslDocumentSemanticTokensProvider implements DocumentSemanticToken
         this.result = new SemanticTokensBuilder(legend);
     }
 
-    public provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): ProviderResult<SemanticTokens> {
+    public provideDocumentSemanticTokens(
+        document: TextDocument,
+        token: CancellationToken
+    ): ProviderResult<SemanticTokens> {
         this.initialize(document);
         for (const sr of this.di.getRegions().semanticRegions) {
             this.addSemanticToken(sr);

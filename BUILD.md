@@ -9,19 +9,27 @@
 5. Open PowerShell
 6. Clone the repository
 
-        git clone https://github.com/racz16/WebGL-GLSL-Editor.git
+    ```ps1
+    git clone https://github.com/racz16/WebGL-GLSL-Editor.git
+    ```
 
 7. Go inside the repository's root folder
 
-        cd WebGL-GLSL-Editor
+    ```ps1
+    cd WebGL-GLSL-Editor
+    ```
 
 8. Install dependencies
 
-        npm install
+    ```ps1
+    npm install
+    ```
 
 9. Generate code
 
-        npm run compile-antlr-windows
+    ```ps1
+    npm run compile-antlr-windows
+    ```
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
@@ -31,50 +39,70 @@
 
 ### Package the extension (optional)
 
-11. Package the extension
+11. Package the extension <!-- markdownlint-disable-line MD029 -->
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
-        npm run package
+    ```ps1
+    npm run package
+    ```
 
     If you only want to create the Windows-specific package
 
-        npm run package-win32-x64
+    ```ps1
+    npm run package-win32-x64
+    ```
 
 ## Linux
 
 1. Open the Terminal
 2. Install Visual Studio Code
 
-        snap install --classic code
+    ```bash
+    snap install --classic code
+    ```
 
 3. Install npm
 
-        sudo apt install npm
+    ```bash
+    sudo apt install npm
+    ```
 
 4. Install git
 
-        sudo apt install git
+    ```bash
+    sudo apt install git
+    ```
 
 5. Install the JRE
 
-        sudo apt install default-jre
+    ```bash
+    sudo apt install default-jre
+    ```
 
 6. Clone the repository
 
-        git clone https://github.com/racz16/WebGL-GLSL-Editor.git
+    ```bash
+    git clone https://github.com/racz16/WebGL-GLSL-Editor.git
+    ```
 
 7. Go inside the repository's root folder
 
-        cd WebGL-GLSL-Editor
+    ```bash
+    cd WebGL-GLSL-Editor
+    ```
 
 8. Install dependencies
 
-        npm install
+    ```bash
+    npm install
+    ```
 
 9. Generate code
 
-        npm run compile-antlr-linux
+    ```bash
+    npm run compile-antlr-linux
+    ```
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
@@ -84,12 +112,16 @@
 
 ### Package the extension (optional)
 
-11. Package the extension
+11. Package the extension <!-- markdownlint-disable-line MD029 -->
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
-        npm run package
+    ```bash
+    npm run package
+    ```
 
     If you only want to create the Linux-specific package
 
-        npm run package-linux-x64
+    ```bash
+    npm run package-linux-x64
+    ```

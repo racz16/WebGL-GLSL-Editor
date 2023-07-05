@@ -10,7 +10,7 @@
         "url": "https://github.com/racz16/WebGL-GLSL-Editor"
     },
     "bugs": {
-        "email": "racz1666@gmail.com",
+        "email": "zalan.racz.dev@gmail.com",
         "url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
     },
     "license": "SEE LICENSE IN LICENSE.txt",
@@ -295,7 +295,10 @@
         "webpack-dev": "webpack --mode development --watch",
         "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
         "compile-antlr-linux": "./compile-antlr.sh",
-        "lint": "eslint ./src --ext .ts --ignore-pattern src/_generated",
+        "markdownlint": "markdownlint --ignore node_modules **/*.md",
+        "prettier-lint": "prettier --check .",
+        "prettier-format": "prettier --write .",
+        "eslint": "eslint ./src --ext .ts --ignore-pattern src/_generated",
         "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
         "package-web": "vsce package --target web --ignoreFile web.vscodeignore",
         "package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",
@@ -322,6 +325,8 @@
         "assert": "^2.0.0",
         "eslint": "^8.40.0",
         "eslint-config-prettier": "^8.8.0",
+        "markdownlint-cli": "^0.35.0",
+        "prettier": "^3.0.0",
         "process": "^0.11.10",
         "ts-loader": "^9.4.2",
         "typescript": "^5.0.4",

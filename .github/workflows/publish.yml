@@ -7,24 +7,41 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-            - run: npm install
-            - run: npx antlr4ts -o "../src/_generated" "AntlrGlslLexer.g4"
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Install NodeJS
+              uses: actions/setup-node@v3
+            - name: Install dependencies
+              run: npm ci
+            - name: Generate Antlr lexer
+              run: npx antlr4ts -o "../src/_generated" "AntlrGlslLexer.g4"
               working-directory: ./syntaxes
-            - run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
+            - name: Generate Antlr parser
+              run: npx antlr4ts -o "../src/_generated" -no-listener -visitor "AntlrGlslParser.g4"
               working-directory: ./syntaxes
-            - run: npm run package-web
-            - run: npm run package-win32-x64
-            - run: npm run package-win32-ia32
-            - run: npm run package-win32-arm64
-            - run: npm run package-darwin-x64
-            - run: npm run package-darwin-arm64
-            - run: npm run package-linux-x64
-            - run: npm run package-linux-arm64
-            - run: npm run package-linux-armhf
-            - run: npm run package-alpine-x64
-            - run: npm run package-alpine-arm64
-            - run: npx vsce publish --packagePath $(find . -type f -name "*.vsix" | paste -sd " ")
+            - name: Package to web
+              run: npm run package-web
+            - name: Package to win32-x64
+              run: npm run package-win32-x64
+            - name: Package to win32-ia32
+              run: npm run package-win32-ia32
+            - name: Package to win32-arm64
+              run: npm run package-win32-arm64
+            - name: Package to darwin-x64
+              run: npm run package-darwin-x64
+            - name: Package to darwin-arm64
+              run: npm run package-darwin-arm64
+            - name: Package to linux-x64
+              run: npm run package-linux-x64
+            - name: Package to linux-arm64
+              run: npm run package-linux-arm64
+            - name: Package to linux-armhf
+              run: npm run package-linux-armhf
+            - name: Package to alpine-x64
+              run: npm run package-alpine-x64
+            - name: Package to alpine-arm64
+              run: npm run package-alpine-arm64
+            - name: Publish
+              run: npx vsce publish --packagePath $(find . -type f -name "*.vsix" | paste -sd " ")
               env:
                   VSCE_PAT: ${{ secrets.VSCE_PAT }}

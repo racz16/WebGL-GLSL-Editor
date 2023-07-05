@@ -1,9 +1,20 @@
-import { FoldingRangeProvider, FoldingRange, TextDocument, FoldingContext, CancellationToken, ProviderResult } from 'vscode';
+import {
+    FoldingRangeProvider,
+    FoldingRange,
+    TextDocument,
+    FoldingContext,
+    CancellationToken,
+    ProviderResult,
+} from 'vscode';
 
 import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslFoldingProvider implements FoldingRangeProvider {
-    public provideFoldingRanges(document: TextDocument, context: FoldingContext, token: CancellationToken): ProviderResult<FoldingRange[]> {
+    public provideFoldingRanges(
+        document: TextDocument,
+        context: FoldingContext,
+        token: CancellationToken
+    ): ProviderResult<FoldingRange[]> {
         GlslEditor.processElements(document);
         const di = GlslEditor.getDocumentInfo(document.uri);
         const results = new Array<FoldingRange>();

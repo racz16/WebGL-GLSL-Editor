@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD026 -->
 # Change Log
 
 ## [Unreleased]
@@ -51,7 +52,7 @@ For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-
 
 * I made a mistake when I published it, don't use this version!
 
-## [1.3.1] - 2022.06.25. 
+## [1.3.1] - 2022.06.25.
 
 ### Improved
 

@@ -196,7 +196,9 @@ export class GlslDiagnosticProvider {
             const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
             if (line > 0) {
                 const error = row.substring(9 + i + 2);
-                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error));
+                this.diagnostics.push(
+                    new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error)
+                );
             } else {
                 this.di.setInjectionError(true);
             }
@@ -206,7 +208,9 @@ export class GlslDiagnosticProvider {
             const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
             if (line > 0) {
                 const error = row.substring(11 + i + 2);
-                this.diagnostics.push(new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Warning));
+                this.diagnostics.push(
+                    new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Warning)
+                );
             }
         }
     }

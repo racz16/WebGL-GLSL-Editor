@@ -67,7 +67,10 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         const fi = this.di.builtin.functionSummaries.get(sr.name);
         for (const lf of lfs.filter((func) => func.getDeclaration().name === sr.name)) {
             const fp = lf.getDeclaration();
-            if (Helper.isInCorrectStage(fp.stage, this.di) && this.di.isExtensionAvailable(fi?.extension, this.offset)) {
+            if (
+                Helper.isInCorrectStage(fp.stage, this.di) &&
+                this.di.isExtensionAvailable(fi?.extension, this.offset)
+            ) {
                 const si = new SignatureInformation(fp.toString(), fi?.summary);
                 si.parameters = [];
                 for (const vd of fp.parameters) {
@@ -106,7 +109,10 @@ export class GlslSignatureHelpProvider implements SignatureHelpProvider {
         if (sr.parameters.some((param) => !param) || sr.parameters.length > fp.parameters.length) {
             return false;
         }
-        const length = sr.parameters[sr.parameters.length - 1].typeDeclaration == null ? sr.parameters.length - 1 : sr.parameters.length;
+        const length =
+            sr.parameters[sr.parameters.length - 1].typeDeclaration == null
+                ? sr.parameters.length - 1
+                : sr.parameters.length;
         for (let i = 0; i < length; i++) {
             const spr = sr.parameters[i];
             const tu = fp.parameters[i]?.type;

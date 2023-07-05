@@ -21,7 +21,8 @@ export function activate(context: ExtensionContext): void {
 function addHostDependentCode(): void {
     HostDependent.getDocumentation = (name, uri) => Documentation.getDocumentation(name, uri);
     HostDependent.textChanged = (document) => new GlslDiagnosticProvider().textChanged(document);
-    HostDependent.displayPreprocessedCode = (document) => new GlslDiagnosticProvider().displayPreprocessedCode(document);
+    HostDependent.displayPreprocessedCode = (document) =>
+        new GlslDiagnosticProvider().displayPreprocessedCode(document);
 }
 
 function addDiagnostic(context: ExtensionContext): void {
@@ -61,6 +62,8 @@ function addDiagnostic(context: ExtensionContext): void {
 
 function addFeatures(context: ExtensionContext): void {
     //preprocessed glsl
-    context.subscriptions.push(workspace.registerTextDocumentContentProvider(Constants.PREPROCESSED_GLSL, new GlslTextProvider()));
+    context.subscriptions.push(
+        workspace.registerTextDocumentContentProvider(Constants.PREPROCESSED_GLSL, new GlslTextProvider())
+    );
     window.registerFileDecorationProvider(new GlslFileDecorationProvider());
 }

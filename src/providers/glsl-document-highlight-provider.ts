@@ -17,7 +17,10 @@ import { VariableUsage } from '../scope/variable/variable-usage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
 
-export class GlslDocumentHighlightProvider extends PositionalProviderBase<Array<DocumentHighlight>> implements DocumentHighlightProvider {
+export class GlslDocumentHighlightProvider
+    extends PositionalProviderBase<Array<DocumentHighlight>>
+    implements DocumentHighlightProvider
+{
     public provideDocumentHighlights(
         document: TextDocument,
         position: Position,
