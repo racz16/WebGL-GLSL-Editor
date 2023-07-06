@@ -311,7 +311,8 @@
         "package-linux-armhf": "vsce package --target linux-armhf --ignoreFile linux.vscodeignore",
         "package-alpine-x64": "vsce package --target alpine-x64 --ignoreFile linux.vscodeignore",
         "package-alpine-arm64": "vsce package --target alpine-arm64 --ignoreFile linux.vscodeignore",
-        "package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64"
+        "package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64",
+        "prepare": "husky install"
     },
     "devDependencies": {
         "@types/node": "^20.1.0",
@@ -325,8 +326,10 @@
         "assert": "^2.0.0",
         "eslint": "^8.40.0",
         "eslint-config-prettier": "^8.8.0",
+        "husky": "^8.0.0",
         "markdownlint-cli": "^0.35.0",
-        "prettier": "^3.0.0",
+        "prettier": "^2.8.8",
+        "pretty-quick": "^3.1.3",
         "process": "^0.11.10",
         "ts-loader": "^9.4.2",
         "typescript": "^5.0.4",
