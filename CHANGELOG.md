@@ -5,6 +5,23 @@
 
 For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
 
+## [1.3.6] - 2023.07.09.
+
+### Improved
+
+* Added a new configuration to control if you like floating suffixes or not
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Fixed a problem where the color picker generated numbers with floating suffixes in GLSL ES 100
+* Fixed a bug that caused problems when used with translation extensions
+* Fixed a code completion bug where local variables didn't hide global variables and user types didn't hide builtin types
+* Fixed a bug where unnamed variables and structs broke code completion
+* Fixed a bug where variable usage was considered as an unnamed variable declaration
+* Other small fixes
+
 ## [1.3.5] - 2023.05.09.
 
 ### Improved

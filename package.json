@@ -28,7 +28,7 @@
         "color": "#990000",
         "theme": "dark"
     },
-    "version": "1.3.5",
+    "version": "1.3.6",
     "engines": {
         "vscode": "^1.65.0"
     },
@@ -251,7 +251,7 @@
                     "webgl-glsl-editor.format.favorFloatingSuffix": {
                         "type": "boolean",
                         "default": true,
-                        "markdownDescription": "The formatter and the color picker favors the floating suffix (`f`) when applicable.\n\n**Enabled**\n```glsl\nfloat value = 1.0f;\n```\n**Disabled:**\n```glsl\nfloat value = 1.0;\n```",
+                        "markdownDescription": "The formatter and the color picker favor the floating suffix (`f`) when applicable.\n\n**Enabled**\n```glsl\nfloat value = 1.0f;\n```\n**Disabled:**\n```glsl\nfloat value = 1.0;\n```",
                         "order": 22
                     },
                     "webgl-glsl-editor.codeInjection": {

@@ -184,6 +184,7 @@ You can easily access several online documentations by commands.
 * `webgl-glsl-editor.format.placeSpacesAroundBraces`: Places spaces around braces.
 * `webgl-glsl-editor.format.placeSpaceBeforeOpeningBrackets`: Places a space before opening brackets.
 * `webgl-glsl-editor.format.placeSpacesInsideBrackets`: Places spaces inside brackets.
+* `webgl-glsl-editor.format.favorFloatingSuffix`: The formatter and the color picker favor the floating suffix when applicable.
 * `webgl-glsl-editor.codeInjection`: Enables/disables code injection.
 * `webgl-glsl-editor.codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
 
@@ -201,6 +202,11 @@ You can find the user-provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.6
+
+* Added a new configuration to control if you like floating suffixes or not
+* Other small changes and bugfixes
 
 ### 1.3.5
 
