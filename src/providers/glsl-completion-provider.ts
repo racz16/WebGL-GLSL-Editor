@@ -469,6 +469,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         for (const td of scope.typeDeclarations) {
             if (
                 Helper.isALowerThanOffset(td.interval, this.offset) &&
+                td.name &&
                 !this.items.some((ci) => this.getName(ci) === td.name) &&
                 !td.interfaceBlock
             ) {
@@ -486,6 +487,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         for (const vd of scope.variableDeclarations) {
             if (
                 Helper.isALowerThanOffset(vd.declarationInterval, this.offset) &&
+                vd.name &&
                 !this.items.some((ci) => this.getName(ci) === vd.name)
             ) {
                 const ci = new CompletionItem(
