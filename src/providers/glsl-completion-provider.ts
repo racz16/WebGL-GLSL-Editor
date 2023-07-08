@@ -452,10 +452,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
             this.addUserTypeItems(scope, localItems);
             this.addUserVariableItems(scope, localItems);
             this.addUserFunctionItems(scope, localItems);
-            if (scope.isGlobal()) {
-                this.addBuiltinItems(localItems);
-            }
             this.items = this.items.concat(localItems);
+            if (scope.isGlobal()) {
+                localItems.length = 0;
+                this.addBuiltinItems(localItems);
+                this.items = this.items.concat(localItems);
+            }
             this.addItems(scope.parent);
         }
     }
@@ -556,6 +558,12 @@ export class GlslCompletionProvider implements CompletionItemProvider {
     }
 
     private getName(ci: CompletionItem): string {
-        return ci.filterText ?? ci.label.toString();
+        if (ci.filterText) {
+            return ci.filterText;
+        } else if (typeof ci.label === 'string') {
+            return ci.label;
+        } else {
+            return ci.label.label;
+        }
     }
 }
