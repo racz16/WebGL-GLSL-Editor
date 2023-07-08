@@ -82,8 +82,7 @@ export class TypeUsageProcessor {
         index: number
     ): TypeUsage {
         this.initialize(scope, di, tuc);
-        const tu = this.getType(index, variableArray);
-        return tu;
+        return this.getType(index, variableArray);
     }
 
     //

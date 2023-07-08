@@ -15,6 +15,8 @@ import { ColorRegion } from '../scope/regions/color-region';
 import { ExpressionResult } from './expression-result';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 import { Token } from 'antlr4ts';
+import { VariableUsageProcessor } from './variable-usage-processor';
+import { TypeDeclarationProcessor } from './type-declaration-processor';
 
 export class VariableDeclarationProcessor {
     private di: DocumentInfo;
@@ -178,6 +180,11 @@ export class VariableDeclarationProcessor {
                 tu.declaration.usages.push(tu);
             }
         } else {
+            if (this.isNotVariableDeclaration(vdc)) {
+                const tn = vdc.type_usage().type()?.TYPE() ?? vdc.type_usage().type()?.IDENTIFIER();
+                new VariableUsageProcessor().getVariableUsage(tn, this.scope, this.di);
+                return vds;
+            }
             const tu = new TypeUsageProcessor().getMemberType(
                 vdc.type_usage(),
                 new ArrayUsage(),
@@ -204,6 +211,15 @@ export class VariableDeclarationProcessor {
             }
         }
         return vds;
+    }
+
+    private isNotVariableDeclaration(vdc: Variable_declarationContext): boolean {
+        const tn = vdc.type_usage().type()?.TYPE() ?? vdc.type_usage().type()?.IDENTIFIER();
+        const tnName = tn?.text;
+        const tnNameInterval = Helper.getIntervalFromTerminalNode(tn, this.di);
+        const td = TypeDeclarationProcessor.searchTypeDeclaration(tnName, tnNameInterval, this.scope, this.di);
+        const vd = VariableDeclarationProcessor.searchVariableDeclaration(tnName, tnNameInterval, this.scope, this.di);
+        return (vd && !td) || (vd && td && vd.nameInterval.stopIndex < td.nameInterval.stopIndex);
     }
 
     private handleColorRegion(vd: VariableDeclaration, right: ExpressionResult | ExpressionResult[]): void {
