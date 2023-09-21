@@ -89,7 +89,8 @@
                 "scopeName": "source.ts.injected.glsl",
                 "path": "./syntaxes/ts-injected-glsl.language.json",
                 "injectTo": [
-                    "source.ts"
+                    "source.ts",
+                    "source.tsx"
                 ]
             }
         ],

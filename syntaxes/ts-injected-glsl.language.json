@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
     "name": "GLSL",
     "scopeName": "source.ts.injected.glsl",
-    "injectionSelector": "L:source.ts",
+    "injectionSelector": "L:source.ts, L:source.tsx",
     "patterns": [
         {
             "begin": "((\\/\\*)\\s*glsl\\s*(\\*\\/))\\s*(`)",
