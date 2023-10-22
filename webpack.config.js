@@ -1,32 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 //@ts-check
-
 'use strict';
-
-//@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 
 const path = require('path');
 const webpack = require('webpack');
 
 /**@type {import('webpack').Configuration}*/
-const config = {
-    target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
-
-    entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+const desktopExtensionConfig = {
+    target: 'node',
+    mode: 'development',
+    entry: './src/extension-desktop.ts',
     output: {
-        // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
         path: path.resolve(__dirname, 'dist'),
-        filename: 'extension.js',
+        filename: 'extension-desktop.js',
         libraryTarget: 'commonjs2',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
     devtool: 'source-map',
     externals: {
-        vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        vscode: 'commonjs vscode',
     },
     resolve: {
-        // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js'],
     },
     module: {
@@ -46,24 +41,23 @@ const config = {
 
 /** @type WebpackConfig */
 const webExtensionConfig = {
-    mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
-    target: 'webworker', // extensions run in a webworker context
-    entry: {
-        'web-extension': './src/web-extension.ts',
-    },
+    target: 'webworker',
+    mode: 'none',
+    entry: './src/extension-web.ts',
     output: {
-        filename: '[name].js',
         path: path.join(__dirname, './dist'),
+        filename: 'extension-web.js',
         libraryTarget: 'commonjs',
         devtoolModuleFilenameTemplate: '../../[resource-path]',
     },
+    devtool: 'nosources-source-map',
+    externals: {
+        vscode: 'commonjs vscode',
+    },
     resolve: {
-        mainFields: ['browser', 'module', 'main'], // look for `browser` entry point in imported node modules
-        extensions: ['.ts', '.js'], // support ts-files and js-files
+        mainFields: ['browser', 'module', 'main'],
+        extensions: ['.ts', '.js'],
         fallback: {
-            // Webpack 5 no longer polyfills Node.js core modules automatically.
-            // see https://webpack.js.org/configuration/resolve/#resolvefallback
-            // for the list of Node.js core module polyfills.
             assert: require.resolve('assert'),
         },
     },
@@ -82,22 +76,18 @@ const webExtensionConfig = {
     },
     plugins: [
         new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks: 1, // disable chunks by default since web extensions must be a single bundle
+            maxChunks: 1,
         }),
         new webpack.ProvidePlugin({
-            process: 'process/browser', // provide a shim for the global `process` variable
+            process: 'process/browser',
         }),
     ],
-    externals: {
-        vscode: 'commonjs vscode', // ignored because it doesn't exist
-    },
     performance: {
         hints: false,
     },
-    devtool: 'nosources-source-map', // create a source map that points to the original source file
     infrastructureLogging: {
-        level: 'log', // enables logging required for problem matchers
+        level: 'log',
     },
 };
 
-module.exports = [config, webExtensionConfig];
+module.exports = [desktopExtensionConfig, webExtensionConfig];

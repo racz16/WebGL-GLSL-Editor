@@ -1,6 +1,6 @@
 import { ExtensionContext } from 'vscode';
 import { GlslEditor } from './core/glsl-editor';
-import { addSharedCommands, addSharedFeatures } from './extension-base';
+import { addSharedCommands, addSharedFeatures } from './extension';
 import { HostDependent } from './host-dependent';
 
 export function activate(context: ExtensionContext): void {

@@ -45,8 +45,8 @@
         "onCommand:webgl-glsl-editor.opengles3",
         "onCommand:webgl-glsl-editor.generatepreprocessed"
     ],
-    "main": "./dist/extension.js",
-    "browser": "./dist/web-extension.js",
+    "main": "./dist/extension-desktop.js",
+    "browser": "./dist/extension-web.js",
     "contributes": {
         "languages": [
             {
@@ -292,8 +292,8 @@
     },
     "scripts": {
         "vscode:prepublish": "webpack --mode production",
-        "webpack": "webpack --mode development",
-        "webpack-dev": "webpack --mode development --watch",
+        "webpack": "webpack",
+        "webpack-dev": "webpack --watch",
         "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
         "compile-antlr-linux": "./compile-antlr.sh",
         "markdownlint": "markdownlint --ignore node_modules **/*.md",
