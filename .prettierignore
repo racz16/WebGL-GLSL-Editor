@@ -1,19 +1,11 @@
-/out
-/node_modules
-/dist
-/.vscode-test-web
-*.vsix
+# folder
+.vscode-test
+.vscode-test-web
+dist
+node_modules
+private
+src/_generated
+res
 
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-/syntaxes/.antlr/*
-/private
-/src/_generated
-
-/res
-*.md
+# file type
+**/*.md
