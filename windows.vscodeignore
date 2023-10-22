@@ -1,25 +1,35 @@
+# folder
 .github
-.vscode/**
-.vscode-test/**
-.vscode-test-web/**
-out/test/**
-out
+.husky
+.vscode
+.vscode-test
+.vscode-test-web
 node_modules
-src/**
-.gitignore
-BUILD.md
-**/tsconfig.json
-**/*.map
-**/*.ts
-syntaxes/.antlr
-syntaxes/*.g4
-res/png/screenshots
-res/gif
 private
+res/gif
+res/png/screenshots
+src
+syntaxes/.antlr
+
+# file
+.editorconfig
+.eslintrc.js
+.gitattributes
+.gitignore
+.markdownlint.json
+.prettierignore
+.prettierrc.json
+BUILD.md
+package-lock.json
+tsconfig.json
+webpack.config.js
+
+# file type
 **/*.ps1
 **/*.sh
-webpack.config.js
-*.vscodeignore
+**/*.vscodeignore
+**/*.g4
+**/*.map
 
 # windows specific ignore
 res/bin/glslangValidatorLinux
