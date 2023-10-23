@@ -1,32 +1,32 @@
 import {
-    CompletionItemProvider,
-    TextDocument,
-    Position,
     CancellationToken,
     CompletionContext,
-    ProviderResult,
     CompletionItem,
-    CompletionList,
     CompletionItemKind,
-    MarkdownString,
-    CompletionTriggerKind,
     CompletionItemLabel,
+    CompletionItemProvider,
+    CompletionList,
+    CompletionTriggerKind,
+    MarkdownString,
+    Position,
+    ProviderResult,
+    TextDocument,
 } from 'vscode';
-import { GlslEditor } from '../core/glsl-editor';
-import { DocumentInfo } from '../core/document-info';
-import { LogicalFunction } from '../scope/function/logical-function';
-import { Scope } from '../scope/scope';
-import { TypeCategory } from '../scope/type/type-category';
-import { ShaderStage } from '../scope/shader-stage';
-import { Helper } from '../processor/helper';
-import { Constants } from '../core/constants';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
-import { TypeDeclaration } from '../scope/type/type-declaration';
-import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
-import { PreprocessorCompletionContext } from './helper/preprocessor-completion-context';
-import { CompletionRegion } from '../scope/regions/completion-region';
+import { Constants } from '../core/constants';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { Helper } from '../processor/helper';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionInfo } from '../scope/function/function-info';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { CompletionRegion } from '../scope/regions/completion-region';
+import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
+import { Scope } from '../scope/scope';
+import { ShaderStage } from '../scope/shader-stage';
+import { TypeCategory } from '../scope/type/type-category';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { PreprocessorCompletionContext } from './helper/preprocessor-completion-context';
 
 export class GlslCompletionProvider implements CompletionItemProvider {
     private di: DocumentInfo;

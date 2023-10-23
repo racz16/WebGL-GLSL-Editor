@@ -1,22 +1,22 @@
-import { TypeDeclaration } from '../scope/type/type-declaration';
-import { Helper } from './helper';
-import { TypeBase } from '../scope/type/type-base';
-import { TypeCategory } from '../scope/type/type-category';
-import { DocumentInfo } from '../core/document-info';
-import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
 import {
-    Type_declarationContext,
     Interface_block_declarationContext,
+    Type_declarationContext,
     Variable_declarationContext,
 } from '../_generated/AntlrGlslParser';
-import { VariableDeclarationProcessor } from './variable-declaration-processor';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { TypeUsage } from '../scope/type/type-usage';
-import { ArrayUsage } from '../scope/array-usage';
-import { LogicalFunction } from '../scope/function/logical-function';
 import { Constants } from '../core/constants';
+import { DocumentInfo } from '../core/document-info';
+import { ArrayUsage } from '../scope/array-usage';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { Interval } from '../scope/interval';
 import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Scope } from '../scope/scope';
+import { TypeBase } from '../scope/type/type-base';
+import { TypeCategory } from '../scope/type/type-category';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { Helper } from './helper';
+import { VariableDeclarationProcessor } from './variable-declaration-processor';
 
 export class TypeDeclarationProcessor {
     private di: DocumentInfo;

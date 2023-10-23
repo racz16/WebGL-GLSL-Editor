@@ -1,21 +1,21 @@
 import {
-    DocumentHighlightProvider,
-    TextDocument,
-    Position,
     CancellationToken,
-    ProviderResult,
     DocumentHighlight,
     DocumentHighlightKind,
+    DocumentHighlightProvider,
+    Position,
+    ProviderResult,
+    TextDocument,
 } from 'vscode';
-import { LogicalFunction } from '../scope/function/logical-function';
 import { Element } from '../scope/element';
-import { PositionalProviderBase } from './helper/positional-provider-base';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { VariableUsage } from '../scope/variable/variable-usage';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { VariableUsage } from '../scope/variable/variable-usage';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslDocumentHighlightProvider
     extends PositionalProviderBase<Array<DocumentHighlight>>

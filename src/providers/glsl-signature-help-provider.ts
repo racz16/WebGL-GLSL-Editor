@@ -1,24 +1,24 @@
 import {
-    SignatureHelpProvider,
-    TextDocument,
-    Position,
     CancellationToken,
-    SignatureHelpContext,
+    ParameterInformation,
+    Position,
     ProviderResult,
     SignatureHelp,
+    SignatureHelpContext,
+    SignatureHelpProvider,
     SignatureInformation,
-    ParameterInformation,
+    TextDocument,
 } from 'vscode';
-import { GlslEditor } from '../core/glsl-editor';
-import { DocumentInfo } from '../core/document-info';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { TypeUsage } from '../scope/type/type-usage';
-import { LogicalFunction } from '../scope/function/logical-function';
-import { Scope } from '../scope/scope';
 import { Constants } from '../core/constants';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
+import { Helper } from '../processor/helper';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
 import { SignatureParameterRegion } from '../scope/regions/signature-parameter-region';
 import { SignatureRegion } from '../scope/regions/signature-region';
-import { Helper } from '../processor/helper';
+import { Scope } from '../scope/scope';
+import { TypeUsage } from '../scope/type/type-usage';
 
 export class GlslSignatureHelpProvider implements SignatureHelpProvider {
     private di: DocumentInfo;

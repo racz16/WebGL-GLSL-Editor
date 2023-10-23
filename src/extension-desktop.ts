@@ -1,13 +1,13 @@
-import { ExtensionContext, languages, workspace, window } from 'vscode';
-import { GlslEditor } from './core/glsl-editor';
-import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
+import { ExtensionContext, languages, window, workspace } from 'vscode';
+import { Documentation } from './builtin/documentation';
 import { Constants } from './core/constants';
-import { GlslTextProvider } from './providers/glsl-text-provider';
-import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
-import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
+import { GlslEditor } from './core/glsl-editor';
 import { addSharedCommands, addSharedFeatures, selector } from './extension';
 import { HostDependent } from './host-dependent';
-import { Documentation } from './builtin/documentation';
+import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
+import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
+import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
+import { GlslTextProvider } from './providers/glsl-text-provider';
 
 export function activate(context: ExtensionContext): void {
     GlslEditor.initialize(context);

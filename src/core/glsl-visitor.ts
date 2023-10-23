@@ -1,41 +1,41 @@
-import { GlslEditor } from './glsl-editor';
+import { Token } from 'antlr4ts';
+import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
+import { RuleNode } from 'antlr4ts/tree/RuleNode';
 import { Uri } from 'vscode';
-import { DocumentInfo } from './document-info';
+import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import {
-    StartContext,
-    Function_definitionContext,
-    Function_prototypeContext,
-    ExpressionContext,
-    Compound_statementContext,
-    Variable_declarationContext,
-    Type_declarationContext,
-    For_iterationContext,
-    While_iterationContext,
-    Do_while_iterationContext,
-    Selection_statementContext,
-    Case_groupContext,
-    Invariant_declarationContext,
-    Switch_statementContext,
-    Interface_block_declarationContext,
     AntlrGlslParser,
-    Layout_qualifierContext,
+    Case_groupContext,
+    Compound_statementContext,
+    Do_while_iterationContext,
+    ExpressionContext,
+    For_iterationContext,
+    Function_definitionContext,
     Function_headerContext,
+    Function_prototypeContext,
+    Interface_block_declarationContext,
+    Invariant_declarationContext,
+    Layout_qualifierContext,
+    Selection_statementContext,
+    StartContext,
+    Switch_statementContext,
+    Type_declarationContext,
+    Variable_declarationContext,
+    While_iterationContext,
 } from '../_generated/AntlrGlslParser';
+import { AntlrGlslParserVisitor } from '../_generated/AntlrGlslParserVisitor';
+import { ExpressionProcessor } from '../processor/expression-processor';
 import { FunctionProcessor } from '../processor/function-processor';
 import { Helper } from '../processor/helper';
-import { Scope } from '../scope/scope';
-import { AntlrGlslParserVisitor } from '../_generated/AntlrGlslParserVisitor';
-import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
-import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { VariableDeclarationProcessor } from '../processor/variable-declaration-processor';
-import { ExpressionProcessor } from '../processor/expression-processor';
-import { Interval } from '../scope/interval';
-import { Token } from 'antlr4ts';
 import { VariableUsageProcessor } from '../processor/variable-usage-processor';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { RuleNode } from 'antlr4ts/tree/RuleNode';
+import { Interval } from '../scope/interval';
 import { PreprocessorRegion } from '../scope/regions/preprocessor-region';
+import { Scope } from '../scope/scope';
+import { DocumentInfo } from './document-info';
+import { GlslEditor } from './glsl-editor';
 
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
     private uri: Uri;

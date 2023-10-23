@@ -1,13 +1,13 @@
-import { Element } from '../element';
-import { LogicalFunction } from './logical-function';
-import { Interval } from '../interval';
-import { TypeUsage } from '../type/type-usage';
-import { VariableDeclaration } from '../variable/variable-declaration';
+import { Constants } from '../../core/constants';
 import { DocumentInfo } from '../../core/document-info';
+import { Element } from '../element';
+import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
+import { TypeUsage } from '../type/type-usage';
+import { VariableDeclaration } from '../variable/variable-declaration';
 import { FunctionCall } from './function-call';
-import { Constants } from '../../core/constants';
+import { LogicalFunction } from './logical-function';
 
 export class FunctionDeclaration extends Element {
     public logicalFunction: LogicalFunction;

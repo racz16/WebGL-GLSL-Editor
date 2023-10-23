@@ -1,4 +1,6 @@
+import { ParserRuleContext, Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
+import { FoldingRangeKind, MarkdownString, Position } from 'vscode';
 import {
     Array_subscriptContext,
     Compound_statementContext,
@@ -6,23 +8,21 @@ import {
     Identifier_optarray_optassignmentContext,
     StatementContext,
 } from '../_generated/AntlrGlslParser';
-import { ParserRuleContext, Token } from 'antlr4ts';
-import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
-import { ArrayUsage } from '../scope/array-usage';
-import { ExpressionProcessor } from './expression-processor';
+import { Constants } from '../core/constants';
 import { DocumentInfo } from '../core/document-info';
+import { ArrayUsage } from '../scope/array-usage';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { Interval } from '../scope/interval';
+import { FoldingRegion } from '../scope/regions/folding-region';
+import { Scope } from '../scope/scope';
+import { ShaderStage } from '../scope/shader-stage';
 import { TypeBase } from '../scope/type/type-base';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
-import { FoldingRangeKind, MarkdownString, Position } from 'vscode';
-import { ShaderStage } from '../scope/shader-stage';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { ExpressionProcessor } from './expression-processor';
 import { ExpressionResult } from './expression-result';
-import { Constants } from '../core/constants';
-import { FoldingRegion } from '../scope/regions/folding-region';
 
 export class Helper {
     public static getArraySizeFromArraySubscript(

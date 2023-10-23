@@ -1,20 +1,20 @@
 import {
-    DefinitionProvider,
-    TextDocument,
-    Position,
     CancellationToken,
-    ProviderResult,
+    DefinitionProvider,
     Location,
     LocationLink,
+    Position,
+    ProviderResult,
+    TextDocument,
 } from 'vscode';
-import { PositionalProviderBase } from './helper/positional-provider-base';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { VariableUsage } from '../scope/variable/variable-usage';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
-import { LogicalFunction } from '../scope/function/logical-function';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { VariableUsage } from '../scope/variable/variable-usage';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslDefinitionProvider
     extends PositionalProviderBase<Location | Array<Location>>

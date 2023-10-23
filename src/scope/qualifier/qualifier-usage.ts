@@ -1,7 +1,7 @@
 import { Element } from '../element';
-import { Qualifier } from './qualifier';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
+import { Qualifier } from './qualifier';
 
 export class QualifierUsage extends Element {
     public readonly qualifier: Qualifier;

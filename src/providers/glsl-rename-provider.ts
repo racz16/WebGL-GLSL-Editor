@@ -1,23 +1,23 @@
 import {
+    CancellationToken,
+    Position,
+    ProviderResult,
+    Range,
     RenameProvider,
     TextDocument,
-    Position,
-    CancellationToken,
-    ProviderResult,
     WorkspaceEdit,
-    Range,
 } from 'vscode';
-import { LogicalFunction } from '../scope/function/logical-function';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { TypeDeclaration } from '../scope/type/type-declaration';
-import { PositionalProviderBase } from './helper/positional-provider-base';
-import { Interval } from '../scope/interval';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { FunctionCall } from '../scope/function/function-call';
-import { VariableUsage } from '../scope/variable/variable-usage';
-import { TypeUsage } from '../scope/type/type-usage';
 import { GlslEditor } from '../core/glsl-editor';
+import { FunctionCall } from '../scope/function/function-call';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { Interval } from '../scope/interval';
 import { Scope } from '../scope/scope';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { VariableUsage } from '../scope/variable/variable-usage';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslRenameProvider extends PositionalProviderBase<Range> implements RenameProvider {
     private lf: LogicalFunction;

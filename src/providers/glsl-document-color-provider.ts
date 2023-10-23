@@ -1,19 +1,19 @@
 import {
-    DocumentColorProvider,
-    TextDocument,
     CancellationToken,
-    ProviderResult,
-    ColorInformation,
     Color,
-    Range,
+    ColorInformation,
     ColorPresentation,
+    DocumentColorProvider,
+    ProviderResult,
+    Range,
+    TextDocument,
     TextEdit,
 } from 'vscode';
+import { Constants } from '../core/constants';
 import { DocumentInfo } from '../core/document-info';
 import { GlslEditor } from '../core/glsl-editor';
-import { ColorRegion } from '../scope/regions/color-region';
-import { Constants } from '../core/constants';
 import { Interval } from '../scope/interval';
+import { ColorRegion } from '../scope/regions/color-region';
 
 export class GlslDocumentColorProvider implements DocumentColorProvider {
     private di: DocumentInfo;

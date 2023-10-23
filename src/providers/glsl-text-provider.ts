@@ -1,4 +1,4 @@
-import { TextDocumentContentProvider, Uri, CancellationToken, ProviderResult, window, EventEmitter } from 'vscode';
+import { CancellationToken, EventEmitter, ProviderResult, TextDocumentContentProvider, Uri, window } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 
 export class GlslTextProvider implements TextDocumentContentProvider {

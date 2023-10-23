@@ -1,13 +1,13 @@
-import { GlslEditor } from '../../core/glsl-editor';
-import { TextDocument, Position, Location } from 'vscode';
-import { FunctionDeclaration } from '../../scope/function/function-declaration';
+import { Location, Position, TextDocument } from 'vscode';
 import { DocumentInfo } from '../../core/document-info';
-import { VariableDeclaration } from '../../scope/variable/variable-declaration';
-import { VariableUsage } from '../../scope/variable/variable-usage';
+import { GlslEditor } from '../../core/glsl-editor';
+import { FunctionCall } from '../../scope/function/function-call';
+import { FunctionDeclaration } from '../../scope/function/function-declaration';
+import { Interval } from '../../scope/interval';
 import { TypeDeclaration } from '../../scope/type/type-declaration';
 import { TypeUsage } from '../../scope/type/type-usage';
-import { FunctionCall } from '../../scope/function/function-call';
-import { Interval } from '../../scope/interval';
+import { VariableDeclaration } from '../../scope/variable/variable-declaration';
+import { VariableUsage } from '../../scope/variable/variable-usage';
 
 export class PositionalProviderBase<T> {
     protected di: DocumentInfo;

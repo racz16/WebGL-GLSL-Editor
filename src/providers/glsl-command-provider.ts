@@ -1,4 +1,4 @@
-import { ViewColumn, window, Uri, env, WebviewPanel, Disposable } from 'vscode';
+import { Disposable, Uri, ViewColumn, WebviewPanel, env, window } from 'vscode';
 import { Constants } from '../core/constants';
 import { GlslEditor } from '../core/glsl-editor';
 import { HostDependent } from '../host-dependent';

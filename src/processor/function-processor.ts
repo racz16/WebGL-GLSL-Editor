@@ -1,18 +1,18 @@
-import { Helper } from './helper';
-import { DocumentInfo } from '../core/document-info';
 import {
-    Function_prototypeContext,
     Function_definitionContext,
     Function_headerContext,
+    Function_prototypeContext,
 } from '../_generated/AntlrGlslParser';
-import { Scope } from '../scope/scope';
+import { DocumentInfo } from '../core/document-info';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { Interval } from '../scope/interval';
+import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Scope } from '../scope/scope';
+import { ExpressionResult } from './expression-result';
+import { Helper } from './helper';
 import { TypeUsageProcessor } from './type-usage-processor';
 import { VariableDeclarationProcessor } from './variable-declaration-processor';
-import { Interval } from '../scope/interval';
-import { ExpressionResult } from './expression-result';
-import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class FunctionProcessor {
     private di: DocumentInfo;

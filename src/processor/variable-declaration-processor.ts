@@ -1,22 +1,22 @@
-import { Helper } from './helper';
-import { Interval } from '../scope/interval';
-import { DocumentInfo } from '../core/document-info';
-import { Scope } from '../scope/scope';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { TypeUsageProcessor } from './type-usage-processor';
+import { Token } from 'antlr4ts';
 import {
+    Interface_block_declarationContext,
     Single_variable_declarationContext,
     Variable_declarationContext,
-    Interface_block_declarationContext,
 } from '../_generated/AntlrGlslParser';
+import { DocumentInfo } from '../core/document-info';
 import { ArrayUsage } from '../scope/array-usage';
-import { ExpressionProcessor } from './expression-processor';
+import { Interval } from '../scope/interval';
 import { ColorRegion } from '../scope/regions/color-region';
-import { ExpressionResult } from './expression-result';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
-import { Token } from 'antlr4ts';
-import { VariableUsageProcessor } from './variable-usage-processor';
+import { Scope } from '../scope/scope';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { ExpressionProcessor } from './expression-processor';
+import { ExpressionResult } from './expression-result';
+import { Helper } from './helper';
 import { TypeDeclarationProcessor } from './type-declaration-processor';
+import { TypeUsageProcessor } from './type-usage-processor';
+import { VariableUsageProcessor } from './variable-usage-processor';
 
 export class VariableDeclarationProcessor {
     private di: DocumentInfo;

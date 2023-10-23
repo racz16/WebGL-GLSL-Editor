@@ -1,8 +1,8 @@
-import { Uri, TextDocument, ExtensionContext, DiagnosticCollection, languages } from 'vscode';
-import { DocumentInfo } from './document-info';
+import { DiagnosticCollection, ExtensionContext, TextDocument, Uri, languages } from 'vscode';
+import { HostDependent } from '../host-dependent';
 import { Configurations } from './configurations';
 import { Constants } from './constants';
-import { HostDependent } from '../host-dependent';
+import { DocumentInfo } from './document-info';
 
 export class GlslEditor {
     public static readonly CONFIGURATIONS = new Configurations();

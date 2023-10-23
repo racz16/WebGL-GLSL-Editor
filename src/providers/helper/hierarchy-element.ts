@@ -1,4 +1,4 @@
-import { CallHierarchyItem, Range, CallHierarchyIncomingCall, CallHierarchyOutgoingCall } from 'vscode';
+import { CallHierarchyIncomingCall, CallHierarchyItem, CallHierarchyOutgoingCall, Range } from 'vscode';
 import { LogicalFunction } from '../../scope/function/logical-function';
 
 export class HierarchyElement {

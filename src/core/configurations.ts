@@ -1,4 +1,4 @@
-import { workspace, ConfigurationChangeEvent } from 'vscode';
+import { ConfigurationChangeEvent, workspace } from 'vscode';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 

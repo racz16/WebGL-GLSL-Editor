@@ -1,7 +1,7 @@
 import { Element } from '../element';
-import { VariableDeclaration } from './variable-declaration';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
+import { VariableDeclaration } from './variable-declaration';
 
 export class VariableUsage extends Element {
     public readonly declaration: VariableDeclaration;

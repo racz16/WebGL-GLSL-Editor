@@ -1,19 +1,19 @@
-import {
-    DocumentFormattingEditProvider,
-    TextDocument,
-    FormattingOptions,
-    CancellationToken,
-    ProviderResult,
-    TextEdit,
-    Range,
-    Position,
-    DocumentRangeFormattingEditProvider,
-} from 'vscode';
-import { DocumentInfo } from '../core/document-info';
 import { Token } from 'antlr4ts';
+import {
+    CancellationToken,
+    DocumentFormattingEditProvider,
+    DocumentRangeFormattingEditProvider,
+    FormattingOptions,
+    Position,
+    ProviderResult,
+    Range,
+    TextDocument,
+    TextEdit,
+} from 'vscode';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
-import { GlslEditor } from '../core/glsl-editor';
 import { Constants } from '../core/constants';
+import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
 import { FormattingContext } from './helper/formatting-context';
 
 export class GlslDocumentFormattingProvider

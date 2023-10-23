@@ -1,8 +1,8 @@
 import { Element } from '../element';
-import { LogicalFunction } from './logical-function';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { FunctionDeclaration } from './function-declaration';
+import { LogicalFunction } from './logical-function';
 
 export class FunctionCall extends Element {
     public readonly logicalFunction: LogicalFunction;

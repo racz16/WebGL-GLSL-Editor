@@ -1,6 +1,6 @@
-import { LogicalFunction } from '../scope/function/logical-function';
 import { Helper } from '../processor/helper';
 import { ArrayUsage } from '../scope/array-usage';
+import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeCategory } from '../scope/type/type-category';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 

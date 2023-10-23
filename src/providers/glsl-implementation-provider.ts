@@ -1,16 +1,16 @@
 import {
-    ImplementationProvider,
-    TextDocument,
-    Position,
     CancellationToken,
-    ProviderResult,
+    ImplementationProvider,
     Location,
     LocationLink,
+    Position,
+    ProviderResult,
+    TextDocument,
 } from 'vscode';
-import { PositionalProviderBase } from './helper/positional-provider-base';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslImplementationProvider
     extends PositionalProviderBase<Array<Location>>

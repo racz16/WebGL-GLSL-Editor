@@ -1,5 +1,5 @@
-import { FunctionDeclaration } from './function-declaration';
 import { FunctionCall } from './function-call';
+import { FunctionDeclaration } from './function-declaration';
 
 export class LogicalFunction {
     public readonly prototypes = new Array<FunctionDeclaration>();

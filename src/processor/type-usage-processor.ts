@@ -1,18 +1,18 @@
+import { Token } from 'antlr4ts';
+import {
+    Interface_block_declarationContext,
+    QualifierContext,
+    TypeContext,
+    Type_usageContext,
+} from '../_generated/AntlrGlslParser';
+import { DocumentInfo } from '../core/document-info';
+import { ArrayUsage } from '../scope/array-usage';
+import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
+import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
+import { Scope } from '../scope/scope';
 import { TypeUsage } from '../scope/type/type-usage';
 import { Helper } from './helper';
 import { TypeDeclarationProcessor } from './type-declaration-processor';
-import { DocumentInfo } from '../core/document-info';
-import { Scope } from '../scope/scope';
-import {
-    Type_usageContext,
-    QualifierContext,
-    Interface_block_declarationContext,
-    TypeContext,
-} from '../_generated/AntlrGlslParser';
-import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
-import { ArrayUsage } from '../scope/array-usage';
-import { Token } from 'antlr4ts';
-import { SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
 
 export class TypeUsageProcessor {
     private di: DocumentInfo;
