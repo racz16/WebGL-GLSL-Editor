@@ -188,6 +188,21 @@ You can easily access several online documentations by commands.
 * `webgl-glsl-editor.codeInjection`: Enables/disables code injection.
 * `webgl-glsl-editor.codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
 
+### Builtin Visual Studio Code configuration
+
+There are a lot of features you can enable/disable using builtin VS Code configurations:
+
+* `editor.semanticHighlighting.enabled`: Semantic highlight
+* `editor.occurrencesHighlight`: Highlights
+* `editor.hover.enabled`: Hover
+* `editor.inlayHints.enabled`: Inlay hints
+* `editor.colorDecorators`: Color picker
+* `editor.folding`: Folding
+* `editor.autoIndent`: Indentation
+* `editor.bracketPairColorization.enabled`: Brace matching
+* `editor.autoClosingBrackets`: Autoclosing pairs
+* `editor.autoSurround`: Surrounding pairs
+
 ## Notes
 
 * If you open GLSL code embedded in HTML, only the syntax highlight and limited indentation will work
