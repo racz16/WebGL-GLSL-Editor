@@ -116,9 +116,19 @@
             {
                 "command": "webgl-glsl-editor.generatepreprocessed",
                 "title": "Generate preprocessed GLSL source code",
-                "enablement": "!isWeb && editorLangId == glsl && !editorReadonly"
+                "enablement": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly",
+                "icon": "$(open-preview)"
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "webgl-glsl-editor.generatepreprocessed",
+                    "group": "navigation",
+                    "when": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly"
+                }
+            ]
+        },
         "configuration": [
             {
                 "title": "WebGL GLSL Editor",
