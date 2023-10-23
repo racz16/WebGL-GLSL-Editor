@@ -14,8 +14,6 @@ export class Constants {
     public static readonly FS = 'fs';
     public static readonly FRAGMENT_EXTS = [this.FRAG_GLSL, this.FS_GLSL, this.FRAG, this.FS];
 
-    public static readonly FILE = 'file';
-    public static readonly UNTITLED = 'untitled';
     public static readonly PREPROCESSED_GLSL = 'webgl-glsl-editor-preprocessed';
 
     public static readonly VEC3 = 'vec3';

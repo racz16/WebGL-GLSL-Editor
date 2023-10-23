@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 //@ts-check
 'use strict';
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -50,12 +51,12 @@ const webExtensionConfig = {
         libraryTarget: 'commonjs',
         devtoolModuleFilenameTemplate: '../../[resource-path]',
     },
-    devtool: 'nosources-source-map',
+    devtool: 'source-map',
     externals: {
         vscode: 'commonjs vscode',
     },
     resolve: {
-        mainFields: ['browser', 'module', 'main'],
+        mainFields: ['module', 'main'],
         extensions: ['.ts', '.js'],
         fallback: {
             assert: require.resolve('assert'),
@@ -75,18 +76,12 @@ const webExtensionConfig = {
         ],
     },
     plugins: [
-        new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks: 1,
-        }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
         }),
     ],
     performance: {
         hints: false,
-    },
-    infrastructureLogging: {
-        level: 'log',
     },
 };
 
