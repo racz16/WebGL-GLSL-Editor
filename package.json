@@ -62,6 +62,10 @@
                     ".frag",
                     ".fs"
                 ],
+                "icon": {
+                    "dark": "./res/svg/file-icon.svg",
+                    "light": "./res/svg/file-icon.svg"
+                },
                 "configuration": "./language-configuration.json"
             }
         ],
