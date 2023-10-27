@@ -6,7 +6,7 @@
 2. Download and install NodeJS (<https://nodejs.org/en/download>)
 3. Download and install git (<https://git-scm.com/downloads>)
 4. Download and install the JRE (<https://java.com/en/download>)
-5. Open PowerShell
+5. Open PowerShell or cmd
 6. Clone the repository
 
     ```ps1
@@ -33,13 +33,21 @@
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
-10. Run the extension
+10. Open the repository's root folder in Visual Studio Code
 
-    Open the repository's root folder in Visual Studio Code and press F5.
+    ```ps1
+    code .
+    ```
+
+    When Visual Studio Code opens, it'll suggest you to install the recommanded extensions. They're all useful, but __TypeScript + Webpack Problem Matchers__ is required, without it, you won't be able to run the extension.
+
+11. Press __F5__, to run the extension. In the __Run and Debug__ tab, you can choose between the desktop and the web version.
+
+    By running the __run-in-browser__ script, you can try the web extension in an actual browser.
 
 ### Package the extension (optional)
 
-11. Package the extension <!-- markdownlint-disable-line MD029 -->
+12. Package the extension <!-- markdownlint-disable-line MD029 -->
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
@@ -106,13 +114,21 @@
 
     You have to run this script again, every time you change the AntlrGlslLexer.g4 or the AntlrGlslParser.g4 files in the syntaxes folder.
 
-10. Run the extension
+10. Open the repository's root folder in Visual Studio Code
 
-    Open the repository's root folder in Visual Studio Code and press F5.
+    ```bash
+    code .
+    ```
+
+    When Visual Studio Code opens, it'll suggest you to install the recommanded extensions. They're all useful, but __TypeScript + Webpack Problem Matchers__ is required, without it, you won't be able to run the extension.
+
+11. Press __F5__, to run the extension. In the __Run and Debug__ tab, you can choose between the desktop and the web version.
+
+    By running the __run-in-browser__ script, you can try the web extension in an actual browser.
 
 ### Package the extension (optional)
 
-11. Package the extension <!-- markdownlint-disable-line MD029 -->
+12. Package the extension <!-- markdownlint-disable-line MD029 -->
 
     If you want to create all 11 platform-specific packages (will open 11 terminals)
 
