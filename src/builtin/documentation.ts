@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { JSDOM } from 'jsdom';
 import { Uri } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { documentationRedirections } from './info/documentation-redirections';
@@ -18,14 +19,34 @@ export class Documentation {
     }
 
     public static getDocumentation(name: string, uri: Uri): string {
-        this.initialize();
-        const redirectedName = this.redirections.get(name) ?? name;
-        let documentation = this.documentations.get(redirectedName);
-        if (!documentation) {
-            documentation = this.getDocumentationFromFile(name, redirectedName, uri);
-            this.documentations.set(redirectedName, documentation);
-        }
-        return documentation;
+        // this.initialize();
+        // const redirectedName = this.redirections.get(name) ?? name;
+        // let documentation = this.documentations.get(redirectedName);
+        // if (!documentation) {
+        //     documentation = this.getDocumentationFromFile(name, redirectedName, uri);
+        //     this.documentations.set(redirectedName, documentation);
+        // }
+        // return documentation;
+        const html = name;
+        const div = new JSDOM(html).window.document.createElement('div');
+        div.innerHTML = html;
+        const main = div.querySelector('main');
+        main.querySelector('#article-header').remove();
+        main.querySelector('#center-doc-outline').remove();
+        main.querySelector('.page-metadata-container').remove();
+        main.querySelectorAll('a').forEach(
+            (a) =>
+                (a.href = `https://learn.microsoft.com${
+                    a.href.includes('/') ? '' : '/en-us/windows/win32/direct3dhlsl/'
+                }${a.href}`)
+        );
+        main.querySelectorAll('table').forEach((table) => {
+            table.style.borderSpacing = '0';
+            table.style.borderCollapse = 'collapse';
+        });
+        main.querySelectorAll('td').forEach((td) => (td.style.border = '1px solid'));
+        main.querySelectorAll('th').forEach((th) => (th.style.border = '1px solid'));
+        return this.createHtml('Some title', uri, main.outerHTML);
     }
 
     private static getDocumentationFromFile(name: string, redirectedName: string, uri: Uri): string {

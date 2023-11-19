@@ -1,4 +1,14 @@
-import { commands, DocumentSelector, ExtensionContext, languages } from 'vscode';
+import {
+    commands,
+    DocumentLink,
+    DocumentSelector,
+    ExtensionContext,
+    languages,
+    Position,
+    Range,
+    Uri,
+    workspace,
+} from 'vscode';
 import { Constants } from './core/constants';
 import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 import { GlslCommandProvider } from './providers/glsl-command-provider';
@@ -117,4 +127,40 @@ export function addSharedFeatures(context: ExtensionContext): void {
     );
     //inlay hints
     context.subscriptions.push(languages.registerInlayHintsProvider(selector, new GlslInlayHintsProvider()));
+
+    context.subscriptions.push(
+        languages.registerDocumentLinkProvider(selector, {
+            provideDocumentLinks(document, token) {
+                const regex = /(?<=(#\s*include\s+"\s*))(?<path>(\w|\.|\/|\\)+)\s*"/g;
+                const text = document.getText();
+                const result = new Array<DocumentLink>();
+                for (const regexResult of text.matchAll(regex)) {
+                    if (regexResult?.groups) {
+                        const index = regexResult.index;
+                        const lines = text.split('\n');
+                        let characterCount = 0;
+                        for (let i = 0; i < lines.length; i++) {
+                            const line = lines[i];
+                            if (characterCount + line.length >= index) {
+                                const path = regexResult.groups['path'];
+                                const position = index - characterCount;
+                                const newUri = Uri.joinPath(workspace.workspaceFolders[0].uri, path);
+                                result.push({
+                                    range: new Range(
+                                        new Position(i, position),
+                                        new Position(i, position + path.length)
+                                    ),
+                                    target: newUri,
+                                });
+                                break;
+                            } else {
+                                characterCount += line.length + 1;
+                            }
+                        }
+                    }
+                }
+                return result;
+            },
+        })
+    );
 }

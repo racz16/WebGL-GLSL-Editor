@@ -330,6 +330,7 @@
         "prepare": "husky install"
     },
     "devDependencies": {
+        "@types/jsdom": "^21.1.4",
         "@types/node": "^20.8.7",
         "@types/vscode": "1.65.0",
         "@typescript-eslint/eslint-plugin": "^6.9.0",
@@ -352,7 +353,8 @@
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
-        "antlr4ts": "^0.5.0-alpha.4"
+        "antlr4ts": "^0.5.0-alpha.4",
+        "jsdom": "^22.1.0"
     },
     "lint-staged": {
         "*": "prettier --write --ignore-unknown"

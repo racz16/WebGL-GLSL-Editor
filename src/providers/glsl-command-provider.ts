@@ -54,7 +54,13 @@ export class GlslCommandProvider {
         this.panel.title = name;
         const filePath = Uri.file(`${GlslEditor.getContext().extensionPath}/res/js/mml-chtml.js`);
         const specialFilePath = this.panel.webview.asWebviewUri(filePath);
-        this.panel.webview.html = HostDependent.getDocumentation(name, specialFilePath);
+        // this.panel.webview.html = HostDependent.getDocumentation(name, specialFilePath);
+        fetch('https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/sm5-object-structuredbuffer')
+            .then((response) => response.text())
+            .then((html) => {
+                this.panel.webview.html = HostDependent.getDocumentation(html, specialFilePath);
+            })
+            .catch((error) => console.error('Error fetch:', error));
     }
 
     private static createPanel(name: string): WebviewPanel {
