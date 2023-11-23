@@ -1,5 +1,4 @@
 import { Disposable, Uri, ViewColumn, WebviewPanel, env, window } from 'vscode';
-import { Constants } from '../core/constants';
 import { GlslEditor } from '../core/glsl-editor';
 import { HostDependent } from '../host-dependent';
 
@@ -36,15 +35,7 @@ export class GlslCommandProvider {
 
     public static openPreprocessedGlsl(): void {
         const doc = window.activeTextEditor.document;
-        if (doc?.languageId !== Constants.GLSL) {
-            window.showWarningMessage('The active file has to be a GLSL file.');
-        } else if (HostDependent.webExtension) {
-            window.showWarningMessage(
-                "The web extension can't generate preprocessed GLSL source code. Try it with the desktop version."
-            );
-        } else {
-            HostDependent.displayPreprocessedCode(doc);
-        }
+        HostDependent.displayPreprocessedCode(doc);
     }
 
     private static openOfflineDoc(name: string): void {

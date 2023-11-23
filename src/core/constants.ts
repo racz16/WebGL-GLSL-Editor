@@ -16,6 +16,8 @@ export class Constants {
 
     public static readonly PREPROCESSED_GLSL = 'webgl-glsl-editor-preprocessed';
 
+    public static readonly CAN_RUN_COMPILER_CONTEXT = `${Constants.EXTENSION_NAME}.canRunCompiler`;
+
     public static readonly VEC3 = 'vec3';
     public static readonly VEC4 = 'vec4';
     public static readonly BOOL = 'bool';

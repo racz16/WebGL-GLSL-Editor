@@ -120,7 +120,7 @@
             {
                 "command": "webgl-glsl-editor.generatepreprocessed",
                 "title": "Generate preprocessed GLSL source code",
-                "enablement": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly",
+                "enablement": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly && webgl-glsl-editor.canRunCompiler",
                 "icon": "$(open-preview)"
             }
         ],
@@ -129,7 +129,7 @@
                 {
                     "command": "webgl-glsl-editor.generatepreprocessed",
                     "group": "navigation",
-                    "when": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly"
+                    "when": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly && webgl-glsl-editor.canRunCompiler"
                 }
             ]
         },
@@ -305,7 +305,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "webpack --mode production",
+        "build-production": "webpack --mode production",
         "build": "webpack",
         "watch": "webpack --watch",
         "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
@@ -315,18 +315,12 @@
         "prettier-format": "prettier --write .",
         "eslint": "eslint ./src --ext .ts --ignore-pattern src/_generated",
         "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
+        "package-universal": "vsce package",
         "package-web": "vsce package --target web --ignoreFile web.vscodeignore",
         "package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",
-        "package-win32-ia32": "vsce package --target win32-ia32 --ignoreFile windows.vscodeignore",
-        "package-win32-arm64": "vsce package --target win32-arm64 --ignoreFile windows.vscodeignore",
         "package-darwin-x64": "vsce package --target darwin-x64 --ignoreFile mac.vscodeignore",
-        "package-darwin-arm64": "vsce package --target darwin-arm64 --ignoreFile mac.vscodeignore",
         "package-linux-x64": "vsce package --target linux-x64 --ignoreFile linux.vscodeignore",
-        "package-linux-arm64": "vsce package --target linux-arm64 --ignoreFile linux.vscodeignore",
-        "package-linux-armhf": "vsce package --target linux-armhf --ignoreFile linux.vscodeignore",
-        "package-alpine-x64": "vsce package --target alpine-x64 --ignoreFile linux.vscodeignore",
-        "package-alpine-arm64": "vsce package --target alpine-arm64 --ignoreFile linux.vscodeignore",
-        "package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64",
+        "package-all": "start npm run package-universal && start npm run package-web && start npm run package-win32-x64 && start npm run package-darwin-x64 && start npm run package-linux-x64",
         "prepare": "husky install"
     },
     "devDependencies": {

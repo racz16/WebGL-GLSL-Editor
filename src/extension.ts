@@ -118,3 +118,7 @@ export function addSharedFeatures(context: ExtensionContext): void {
     //inlay hints
     context.subscriptions.push(languages.registerInlayHintsProvider(selector, new GlslInlayHintsProvider()));
 }
+
+export async function setContext<T>(name: string, value: T): Promise<void> {
+    await commands.executeCommand('setContext', name, value);
+}

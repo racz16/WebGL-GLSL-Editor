@@ -2,15 +2,18 @@ import { ExtensionContext, languages, window, workspace } from 'vscode';
 import { Documentation } from './builtin/documentation';
 import { Constants } from './core/constants';
 import { GlslEditor } from './core/glsl-editor';
-import { addSharedCommands, addSharedFeatures, selector } from './extension';
+import { addSharedCommands, addSharedFeatures, selector, setContext } from './extension';
 import { HostDependent } from './host-dependent';
 import { GlslDiagnosticProvider } from './providers/glsl-diagnostic-provider';
 import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-provider';
 import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
 import { GlslTextProvider } from './providers/glsl-text-provider';
 
-export function activate(context: ExtensionContext): void {
+import * as os from 'os';
+
+export async function activate(context: ExtensionContext): Promise<void> {
     GlslEditor.initialize(context);
+    await setContext(Constants.CAN_RUN_COMPILER_CONTEXT, canRunCompiler());
     addHostDependentCode();
     addDiagnostic(context);
     addSharedCommands(context);
@@ -26,6 +29,9 @@ function addHostDependentCode(): void {
 }
 
 function addDiagnostic(context: ExtensionContext): void {
+    if (!canRunCompiler()) {
+        return;
+    }
     //diagnostic
     for (const editor of window.visibleTextEditors) {
         if (editor.document.languageId === Constants.GLSL) {
@@ -66,4 +72,9 @@ function addFeatures(context: ExtensionContext): void {
         workspace.registerTextDocumentContentProvider(Constants.PREPROCESSED_GLSL, new GlslTextProvider())
     );
     window.registerFileDecorationProvider(new GlslFileDecorationProvider());
+}
+
+export function canRunCompiler(): boolean {
+    const platform = os.platform();
+    return (platform === 'win32' || platform === 'darwin' || platform === 'linux') && os.arch() === 'x64';
 }

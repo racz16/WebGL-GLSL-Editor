@@ -1,0 +1,35 @@
+# folder
+.github
+.husky
+.vscode
+.vscode-test
+.vscode-test-web
+node_modules
+private
+res/gif
+res/png/screenshots
+src
+syntaxes/.antlr
+
+# file
+.editorconfig
+.eslintrc.js
+.gitattributes
+.gitignore
+.markdownlint.json
+.prettierignore
+.prettierrc.json
+BUILD.md
+package-lock.json
+tsconfig.json
+webpack.config.js
+
+# file type
+**/*.ps1
+**/*.sh
+**/*.vscodeignore
+**/*.g4
+**/*.map
+
+# universal ignore
+res/bin

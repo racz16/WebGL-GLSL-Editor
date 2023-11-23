@@ -13,26 +13,14 @@ jobs:
                 include:
                     - os: windows-latest
                       command: package-win32-x64
-                    - os: windows-latest
-                      command: package-win32-ia32
-                    - os: windows-latest
-                      command: package-win32-arm64
                     - os: ubuntu-latest
                       command: package-linux-x64
-                    - os: ubuntu-latest
-                      command: package-linux-arm64
-                    - os: ubuntu-latest
-                      command: package-linux-armhf
-                    - os: ubuntu-latest
-                      command: package-alpine-x64
-                    - os: ubuntu-latest
-                      command: package-alpine-arm64
                     - os: macos-latest
                       command: package-darwin-x64
-                    - os: macos-latest
-                      command: package-darwin-arm64
                     - os: ubuntu-latest
                       command: package-web
+                    - os: ubuntu-latest
+                      command: package-universal
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -53,5 +41,7 @@ jobs:
               run: npm run markdownlint
             - name: Prettier lint
               run: npm run prettier-lint
+            - name: Build in production mode
+              run: npm run build-production
             - name: Package
               run: npm run ${{ matrix.command }}
