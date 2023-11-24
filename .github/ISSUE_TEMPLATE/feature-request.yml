@@ -1,0 +1,16 @@
+name: Request a feature
+description: Request a completely new feature or the enhancement of an already existing feature.
+title: '[Feature]: '
+labels: ['enhancement']
+assignees:
+    - racz16
+body:
+    - type: markdown
+      attributes:
+          value: At the moment, the extension is not under regular development. Sometimes there are new releases, but they usually only contain bug fixes and sometimes very small features. If you have a feature request, feel free to create an issue, but I don't promise, that I'll implement it.
+    - type: textarea
+      id: feature-details
+      attributes:
+          label: Feature details
+      validations:
+          required: true

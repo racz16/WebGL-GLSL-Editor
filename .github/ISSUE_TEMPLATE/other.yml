@@ -1,0 +1,11 @@
+name: Other
+description: If you have a question, a suggestion, or anything that is not a bug report and not a feature request.
+assignees:
+    - racz16
+body:
+    - type: textarea
+      id: content
+      attributes:
+          label: Content
+      validations:
+          required: true
