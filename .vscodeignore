@@ -1,35 +1,3 @@
-# folder
-.github
-.husky
-.vscode
-.vscode-test
-.vscode-test-web
-node_modules
-private
-res/gif
-res/png/screenshots
-src
-syntaxes/.antlr
-
-# file
-.editorconfig
-.eslintrc.js
-.gitattributes
-.gitignore
-.markdownlint.json
-.prettierignore
-.prettierrc.json
-BUILD.md
-package-lock.json
-tsconfig.json
-webpack.config.js
-
-# file type
-**/*.ps1
-**/*.sh
-**/*.vscodeignore
-**/*.g4
-**/*.map
-
-# universal ignore
-res/bin
+# This is a safeguard, which makes packaging fail if you use the default configuration.
+# Instead, use the packaging scripts defined in the package.json file, which uses the real configurations in the vscodeignore folder.
+dist
