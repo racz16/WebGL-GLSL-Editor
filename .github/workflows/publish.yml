@@ -25,10 +25,10 @@ jobs:
               run: npm run package-universal
             - name: Package to web
               run: npm run package-web
-            - name: Package to win32-x64
-              run: npm run package-win32-x64
-            - name: Package to darwin-x64
-              run: npm run package-darwin-x64
+            - name: Package to Windows x64
+              run: npm run package-windows-x64
+            - name: Package to Mac x64
+              run: npm run package-mac-x64
             - name: Package to linux-x64
               run: npm run package-linux-x64
             - name: Publish

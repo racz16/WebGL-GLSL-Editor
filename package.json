@@ -317,10 +317,10 @@
         "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
         "package-universal": "vsce package --ignoreFile vscodeignore/universal.vscodeignore",
         "package-web": "vsce package --target web --ignoreFile vscodeignore/web.vscodeignore",
-        "package-win32-x64": "vsce package --target win32-x64 --ignoreFile vscodeignore/windows.vscodeignore",
-        "package-darwin-x64": "vsce package --target darwin-x64 --ignoreFile vscodeignore/mac.vscodeignore",
+        "package-windows-x64": "vsce package --target win32-x64 --ignoreFile vscodeignore/windows.vscodeignore",
+        "package-mac-x64": "vsce package --target darwin-x64 --ignoreFile vscodeignore/mac.vscodeignore",
         "package-linux-x64": "vsce package --target linux-x64 --ignoreFile vscodeignore/linux.vscodeignore",
-        "package-all": "start npm run package-universal && start npm run package-web && start npm run package-win32-x64 && start npm run package-darwin-x64 && start npm run package-linux-x64",
+        "package-all": "start npm run package-universal && start npm run package-web && start npm run package-windows-x64 && start npm run package-mac-x64 && start npm run package-linux-x64",
         "prepare": "husky install"
     },
     "devDependencies": {

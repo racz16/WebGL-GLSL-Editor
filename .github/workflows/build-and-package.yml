@@ -12,11 +12,11 @@ jobs:
             matrix:
                 include:
                     - os: windows-latest
-                      command: package-win32-x64
+                      command: package-windows-x64
                     - os: ubuntu-latest
                       command: package-linux-x64
                     - os: macos-latest
-                      command: package-darwin-x64
+                      command: package-mac-x64
                     - os: ubuntu-latest
                       command: package-web
                     - os: ubuntu-latest
