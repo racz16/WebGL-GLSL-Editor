@@ -124,10 +124,18 @@ export class GlslDiagnosticProvider {
     private executeGeneration(validatorPath: string, stageName: string): void {
         const result = exec(`${validatorPath} --stdin -E -S ${stageName}`);
         let preprocessedText = Constants.EMPTY;
+        let error = false;
         result.stdout.on('data', (data: string) => {
             preprocessedText += data;
         });
+        result.stderr.on('data', (_data: string) => {
+            error = true;
+        });
         result.stdout.on('close', async () => {
+            if (error) {
+                await window.showErrorMessage("Something went wrong. Most likely the code doesn't compile.");
+                return;
+            }
             const uri = Uri.parse(`${Constants.PREPROCESSED_GLSL}: ${this.document.fileName}`);
             GlslEditor.getDocumentInfo(uri).setPreprocessedText(preprocessedText);
             GlslTextProvider.onDidChangeEmitter.fire(uri);
