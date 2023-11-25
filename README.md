@@ -325,6 +325,6 @@ For more information, see the [changelog](CHANGELOG.md).
 
 Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7) and [Matt Curtis](https://github.com/matt-curtis) for contributing.
 
-## How to build, run and package the extension
+## More information about the project
 
-[Detailed build instructions](BUILD.md)
+If you want to know more about a project structure, how to build, run, package, and much more, read the [extension's wiki page](https://github.com/racz16/WebGL-GLSL-Editor/wiki).
