@@ -137,7 +137,7 @@ You can find (go to / find all / peek) the references of a type, a variable, a f
 
 ### Generating preprocessed GLSL source code
 
-You can generate preprocessed GLSL source code by running a command. Only available in the desktop version.
+You can generate preprocessed GLSL source code by running a command or pressing the button on the top-right corner of the editor. Only available in the desktop version.
 
 ![before the preprocessor](res/gif/generate-preprocessed-glsl.gif)
 
@@ -160,6 +160,7 @@ You can easily access several online documentations by commands.
 * Comment toggling
 * Autoclosing pairs
 * Surrounding pairs
+* Default icon for GLSL files
 
 ## Configuration
 
@@ -217,6 +218,13 @@ You can find the user-provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.7
+
+* Added default file icons
+* Added a button (top-right corner of the editor) to generate preprocessed code
+* Extended the syntax highlight to work with strings in .tsx files (thanks George Corney)
+* Other small changes and bugfixes
 
 ### 1.3.6
 
@@ -323,7 +331,7 @@ For more information, see the [changelog](CHANGELOG.md).
 
 ## Contributions
 
-Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7) and [Matt Curtis](https://github.com/matt-curtis) for contributing.
+Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7), [Matt Curtis](https://github.com/matt-curtis), and [George Corney](https://github.com/haxiomic) for contributing.
 
 ## More information about the project
 
