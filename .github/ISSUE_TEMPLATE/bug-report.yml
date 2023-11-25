@@ -24,10 +24,10 @@ body:
       id: extension-host
       attributes:
           label: Extension host
-          description: Choose **Desktop VS Code** if you downloaded VS Code, and choose **Web VS Code**, if you used <https://vscode.dev>, <https://github.dev>, or similar.
+          description: Choose **Desktop VS Code** if you downloaded VS Code, and choose **VS Code for the Web**, if you used <https://vscode.dev>, <https://github.dev>, or similar.
           options:
               - Desktop VS Code
-              - Web VS Code
+              - VS Code for the Web
     - type: input
       id: operating-system
       attributes:
