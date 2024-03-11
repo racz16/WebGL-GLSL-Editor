@@ -1,9 +1,9 @@
-import { TextDocument, Uri } from 'vscode';
+import { TextDocument, Uri, Webview } from 'vscode';
 
 export class HostDependent {
     public static webExtension = false;
 
-    public static getDocumentation(name: string, uri: Uri): string {
+    public static getDocumentation(name: string, uri: Uri, webview: Webview): string {
         return '';
     }
 

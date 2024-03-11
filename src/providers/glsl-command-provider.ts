@@ -45,14 +45,17 @@ export class GlslCommandProvider {
         this.panel.title = name;
         const filePath = Uri.file(`${GlslEditor.getContext().extensionPath}/res/js/mml-chtml.js`);
         const specialFilePath = this.panel.webview.asWebviewUri(filePath);
-        this.panel.webview.html = HostDependent.getDocumentation(name, specialFilePath);
+        this.panel.webview.html = HostDependent.getDocumentation(name, specialFilePath, this.panel.webview);
     }
 
     private static createPanel(name: string): WebviewPanel {
         const panel = window.createWebviewPanel('documentation', name, ViewColumn.Beside, {
             enableScripts: true,
             enableCommandUris: true,
-            localResourceRoots: [Uri.file(`${GlslEditor.getContext().extensionPath}/res/js`)],
+            localResourceRoots: [
+                Uri.file(`${GlslEditor.getContext().extensionPath}/res/js`),
+                Uri.file(`${GlslEditor.getContext().extensionPath}/out`),
+            ],
         });
 
         this.panelEventHandler?.dispose();

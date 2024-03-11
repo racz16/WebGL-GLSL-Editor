@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Uri } from 'vscode';
+import { Uri, Webview } from 'vscode';
 import { GlslEditor } from '../core/glsl-editor';
 import { documentationRedirections } from './info/documentation-redirections';
 
@@ -7,6 +7,7 @@ export class Documentation {
     private static readonly documentations = new Map<string, string>();
     private static readonly redirections = new Map<string, string>();
     private static initialized = false;
+    private static webview: Webview;
 
     private static initialize(): void {
         if (!this.initialized) {
@@ -17,7 +18,8 @@ export class Documentation {
         }
     }
 
-    public static getDocumentation(name: string, uri: Uri): string {
+    public static getDocumentation(name: string, uri: Uri, webview: Webview): string {
+        this.webview = webview;
         this.initialize();
         const redirectedName = this.redirections.get(name) ?? name;
         let documentation = this.documentations.get(redirectedName);
@@ -37,7 +39,19 @@ export class Documentation {
         return this.createHtml(redirectedName, uri, fileContent);
     }
 
+    private static getNonce() {
+        let text = '';
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
+
     private static createHtml(redirectedName: string, uri: Uri, fileContent: string): string {
+        const uri2 = Uri.file(`${GlslEditor.getContext().extensionPath}/out/webview.js`);
+        const uri3 = this.webview.asWebviewUri(uri2);
+        const nonce = this.getNonce();
         return `
                 <!DOCTYPE html>
                 <html lang="en">
@@ -45,17 +59,16 @@ export class Documentation {
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width">
                     <title>${redirectedName}</title>
-                    <script>
-                    MathJax = {
-                        options: {
-                          enableMenu: false
-                        }
-                      };
-                    </script>
-                    <script src="${uri}"></script>
+                    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}';">
+                    <script type="module" nonce="${nonce}" src="${uri3}"></script>
                 </head>
                 <body>
-                    ${fileContent}
+                    <vscode-button appearance="primary">Button Text</vscode-button>
+                    <vscode-dropdown>
+                        <vscode-option>Option Label #1</vscode-option>
+                        <vscode-option>Option Label #2</vscode-option>
+                        <vscode-option>Option Label #3</vscode-option>
+                    </vscode-dropdown>
                 </body>
                 </html>
                 `;

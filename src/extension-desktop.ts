@@ -22,7 +22,7 @@ export async function activate(context: ExtensionContext): Promise<void> {
 }
 
 function addHostDependentCode(): void {
-    HostDependent.getDocumentation = (name, uri) => Documentation.getDocumentation(name, uri);
+    HostDependent.getDocumentation = (name, uri, webview) => Documentation.getDocumentation(name, uri, webview);
     HostDependent.textChanged = (document) => new GlslDiagnosticProvider().textChanged(document);
     HostDependent.displayPreprocessedCode = (document) =>
         new GlslDiagnosticProvider().displayPreprocessedCode(document);
