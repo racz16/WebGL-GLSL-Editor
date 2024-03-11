@@ -75,6 +75,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         } else {
             const scope = this.di.getScopeAt(this.position);
             this.addLanguageElements();
+            this.addMacros();
             this.addItems(scope);
         }
     }
