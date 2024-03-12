@@ -1,6 +1,14 @@
 <!-- markdownlint-disable MD026 -->
 # Change Log
 
+## [1.3.8] - 2024.03.12.
+
+### Improved
+
+* Making builtin macros available in normal code completion (with values), not only in preprocessor lines
+* Adding a tooltip and a link to inlay hints
+* Updated packages
+
 ## [1.3.7] - 2023.11.25.
 
 ### Improved

@@ -37,7 +37,7 @@ The extension can display a signature helper for functions and constructors (exc
 
 ### Code completion
 
-The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, according to the current scope and shader stage. Member variables and vector swizzles are also supported.
+The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives, macros, and code snippets using IntelliSense, according to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
 ![code completion](res/gif/code-completion.gif)
 
@@ -83,7 +83,7 @@ The extension can provide outline information and breadcrumbs about the types, i
 
 ### Inlay hints
 
-The extension can show function and constructor parameters in the source code.
+The extension can show function and constructor parameters in the source code with tooltips and links.
 
 ![inlay hints](res/png/screenshots/inlay-hints.png)
 
@@ -218,6 +218,12 @@ You can find the user-provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.8
+
+* Making builtin macros available in normal code completion (with values), not only in preprocessor lines
+* Adding a tooltip and a link to inlay hints
+* Other small changes
 
 ### 1.3.7
 
