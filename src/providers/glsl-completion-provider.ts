@@ -146,9 +146,22 @@ export class GlslCompletionProvider implements CompletionItemProvider {
 
     private addMacros(): void {
         for (const macro of this.di.builtin.macros) {
-            const ci = new CompletionItem(macro, CompletionItemKind.Value);
+            const label = this.createMacroLabel(macro);
+            const ci = new CompletionItem(label, CompletionItemKind.Value);
             this.items.push(ci);
         }
+    }
+
+    private createMacroLabel(macro: string): CompletionItemLabel {
+        const label: CompletionItemLabel = {
+            label: macro,
+        };
+        if (macro === '__VERSION__') {
+            label.description = this.di.getVersion().toString();
+        } else if (macro == '__LINE__') {
+            label.description = `${this.position.line + this.di.getInjectionLineCount() + 1}`;
+        }
+        return label;
     }
 
     private getPreprocessorCompletionContext(mr: PreprocessorRegion): PreprocessorCompletionContext {
