@@ -15,6 +15,12 @@
             "begin": "//",
             "end": "$"
         },
+	{
+            "comment": "DOUBLE-QUOTED STRING",
+            "name": "string.quoted.double.glsl",
+            "begin": "\"",
+            "end": "\""
+        },
         {
             "comment": "PREPROCESSOR",
             "name": "meta.preprocessor.glsl",
