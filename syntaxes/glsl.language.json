@@ -22,9 +22,9 @@
             "end": "\""
         },
         {
-            "comment": "PREPROCESSOR",
-            "name": "meta.preprocessor.glsl",
-            "match": "#.*?($|(?=(\\/\\/|\\/\\*)))"
+            "comment": "PREPROCESSOR KEYWORD",
+            "name": "keyword.control.directive.glsl",
+            "match": "^\\s*#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|version|line|include|#?)\\s"
         },
         {
             "comment": "BOOL LITERAL",
