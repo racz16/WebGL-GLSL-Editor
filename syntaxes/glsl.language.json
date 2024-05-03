@@ -4,6 +4,22 @@
     "scopeName": "source.glsl",
     "patterns": [
         {
+            "comment": "GL VERSION",
+            "name": "directive.preprocessor.glsl",
+            "match": "\\s*(#\\s*version)\\s+([1-9]\\d*)(\\s+(es|core|compatibility))?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.glsl"
+                },
+                "2": {
+                    "name": "constant.numeric.glsl"
+                },
+                "4": {
+                    "name": "storage.modifier.glsl"
+                }
+            }
+        },
+        {
             "comment": "BLOCK COMMENT",
             "name": "comment.block.glsl",
             "begin": "\\/\\*",
