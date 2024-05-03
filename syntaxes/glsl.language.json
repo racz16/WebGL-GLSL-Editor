@@ -42,7 +42,7 @@
                 {
                     "comment": "FIXED POINT NUMBER",
                     "name": "constant.numeric.glsl",
-                    "match": "(([1-9]\\d*)|(0[xX][0-9a-fA-F]+)|(0[0-7]*))[uU]?"
+                    "match": "(([1-9]\\d*)|(0[xX][\\da-fA-F]+)|(0[0-7]*))[uU]?"
                 }
             ]
         },
