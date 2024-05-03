@@ -6,16 +6,31 @@
         {
             "comment": "GL VERSION",
             "name": "directive.preprocessor.glsl",
-            "match": "\\s*(#\\s*version)\\s+([1-9]\\d*)(\\s+(es|core|compatibility))?",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*version)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)((\\s|(\\/\\*.*?\\*\\/))*(es|core|compatibility))?",
             "captures": {
                 "1": {
-                    "name": "keyword.control.directive.glsl"
+                    "name": "keyword.control.directive.version.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
                 },
-                "2": {
-                    "name": "constant.numeric.glsl"
+                "6": {
+                    "name": "constant.numeric.version.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
                 },
-                "4": {
-                    "name": "storage.modifier.glsl"
+                "12": {
+                    "name": "storage.modifier.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
                 }
             }
         },
@@ -81,32 +96,13 @@
         },
         {
             "comment": "PREPROCESSOR KEYWORD",
-            "match": "^(\\s|(\\/\\*.*?\\*\\/))*(#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|line|include|#?))",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*(defined|define|undef|if|ifdef|ifndef|else|elif|endif|pragma|line|include|extension|version|error|#?))\\b",
             "captures": {
-                "2": {
-                    "name": "comment.block.glsl"
-                },
-                "3": {
-                    "name": "keyword.control.directive.glsl"
-                },
-                "4": {
-                    "name": "comment.block.glsl"
-                },
-                "6": {
+                "1": {
+                    "name": "keyword.control.directive.glsl",
                     "patterns": [
                         {
-                            "comment": "PREPROCESSOR ERROR",
-                            "match": "(error)\\s+(.+)",
-                            "captures": {
-                                "1": {
-                                    "name": "keyword.control.directive.error.glsl"
-                                },
-                                "2": {
-                                    "name": "string.unquoted.glsl",
-                                    "patterns": [
-                        {
-                            "comment": "GL VERSION",
-                            "match": "(version)\\s+\\d"
+                            "include": "#block-comment"
                         }
                     ]
                 }
