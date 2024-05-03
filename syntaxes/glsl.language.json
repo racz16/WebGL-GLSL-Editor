@@ -69,7 +69,7 @@
                     ]
                 },
                 "6": {
-                    "name": "variable.glsl",
+                    "name": "variable.extension.glsl",
                     "patterns": [
                         {
                             "include": "#block-comment"
@@ -85,7 +85,7 @@
                     ]
                 },
                 "12": {
-                    "name": "constant.language.glsl",
+                    "name": "constant.language.extension.glsl",
                     "patterns": [
                         {
                             "include": "#block-comment"
