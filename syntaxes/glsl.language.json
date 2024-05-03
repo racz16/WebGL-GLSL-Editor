@@ -20,6 +20,24 @@
             }
         },
         {
+            "comment": "PREPROCESSOR KEYWORD",
+            "match": "^(\\s|(\\/\\*.*?\\*\\/))*(#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|line|include|#?))",
+            "captures": {
+                "2": {
+                    "name": "comment.block.glsl"
+                },
+                "3": {
+                    "name": "keyword.control.directive.glsl",
+                    "patterns": [
+                        {
+                            "comment": "GL VERSION",
+                            "match": "(version)\\s+\\d"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "comment": "BLOCK COMMENT",
             "name": "comment.block.glsl",
             "begin": "\\/\\*",
@@ -36,11 +54,6 @@
             "name": "string.quoted.double.glsl",
             "begin": "\"",
             "end": "\""
-        },
-        {
-            "comment": "PREPROCESSOR KEYWORD",
-            "name": "keyword.control.directive.glsl",
-            "match": "^\\s*#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|version|line|include|#?)\\s"
         },
         {
             "comment": "BOOL LITERAL",
