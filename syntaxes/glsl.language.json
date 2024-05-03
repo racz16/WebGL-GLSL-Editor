@@ -53,10 +53,7 @@
             }
         },
         {
-            "comment": "BLOCK COMMENT",
-            "name": "comment.block.glsl",
-            "begin": "\\/\\*",
-            "end": "\\*\\/"
+            "include": "#block-comment"
         },
         {
             "comment": "SINGLE LINE COMMENT",
@@ -224,5 +221,13 @@
             "name": "variable.glsl",
             "match": "\\b([a-zA-Z_]\\w*)\\b"
         }
-    ]
+    ],
+    "repository": {
+        "block-comment": {
+            "comment": "BLOCK COMMENT",
+            "name": "comment.block.glsl",
+            "begin": "\\/\\*",
+            "end": "\\*\\/"
+        }
+    }
 }
