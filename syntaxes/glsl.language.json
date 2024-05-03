@@ -4,8 +4,7 @@
     "scopeName": "source.glsl",
     "patterns": [
         {
-            "comment": "GL VERSION",
-            "name": "directive.preprocessor.glsl",
+            "comment": "PREPROCESSOR GL VERSION",
             "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*version)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)((\\s|(\\/\\*.*?\\*\\/))*(es|core|compatibility))?",
             "captures": {
                 "1": {
@@ -24,7 +23,7 @@
                         }
                     ]
                 },
-                "12": {
+                "9": {
                     "name": "storage.modifier.glsl",
                     "patterns": [
                         {
