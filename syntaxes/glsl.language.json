@@ -20,6 +20,66 @@
             }
         },
         {
+            "comment": "PREPROCESSOR ERROR",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*(#(\\s|(\\/\\*.*?\\*\\/))*error))\\s+(.+)",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.error.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "7": {
+                    "name": "string.unquoted.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR EXTENSION",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*extension)((\\s|(\\/\\*.*?\\*\\/))+\\w+)((\\s|(\\/\\*.*?\\*\\/))+:)((\\s|(\\/\\*.*?\\*\\/))+(enable|disable))",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.extension.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "variable.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "9": {
+                    "name": "keyword.operator.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "12": {
+                    "name": "constant.language.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "comment": "PREPROCESSOR KEYWORD",
             "match": "^(\\s|(\\/\\*.*?\\*\\/))*(#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|line|include|#?))",
             "captures": {
