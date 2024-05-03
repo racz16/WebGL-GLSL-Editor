@@ -34,6 +34,37 @@
             }
         },
         {
+            "comment": "PREPROCESSOR LINE",
+            "name": "directive.preprocessor.glsl",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*line)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.line.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "constant.numeric.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "9": {
+                    "name": "constant.numeric.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "comment": "PREPROCESSOR ERROR",
             "match": "^((\\s|(\\/\\*.*?\\*\\/))*(#(\\s|(\\/\\*.*?\\*\\/))*error))\\s+(.+)",
             "captures": {
