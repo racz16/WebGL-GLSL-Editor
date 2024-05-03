@@ -43,7 +43,7 @@
         },
         {
             "comment": "PREPROCESSOR EXTENSION",
-            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*extension)((\\s|(\\/\\*.*?\\*\\/))+\\w+)((\\s|(\\/\\*.*?\\*\\/))+:)((\\s|(\\/\\*.*?\\*\\/))+(enable|disable))",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*extension)((\\s|(\\/\\*.*?\\*\\/))+\\w+)((\\s|(\\/\\*.*?\\*\\/))+:)((\\s|(\\/\\*.*?\\*\\/))+(enable|disable|require|warn))\\b",
             "captures": {
                 "1": {
                     "name": "keyword.control.directive.extension.glsl",
