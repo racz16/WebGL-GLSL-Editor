@@ -27,8 +27,23 @@
                     "name": "comment.block.glsl"
                 },
                 "3": {
-                    "name": "keyword.control.directive.glsl",
+                    "name": "keyword.control.directive.glsl"
+                },
+                "4": {
+                    "name": "comment.block.glsl"
+                },
+                "6": {
                     "patterns": [
+                        {
+                            "comment": "PREPROCESSOR ERROR",
+                            "match": "(error)\\s+(.+)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.control.directive.error.glsl"
+                                },
+                                "2": {
+                                    "name": "string.unquoted.glsl",
+                                    "patterns": [
                         {
                             "comment": "GL VERSION",
                             "match": "(version)\\s+\\d"
