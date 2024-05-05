@@ -87,6 +87,34 @@
             }
         },
         {
+            "comment": "PREPROCESSOR DEFINE",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*(#(\\s|(\\/\\*.*?\\*\\/))*define))((\\s|(\\/\\*.*?\\*\\/))*[_a-zA-Z]\\w*)(\\(\\s*(([_a-zA-Z]\\w+)(\\s*,\\s*([_a-zA-Z]\\w+)\\s*)*)?\\))?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.error.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "7": {
+                    "name": "entity.name.function",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "12": {
+                    "name": "variable.parameter.glsl"
+                },
+                "14": {
+                    "name": "variable.parameter.glsl"
+                }
+            }
+        },
+        {
             "comment": "PREPROCESSOR EXTENSION",
             "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*extension)((\\s|(\\/\\*.*?\\*\\/))+\\w+)((\\s|(\\/\\*.*?\\*\\/))+:)((\\s|(\\/\\*.*?\\*\\/))+(enable|disable|require|warn))\\b",
             "captures": {
