@@ -154,7 +154,7 @@
         },
         {
             "comment": "PREPROCESSOR KEYWORD",
-            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*(defined|define|undef|if|ifdef|ifndef|else|elif|endif|pragma|line|include|extension|version|error|#?))\\b",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*(defined|define|undef|if|ifdef|ifndef|else|elif|endif|pragma|line|include|extension|version|error|(\\w+)|#?))\\b",
             "captures": {
                 "1": {
                     "name": "keyword.control.directive.glsl",
