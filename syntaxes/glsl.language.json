@@ -4,10 +4,170 @@
     "scopeName": "source.glsl",
     "patterns": [
         {
-            "comment": "BLOCK COMMENT",
-            "name": "comment.block.glsl",
-            "begin": "\\/\\*",
-            "end": "\\*\\/"
+            "comment": "PREPROCESSOR GL VERSION",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*version)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)((\\s|(\\/\\*.*?\\*\\/))*(es|core|compatibility))?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.version.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "constant.numeric.version.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "9": {
+                    "name": "storage.modifier.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR LINE",
+            "name": "directive.preprocessor.glsl",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*line)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)((\\s|(\\/\\*.*?\\*\\/))+[1-9]\\d*)?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.line.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "constant.numeric.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "9": {
+                    "name": "constant.numeric.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR ERROR",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*(#(\\s|(\\/\\*.*?\\*\\/))*error))\\s+(.+)",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.error.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "7": {
+                    "name": "string.unquoted.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR DEFINE",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*(#(\\s|(\\/\\*.*?\\*\\/))*define))((\\s|(\\/\\*.*?\\*\\/))*[_a-zA-Z]\\w*)(\\(\\s*(([_a-zA-Z]\\w+)(\\s*,\\s*([_a-zA-Z]\\w+)\\s*)*)?\\))?",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.error.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "7": {
+                    "name": "entity.name.function",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "12": {
+                    "name": "variable.parameter.glsl"
+                },
+                "14": {
+                    "name": "variable.parameter.glsl"
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR EXTENSION",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*extension)((\\s|(\\/\\*.*?\\*\\/))+\\w+)((\\s|(\\/\\*.*?\\*\\/))+:)((\\s|(\\/\\*.*?\\*\\/))+(enable|disable|require|warn))\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.extension.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "6": {
+                    "name": "variable.extension.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "9": {
+                    "name": "keyword.operator.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                },
+                "12": {
+                    "name": "constant.language.extension.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "comment": "PREPROCESSOR KEYWORD",
+            "match": "^((\\s|(\\/\\*.*?\\*\\/))*#(\\s|(\\/\\*.*?\\*\\/))*(defined|define|undef|if|ifdef|ifndef|else|elif|endif|pragma|line|include|extension|version|error|(\\w+)|#?))\\b",
+            "captures": {
+                "1": {
+                    "name": "keyword.control.directive.glsl",
+                    "patterns": [
+                        {
+                            "include": "#block-comment"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "include": "#block-comment"
         },
         {
             "comment": "SINGLE LINE COMMENT",
@@ -20,11 +180,6 @@
             "name": "string.quoted.double.glsl",
             "begin": "\"",
             "end": "\""
-        },
-        {
-            "comment": "PREPROCESSOR KEYWORD",
-            "name": "keyword.control.directive.glsl",
-            "match": "^\\s*#\\s*(define|defined|undef|if|ifdef|ifndef|else|elif|endif|error|pragma|extension|version|line|include|#?)\\s"
         },
         {
             "comment": "BOOL LITERAL",
@@ -180,5 +335,13 @@
             "name": "variable.glsl",
             "match": "\\b([a-zA-Z_]\\w*)\\b"
         }
-    ]
+    ],
+    "repository": {
+        "block-comment": {
+            "comment": "BLOCK COMMENT",
+            "name": "comment.block.glsl",
+            "begin": "\\/\\*",
+            "end": "\\*\\/"
+        }
+    }
 }
