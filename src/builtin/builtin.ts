@@ -1,28 +1,40 @@
-import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { TypeDeclaration } from '../scope/type/type-declaration';
-import { Keyword } from '../scope/keyword';
-import { Qualifier } from '../scope/qualifier/qualifier';
-import { TypeCategory } from '../scope/type/type-category';
-import { TypeBase } from '../scope/type/type-base';
-import { TypeUsage } from '../scope/type/type-usage';
-import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
 import { MarkdownString } from 'vscode';
-import { ShaderStage } from '../scope/shader-stage';
-import { GlslCommandProvider } from '../providers/glsl-command-provider';
 import { Constants } from '../core/constants';
-import { FunctionInfo } from '../scope/function/function-info';
-import { GenericTypeProcessor } from './generic-type-processor';
-import { ArrayUsage } from '../scope/array-usage';
-import { LogicalFunction } from '../scope/function/logical-function';
-import { ConstructorProcessor } from './constructor-processor';
 import { Helper } from '../processor/helper';
+import { GlslCommandProvider } from '../providers/glsl-command-provider';
+import { ArrayUsage } from '../scope/array-usage';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { FunctionInfo } from '../scope/function/function-info';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { Keyword } from '../scope/keyword';
 import { LayoutParameter } from '../scope/qualifier/layout-parameter';
-import { reservedWords } from './info/reserved';
+import { Qualifier } from '../scope/qualifier/qualifier';
+import { QualifierUsage } from '../scope/qualifier/qualifier-usage';
+import { ShaderStage } from '../scope/shader-stage';
+import { TypeBase } from '../scope/type/type-base';
+import { TypeCategory } from '../scope/type/type-category';
+import { TypeDeclaration } from '../scope/type/type-declaration';
+import { TypeUsage } from '../scope/type/type-usage';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { ConstructorProcessor } from './constructor-processor';
+import { GenericTypeProcessor } from './generic-type-processor';
+import { functionSummaries } from './info/function-summaries';
+import { functions } from './info/functions';
+import { genericTypes } from './info/generic_types';
+import { importantFunctions } from './info/important-functions';
 import { keywords } from './info/keywords';
-import { qualifiers } from './info/qualifiers';
-import { preprocessorDirectives, preprocessorMacros } from './info/preprocessor';
 import { layoutParameters } from './info/layout-parameters';
+import { preprocessorDirectives, preprocessorMacros } from './info/preprocessor';
+import { qualifiers } from './info/qualifiers';
+import { reservedWords } from './info/reserved';
+import {
+    customTypes,
+    floatingPointOpaqueTypes,
+    signedIntegerOpaqueTypes,
+    transparentTypes,
+    unsignedIntegerOpaqueTypes,
+} from './info/types';
+import { variables } from './info/variables';
 import {
     ICustomType,
     IFunction,
@@ -33,18 +45,6 @@ import {
     ITypeMember,
     IVariable,
 } from './interfaces';
-import { genericTypes } from './info/generic_types';
-import { variables } from './info/variables';
-import { functions } from './info/functions';
-import { functionSummaries } from './info/function-summaries';
-import { importantFunctions } from './info/important-functions';
-import {
-    customTypes,
-    floatingPointOpaqueTypes,
-    signedIntegerOpaqueTypes,
-    transparentTypes,
-    unsignedIntegerOpaqueTypes,
-} from './info/types';
 
 export class Builtin {
     private static builtin_100: Builtin;

@@ -13,7 +13,7 @@
         "email": "zalan.racz.dev@gmail.com",
         "url": "https://github.com/racz16/WebGL-GLSL-Editor/issues"
     },
-    "license": "SEE LICENSE IN LICENSE.txt",
+    "license": "MIT",
     "keywords": [
         "GLSL",
         "shader",
@@ -28,7 +28,7 @@
         "color": "#990000",
         "theme": "dark"
     },
-    "version": "1.3.6",
+    "version": "1.3.8",
     "engines": {
         "vscode": "^1.65.0"
     },
@@ -62,6 +62,10 @@
                     ".frag",
                     ".fs"
                 ],
+                "icon": {
+                    "dark": "./res/svg/file-icon.svg",
+                    "light": "./res/svg/file-icon.svg"
+                },
                 "configuration": "./language-configuration.json"
             }
         ],
@@ -116,9 +120,19 @@
             {
                 "command": "webgl-glsl-editor.generatepreprocessed",
                 "title": "Generate preprocessed GLSL source code",
-                "enablement": "!isWeb && editorLangId == glsl && !editorReadonly"
+                "enablement": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly && webgl-glsl-editor.canRunCompiler",
+                "icon": "$(open-preview)"
             }
         ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "webgl-glsl-editor.generatepreprocessed",
+                    "group": "navigation",
+                    "when": "!isWeb && editorLangId == glsl && resourceExtname != .glsl && !editorReadonly && webgl-glsl-editor.canRunCompiler"
+                }
+            ]
+        },
         "configuration": [
             {
                 "title": "WebGL GLSL Editor",
@@ -291,9 +305,9 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "webpack --mode production",
-        "webpack": "webpack",
-        "webpack-dev": "webpack --watch",
+        "build-production": "webpack --mode production",
+        "build": "webpack",
+        "watch": "webpack --watch",
         "compile-antlr-windows": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./compile-antlr.ps1",
         "compile-antlr-linux": "./compile-antlr.sh",
         "markdownlint": "markdownlint --ignore node_modules **/*.md",
@@ -301,43 +315,40 @@
         "prettier-format": "prettier --write .",
         "eslint": "eslint ./src --ext .ts --ignore-pattern src/_generated",
         "run-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
-        "package-web": "vsce package --target web --ignoreFile web.vscodeignore",
-        "package-win32-x64": "vsce package --target win32-x64 --ignoreFile windows.vscodeignore",
-        "package-win32-ia32": "vsce package --target win32-ia32 --ignoreFile windows.vscodeignore",
-        "package-win32-arm64": "vsce package --target win32-arm64 --ignoreFile windows.vscodeignore",
-        "package-darwin-x64": "vsce package --target darwin-x64 --ignoreFile mac.vscodeignore",
-        "package-darwin-arm64": "vsce package --target darwin-arm64 --ignoreFile mac.vscodeignore",
-        "package-linux-x64": "vsce package --target linux-x64 --ignoreFile linux.vscodeignore",
-        "package-linux-arm64": "vsce package --target linux-arm64 --ignoreFile linux.vscodeignore",
-        "package-linux-armhf": "vsce package --target linux-armhf --ignoreFile linux.vscodeignore",
-        "package-alpine-x64": "vsce package --target alpine-x64 --ignoreFile linux.vscodeignore",
-        "package-alpine-arm64": "vsce package --target alpine-arm64 --ignoreFile linux.vscodeignore",
-        "package": "start npm run package-web && start npm run package-win32-x64 && start npm run package-win32-ia32 && start npm run package-win32-arm64 && start npm run package-darwin-x64 && start npm run package-darwin-arm64 && start npm run package-linux-x64 && start npm run package-linux-arm64 && start npm run package-linux-armhf && start npm run package-alpine-x64 && start npm run package-alpine-arm64",
+        "package-universal": "vsce package --ignoreFile vscodeignore/universal.vscodeignore",
+        "package-web": "vsce package --target web --ignoreFile vscodeignore/web.vscodeignore",
+        "package-windows-x64": "vsce package --target win32-x64 --ignoreFile vscodeignore/windows.vscodeignore",
+        "package-mac-x64": "vsce package --target darwin-x64 --ignoreFile vscodeignore/mac.vscodeignore",
+        "package-linux-x64": "vsce package --target linux-x64 --ignoreFile vscodeignore/linux.vscodeignore",
+        "package-all": "start npm run package-universal && start npm run package-web && start npm run package-windows-x64 && start npm run package-mac-x64 && start npm run package-linux-x64",
         "prepare": "husky install"
     },
     "devDependencies": {
-        "@types/node": "^20.4.1",
+        "@types/node": "^20.11.26",
         "@types/vscode": "1.65.0",
-        "@types/webpack-env": "^1.18.1",
-        "@typescript-eslint/eslint-plugin": "^5.61.0",
-        "@typescript-eslint/parser": "^5.61.0",
-        "@vscode/test-web": "^0.0.44",
-        "@vscode/vsce": "^2.19.0",
+        "@typescript-eslint/eslint-plugin": "^7.2.0",
+        "@typescript-eslint/parser": "^7.2.0",
+        "@vscode/test-web": "^0.0.52",
+        "@vscode/vsce": "^2.24.0",
         "antlr4ts-cli": "^0.5.0-alpha.4",
-        "assert": "^2.0.0",
-        "eslint": "^8.44.0",
-        "eslint-config-prettier": "^8.8.0",
-        "husky": "^8.0.3",
-        "markdownlint-cli": "^0.35.0",
-        "prettier": "^2.8.8",
-        "pretty-quick": "^3.1.3",
+        "assert": "^2.1.0",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "husky": "^9.0.11",
+        "lint-staged": "^15.2.2",
+        "markdownlint-cli": "^0.39.0",
+        "prettier": "^3.2.5",
+        "prettier-plugin-organize-imports": "^3.2.4",
         "process": "^0.11.10",
-        "ts-loader": "^9.4.4",
-        "typescript": "^5.1.6",
-        "webpack": "^5.88.1",
+        "ts-loader": "^9.5.1",
+        "typescript": "^5.4.2",
+        "webpack": "^5.90.3",
         "webpack-cli": "^5.1.4"
     },
     "dependencies": {
         "antlr4ts": "^0.5.0-alpha.4"
+    },
+    "lint-staged": {
+        "*": "prettier --write --ignore-unknown"
     }
 }

@@ -1,16 +1,16 @@
-import { exec, ChildProcess } from 'child_process';
-import { Stream } from 'stream';
+import { ChildProcess, exec } from 'child_process';
 import { platform } from 'os';
-import { TextDocument, Diagnostic, DiagnosticSeverity, Uri, DiagnosticTag, window } from 'vscode';
-import { GlslEditor } from '../core/glsl-editor';
+import { Stream } from 'stream';
+import { Diagnostic, DiagnosticSeverity, DiagnosticTag, TextDocument, Uri, ViewColumn, window } from 'vscode';
+import { Constants } from '../core/constants';
 import { DocumentInfo } from '../core/document-info';
-import { LogicalFunction } from '../scope/function/logical-function';
-import { Scope } from '../scope/scope';
+import { GlslEditor } from '../core/glsl-editor';
 import { Element } from '../scope/element';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { LogicalFunction } from '../scope/function/logical-function';
+import { Scope } from '../scope/scope';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { Constants } from '../core/constants';
 import { GlslTextProvider } from './glsl-text-provider';
 
 export class GlslDiagnosticProvider {
@@ -124,14 +124,22 @@ export class GlslDiagnosticProvider {
     private executeGeneration(validatorPath: string, stageName: string): void {
         const result = exec(`"${validatorPath}" --stdin -E -S ${stageName}`);
         let preprocessedText = Constants.EMPTY;
+        let error = false;
         result.stdout.on('data', (data: string) => {
             preprocessedText += data;
         });
+        result.stderr.on('data', (_data: string) => {
+            error = true;
+        });
         result.stdout.on('close', async () => {
+            if (error) {
+                await window.showErrorMessage("Something went wrong. Most likely the code doesn't compile.");
+                return;
+            }
             const uri = Uri.parse(`${Constants.PREPROCESSED_GLSL}: ${this.document.fileName}`);
             GlslEditor.getDocumentInfo(uri).setPreprocessedText(preprocessedText);
             GlslTextProvider.onDidChangeEmitter.fire(uri);
-            await window.showTextDocument(uri, { preview: false });
+            await window.showTextDocument(uri, { preview: false, viewColumn: ViewColumn.Beside });
         });
         this.provideInput(result);
     }

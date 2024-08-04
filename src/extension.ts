@@ -1,4 +1,4 @@
-import { commands, ExtensionContext, languages } from 'vscode';
+import { commands, DocumentSelector, ExtensionContext, languages } from 'vscode';
 import { Constants } from './core/constants';
 import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 import { GlslCommandProvider } from './providers/glsl-command-provider';
@@ -22,22 +22,12 @@ import { GlslRenameProvider } from './providers/glsl-rename-provider';
 import { GlslSignatureHelpProvider } from './providers/glsl-signature-help-provider';
 import { GlslTypeDefinitionProvider } from './providers/glsl-type-definition-provider';
 
-export const selector = [
-    { language: Constants.GLSL, scheme: Constants.FILE },
-    { language: Constants.GLSL, scheme: Constants.UNTITLED },
-    { language: Constants.GLSL, scheme: Constants.PREPROCESSED_GLSL },
-    { language: Constants.VERT, scheme: Constants.FILE },
-    { language: Constants.VERT, scheme: Constants.UNTITLED },
-    { language: Constants.VERT, scheme: Constants.PREPROCESSED_GLSL },
-    { language: Constants.VS, scheme: Constants.FILE },
-    { language: Constants.VS, scheme: Constants.UNTITLED },
-    { language: Constants.VS, scheme: Constants.PREPROCESSED_GLSL },
-    { language: Constants.FRAG, scheme: Constants.FILE },
-    { language: Constants.FRAG, scheme: Constants.UNTITLED },
-    { language: Constants.FRAG, scheme: Constants.PREPROCESSED_GLSL },
-    { language: Constants.FS, scheme: Constants.FILE },
-    { language: Constants.FS, scheme: Constants.UNTITLED },
-    { language: Constants.FS, scheme: Constants.PREPROCESSED_GLSL },
+export const selector: DocumentSelector = [
+    { language: Constants.GLSL },
+    { language: Constants.VERT },
+    { language: Constants.VS },
+    { language: Constants.FRAG },
+    { language: Constants.FS },
 ];
 
 export function addSharedCommands(context: ExtensionContext): void {
@@ -127,4 +117,8 @@ export function addSharedFeatures(context: ExtensionContext): void {
     );
     //inlay hints
     context.subscriptions.push(languages.registerInlayHintsProvider(selector, new GlslInlayHintsProvider()));
+}
+
+export async function setContext<T>(name: string, value: T): Promise<void> {
+    await commands.executeCommand('setContext', name, value);
 }

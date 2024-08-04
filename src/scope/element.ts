@@ -1,5 +1,5 @@
-import { Interval } from './interval';
 import { DocumentInfo } from '../core/document-info';
+import { Interval } from './interval';
 import { Scope } from './scope';
 
 export abstract class Element {

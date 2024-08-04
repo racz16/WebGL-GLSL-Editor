@@ -2,7 +2,9 @@ import {
     CancellationToken,
     InlayHint,
     InlayHintKind,
+    InlayHintLabelPart,
     InlayHintsProvider,
+    MarkdownString,
     ProviderResult,
     Range,
     TextDocument,
@@ -62,10 +64,26 @@ export class GlslInlayHintsProvider implements InlayHintsProvider {
 
     private addHint(fc: FunctionCall, declaration: FunctionDeclaration, i: number): void {
         const startIndex = fc.parametersStartOffset[i];
-        const name = `${declaration.parameters[i].name}:`;
         const position = this.di.offsetToPosition(startIndex - this.di.getInjectionOffset());
-        const ih = new InlayHint(position, name, InlayHintKind.Parameter);
+        const label = this.createLabel(declaration, i);
+        const ih = new InlayHint(position, label, InlayHintKind.Parameter);
         ih.paddingRight = true;
         this.result.push(ih);
+    }
+
+    private createLabel(declaration: FunctionDeclaration, i: number): string | InlayHintLabelPart[] {
+        const parameter = declaration.parameters[i];
+        const name = `${parameter.name}:`;
+        if (declaration.builtIn) {
+            return name;
+        } else {
+            return [
+                {
+                    value: name,
+                    tooltip: new MarkdownString(parameter.toStringDocumentation()),
+                    location: this.di.intervalToLocation(parameter.nameInterval),
+                },
+            ];
+        }
     }
 }

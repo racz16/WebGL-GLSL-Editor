@@ -1,17 +1,17 @@
 import {
-    TypeDefinitionProvider,
-    TextDocument,
-    Position,
     CancellationToken,
-    ProviderResult,
     Location,
     LocationLink,
+    Position,
+    ProviderResult,
+    TextDocument,
+    TypeDefinitionProvider,
 } from 'vscode';
-import { PositionalProviderBase } from './helper/positional-provider-base';
+import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
+import { FunctionCall } from '../scope/function/function-call';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
 import { VariableUsage } from '../scope/variable/variable-usage';
-import { FunctionCall } from '../scope/function/function-call';
-import { TypeDeclarationProcessor } from '../processor/type-declaration-processor';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslTypeDefinitionProvider extends PositionalProviderBase<Location> implements TypeDefinitionProvider {
     public provideTypeDefinition(

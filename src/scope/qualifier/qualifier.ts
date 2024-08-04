@@ -1,5 +1,5 @@
-import { QualifierUsage } from './qualifier-usage';
 import { DocumentInfo } from '../../core/document-info';
+import { QualifierUsage } from './qualifier-usage';
 
 export class Qualifier {
     public readonly name: string;

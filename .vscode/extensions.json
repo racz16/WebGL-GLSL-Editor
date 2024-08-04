@@ -5,6 +5,9 @@
         "editorconfig.editorconfig",
         "github.vscode-github-actions",
         "davidanson.vscode-markdownlint",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "robertohuertasm.vscode-marketplace-preview",
+        "redcmd.tmlanguage-syntax-highlighter",
+        "amodio.tsl-problem-matcher"
     ]
 }

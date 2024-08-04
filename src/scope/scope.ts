@@ -1,11 +1,11 @@
 import { FunctionCall } from './function/function-call';
-import { VariableDeclaration } from './variable/variable-declaration';
-import { VariableUsage } from './variable/variable-usage';
+import { FunctionDeclaration } from './function/function-declaration';
+import { LogicalFunction } from './function/logical-function';
+import { Interval } from './interval';
 import { TypeDeclaration } from './type/type-declaration';
 import { TypeUsage } from './type/type-usage';
-import { Interval } from './interval';
-import { LogicalFunction } from './function/logical-function';
-import { FunctionDeclaration } from './function/function-declaration';
+import { VariableDeclaration } from './variable/variable-declaration';
+import { VariableUsage } from './variable/variable-usage';
 
 export class Scope {
     public readonly parent: Scope;

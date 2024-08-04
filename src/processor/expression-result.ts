@@ -1,6 +1,6 @@
-import { TypeDeclaration } from '../scope/type/type-declaration';
 import { ArrayUsage } from '../scope/array-usage';
 import { FunctionCall } from '../scope/function/function-call';
+import { TypeDeclaration } from '../scope/type/type-declaration';
 
 export class ExpressionResult {
     public readonly type: TypeDeclaration;

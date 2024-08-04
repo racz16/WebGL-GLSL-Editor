@@ -1,21 +1,21 @@
-import { Uri, TextDocument, Position, Location, Range } from 'vscode';
 import { ANTLRInputStream, CommonTokenStream, Token } from 'antlr4ts';
-import { GlslVisitor } from './glsl-visitor';
+import { Location, Position, Range, TextDocument, Uri } from 'vscode';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
-import { Scope } from '../scope/scope';
-import { Interval } from '../scope/interval';
 import { Builtin } from '../builtin/builtin';
-import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { VariableUsage } from '../scope/variable/variable-usage';
+import { FunctionCall } from '../scope/function/function-call';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { Interval } from '../scope/interval';
+import { Scope } from '../scope/scope';
+import { ShaderStage } from '../scope/shader-stage';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { TypeUsage } from '../scope/type/type-usage';
-import { FunctionCall } from '../scope/function/function-call';
-import { ShaderStage } from '../scope/shader-stage';
+import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { VariableUsage } from '../scope/variable/variable-usage';
 import { Constants } from './constants';
-import { GlslEditor } from './glsl-editor';
 import { DocumentRegions } from './document-regions';
+import { GlslEditor } from './glsl-editor';
+import { GlslVisitor } from './glsl-visitor';
 
 export class DocumentInfo {
     private readonly uri: Uri;

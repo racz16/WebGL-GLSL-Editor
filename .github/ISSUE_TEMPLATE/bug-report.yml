@@ -1,0 +1,43 @@
+name: Report a bug
+description: Report a bug, for example, the extension crashes, or one of the features doesn't work correctly, etc.
+title: '[Bug]: '
+labels: ['bug']
+assignees:
+    - racz16
+body:
+    - type: markdown
+      attributes:
+          value: While most of the fields are not required, please give me as much information as possible to be able to reproduce the problem.
+    - type: input
+      id: extension-version
+      attributes:
+          label: The extension's version
+          description: You can find it in the extensions's page in the **Extensions** tab, next to the extension's name.
+          placeholder: eg. 1.3.6
+    - type: input
+      id: vs-code-version
+      attributes:
+          label: VS Code's version
+          description: You can find it in **Help** / **About**.
+          placeholder: eg. 1.84.1
+    - type: dropdown
+      id: extension-host
+      attributes:
+          label: Extension host
+          description: Choose **Desktop VS Code** if you downloaded VS Code, and choose **VS Code for the Web**, if you used <https://vscode.dev>, <https://github.dev>, or similar.
+          options:
+              - Desktop VS Code
+              - VS Code for the Web
+    - type: input
+      id: operating-system
+      attributes:
+          label: Operating system
+          description: Please provide the CPU architecture as well, like x64, or ARM64, etc.
+          placeholder: eg. Windows 11 x64
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: Please provide information, like what have you done when the problem happened, what exactly happened, error messages, logs, pictures, etc.
+      validations:
+          required: true

@@ -1,12 +1,12 @@
 import {
-    DocumentSemanticTokensProvider,
-    TextDocument,
     CancellationToken,
+    DocumentSemanticTokensProvider,
     ProviderResult,
-    SemanticTokens,
-    SemanticTokensLegend,
-    SemanticTokensBuilder,
     Range,
+    SemanticTokens,
+    SemanticTokensBuilder,
+    SemanticTokensLegend,
+    TextDocument,
 } from 'vscode';
 import { DocumentInfo } from '../core/document-info';
 import { GlslEditor } from '../core/glsl-editor';

@@ -1,20 +1,20 @@
 import {
-    DocumentSymbolProvider,
-    TextDocument,
     CancellationToken,
-    ProviderResult,
-    SymbolInformation,
     DocumentSymbol,
-    SymbolKind,
+    DocumentSymbolProvider,
+    ProviderResult,
     Range,
+    SymbolInformation,
+    SymbolKind,
+    TextDocument,
 } from 'vscode';
-import { GlslEditor } from '../core/glsl-editor';
-import { Scope } from '../scope/scope';
 import { DocumentInfo } from '../core/document-info';
+import { GlslEditor } from '../core/glsl-editor';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
+import { Interval } from '../scope/interval';
+import { Scope } from '../scope/scope';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
-import { Interval } from '../scope/interval';
 
 export class GlslDocumentSymbolProvider implements DocumentSymbolProvider {
     private di: DocumentInfo;

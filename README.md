@@ -37,7 +37,7 @@ The extension can display a signature helper for functions and constructors (exc
 
 ### Code completion
 
-The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives and code snippets using IntelliSense, according to the current scope and shader stage. Member variables and vector swizzles are also supported.
+The extension provides types, variables, functions, constructors, keywords, qualifiers, qualifier parameters, preprocessor directives, macros, and code snippets using IntelliSense, according to the current scope and shader stage. Member variables and vector swizzles are also supported.
 
 ![code completion](res/gif/code-completion.gif)
 
@@ -83,7 +83,7 @@ The extension can provide outline information and breadcrumbs about the types, i
 
 ### Inlay hints
 
-The extension can show function and constructor parameters in the source code.
+The extension can show function and constructor parameters in the source code with tooltips and links.
 
 ![inlay hints](res/png/screenshots/inlay-hints.png)
 
@@ -137,7 +137,7 @@ You can find (go to / find all / peek) the references of a type, a variable, a f
 
 ### Generating preprocessed GLSL source code
 
-You can generate preprocessed GLSL source code by running a command. Only available in the desktop version.
+You can generate preprocessed GLSL source code by running a command or pressing the button on the top-right corner of the editor. Only available in the desktop version.
 
 ![before the preprocessor](res/gif/generate-preprocessed-glsl.gif)
 
@@ -160,6 +160,7 @@ You can easily access several online documentations by commands.
 * Comment toggling
 * Autoclosing pairs
 * Surrounding pairs
+* Default icon for GLSL files
 
 ## Configuration
 
@@ -188,6 +189,21 @@ You can easily access several online documentations by commands.
 * `webgl-glsl-editor.codeInjection`: Enables/disables code injection.
 * `webgl-glsl-editor.codeInjectionSource`: The lines of the injected source code. Only works if Code Injection is enabled.
 
+### Builtin Visual Studio Code configuration
+
+There are a lot of features you can enable/disable using builtin VS Code configurations:
+
+* `editor.semanticHighlighting.enabled`: Semantic highlight
+* `editor.occurrencesHighlight`: Highlights
+* `editor.hover.enabled`: Hover
+* `editor.inlayHints.enabled`: Inlay hints
+* `editor.colorDecorators`: Color picker
+* `editor.folding`: Folding
+* `editor.autoIndent`: Indentation
+* `editor.bracketPairColorization.enabled`: Brace matching
+* `editor.autoClosingBrackets`: Autoclosing pairs
+* `editor.autoSurround`: Surrounding pairs
+
 ## Notes
 
 * If you open GLSL code embedded in HTML, only the syntax highlight and limited indentation will work
@@ -202,6 +218,19 @@ You can find the user-provided issues on [GitHub](https://github.com/racz16/WebG
 ## Release Notes
 
 For more information, see the [changelog](CHANGELOG.md).
+
+### 1.3.8
+
+* Making builtin macros available in normal code completion (with values), not only in preprocessor lines
+* Adding a tooltip and a link to inlay hints
+* Other small changes
+
+### 1.3.7
+
+* Added default file icons
+* Added a button (top-right corner of the editor) to generate preprocessed code
+* Extended the syntax highlight to work with strings in .tsx files (thanks George Corney)
+* Other small changes and bugfixes
 
 ### 1.3.6
 
@@ -308,8 +337,8 @@ For more information, see the [changelog](CHANGELOG.md).
 
 ## Contributions
 
-Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7) and [Matt Curtis](https://github.com/matt-curtis) for contributing.
+Special thanks to [michaelmcleodnz](https://github.com/michaelmcleodnz), [RAX7](https://github.com/RAX7), [Matt Curtis](https://github.com/matt-curtis), and [George Corney](https://github.com/haxiomic) for contributing.
 
-## How to build, run and package the extension
+## More information about the project
 
-[Detailed build instructions](BUILD.md)
+If you want to know more about a project structure, how to build, run, package, and much more, read the [extension's wiki page](https://github.com/racz16/WebGL-GLSL-Editor/wiki).

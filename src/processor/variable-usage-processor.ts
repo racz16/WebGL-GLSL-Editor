@@ -1,12 +1,12 @@
-import { Helper } from './helper';
-import { VariableDeclarationProcessor } from './variable-declaration-processor';
+import { Token } from 'antlr4ts';
 import { TerminalNode } from 'antlr4ts/tree/TerminalNode';
 import { DocumentInfo } from '../core/document-info';
-import { Scope } from '../scope/scope';
-import { VariableUsage } from '../scope/variable/variable-usage';
 import { SemanticModifier, SemanticRegion, SemanticType } from '../scope/regions/semantic-region';
-import { Token } from 'antlr4ts';
+import { Scope } from '../scope/scope';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
+import { VariableUsage } from '../scope/variable/variable-usage';
+import { Helper } from './helper';
+import { VariableDeclarationProcessor } from './variable-declaration-processor';
 
 export class VariableUsageProcessor {
     private di: DocumentInfo;

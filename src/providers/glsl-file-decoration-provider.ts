@@ -1,4 +1,4 @@
-import { FileDecorationProvider, Uri, CancellationToken, ProviderResult, FileDecoration } from 'vscode';
+import { CancellationToken, FileDecoration, FileDecorationProvider, ProviderResult, Uri } from 'vscode';
 import { Constants } from '../core/constants';
 
 export class GlslFileDecorationProvider implements FileDecorationProvider {

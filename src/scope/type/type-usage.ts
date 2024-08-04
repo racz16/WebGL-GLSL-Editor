@@ -1,11 +1,11 @@
+import { Constants } from '../../core/constants';
+import { ArrayUsage } from '../array-usage';
 import { Element } from '../element';
-import { TypeDeclaration } from './type-declaration';
+import { Interval } from '../interval';
 import { Qualifier } from '../qualifier/qualifier';
 import { QualifierUsage } from '../qualifier/qualifier-usage';
-import { Interval } from '../interval';
 import { Scope } from '../scope';
-import { ArrayUsage } from '../array-usage';
-import { Constants } from '../../core/constants';
+import { TypeDeclaration } from './type-declaration';
 
 export class TypeUsage extends Element {
     public readonly declaration: TypeDeclaration;

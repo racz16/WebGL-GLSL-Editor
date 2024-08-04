@@ -1,9 +1,28 @@
 <!-- markdownlint-disable MD026 -->
 # Change Log
 
-## [Unreleased]
+## [1.3.8] - 2024.03.12.
 
-For new feature plans see the [GitHub Projects](https://github.com/racz16/WebGL-GLSL-Editor/projects) page.
+### Improved
+
+* Making builtin macros available in normal code completion (with values), not only in preprocessor lines
+* Adding a tooltip and a link to inlay hints
+* Updated packages
+
+## [1.3.7] - 2023.11.25.
+
+### Improved
+
+* Added default icon for GLSL files
+* Added a button (top-right corner of the editor) to generate preprocessed code
+* Extended the syntax highlight to work with strings in .tsx files (thanks George Corney)
+* Updated packages
+* Other small updates
+
+### Fixed
+
+* Cleaned up the platform-specific packages
+* Other small fixes
 
 ## [1.3.6] - 2023.07.09.
 

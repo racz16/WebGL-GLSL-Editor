@@ -1,11 +1,11 @@
-import { Element } from '../element';
-import { TypeUsage } from '../type/type-usage';
-import { VariableUsage } from './variable-usage';
-import { Interval } from '../interval';
 import { MarkdownString } from 'vscode';
+import { Constants } from '../../core/constants';
+import { Element } from '../element';
+import { Interval } from '../interval';
 import { Scope } from '../scope';
 import { ShaderStage } from '../shader-stage';
-import { Constants } from '../../core/constants';
+import { TypeUsage } from '../type/type-usage';
+import { VariableUsage } from './variable-usage';
 
 export class VariableDeclaration extends Element {
     public readonly builtin: boolean;

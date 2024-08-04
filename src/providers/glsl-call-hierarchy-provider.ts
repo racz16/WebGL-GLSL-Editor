@@ -1,22 +1,22 @@
 import {
-    CallHierarchyProvider,
-    TextDocument,
-    Position,
-    CancellationToken,
-    ProviderResult,
-    CallHierarchyItem,
     CallHierarchyIncomingCall,
+    CallHierarchyItem,
     CallHierarchyOutgoingCall,
-    SymbolKind,
+    CallHierarchyProvider,
+    CancellationToken,
+    Position,
+    ProviderResult,
     Range,
+    SymbolKind,
+    TextDocument,
 } from 'vscode';
-import { PositionalProviderBase } from './helper/positional-provider-base';
-import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { FunctionCall } from '../scope/function/function-call';
+import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { HierarchyElement } from './helper/hierarchy-element';
 import { HierarcySearchStage } from './helper/hierarchy-search-stage';
+import { PositionalProviderBase } from './helper/positional-provider-base';
 
 export class GlslCallHierarchyProvider
     extends PositionalProviderBase<Array<HierarchyElement>>

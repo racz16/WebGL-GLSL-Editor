@@ -1,12 +1,12 @@
+import { Constants } from '../../core/constants';
 import { Element } from '../element';
-import { TypeCategory } from './type-category';
-import { TypeBase } from './type-base';
-import { VariableDeclaration } from '../variable/variable-declaration';
-import { TypeUsage } from './type-usage';
+import { FunctionCall } from '../function/function-call';
 import { Interval } from '../interval';
 import { Scope } from '../scope';
-import { Constants } from '../../core/constants';
-import { FunctionCall } from '../function/function-call';
+import { VariableDeclaration } from '../variable/variable-declaration';
+import { TypeBase } from './type-base';
+import { TypeCategory } from './type-category';
+import { TypeUsage } from './type-usage';
 
 export class TypeDeclaration extends Element {
     public readonly builtin: boolean;
