@@ -122,7 +122,7 @@ export class GlslDiagnosticProvider {
     }
 
     private executeGeneration(validatorPath: string, stageName: string): void {
-        const result = exec(`${validatorPath} --stdin -E -S ${stageName}`);
+        const result = exec(`"${validatorPath}" --stdin -E -S ${stageName}`);
         let preprocessedText = Constants.EMPTY;
         result.stdout.on('data', (data: string) => {
             preprocessedText += data;
@@ -144,7 +144,7 @@ export class GlslDiagnosticProvider {
     }
 
     private executeValidation(validatorPath: string, stageName: string): void {
-        const result = exec(`${validatorPath} --stdin -C -S ${stageName}`);
+        const result = exec(`"${validatorPath}" --stdin -C -S ${stageName}`);
         const lintId = this.increaseLintId();
         result.stdout.on('data', (data: string) => {
             this.handleErrors(data);
