@@ -9,6 +9,8 @@ export class Configurations {
     private static readonly ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB = 'alwaysOpenOfflineDocInNewTab';
     private static readonly CODE_INJECTION = 'codeInjection';
     private static readonly CODE_INJECTION_SOURCE = 'codeInjectionSource';
+    private static readonly FRAG_INJECTION_SOURCE = 'fragInjectionSource';
+    private static readonly VERT_INJECTION_SOURCE = 'vertInjectionSource';
     private static readonly BRACES_ON_SEPARATE_LINE = 'format.placeBracesOnSeparateLine';
     private static readonly SPACE_AROUND_UNARY_OPERATORS = 'format.placeSpaceAroundUnaryOperators';
     private static readonly SPACES_AROUND_BINARY_OPERATOS = 'format.placeSpacesAroundBinaryOperators';
@@ -34,6 +36,8 @@ export class Configurations {
     private alwaysOpenOfflineDocInNewTab: boolean;
     private codeInjection: boolean;
     private codeInjectionSource: Array<string>;
+    private fragInjectionSource: Array<string>;
+    private vertInjectionSource: Array<string>;
     private bracesOnSeparateLine: boolean;
     private spaceAroundUnaryOperators: boolean;
     private spacesAroundBinaryOperators: boolean;
@@ -61,6 +65,8 @@ export class Configurations {
         this.alwaysOpenOfflineDocInNewTab = config.get(Configurations.ALWAYS_OPEN_OFFLINE_DOC_IN_NEW_TAB);
         this.codeInjection = config.get(Configurations.CODE_INJECTION);
         this.codeInjectionSource = config.get(Configurations.CODE_INJECTION_SOURCE);
+        this.fragInjectionSource = config.get(Configurations.FRAG_INJECTION_SOURCE);
+        this.vertInjectionSource = config.get(Configurations.VERT_INJECTION_SOURCE);
         this.bracesOnSeparateLine = config.get(Configurations.BRACES_ON_SEPARATE_LINE);
         this.spaceAroundUnaryOperators = config.get(Configurations.SPACE_AROUND_UNARY_OPERATORS);
         this.spacesAroundBinaryOperators = config.get(Configurations.SPACES_AROUND_BINARY_OPERATOS);
@@ -100,6 +106,12 @@ export class Configurations {
                 GlslEditor.invalidateDocuments();
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.CODE_INJECTION_SOURCE}`)) {
                 this.codeInjectionSource = config.get(Configurations.CODE_INJECTION_SOURCE);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.FRAG_INJECTION_SOURCE}`)) {
+                this.fragInjectionSource = config.get(Configurations.FRAG_INJECTION_SOURCE);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.VERT_INJECTION_SOURCE}`)) {
+                this.vertInjectionSource = config.get(Configurations.VERT_INJECTION_SOURCE);
                 GlslEditor.invalidateDocuments();
             } else if (
                 e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.BRACES_ON_SEPARATE_LINE}`)
@@ -187,6 +199,14 @@ export class Configurations {
 
     public getCodeInjectionSource(): Array<string> {
         return this.codeInjectionSource;
+    }
+
+    public getFragInjectionSource(): Array<string> {
+        return this.fragInjectionSource;
+    }
+
+    public getVertInjectionSource(): Array<string> {
+        return this.vertInjectionSource;
     }
 
     public getBracesOnSeparateLine(): boolean {

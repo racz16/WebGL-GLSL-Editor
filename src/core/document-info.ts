@@ -168,7 +168,12 @@ export class DocumentInfo {
     public getText(): string {
         const originalText = this.document.getText();
         if (GlslEditor.CONFIGURATIONS.getCodeInjection() && this.uri.scheme !== Constants.PREPROCESSED_GLSL) {
-            const injectionSource = GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
+            const injectionSource =
+                this.stage === ShaderStage.FRAGMENT
+                    ? GlslEditor.CONFIGURATIONS.getFragInjectionSource()
+                    : this.stage === ShaderStage.VERTEX
+                      ? GlslEditor.CONFIGURATIONS.getVertInjectionSource()
+                      : GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
             let text = injectionSource.join(Constants.NEW_LINE) + Constants.NEW_LINE;
             this.injectionLineCount = injectionSource.length;
             this.injectionOffset = text.length;
