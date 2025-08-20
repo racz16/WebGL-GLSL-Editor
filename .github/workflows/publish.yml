@@ -29,6 +29,8 @@ jobs:
               run: npm run package-windows-x64
             - name: Package to Mac x64
               run: npm run package-mac-x64
+            - name: Package to Mac ARM64
+              run: npm run package-mac-arm64
             - name: Package to linux-x64
               run: npm run package-linux-x64
             - name: Publish

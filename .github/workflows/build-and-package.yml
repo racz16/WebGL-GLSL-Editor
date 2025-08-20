@@ -17,6 +17,8 @@ jobs:
                       command: package-linux-x64
                     - os: macos-latest
                       command: package-mac-x64
+                    - os: macos-latest
+                      command: package-mac-arm64
                     - os: ubuntu-latest
                       command: package-web
                     - os: ubuntu-latest

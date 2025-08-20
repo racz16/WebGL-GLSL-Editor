@@ -7,7 +7,7 @@ import { HostDependent } from './host-dependent';
 export async function activate(context: ExtensionContext): Promise<void> {
     GlslEditor.initialize(context);
     HostDependent.webExtension = true;
-    await setContext(Constants.CAN_RUN_COMPILER_CONTEXT, false);
+    await setContext(Constants.COMPILER_EXECUTABLE_CONTEXT, false);
     addSharedCommands(context);
     addSharedFeatures(context);
 }

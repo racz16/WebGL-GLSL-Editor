@@ -1,10 +1,10 @@
 import { ChildProcess, exec } from 'child_process';
-import { platform } from 'os';
 import { Stream } from 'stream';
 import { Diagnostic, DiagnosticSeverity, DiagnosticTag, TextDocument, Uri, ViewColumn, window } from 'vscode';
 import { Constants } from '../core/constants';
 import { DocumentInfo } from '../core/document-info';
 import { GlslEditor } from '../core/glsl-editor';
+import { getCompilerPath } from '../extension-desktop';
 import { Element } from '../scope/element';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
@@ -115,14 +115,13 @@ export class GlslDiagnosticProvider {
     public displayPreprocessedCode(document: TextDocument): void {
         this.document = document;
         this.di = GlslEditor.getDocumentInfo(this.document.uri);
-        const platformName = this.getPlatformName();
         const stageName = this.di.getStageName();
-        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
-        this.executeGeneration(validatorPath, stageName);
+        const compilerPath = getCompilerPath();
+        this.executeGeneration(compilerPath, stageName);
     }
 
-    private executeGeneration(validatorPath: string, stageName: string): void {
-        const result = exec(`"${validatorPath}" --stdin -E -S ${stageName}`);
+    private executeGeneration(compilerPath: string, stageName: string): void {
+        const result = exec(`"${compilerPath}" --stdin -E -S ${stageName}`);
         let preprocessedText = Constants.EMPTY;
         let error = false;
         result.stdout.on('data', (data: string) => {
@@ -145,14 +144,13 @@ export class GlslDiagnosticProvider {
     }
 
     private addErrors(): void {
-        const platformName = this.getPlatformName();
         const stageName = this.di.getStageName();
-        const validatorPath = `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
-        this.executeValidation(validatorPath, stageName);
+        const compilerPath = getCompilerPath();
+        this.executeValidation(compilerPath, stageName);
     }
 
-    private executeValidation(validatorPath: string, stageName: string): void {
-        const result = exec(`"${validatorPath}" --stdin -C -S ${stageName}`);
+    private executeValidation(compilerPath: string, stageName: string): void {
+        const result = exec(`"${compilerPath}" --stdin -C -S ${stageName}`);
         const lintId = this.increaseLintId();
         result.stdout.on('data', (data: string) => {
             this.handleErrors(data);
@@ -229,18 +227,5 @@ export class GlslDiagnosticProvider {
         stdinStream.push(text);
         stdinStream.push(null);
         stdinStream.pipe(result.stdin);
-    }
-
-    private getPlatformName(): string {
-        switch (platform()) {
-            case 'win32':
-                return 'Windows';
-            case 'linux':
-                return 'Linux';
-            case 'darwin':
-                return 'Mac';
-            default:
-                return Constants.EMPTY;
-        }
     }
 }

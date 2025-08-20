@@ -9,13 +9,17 @@ import { GlslFileDecorationProvider } from './providers/glsl-file-decoration-pro
 import { GlslInjectionErrorProvider } from './providers/glsl-injection-error-provider';
 import { GlslTextProvider } from './providers/glsl-text-provider';
 
+import * as fs from 'fs/promises';
 import * as os from 'os';
 
 export async function activate(context: ExtensionContext): Promise<void> {
     GlslEditor.initialize(context);
-    await setContext(Constants.CAN_RUN_COMPILER_CONTEXT, canRunCompiler());
+    const compilerExecutable = await isCompilerExecutable();
+    await setContext(Constants.COMPILER_EXECUTABLE_CONTEXT, compilerExecutable);
     addHostDependentCode();
-    addDiagnostic(context);
+    if (compilerExecutable) {
+        addDiagnostic(context);
+    }
     addSharedCommands(context);
     addFeatures(context);
     addSharedFeatures(context);
@@ -29,10 +33,6 @@ function addHostDependentCode(): void {
 }
 
 function addDiagnostic(context: ExtensionContext): void {
-    if (!canRunCompiler()) {
-        return;
-    }
-    //diagnostic
     for (const editor of window.visibleTextEditors) {
         if (editor.document.languageId === Constants.GLSL) {
             try {
@@ -74,7 +74,56 @@ function addFeatures(context: ExtensionContext): void {
     window.registerFileDecorationProvider(new GlslFileDecorationProvider());
 }
 
-export function canRunCompiler(): boolean {
+async function isCompilerExecutable(): Promise<boolean> {
     const platform = os.platform();
-    return (platform === 'win32' || platform === 'darwin' || platform === 'linux') && os.arch() === 'x64';
+    if (isCompilerAvailable(platform)) {
+        const executablePath = getCompilerPath();
+        return await makeFileExecutableIfNeeded(executablePath, platform);
+    }
+    return false;
+}
+
+function isCompilerAvailable(platform: NodeJS.Platform): boolean {
+    const arch = os.arch();
+    return (
+        ((platform === 'win32' || platform === 'linux') && arch === 'x64') ||
+        (platform === 'darwin' && (arch === 'x64' || arch === 'arm64'))
+    );
+}
+
+export function getCompilerPath(): string {
+    const platformName = getPlatformName();
+    return `${GlslEditor.getContext().extensionPath}/res/bin/glslangValidator${platformName}`;
+}
+
+function getPlatformName(): string {
+    switch (os.platform()) {
+        case 'win32':
+            return 'Windows';
+        case 'linux':
+            return 'Linux';
+        case 'darwin':
+            return 'Mac';
+        default:
+            return Constants.EMPTY;
+    }
+}
+
+async function makeFileExecutableIfNeeded(file: string, platform: NodeJS.Platform): Promise<boolean> {
+    if (platform === 'win32') {
+        return true;
+    }
+    try {
+        await fs.access(file, fs.constants.X_OK);
+        return true;
+    } catch {
+        // file is not executable
+        try {
+            await fs.chmod(file, 0o755);
+            return true;
+        } catch {
+            // can't make the file executable
+            return false;
+        }
+    }
 }
