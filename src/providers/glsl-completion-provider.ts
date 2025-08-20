@@ -158,7 +158,7 @@ export class GlslCompletionProvider implements CompletionItemProvider {
         };
         if (macro === '__VERSION__') {
             label.description = this.di.getVersion().toString();
-        } else if (macro == '__LINE__') {
+        } else if (macro === '__LINE__') {
             label.description = `${this.position.line + this.di.getInjectionLineCount() + 1}`;
         }
         return label;

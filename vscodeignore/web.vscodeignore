@@ -13,13 +13,13 @@ syntaxes/.antlr
 
 # file
 .editorconfig
-.eslintrc.js
 .gitattributes
 .gitignore
 .markdownlint.json
 .prettierignore
 .prettierrc.json
 BUILD.md
+eslint.config.mjs
 package-lock.json
 tsconfig.json
 webpack.config.js

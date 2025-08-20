@@ -37,6 +37,7 @@ import { Scope } from '../scope/scope';
 import { DocumentInfo } from './document-info';
 import { GlslEditor } from './glsl-editor';
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export class GlslVisitor extends AbstractParseTreeVisitor<void> implements AntlrGlslParserVisitor<void> {
     private uri: Uri;
     private di: DocumentInfo;
