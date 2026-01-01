@@ -67,6 +67,15 @@ export class IncludeResolver {
         return graph;
     }
 
+    public static async tryResolveInclude(
+        from: Uri,
+        directive: IncludeDirective,
+        options: IncludeResolverOptions,
+        errors: Array<IncludeResolutionError>
+    ): Promise<ResolvedInclude | null> {
+        return await this.resolveInclude(from, directive, options, errors);
+    }
+
     private static async visit(
         uri: Uri,
         text: string,
