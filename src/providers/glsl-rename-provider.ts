@@ -92,7 +92,11 @@ export class GlslRenameProvider extends PositionalProviderBase<Range> implements
 
     private rename(we: WorkspaceEdit, interval: Interval): void {
         if (interval && !interval.isInjected()) {
-            we.replace(this.document.uri, this.di.intervalToRange(interval), this.newName);
+            const loc = this.di.intervalToLocation(interval);
+            if (!loc) {
+                return;
+            }
+            we.replace(loc.uri, loc.range, this.newName);
         }
     }
 

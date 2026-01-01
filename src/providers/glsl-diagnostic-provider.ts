@@ -8,6 +8,7 @@ import { getCompilerPath } from '../extension-desktop';
 import { Element } from '../scope/element';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { LogicalFunction } from '../scope/function/logical-function';
+import { Interval } from '../scope/interval';
 import { Scope } from '../scope/scope';
 import { TypeDeclaration } from '../scope/type/type-declaration';
 import { VariableDeclaration } from '../scope/variable/variable-declaration';
@@ -15,15 +16,50 @@ import { GlslTextProvider } from './glsl-text-provider';
 
 export class GlslDiagnosticProvider {
     private static newestLintIds = new Map<Uri, number>();
+    private static previouslyPublishedUrisByRoot = new Map<string, Set<string>>();
 
     private di: DocumentInfo;
-    private diagnostics = new Array<Diagnostic>();
+    private diagnosticsByUri = new Map<string, { uri: Uri; diagnostics: Array<Diagnostic> }>();
     private document: TextDocument;
+
+    private includeDiagnosticsMode = false;
+    private compilerTextLineStarts: Array<number> = [];
+
+    private static uriKey(uri: Uri): string {
+        return uri.toString(true);
+    }
+
+    private clearDiagnostics(): void {
+        this.diagnosticsByUri.clear();
+    }
+
+    private pushDiagnostic(uri: Uri, diagnostic: Diagnostic): void {
+        const k = GlslDiagnosticProvider.uriKey(uri);
+        let entry = this.diagnosticsByUri.get(k);
+        if (!entry) {
+            entry = { uri, diagnostics: [] };
+            this.diagnosticsByUri.set(k, entry);
+        }
+        entry.diagnostics.push(diagnostic);
+    }
+
+    private computeLineStarts(text: string): Array<number> {
+        const starts = [0];
+        for (let i = 0; i < text.length; i++) {
+            if (text.charCodeAt(i) === 10 /* \n */) {
+                starts.push(i + 1);
+            }
+        }
+        return starts;
+    }
 
     private initialize(document: TextDocument): void {
         GlslEditor.processElements(document);
         this.di = GlslEditor.getDocumentInfo(document.uri);
         this.document = document;
+        this.includeDiagnosticsMode =
+            this.di.hasSourceMap() && GlslEditor.CONFIGURATIONS.getIncludeResolverOptions().enabled;
+        this.clearDiagnostics();
     }
 
     public textChanged(document: TextDocument): void {
@@ -96,10 +132,13 @@ export class GlslDiagnosticProvider {
 
     private addUnusedHint(element: Element, message: string): void {
         if (element.nameInterval && !element.nameInterval.isInjected()) {
-            const range = this.di.intervalToRange(element.nameInterval);
-            const d = new Diagnostic(range, message, DiagnosticSeverity.Hint);
+            const loc = this.di.intervalToLocation(element.nameInterval);
+            if (!loc) {
+                return;
+            }
+            const d = new Diagnostic(loc.range, message, DiagnosticSeverity.Hint);
             d.tags = [DiagnosticTag.Unnecessary];
-            this.diagnostics.push(d);
+            this.pushDiagnostic(loc.uri, d);
         }
     }
 
@@ -157,11 +196,43 @@ export class GlslDiagnosticProvider {
         });
         result.stdout.on('close', () => {
             if (lintId === this.getCurrentLintId() && !this.document.isClosed) {
-                GlslEditor.getDiagnosticCollection().set(this.document.uri, this.diagnostics);
+                this.publishDiagnostics();
             }
         });
         this.di.setInjectionError(false);
         this.provideInput(result);
+    }
+
+    private publishDiagnostics(): void {
+        const collection = GlslEditor.getDiagnosticCollection();
+
+        const rootKey = GlslDiagnosticProvider.uriKey(this.document.uri);
+
+        const currentUris = new Set<string>();
+        if (this.includeDiagnosticsMode) {
+            for (const uri of this.di.getIncludeSourceUris()) {
+                currentUris.add(GlslDiagnosticProvider.uriKey(uri));
+            }
+        } else {
+            currentUris.add(rootKey);
+        }
+
+        // Clear any diagnostics previously published for this root that no longer apply.
+        const prev = GlslDiagnosticProvider.previouslyPublishedUrisByRoot.get(rootKey);
+        if (prev) {
+            for (const k of prev) {
+                if (!currentUris.has(k)) {
+                    collection.set(Uri.parse(k), []);
+                }
+            }
+        }
+
+        for (const k of currentUris) {
+            const entry = this.diagnosticsByUri.get(k);
+            collection.set(entry?.uri ?? Uri.parse(k), entry?.diagnostics ?? []);
+        }
+
+        GlslDiagnosticProvider.previouslyPublishedUrisByRoot.set(rootKey, currentUris);
     }
 
     private increaseLintId(): number {
@@ -197,33 +268,53 @@ export class GlslDiagnosticProvider {
 
     private addDiagnostic(row: string): void {
         if (row.startsWith('ERROR: 0:')) {
-            const t1 = row.substring(9);
-            const i = t1.indexOf(Constants.COLON);
-            const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
-            if (line > 0) {
-                const error = row.substring(9 + i + 2);
-                this.diagnostics.push(
-                    new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Error)
-                );
-            } else {
-                this.di.setInjectionError(true);
-            }
+            this.addCompilerDiagnostic(row, 9, DiagnosticSeverity.Error);
         } else if (row.startsWith('WARNING: 0:')) {
-            const t1 = row.substring(11);
-            const i = t1.indexOf(Constants.COLON);
-            const line = +t1.substring(0, i) - this.di.getInjectionLineCount();
-            if (line > 0) {
-                const error = row.substring(11 + i + 2);
-                this.diagnostics.push(
-                    new Diagnostic(this.document.lineAt(line - 1).range, error, DiagnosticSeverity.Warning)
-                );
+            this.addCompilerDiagnostic(row, 11, DiagnosticSeverity.Warning);
+        }
+    }
+
+    private addCompilerDiagnostic(row: string, headerLen: number, severity: DiagnosticSeverity): void {
+        const t1 = row.substring(headerLen);
+        const i = t1.indexOf(Constants.COLON);
+        const lineRaw = +t1.substring(0, i);
+        const message = row.substring(headerLen + i + 2);
+
+        if (this.includeDiagnosticsMode) {
+            const virtualLine0 = lineRaw - 1;
+            if (virtualLine0 < 0 || virtualLine0 >= this.compilerTextLineStarts.length) {
+                return;
             }
+
+            const vOffset = this.compilerTextLineStarts[virtualLine0];
+            const loc = this.di.intervalToLocation(new Interval(vOffset, vOffset + 1, this.di));
+            if (!loc) {
+                // Typically means this diagnostic points to generated/injected prelude.
+                this.di.setInjectionError(true);
+                return;
+            }
+
+            const lineRange = this.di.getLineRangeAtUri(loc.uri, loc.range.start.line) ?? loc.range;
+            this.pushDiagnostic(loc.uri, new Diagnostic(lineRange, message, severity));
+            return;
+        }
+
+        // Legacy mode: subtract injection line count and publish only to the root.
+        const line = lineRaw - this.di.getInjectionLineCount();
+        if (line > 0) {
+            this.pushDiagnostic(
+                this.document.uri,
+                new Diagnostic(this.document.lineAt(line - 1).range, message, severity)
+            );
+        } else {
+            this.di.setInjectionError(true);
         }
     }
 
     private provideInput(result: ChildProcess): void {
         const stdinStream = new Stream.Readable();
-        const text = this.di.getText();
+        const text = this.di.getCompilerText();
+        this.compilerTextLineStarts = this.computeLineStarts(text);
         stdinStream.push(text);
         stdinStream.push(null);
         stdinStream.pipe(result.stdin);
