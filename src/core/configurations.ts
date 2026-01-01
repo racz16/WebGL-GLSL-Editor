@@ -1,4 +1,5 @@
-import { ConfigurationChangeEvent, workspace } from 'vscode';
+import { ConfigurationChangeEvent, Uri, workspace } from 'vscode';
+import { IncludeResolverOptions } from '../include/include-types';
 import { Constants } from './constants';
 import { GlslEditor } from './glsl-editor';
 
@@ -28,6 +29,12 @@ export class Configurations {
     private static readonly SPACES_INSIDE_BRACKETS = 'format.placeSpacesInsideBrackets';
     private static readonly FAVOR_FLOATING_SUFFIX = 'format.favorFloatingSuffix';
 
+    private static readonly INCLUDES_ENABLED = 'includes.enabled';
+    private static readonly INCLUDES_SEARCH_PATHS = 'includes.searchPaths';
+    private static readonly INCLUDES_MAX_DEPTH = 'includes.maxDepth';
+    private static readonly INCLUDES_MAX_TOTAL_BYTES = 'includes.maxTotalBytes';
+    private static readonly INCLUDES_ALLOW_ANGLED = 'includes.allowAngledIncludes';
+
     private diagnostics: boolean;
     private strictRename: boolean;
     private alwaysOpenOnlineDoc: boolean;
@@ -52,6 +59,12 @@ export class Configurations {
     private spaceBeforeOpeningBrackets: boolean;
     private spacesInsideBrackets: boolean;
     private favorFloatingSuffix: boolean;
+
+    private includesEnabled: boolean;
+    private includesSearchPaths: Array<string>;
+    private includesMaxDepth: number;
+    private includesMaxTotalBytes: number;
+    private includesAllowAngledIncludes: boolean;
 
     public constructor() {
         const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
@@ -79,6 +92,12 @@ export class Configurations {
         this.spaceBeforeOpeningBrackets = config.get(Configurations.SPACE_BEFORE_OPENING_BRACKETS);
         this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
         this.favorFloatingSuffix = config.get(Configurations.FAVOR_FLOATING_SUFFIX);
+
+        this.includesEnabled = config.get(Configurations.INCLUDES_ENABLED);
+        this.includesSearchPaths = config.get(Configurations.INCLUDES_SEARCH_PATHS);
+        this.includesMaxDepth = config.get(Configurations.INCLUDES_MAX_DEPTH);
+        this.includesMaxTotalBytes = config.get(Configurations.INCLUDES_MAX_TOTAL_BYTES);
+        this.includesAllowAngledIncludes = config.get(Configurations.INCLUDES_ALLOW_ANGLED);
 
         workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
             const config = workspace.getConfiguration(Constants.EXTENSION_NAME);
@@ -161,6 +180,23 @@ export class Configurations {
                 this.spacesInsideBrackets = config.get(Configurations.SPACES_INSIDE_BRACKETS);
             } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.FAVOR_FLOATING_SUFFIX}`)) {
                 this.favorFloatingSuffix = config.get(Configurations.FAVOR_FLOATING_SUFFIX);
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INCLUDES_ENABLED}`)) {
+                this.includesEnabled = config.get(Configurations.INCLUDES_ENABLED);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INCLUDES_SEARCH_PATHS}`)) {
+                this.includesSearchPaths = config.get(Configurations.INCLUDES_SEARCH_PATHS);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INCLUDES_MAX_DEPTH}`)) {
+                this.includesMaxDepth = config.get(Configurations.INCLUDES_MAX_DEPTH);
+                GlslEditor.invalidateDocuments();
+            } else if (
+                e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INCLUDES_MAX_TOTAL_BYTES}`)
+            ) {
+                this.includesMaxTotalBytes = config.get(Configurations.INCLUDES_MAX_TOTAL_BYTES);
+                GlslEditor.invalidateDocuments();
+            } else if (e.affectsConfiguration(`${Constants.EXTENSION_NAME}.${Configurations.INCLUDES_ALLOW_ANGLED}`)) {
+                this.includesAllowAngledIncludes = config.get(Configurations.INCLUDES_ALLOW_ANGLED);
+                GlslEditor.invalidateDocuments();
             }
         });
     }
@@ -259,5 +295,74 @@ export class Configurations {
 
     public getFavorFloatingSuffix(): boolean {
         return this.favorFloatingSuffix;
+    }
+
+    public getIncludesEnabled(): boolean {
+        return this.includesEnabled;
+    }
+
+    public getIncludesSearchPaths(): Array<string> {
+        return this.includesSearchPaths;
+    }
+
+    public getIncludesMaxDepth(): number {
+        return this.includesMaxDepth;
+    }
+
+    public getIncludesMaxTotalBytes(): number {
+        return this.includesMaxTotalBytes;
+    }
+
+    public getIncludesAllowAngledIncludes(): boolean {
+        return this.includesAllowAngledIncludes;
+    }
+
+    public getIncludeResolverOptions(): IncludeResolverOptions {
+        const folders = this.getIncludesSearchPaths() ?? [];
+        const searchPaths = folders.map((p) => this.toSearchPathUri(p)).filter((u): u is Uri => u != null);
+
+        return {
+            enabled: this.getIncludesEnabled() ?? false,
+            allowAngledIncludes: this.getIncludesAllowAngledIncludes() ?? false,
+            searchPaths,
+            maxDepth: this.getIncludesMaxDepth() ?? 32,
+            maxTotalBytes: this.getIncludesMaxTotalBytes() ?? 1024 * 1024,
+        };
+    }
+
+    private toSearchPathUri(value: string): Uri | null {
+        const p = (value ?? '').trim();
+        if (!p) {
+            return null;
+        }
+
+        // Accept explicit URIs: file://, vscode-remote://, etc.
+        if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(p)) {
+            try {
+                return Uri.parse(p);
+            } catch {
+                return null;
+            }
+        }
+
+        const isWindowsAbs = /^[a-zA-Z]:[\\/]/.test(p);
+        const isPosixAbs = p.startsWith('/');
+
+        // If relative, interpret relative to the first workspace folder.
+        if (!isWindowsAbs && !isPosixAbs) {
+            const root = workspace.workspaceFolders?.[0]?.uri;
+            if (!root) {
+                return null;
+            }
+            const segments = p.split(/[\\/]+/g).filter(Boolean);
+            return Uri.joinPath(root, ...segments);
+        }
+
+        // Absolute filesystem path (desktop extension only).
+        try {
+            return Uri.file(p);
+        } catch {
+            return null;
+        }
     }
 }

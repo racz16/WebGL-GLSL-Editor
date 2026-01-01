@@ -301,6 +301,39 @@
                         ],
                         "description": "The lines of the injected source code. Only works if Code Injection is enabled.",
                         "order": 24
+                    },
+                    "webgl-glsl-editor.includes.enabled": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Enables/disables experimental #include support (phased rollout).",
+                        "order": 25
+                    },
+                    "webgl-glsl-editor.includes.searchPaths": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [],
+                        "description": "Additional folders to search for #include files (besides the including file’s folder).",
+                        "order": 26
+                    },
+                    "webgl-glsl-editor.includes.maxDepth": {
+                        "type": "number",
+                        "default": 32,
+                        "description": "Maximum nested #include depth.",
+                        "order": 27
+                    },
+                    "webgl-glsl-editor.includes.maxTotalBytes": {
+                        "type": "number",
+                        "default": 1048576,
+                        "description": "Maximum total expanded size (in bytes) across all nested includes.",
+                        "order": 28
+                    },
+                    "webgl-glsl-editor.includes.allowAngledIncludes": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Allow #include <...> form (in addition to #include \"...\").",
+                        "order": 29
                     }
                 }
             }
