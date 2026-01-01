@@ -1,13 +1,9 @@
-import { Uri, workspace } from 'vscode';
+import { Uri } from 'vscode';
 import { ExpandedDocument, ExpandedSource } from './expanded-document';
 import { IncludeResolver } from './include-resolver';
 import { IncludeResolutionError, IncludeResolverOptions, ResolvedInclude } from './include-types';
 import { SourceMap } from './source-map';
-
-async function readTextFile(uri: Uri): Promise<string> {
-    const data = await workspace.fs.readFile(uri);
-    return new TextDecoder('utf-8').decode(data);
-}
+import { WorkspaceText } from './workspace-text';
 
 function computeLineStartOffsets(text: string): Array<number> {
     const starts = [0];
@@ -114,8 +110,15 @@ export class IncludeExpander {
             out += text.slice(start, end);
             sm.appendSource(uri, start, end);
 
+            // NOTE: If the include directive is the last line without a trailing newline,
+            // ensure the included content begins on the next line.
+            if (end === text.length && end > start && text.charCodeAt(end - 1) !== 10 /* \n */) {
+                out += '\n';
+                sm.appendGenerated('\n');
+            }
+
             try {
-                const includedText = await readTextFile(resolved.to);
+                const includedText = await WorkspaceText.readText(resolved.to);
                 const expandedIncluded = await this.expandFile(
                     resolved.to,
                     includedText,

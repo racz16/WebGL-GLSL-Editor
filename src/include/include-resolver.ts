@@ -7,6 +7,7 @@ import {
     IncludeResolverOptions,
     ResolvedInclude,
 } from './include-types';
+import { WorkspaceText } from './workspace-text';
 
 // Supports: #include "path" and #include <path>, with optional trailing //... or /* ... */ comments.
 const INCLUDE_RE = /^\s*#\s*include\s+(?:"([^"]+)"|<([^>]+)>)\s*(?:(?:\/\/.*)|(?:\/\*.*\*\/\s*))?$/;
@@ -20,8 +21,7 @@ function splitIncludePath(p: string): Array<string> {
 }
 
 async function readTextFile(uri: Uri): Promise<string> {
-    const data = await workspace.fs.readFile(uri);
-    return new TextDecoder('utf-8').decode(data);
+    return await WorkspaceText.readText(uri);
 }
 
 export class IncludeResolver {

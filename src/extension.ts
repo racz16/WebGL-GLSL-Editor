@@ -1,5 +1,6 @@
-import { commands, DocumentSelector, ExtensionContext, languages } from 'vscode';
+import { commands, DocumentSelector, ExtensionContext, languages, workspace } from 'vscode';
 import { Constants } from './core/constants';
+import { ExpandedDocumentCache } from './include/expanded-document-cache';
 import { GlslCallHierarchyProvider } from './providers/glsl-call-hierarchy-provider';
 import { GlslCommandProvider } from './providers/glsl-command-provider';
 import { GlslCompletionProvider } from './providers/glsl-completion-provider';
@@ -60,6 +61,22 @@ export function addSharedCommands(context: ExtensionContext): void {
 }
 
 export function addSharedFeatures(context: ExtensionContext): void {
+    // include cache invalidation (phased rollout)
+    context.subscriptions.push(
+        workspace.onDidChangeTextDocument((e) => {
+            if (e.document.languageId === Constants.GLSL) {
+                ExpandedDocumentCache.invalidate(e.document.uri);
+            }
+        })
+    );
+    context.subscriptions.push(
+        workspace.onDidCloseTextDocument((e) => {
+            if (e.languageId === Constants.GLSL) {
+                ExpandedDocumentCache.invalidate(e.uri);
+            }
+        })
+    );
+
     //syntax highlighting
     context.subscriptions.push(
         languages.registerDocumentSemanticTokensProvider(

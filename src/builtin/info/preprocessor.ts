@@ -1,5 +1,6 @@
 export const preprocessorDirectives: Array<Array<Array<string>>> = [
     [['version'], ['100', '300'], ['es']],
+    [['include']],
     [['define']],
     [['undef']],
     [['if']],
