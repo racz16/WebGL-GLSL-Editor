@@ -1,5 +1,6 @@
 import { DiagnosticCollection, ExtensionContext, TextDocument, Uri, languages } from 'vscode';
 import { HostDependent } from '../host-dependent';
+import { ExpandedDocumentCache } from '../include/expanded-document-cache';
 import { Configurations } from './configurations';
 import { Constants } from './constants';
 import { DocumentInfo } from './document-info';
@@ -20,6 +21,7 @@ export class GlslEditor {
     }
 
     public static processElements(document: TextDocument): void {
+        ExpandedDocumentCache.schedule(document);
         const di = this.getDocumentInfo(document.uri);
         di.processElements(document);
     }

@@ -3,6 +3,9 @@ import { Location, Position, Range, TextDocument, Uri } from 'vscode';
 import { AntlrGlslLexer } from '../_generated/AntlrGlslLexer';
 import { AntlrGlslParser } from '../_generated/AntlrGlslParser';
 import { Builtin } from '../builtin/builtin';
+import { ExpandedDocument, ExpandedSource } from '../include/expanded-document';
+import { ExpandedDocumentCache } from '../include/expanded-document-cache';
+import { SourceMap } from '../include/source-map';
 import { FunctionCall } from '../scope/function/function-call';
 import { FunctionDeclaration } from '../scope/function/function-declaration';
 import { Interval } from '../scope/interval';
@@ -31,6 +34,8 @@ export class DocumentInfo {
     private invalid = false;
 
     private visitor: GlslVisitor;
+
+    private expanded: ExpandedDocument | null = null;
 
     private version = 100;
     private stage: ShaderStage;
@@ -128,9 +133,10 @@ export class DocumentInfo {
     }
 
     public getTokenAt(position: Position): Token {
+        const offset = this.positionToOffset(position);
         for (const token of this.getTokens()) {
-            const range = this.intervalToRange(new Interval(token.startIndex, token.stopIndex + 1, this));
-            if (range.contains(position)) {
+            const interval = new Interval(token.startIndex, token.stopIndex + 1, this);
+            if (offset >= interval.startIndex && offset < interval.stopIndex) {
                 return token;
             }
         }
@@ -151,18 +157,75 @@ export class DocumentInfo {
 
     private processDocument(document: TextDocument): void {
         this.document = document;
+        this.expanded = ExpandedDocumentCache.get(document);
+        this.applyInjectionToExpandedIfNeeded();
         this.lexer = this.createLexer();
         this.parser = this.createParser();
+    }
+
+    private applyInjectionToExpandedIfNeeded(): void {
+        if (!this.expanded) {
+            return;
+        }
+
+        // Reset; code injection is opt-in and not used for preprocessed docs.
+        this.injectionLineCount = 0;
+        this.injectionOffset = 0;
+
+        if (!GlslEditor.CONFIGURATIONS.getCodeInjection() || this.uri.scheme === Constants.PREPROCESSED_GLSL) {
+            return;
+        }
+
+        const injectionSource = GlslEditor.CONFIGURATIONS.getCodeInjectionSource();
+        const prelude = injectionSource.join(Constants.NEW_LINE) + Constants.NEW_LINE;
+        this.injectionLineCount = injectionSource.length;
+        this.injectionOffset = prelude.length;
+
+        if (!prelude) {
+            return;
+        }
+
+        // Compose a per-document expanded snapshot that also contains the injected prelude.
+        // The injected prelude is marked as generated so it does not map to any real source file.
+        const sm = new SourceMap();
+        sm.appendGenerated(prelude);
+        sm.appendFrom(this.expanded.sourceMap);
+        this.expanded = {
+            ...this.expanded,
+            text: prelude + this.expanded.text,
+            sourceMap: sm,
+        };
     }
 
     private createLexer(): AntlrGlslLexer {
         //The ANTLRInputStream class is deprecated, however as far as I know this is the only way the TypeScript version of ANTLR accepts UTF-16 strings.
         //The CharStreams.fromString method only accepts UTF-8 and other methods of the CharStreams class are not implemented in TypeScript.
-        const charStream = new ANTLRInputStream(this.getText());
+        const charStream = new ANTLRInputStream(this.getParseText());
         const lexer = new AntlrGlslLexer(charStream);
         this.tokens = lexer.getAllTokens();
         lexer.reset();
         return lexer;
+    }
+
+    private getParseText(): string {
+        // In include mode, we parse the expanded text snapshot if available.
+        if (this.expanded && GlslEditor.CONFIGURATIONS.getIncludeResolverOptions().enabled) {
+            return this.expanded.text;
+        }
+        return this.getText();
+    }
+
+    /**
+     * Text used for compiler diagnostics.
+     *
+     * When includes are enabled and an expanded snapshot is available, diagnostics should compile
+     * the same expanded text we parse, so line numbers can be mapped back via the SourceMap.
+     */
+    public getCompilerText(): string {
+        if (this.expanded && GlslEditor.CONFIGURATIONS.getIncludeResolverOptions().enabled) {
+            return this.expanded.text;
+        }
+        return this.getText();
     }
 
     public getText(): string {
@@ -203,25 +266,60 @@ export class DocumentInfo {
     }
 
     public intervalToLocation(interval: Interval): Location {
-        const range = this.intervalToRange(interval);
-        return new Location(this.document.uri, range);
+        const mapped = this.intervalToMappedRange(interval);
+        if (!mapped) {
+            return null;
+        }
+        return new Location(mapped.uri, mapped.range);
     }
 
     public intervalToRange(interval: Interval): Range {
+        return this.intervalToMappedRange(interval)?.range ?? null;
+    }
+
+    private intervalToMappedRange(interval: Interval): { uri: Uri; range: Range } | null {
         if (!interval) {
             return null;
         }
-        const start = this.offsetToPosition(interval.startIndex);
-        const stop = this.offsetToPosition(interval.stopIndex);
-        return new Range(start, stop);
+
+        if (!this.hasSourceMap()) {
+            const start = this.offsetToPosition(interval.startIndex);
+            const stop = this.offsetToPosition(interval.stopIndex);
+            if (!start || !stop) {
+                return null;
+            }
+            return { uri: this.document.uri, range: new Range(start, stop) };
+        }
+
+        const startMapped = this.mapVirtualOffsetToPosition(interval.startIndex);
+        const stopMapped = this.mapVirtualOffsetToPosition(interval.stopIndex);
+        if (!startMapped || !stopMapped) {
+            return null;
+        }
+
+        // If an interval somehow crosses files, keep it anchored to the start file.
+        const uri = startMapped.uri;
+        const stop = stopMapped.uri.toString(true) === uri.toString(true) ? stopMapped.position : startMapped.position;
+        return { uri, range: new Range(startMapped.position, stop) };
     }
 
     public offsetToPosition(offset: number): Position {
-        return this.document.positionAt(offset);
+        if (!this.hasSourceMap()) {
+            return this.document.positionAt(offset);
+        }
+
+        const mapped = this.mapVirtualOffsetToPosition(offset);
+        return mapped?.position ?? null;
     }
 
     public positionToOffset(position: Position): number {
-        return this.document.offsetAt(position);
+        if (!this.hasSourceMap()) {
+            return this.document.offsetAt(position);
+        }
+
+        const sourceOffset = this.document.offsetAt(position);
+        const v = this.expanded.sourceMap.mapSourceOffset(this.document.uri, sourceOffset);
+        return v ?? sourceOffset;
     }
 
     public lineAndCharacterToRange(line: number, character: number): Range {
@@ -230,7 +328,133 @@ export class DocumentInfo {
     }
 
     public getTextInInterval(interval: Interval): string {
-        return this.document.getText(this.intervalToRange(interval));
+        if (!interval) {
+            return Constants.EMPTY;
+        }
+        if (!this.hasSourceMap()) {
+            return this.document.getText(this.intervalToRange(interval));
+        }
+
+        const start = this.expanded.sourceMap.mapVirtualOffset(interval.startIndex);
+        const stop = this.expanded.sourceMap.mapVirtualOffset(interval.stopIndex);
+        if (!start || !stop) {
+            return Constants.EMPTY;
+        }
+        if (start.uri.toString(true) !== stop.uri.toString(true)) {
+            return Constants.EMPTY;
+        }
+        const src = this.getExpandedSource(start.uri);
+        if (!src) {
+            return Constants.EMPTY;
+        }
+        return src.text.substring(start.offset, stop.offset);
+    }
+
+    public hasSourceMap(): boolean {
+        return this.expanded != null;
+    }
+
+    public getIncludeSourceUris(): Array<Uri> {
+        if (!this.expanded) {
+            return [this.document.uri];
+        }
+        const result: Array<Uri> = [];
+        for (const s of this.expanded.sources.values()) {
+            result.push(s.uri);
+        }
+        return result;
+    }
+
+    public getLineRangeAtUri(uri: Uri, line0: number): Range | null {
+        if (!uri) {
+            return null;
+        }
+
+        if (uri.toString(true) === this.document.uri.toString(true)) {
+            if (line0 < 0 || line0 >= this.document.lineCount) {
+                return null;
+            }
+            return this.document.lineAt(line0).range;
+        }
+
+        const src = this.getExpandedSource(uri);
+        if (!src) {
+            return null;
+        }
+
+        const starts = src.lineStarts;
+        if (line0 < 0 || line0 >= starts.length) {
+            return null;
+        }
+        const startOffset = starts[line0];
+        let endOffset = line0 + 1 < starts.length ? starts[line0 + 1] : src.text.length;
+
+        // Trim a single trailing newline (and optional preceding \r) so the range matches VS Code's line range.
+        if (endOffset > startOffset) {
+            const last = src.text.charCodeAt(endOffset - 1);
+            if (last === 10 /* \n */) {
+                endOffset--;
+                if (endOffset > startOffset && src.text.charCodeAt(endOffset - 1) === 13 /* \r */) {
+                    endOffset--;
+                }
+            }
+        }
+
+        const endChar = Math.max(0, endOffset - startOffset);
+        return new Range(new Position(line0, 0), new Position(line0, endChar));
+    }
+
+    public isVirtualOffsetInjected(offset: number): boolean {
+        if (!this.expanded) {
+            return offset < 0;
+        }
+        return this.expanded.sourceMap.isGeneratedVirtualOffset(offset);
+    }
+
+    private mapVirtualOffsetToPosition(offset: number): { uri: Uri; position: Position } | null {
+        if (!this.expanded) {
+            return { uri: this.document.uri, position: this.document.positionAt(offset) };
+        }
+
+        const loc = this.expanded.sourceMap.mapVirtualOffset(offset);
+        if (!loc) {
+            return null;
+        }
+
+        if (loc.uri.toString(true) === this.document.uri.toString(true)) {
+            return { uri: this.document.uri, position: this.document.positionAt(loc.offset) };
+        }
+
+        const src = this.getExpandedSource(loc.uri);
+        if (!src) {
+            return null;
+        }
+
+        return { uri: src.uri, position: this.positionAtInSource(src, loc.offset) };
+    }
+
+    private getExpandedSource(uri: Uri): ExpandedSource | null {
+        const k = uri.toString(true);
+        return this.expanded?.sources.get(k) ?? null;
+    }
+
+    private positionAtInSource(source: ExpandedSource, offset: number): Position {
+        const starts = source.lineStarts;
+        let lo = 0;
+        let hi = starts.length - 1;
+        while (lo <= hi) {
+            const mid = (lo + hi) >>> 1;
+            const s = starts[mid];
+            const n = mid + 1 < starts.length ? starts[mid + 1] : source.text.length + 1;
+            if (offset < s) {
+                hi = mid - 1;
+            } else if (offset >= n) {
+                lo = mid + 1;
+            } else {
+                return new Position(mid, Math.max(0, offset - s));
+            }
+        }
+        return new Position(0, 0);
     }
 
     //
@@ -283,25 +507,48 @@ export class DocumentInfo {
             | 'functionPrototypes'
             | 'functionDefinitions'
     ): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
-        let scope: Scope = this.rootScope;
-        while (scope) {
-            for (const element of scope[type]) {
-                if (
-                    element.nameInterval &&
-                    !element.nameInterval.isInjected() &&
-                    this.intervalToRange(element.nameInterval)?.contains(position)
-                ) {
-                    return element;
-                }
+        const offset = this.positionToOffset(position);
+        return this.findElementAtOffset(this.rootScope, type, offset);
+    }
+
+    private findElementAtOffset(
+        scope: Scope,
+        type:
+            | 'variableDeclarations'
+            | 'variableUsages'
+            | 'typeDeclarations'
+            | 'typeUsages'
+            | 'functionCalls'
+            | 'functionPrototypes'
+            | 'functionDefinitions',
+        offset: number
+    ): VariableDeclaration | VariableUsage | TypeDeclaration | TypeUsage | FunctionCall | FunctionDeclaration {
+        // Prefer the most nested scope first.
+        for (const child of scope.children) {
+            const found = this.findElementAtOffset(child, type, offset);
+            if (found) {
+                return found;
             }
-            scope = this.getChildScope(scope, position);
         }
+
+        for (const element of scope[type]) {
+            if (
+                element.nameInterval &&
+                !element.nameInterval.isInjected() &&
+                offset >= element.nameInterval.startIndex &&
+                offset < element.nameInterval.stopIndex
+            ) {
+                return element;
+            }
+        }
+
         return null;
     }
 
     private getChildScope(scope: Scope, position: Position): Scope {
+        const offset = this.positionToOffset(position);
         for (const childScope of scope.children) {
-            if (this.intervalToRange(childScope.interval)?.contains(position)) {
+            if (offset >= childScope.interval.startIndex && offset < childScope.interval.stopIndex) {
                 return childScope;
             }
         }
@@ -334,9 +581,10 @@ export class DocumentInfo {
     }
 
     private getCaseDepthAt(position: Position): number {
+        const offset = this.positionToOffset(position);
         let depth = 0;
         for (const cr of this.regions.caseStatementsRegions) {
-            if (this.intervalToRange(cr)?.contains(position)) {
+            if (offset >= cr.startIndex && offset < cr.stopIndex) {
                 depth++;
             }
         }

@@ -44,6 +44,63 @@ export class FunctionProcessor {
         return di.builtin.functions.find((lf) => this.areFunctionsMatch(lf, name, nameInterval, parameters)) ?? null;
     }
 
+    /**
+     * Best-effort function lookup when parameter types cannot be inferred.
+     * Used to keep navigation features (e.g. Go to Definition) working.
+     */
+    public static searchFunctionLoosely(
+        name: string,
+        nameInterval: Interval,
+        parameterCount: number,
+        scope: Scope,
+        di: DocumentInfo
+    ): LogicalFunction {
+        while (scope) {
+            const lf = this.findLooseMatchInScope(scope, name, nameInterval, parameterCount);
+            if (lf) {
+                return lf;
+            } else if (this.anyTypeOrVariable(name, nameInterval, scope)) {
+                return null;
+            }
+            scope = scope.parent;
+        }
+        return this.findLooseMatchInList(di.builtin.functions, name, nameInterval, parameterCount);
+    }
+
+    private static findLooseMatchInScope(
+        scope: Scope,
+        name: string,
+        nameInterval: Interval,
+        parameterCount: number
+    ): LogicalFunction {
+        return this.findLooseMatchInList(scope.functions, name, nameInterval, parameterCount);
+    }
+
+    private static findLooseMatchInList(
+        list: Array<LogicalFunction>,
+        name: string,
+        nameInterval: Interval,
+        parameterCount: number
+    ): LogicalFunction {
+        let best: LogicalFunction = null;
+        let bestStop = -1;
+        for (const lf of list) {
+            const fd = lf.getDeclaration();
+            if (
+                fd.name === name &&
+                fd.parameters.length === parameterCount &&
+                Helper.isALowerThanB(fd.interval, nameInterval)
+            ) {
+                const stop = fd.interval?.stopIndex ?? -1;
+                if (stop > bestStop) {
+                    bestStop = stop;
+                    best = lf;
+                }
+            }
+        }
+        return best;
+    }
+
     private static areFunctionsMatch(
         lf: LogicalFunction,
         name: string,

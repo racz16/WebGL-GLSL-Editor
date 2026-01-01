@@ -461,13 +461,26 @@ export class ExpressionProcessor {
         nameInterval: Interval,
         parameters: Array<ExpressionResult>
     ): LogicalFunction {
-        if (parameters.some((param) => !param || !param.type)) {
-            return null;
+        const hasUnknownTypes = parameters.some((param) => !param || !param.type);
+        if (!hasUnknownTypes) {
+            const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
+            if (lf) {
+                return lf;
+            }
+        } else {
+            // Best-effort: allow navigation even when expression typing fails.
+            const lf = FunctionProcessor.searchFunctionLoosely(
+                name,
+                nameInterval,
+                parameters.length,
+                this.scope,
+                this.di
+            );
+            if (lf) {
+                return lf;
+            }
         }
-        const lf = FunctionProcessor.searchFunction(name, nameInterval, parameters, this.scope, this.di);
-        if (lf) {
-            return lf;
-        }
+
         const array = Helper.getArraySizeFromArraySubscript(
             this.ctx.function_call().array_subscript(),
             this.scope,

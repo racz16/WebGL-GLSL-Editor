@@ -1,5 +1,5 @@
 import { Uri, workspace } from 'vscode';
-import { ExpandedDocument } from './expanded-document';
+import { ExpandedDocument, ExpandedSource } from './expanded-document';
 import { IncludeResolver } from './include-resolver';
 import { IncludeResolutionError, IncludeResolverOptions, ResolvedInclude } from './include-types';
 import { SourceMap } from './source-map';
@@ -18,6 +18,10 @@ function computeLineStartOffsets(text: string): Array<number> {
         }
     }
     return starts;
+}
+
+function uriKey(uri: Uri): string {
+    return uri.toString(true);
 }
 
 function getLineSliceOffsets(
@@ -45,15 +49,18 @@ export class IncludeExpander {
         // Use the same backing array so expansion-time errors aren't dropped.
         const errors: Array<IncludeResolutionError> = graph.errors;
 
+        const sources = new Map<string, ExpandedSource>();
+        sources.set(uriKey(root), { uri: root, text: rootText, lineStarts: computeLineStartOffsets(rootText) });
+
         if (!options.enabled) {
             const sm = new SourceMap();
             sm.appendSource(root, 0, rootText.length);
-            return { root, text: rootText, sourceMap: sm, graph, errors };
+            return { root, text: rootText, sourceMap: sm, sources, graph, errors };
         }
 
         const visited = new Set<string>();
-        const { text, sourceMap } = await this.expandFile(root, rootText, errors, options, visited);
-        return { root, text, sourceMap, graph, errors };
+        const { text, sourceMap } = await this.expandFile(root, rootText, errors, options, visited, sources);
+        return { root, text, sourceMap, sources, graph, errors };
     }
 
     private static async expandFile(
@@ -61,9 +68,10 @@ export class IncludeExpander {
         text: string,
         errors: Array<IncludeResolutionError>,
         options: IncludeResolverOptions,
-        visited: Set<string>
+        visited: Set<string>,
+        sources: Map<string, ExpandedSource>
     ): Promise<{ text: string; sourceMap: SourceMap }> {
-        const key = uri.toString(true);
+        const key = uriKey(uri);
         if (visited.has(key)) {
             // cycle already reported by graph builder; keep original text
             const sm = new SourceMap();
@@ -71,6 +79,10 @@ export class IncludeExpander {
             return { text, sourceMap: sm };
         }
         visited.add(key);
+
+        if (!sources.has(key)) {
+            sources.set(key, { uri, text, lineStarts: computeLineStartOffsets(text) });
+        }
 
         const directives = IncludeResolver.scanDirectives(text);
         const lineToInclude = new Map<number, ResolvedInclude>();
@@ -97,10 +109,21 @@ export class IncludeExpander {
                 continue;
             }
 
-            // Replace the include directive line with included file content.
+            // Preserve the include directive line for stable source mapping,
+            // then inline the included content after it.
+            out += text.slice(start, end);
+            sm.appendSource(uri, start, end);
+
             try {
                 const includedText = await readTextFile(resolved.to);
-                const expandedIncluded = await this.expandFile(resolved.to, includedText, errors, options, visited);
+                const expandedIncluded = await this.expandFile(
+                    resolved.to,
+                    includedText,
+                    errors,
+                    options,
+                    visited,
+                    sources
+                );
                 out += expandedIncluded.text;
                 sm.appendFrom(expandedIncluded.sourceMap);
             } catch (e) {
@@ -109,9 +132,7 @@ export class IncludeExpander {
                     directive: resolved.directive,
                     message: `Failed to expand include: ${String(e)}`,
                 });
-                // Fall back to keeping original line as-is.
-                out += text.slice(start, end);
-                sm.appendSource(uri, start, end);
+                // Keep going; the directive line is already emitted.
             }
         }
 
