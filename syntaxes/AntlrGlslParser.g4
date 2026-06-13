@@ -52,7 +52,7 @@ selection_statement : KW_IF LRB expression RRB statement (KW_ELSE statement)?;
 //switch-case
 switch_statement : KW_SWITCH LRB expression RRB LCB case_group* RCB;
 
-case_group : case_label statement*;
+case_group : case_label+ statement*;
 
 case_label : (KW_DEFAULT | KW_CASE expression) COLON;
 

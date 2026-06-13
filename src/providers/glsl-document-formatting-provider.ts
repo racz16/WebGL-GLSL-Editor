@@ -237,7 +237,8 @@ export class GlslDocumentFormattingProvider
                 t2.type !== AntlrGlslLexer.LRB &&
                 (t1.type !== AntlrGlslLexer.KW_ELSE || t2.type !== AntlrGlslLexer.KW_IF)) ||
             (this.ctx.caseStatementsStart &&
-                (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine()))
+                (t2.type !== AntlrGlslLexer.LCB || GlslEditor.CONFIGURATIONS.getBracesOnSeparateLine())) ||
+            t2.type === AntlrGlslLexer.KW_CASE
         );
     }
 
